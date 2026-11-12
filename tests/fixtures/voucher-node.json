@@ -1,0 +1,613 @@
+[
+  {
+    "kind": "scope",
+    "voucher": {},
+    "selection": null,
+    "expected": true
+  },
+  {
+    "kind": "scope",
+    "voucher": {},
+    "selection": {
+      "productId": "p",
+      "variantId": "v",
+      "date": "2099-06-01"
+    },
+    "expected": true
+  },
+  {
+    "kind": "scope",
+    "voucher": {},
+    "selection": {
+      "productId": "p",
+      "variantId": "other",
+      "date": "2099-06-07"
+    },
+    "expected": true
+  },
+  {
+    "kind": "scope",
+    "voucher": {},
+    "selection": {
+      "productId": "other",
+      "variantId": "v",
+      "date": "2099-06-01"
+    },
+    "expected": true
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "ALL"
+    },
+    "selection": null,
+    "expected": true
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "ALL"
+    },
+    "selection": {
+      "productId": "p",
+      "variantId": "v",
+      "date": "2099-06-01"
+    },
+    "expected": true
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "ALL"
+    },
+    "selection": {
+      "productId": "p",
+      "variantId": "other",
+      "date": "2099-06-07"
+    },
+    "expected": true
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "ALL"
+    },
+    "selection": {
+      "productId": "other",
+      "variantId": "v",
+      "date": "2099-06-01"
+    },
+    "expected": true
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "PRODUCTS",
+      "targets": [
+        {
+          "productId": "p"
+        }
+      ]
+    },
+    "selection": null,
+    "expected": false
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "PRODUCTS",
+      "targets": [
+        {
+          "productId": "p"
+        }
+      ]
+    },
+    "selection": {
+      "productId": "p",
+      "variantId": "v",
+      "date": "2099-06-01"
+    },
+    "expected": true
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "PRODUCTS",
+      "targets": [
+        {
+          "productId": "p"
+        }
+      ]
+    },
+    "selection": {
+      "productId": "p",
+      "variantId": "other",
+      "date": "2099-06-07"
+    },
+    "expected": true
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "PRODUCTS",
+      "targets": [
+        {
+          "productId": "p"
+        }
+      ]
+    },
+    "selection": {
+      "productId": "other",
+      "variantId": "v",
+      "date": "2099-06-01"
+    },
+    "expected": false
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "VARIANTS",
+      "targets": [
+        {
+          "productId": "p",
+          "variantId": "v"
+        }
+      ]
+    },
+    "selection": null,
+    "expected": false
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "VARIANTS",
+      "targets": [
+        {
+          "productId": "p",
+          "variantId": "v"
+        }
+      ]
+    },
+    "selection": {
+      "productId": "p",
+      "variantId": "v",
+      "date": "2099-06-01"
+    },
+    "expected": true
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "VARIANTS",
+      "targets": [
+        {
+          "productId": "p",
+          "variantId": "v"
+        }
+      ]
+    },
+    "selection": {
+      "productId": "p",
+      "variantId": "other",
+      "date": "2099-06-07"
+    },
+    "expected": false
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "VARIANTS",
+      "targets": [
+        {
+          "productId": "p",
+          "variantId": "v"
+        }
+      ]
+    },
+    "selection": {
+      "productId": "other",
+      "variantId": "v",
+      "date": "2099-06-01"
+    },
+    "expected": false
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "VARIANTS",
+      "targets": []
+    },
+    "selection": null,
+    "expected": false
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "VARIANTS",
+      "targets": []
+    },
+    "selection": {
+      "productId": "p",
+      "variantId": "v",
+      "date": "2099-06-01"
+    },
+    "expected": false
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "VARIANTS",
+      "targets": []
+    },
+    "selection": {
+      "productId": "p",
+      "variantId": "other",
+      "date": "2099-06-07"
+    },
+    "expected": false
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "VARIANTS",
+      "targets": []
+    },
+    "selection": {
+      "productId": "other",
+      "variantId": "v",
+      "date": "2099-06-01"
+    },
+    "expected": false
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "UNKNOWN",
+      "targets": [
+        {
+          "productId": "p"
+        }
+      ]
+    },
+    "selection": null,
+    "expected": false
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "UNKNOWN",
+      "targets": [
+        {
+          "productId": "p"
+        }
+      ]
+    },
+    "selection": {
+      "productId": "p",
+      "variantId": "v",
+      "date": "2099-06-01"
+    },
+    "expected": false
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "UNKNOWN",
+      "targets": [
+        {
+          "productId": "p"
+        }
+      ]
+    },
+    "selection": {
+      "productId": "p",
+      "variantId": "other",
+      "date": "2099-06-07"
+    },
+    "expected": false
+  },
+  {
+    "kind": "scope",
+    "voucher": {
+      "scope": "UNKNOWN",
+      "targets": [
+        {
+          "productId": "p"
+        }
+      ]
+    },
+    "selection": {
+      "productId": "other",
+      "variantId": "v",
+      "date": "2099-06-01"
+    },
+    "expected": false
+  },
+  {
+    "kind": "visit",
+    "voucher": {},
+    "date": null,
+    "expected": true
+  },
+  {
+    "kind": "visit",
+    "voucher": {},
+    "date": "2099-05-31",
+    "expected": true
+  },
+  {
+    "kind": "visit",
+    "voucher": {},
+    "date": "2099-06-01",
+    "expected": true
+  },
+  {
+    "kind": "visit",
+    "voucher": {},
+    "date": "2099-06-07",
+    "expected": true
+  },
+  {
+    "kind": "visit",
+    "voucher": {},
+    "date": "2099-06-30",
+    "expected": true
+  },
+  {
+    "kind": "visit",
+    "voucher": {},
+    "date": "2099-07-01",
+    "expected": true
+  },
+  {
+    "kind": "visit",
+    "voucher": {},
+    "date": "2099-02-30",
+    "expected": true
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitFrom": "2099-06-01",
+      "visitTo": "2099-06-30"
+    },
+    "date": null,
+    "expected": false
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitFrom": "2099-06-01",
+      "visitTo": "2099-06-30"
+    },
+    "date": "2099-05-31",
+    "expected": false
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitFrom": "2099-06-01",
+      "visitTo": "2099-06-30"
+    },
+    "date": "2099-06-01",
+    "expected": true
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitFrom": "2099-06-01",
+      "visitTo": "2099-06-30"
+    },
+    "date": "2099-06-07",
+    "expected": true
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitFrom": "2099-06-01",
+      "visitTo": "2099-06-30"
+    },
+    "date": "2099-06-30",
+    "expected": true
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitFrom": "2099-06-01",
+      "visitTo": "2099-06-30"
+    },
+    "date": "2099-07-01",
+    "expected": false
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitFrom": "2099-06-01",
+      "visitTo": "2099-06-30"
+    },
+    "date": "2099-02-30",
+    "expected": false
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitWeekdays": [
+        0
+      ]
+    },
+    "date": null,
+    "expected": false
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitWeekdays": [
+        0
+      ]
+    },
+    "date": "2099-05-31",
+    "expected": true
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitWeekdays": [
+        0
+      ]
+    },
+    "date": "2099-06-01",
+    "expected": false
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitWeekdays": [
+        0
+      ]
+    },
+    "date": "2099-06-07",
+    "expected": true
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitWeekdays": [
+        0
+      ]
+    },
+    "date": "2099-06-30",
+    "expected": false
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitWeekdays": [
+        0
+      ]
+    },
+    "date": "2099-07-01",
+    "expected": false
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitWeekdays": [
+        0
+      ]
+    },
+    "date": "2099-02-30",
+    "expected": false
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitFrom": "2099-06-01",
+      "visitTo": "2099-06-30",
+      "visitWeekdays": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "date": null,
+    "expected": false
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitFrom": "2099-06-01",
+      "visitTo": "2099-06-30",
+      "visitWeekdays": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "date": "2099-05-31",
+    "expected": false
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitFrom": "2099-06-01",
+      "visitTo": "2099-06-30",
+      "visitWeekdays": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "date": "2099-06-01",
+    "expected": true
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitFrom": "2099-06-01",
+      "visitTo": "2099-06-30",
+      "visitWeekdays": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "date": "2099-06-07",
+    "expected": false
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitFrom": "2099-06-01",
+      "visitTo": "2099-06-30",
+      "visitWeekdays": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "date": "2099-06-30",
+    "expected": true
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitFrom": "2099-06-01",
+      "visitTo": "2099-06-30",
+      "visitWeekdays": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "date": "2099-07-01",
+    "expected": false
+  },
+  {
+    "kind": "visit",
+    "voucher": {
+      "visitFrom": "2099-06-01",
+      "visitTo": "2099-06-30",
+      "visitWeekdays": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "date": "2099-02-30",
+    "expected": false
+  }
+]

@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS jingo_vouchers (
+ id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+ code VARCHAR(40) CHARACTER SET ascii COLLATE ascii_bin NOT NULL UNIQUE,
+ data JSON NOT NULL,
+ version INT NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS jingo_voucher_uses (
+ order_id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+ voucher_id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+ released BOOLEAN NOT NULL DEFAULT FALSE,
+ INDEX(voucher_id,released),
+ FOREIGN KEY(voucher_id) REFERENCES jingo_vouchers(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -104,6 +104,15 @@ try {
     request($base,'/api/v1/quotes',409,'POST',[],array_merge($quoteInput,['date'=>'2099-06-02']));request($base,'/api/v1/quotes',400,'POST',[],array_merge($quoteInput,['voucherCode'=>'SALE']));
     $prices=request($base,'/api/v1/products/ve-trai-nghiem/prices?variantId=eco&date=2099-06-01',200);if($prices['inventory']['remaining']!==2)throw new RuntimeException('Prices availability');
     $stockRows=request($base,'/api/v1/admin/inventory?productId=ticket-product&from=2099-06-01&to=2099-06-01',200,'GET',[$cookie]);if($stockRows['rows'][0]['used']!==0)throw new RuntimeException('Quotes reserved capacity');
+    request($base,'/api/v1/admin/vouchers',401);
+    $voucher=['id'=>'00000000-0000-4000-8000-000000000050','code'=>' web10 ','name'=>'Ưu đãi web','discountType'=>'PERCENT','value'=>10,'minSubtotal'=>0,'maxDiscount'=>null,'startDate'=>'2000-01-01','endDate'=>'2100-12-31','maxUses'=>1,'enabled'=>true,'version'=>0,'scope'=>'VARIANTS','targets'=>[['productId'=>'ticket-product','variantId'=>'eco']],'visitFrom'=>'2099-06-01','visitTo'=>'2099-06-30','visitWeekdays'=>[1],'notes'=>'Không công khai'];
+    request($base,'/api/v1/admin/vouchers',403,'POST',[$cookie],$voucher);$savedVoucher=request($base,'/api/v1/admin/vouchers',200,'POST',$headers,$voucher)['data'];if($savedVoucher['code']!=='WEB10')throw new RuntimeException('Voucher normalization');
+    request($base,'/api/v1/admin/vouchers',409,'POST',$headers,$voucher);request($base,'/api/v1/admin/vouchers',400,'POST',$headers,array_merge($savedVoucher,['code'=>'OTHER']));
+    request($base,'/api/v1/quotes',400,'POST',[],array_merge($quoteInput,['voucherCode'=>'WEB10'])); // active online discount cannot stack
+    $savedProduct['variants'][0]['onlineDiscount']=['type'=>'NONE','value'=>0];$savedProduct=request($base,'/api/v1/admin/products',200,'POST',$headers,$savedProduct)['data'];
+    $voucherQuote=request($base,'/api/v1/quotes',200,'POST',[],array_merge($quoteInput,['voucherCode'=>'web10']));if($voucherQuote['total']!==540000||$voucherQuote['discount']['code']!=='WEB10'||$voucherQuote['discount']['amount']!==60000)throw new RuntimeException('Voucher quote discount');
+    request($base,'/api/v1/quotes',200,'POST',[],array_merge($quoteInput,['voucherCode'=>'WEB10']));$voucherList=request($base,'/api/v1/admin/vouchers',200,'GET',[$cookie]);if(($voucherList['usage'][$savedVoucher['id']] ?? 0)!==0||$voucherList['checkoutEnabled']!==false)throw new RuntimeException('Voucher quote consumed a use or checkout claimed');
+    $savedVoucher['enabled']=false;request($base,'/api/v1/admin/vouchers',200,'POST',$headers,$savedVoucher);request($base,'/api/v1/quotes',400,'POST',[],array_merge($quoteInput,['voucherCode'=>'WEB10']));request($base,'/api/v1/vouchers',404);
     if(!str_contains(publicHtml($base,'/'),'Vé trải nghiệm'))throw new RuntimeException('Homepage catalog');
     request($base,'/api/v1/products/ve-trai-nghiem?lang=en',404);publicHtml($base,'/en/ve/ve-trai-nghiem',404);
     request($base,'/api/v1/products/ticket-product/sale-calendar',200);

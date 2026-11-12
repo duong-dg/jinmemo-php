@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 if(PHP_SAPI!=='cli')exit;
-foreach(['AdminAuth','Pricing','Inventory','Products','Quotes'] as $class)require dirname(__DIR__).'/src/'.$class.'.php';
+foreach(['AdminAuth','Pricing','Inventory','Products','Vouchers','Quotes'] as $class)require dirname(__DIR__).'/src/'.$class.'.php';
 function stockAssert(bool $ok,string $message):void{if(!$ok)throw new RuntimeException($message);}
 function stockStatus(int $status,callable $fn):void{try{$fn();}catch(HttpError $e){stockAssert($e->status===$status,'Unexpected HTTP '.$e->status.': '.$e->getMessage());return;}throw new RuntimeException('Expected HTTP '.$status);}
 $dsn=getenv('JINGO_TEST_DSN');if(!$dsn){fwrite(STDERR,"Set JINGO_TEST_DSN without dbname.\n");exit(1);}$opts=[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC,PDO::ATTR_EMULATE_PREPARES=>false];$server=new PDO($dsn,getenv('JINGO_TEST_USER')?:'root',getenv('JINGO_TEST_PASSWORD')?:'',$opts);$name='jingo_inventory_test_'.bin2hex(random_bytes(6));$server->exec("CREATE DATABASE `$name` CHARACTER SET utf8mb4");$db=null;

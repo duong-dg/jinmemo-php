@@ -1,6 +1,6 @@
 'use strict';
 const $=s=>document.querySelector(s);
-const names={products:'Sản phẩm',inventory:'Tồn vé','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
+const names={products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
 const labels={ACTIVE:'Hoạt động',ARCHIVED:'Lưu trữ',DRAFT:'Bản nháp',PUBLISHED:'Đã xuất bản',TRASH:'Thùng rác',NEW:'Mới',DONE:'Đã xử lý',TICKET:'Vé',TOUR:'Tour',PAGE:'Trang thường',CONTACT:'Liên hệ'};
 let current='overview',records=[],draft=null,dirty=false,loading=0,contactStatus='NEW',editing=false,editorSection='';
 function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;}
@@ -29,7 +29,7 @@ async function render(){
  if(current==='overview'){
   const intro=el('div',undefined,'overview-intro');intro.append(el('h2','Một nơi để chăm chút nội dung.'),el('p','Các danh mục, trang nội dung và hình ảnh đã sẵn sàng để quản lý. Đặt vé, thanh toán, quầy và cộng tác viên sẽ được bổ sung trong các đợt chuyển tiếp.'));screen.append(intro);
   const cards=el('div',undefined,'cards');const descriptions={'product-types':'Phân nhóm vé và tour của bạn.',destinations:'Sắp xếp địa điểm theo khu vực.',media:'Lưu và chọn hình ảnh cho nội dung.',suppliers:'Quản lý thông tin các đối tác.',pages:'Biên tập giới thiệu, chính sách, liên hệ.','contact-requests':'Theo dõi và xử lý lời nhắn của khách.'};
-  descriptions.products='Vé, gói giá và lịch sử dụng.';descriptions.inventory='Sức chứa theo ngày và suất giờ.';descriptions['site-seo']='Tiêu đề, mô tả và ảnh chia sẻ Việt/Anh.';descriptions.brand='Tên, logo và thông tin công ty.';
+  descriptions.products='Vé, gói giá và lịch sử dụng.';descriptions.inventory='Sức chứa theo ngày và suất giờ.';descriptions.vouchers='Chương trình giảm giá và phạm vi áp dụng.';descriptions['site-seo']='Tiêu đề, mô tả và ảnh chia sẻ Việt/Anh.';descriptions.brand='Tên, logo và thông tin công ty.';
   for(const [key,title]of Object.entries(names)){const card=el('a',undefined,'card');card.href='#'+key;card.append(el('h3',title),el('p',descriptions[key]),el('span','Mở quản lý ↗'));cards.append(card);}screen.append(cards);return;
  }
  if(current==='inventory'){await renderInventory(screen,id);return;}
@@ -45,8 +45,9 @@ async function render(){
   const wrap=el('div',undefined,'table-wrap'),table=el('table'),head=el('thead'),tr=el('tr');for(const title of [current==='contact-requests'?'Khách liên hệ':'Tên','Thông tin','Trạng thái',''])tr.append(el('th',title));head.append(tr);table.append(head);const body=el('tbody');
   records.forEach(record=>{const row=el('tr');const title=el('td');title.append(el('strong',record.name||record.title||record.data?.name||''));
    if(current==='contact-requests')title.append(el('small',record.data.email));
-   const info=current==='suppliers'?`${record.productCount} sản phẩm · ${record.phone||record.email||'Chưa có liên hệ'}`:current==='contact-requests'?record.data.subject:record.slug;
-   row.append(title,el('td',info||''));const state=el('td');state.append(el('span',labels[record.status]||record.status,'tag'));row.append(state);const action=el('td');action.append(button(current==='contact-requests'?'Xem yêu cầu ↗':'Chỉnh sửa ↗',()=>current==='contact-requests'?openContact(record):openEditor(record)));if(current==='pages'&&record.status==='PUBLISHED'){const view=el('a','Xem trang ↗','quiet');view.href=record.kind==='CONTACT'?'/lien-he':'/trang/'+encodeURIComponent(record.slug);view.target='_blank';view.rel='noopener';action.append(document.createTextNode(' · '),view);}row.append(action);body.append(row);
+   if(current==='vouchers')title.append(el('small',record.code));
+   const info=current==='vouchers'?`${record.value}${record.discountType==='PERCENT'?'%':' VND'} · ${result.usage?.[record.id]||0} lượt đã dùng`:current==='suppliers'?`${record.productCount} sản phẩm · ${record.phone||record.email||'Chưa có liên hệ'}`:current==='contact-requests'?record.data.subject:record.slug;
+   row.append(title,el('td',info||''));const state=el('td');state.append(el('span',current==='vouchers'?(record.enabled?'Đang bật':'Đang tắt'):labels[record.status]||record.status,'tag'));row.append(state);const action=el('td');action.append(button(current==='contact-requests'?'Xem yêu cầu ↗':'Chỉnh sửa ↗',()=>current==='contact-requests'?openContact(record):openEditor(record)));if(current==='pages'&&record.status==='PUBLISHED'){const view=el('a','Xem trang ↗','quiet');view.href=record.kind==='CONTACT'?'/lien-he':'/trang/'+encodeURIComponent(record.slug);view.target='_blank';view.rel='noopener';action.append(document.createTextNode(' · '),view);}row.append(action);body.append(row);
   });table.append(body);wrap.append(table);screen.append(wrap);
  }catch(error){if(id!==loading)return;screen.replaceChildren(empty('Chưa tải được dữ liệu'));notice(error.message,true);}
 }
@@ -69,6 +70,7 @@ async function openEditor(record,createContact=false){
  draft=record?structuredClone(record):{id:crypto.randomUUID(),version:0,status:'ACTIVE'};delete draft.productCount;delete draft.updatedAt;dirty=false;$('#fields').replaceChildren();$('#edit-error').hidden=true;$('#editor-title').textContent=(record?'Chỉnh sửa · ':'Tạo mới · ')+names[current];$('#edit-form button[type=submit]').hidden=false;
  if(current==='product-types'){baseFields();field('bookingKind','Cách đặt','select',['TICKET','TOUR']);if(!draft.bookingKind)draft.bookingKind='TICKET';field('description','Mô tả','textarea',[],false,1000);if(draft.english){section('English hiện có');$('#fields').append(el('p','Bản dịch được giữ lại khi lưu. Thay đổi nội dung gốc có thể yêu cầu duyệt lại bản dịch.','full muted'));}}
  if(current==='products'){try{await buildProductFields(!!record);}catch(error){draft=null;notice(error.message,true);return;}}
+ if(current==='vouchers'){try{await buildVoucherFields(!!record);}catch(error){draft=null;notice(error.message,true);return;}}
  if(current==='suppliers'){field('name','Tên nhà cung cấp','text',[],true,150);field('status','Trạng thái','select',['ACTIVE','ARCHIVED']);field('contactName','Người liên hệ','text',[],false,100);field('phone','Điện thoại','tel',[],false,30);field('email','Email','email',[],false,200);field('website','Website','url',[],false,500);field('notes','Ghi chú','textarea',[],false,4000);}
  if(current==='site-seo'){for(const lang of ['vi','en']){section(lang==='vi'?'Tiếng Việt':'English');field(lang+'.title','Tiêu đề SEO '+(lang==='vi'?'Việt':'English'),'text',[],true,200);field(lang+'.description','Mô tả '+(lang==='vi'?'Việt':'English'),'textarea',[],true,500);}}
  if(current==='brand'){field('name','Tên thương hiệu','text',[],true,100);field('companyName','Tên công ty','text',[],false,200);field('email','Email công khai','email',[],false,200);field('phone','Điện thoại','tel',[],false,40);field('address','Địa chỉ','textarea',[],false,500);}
