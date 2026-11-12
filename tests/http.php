@@ -45,7 +45,7 @@ try {
     if(!str_contains(publicHtml($base,'/en'),'Small journeys.'))throw new RuntimeException('English homepage');
     $html=file_get_contents($base.'/admin');
     if(!str_contains($html,'id="login-form"') || !str_contains($html,'JinMemo Test') || !str_contains($html,'/assets/admin.js')) throw new RuntimeException('Admin HTML shell');
-    foreach(['/assets/admin.js','/assets/admin.css','/assets/orders-admin.js'] as $asset) if(strlen(file_get_contents($base.$asset))<100) throw new RuntimeException('Missing admin asset');
+    foreach(['/assets/admin.js','/assets/admin.css','/assets/orders-admin.js','/assets/posts-admin.js'] as $asset) if(strlen(file_get_contents($base.$asset))<100) throw new RuntimeException('Missing admin asset');
     if(!str_contains($html,'href="#orders"')||!str_contains($html,'orders-admin.js?v='))throw new RuntimeException('Order admin shell');
     request($base,'/admin',405,'POST',[],[]);
     request($base,'/.env',404);
@@ -262,6 +262,12 @@ try {
     $db->prepare('INSERT INTO jingo_sessions VALUES (?,?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 1 HOUR))')->execute([hash('sha256',$token),'admin']);
     $adminOrder=request($base,'/api/v1/admin/orders/'.$order['id'],200,'GET',[$cookie]);
     if($adminOrder['data']['contact']['email']!=='order@example.test')throw new RuntimeException('Admin order detail');
+    request($base,'/api/v1/admin/posts',401);$postInput=['id'=>'00000000-0000-4000-8000-000000000701','slug'=>'cam-nang-hoi-an','title'=>'Nhật ký Hội An','excerpt'=>'Chuyến đi 🐴','contentHtml'=>'<h2>Ngày mới</h2><p>Nội dung bài viết.</p><script>bad()</script>','author'=>'JinMemo','category'=>'Cẩm nang','status'=>'DRAFT','version'=>0,'relatedRideIds'=>['legacy-ride']];
+    request($base,'/api/v1/admin/posts',403,'POST',[$cookie],$postInput);$postInput['cover']=['id'=>$uploaded['id'],'alt'=>'Ảnh bài viết'];$draftPost=request($base,'/api/v1/admin/posts',200,'POST',$headers,$postInput)['data'];request($base,'/api/v1/posts/cam-nang-hoi-an',404);publicHtml($base,'/cam-nang/cam-nang-hoi-an',404);
+    unset($draftPost['updatedAt']);$draftPost['status']='PUBLISHED';$draftPost['publishedAt']='2099-06-01T00:00:00Z';$scheduledPost=request($base,'/api/v1/admin/posts',200,'POST',$headers,$draftPost)['data'];publicHtml($base,'/cam-nang/cam-nang-hoi-an',404);unset($scheduledPost['updatedAt']);$scheduledPost['publishedAt']='2026-01-01T00:00:00Z';$publishedPost=request($base,'/api/v1/admin/posts',200,'POST',$headers,$scheduledPost)['data'];
+    $blogHtml=publicHtml($base,'/cam-nang');$postHtml=publicHtml($base,'/cam-nang/cam-nang-hoi-an');if(!str_contains($blogHtml,'Nhật ký Hội An')||!str_contains($postHtml,'content="article"')||!str_contains($postHtml,'Nội dung bài viết.')||str_contains($postHtml,'bad()'))throw new RuntimeException('Blog HTML/projection');publicHtml($base,'/cam-nang/',308,'/cam-nang');publicHtml($base,'/en/blog');publicHtml($base,'/en/blog/cam-nang-hoi-an',404);
+    $postSummary=request($base,'/api/v1/posts',200)['data'][0];if(isset($postSummary['contentHtml'])||isset($postSummary['version'])||isset($postSummary['english']))throw new RuntimeException('Public post projection');request($base,'/api/v1/admin/posts/'.$postInput['id'].'/revisions',401);$postHistory=request($base,'/api/v1/admin/posts/'.$postInput['id'].'/revisions',200,'GET',[$cookie]);if(count($postHistory['data'])!==3)throw new RuntimeException('Post revisions HTTP');
+    unset($publishedPost['updatedAt']);$publishedPost['slug']='nhat-ky-hoi-an';$renamedPost=request($base,'/api/v1/admin/posts',200,'POST',$headers,$publishedPost)['data'];publicHtml($base,'/cam-nang/cam-nang-hoi-an',308,'/cam-nang/nhat-ky-hoi-an');request($base,'/api/v1/admin/posts',409,'POST',$headers,$publishedPost);unset($renamedPost['updatedAt']);$renamedPost['status']='TRASH';request($base,'/api/v1/admin/posts',200,'POST',$headers,$renamedPost);publicHtml($base,'/cam-nang/nhat-ky-hoi-an',404);
     request($base,'/api/v1/admin/orders',401);$adminList=request($base,'/api/v1/admin/orders?q=order%40example.test&pageSize=1',200,'GET',[$cookie]);
     if($adminList['summary']['total']!==1||count($adminList['data'])!==1)throw new RuntimeException('Admin order list/search');
     request($base,'/api/v1/admin/orders?page=0',400,'GET',[$cookie]);

@@ -4,8 +4,32 @@
   "stagingPrefix": "jm_transfer_",
   "runtimePrefix": "jingo_",
   "tables": {
-    "order_tickets": ["id", "order_id", "code", "code_hash", "kind", "covers", "note", "created_at"],
-    "ticket_files": ["id", "order_id", "ticket_id", "name", "mime", "bytes", "hash", "created_at", "revoked_at", "revoke_reason", "file_kind", "deleted_at", "partner_shared", "sharing_version"]
+    "order_tickets": [
+      "id",
+      "order_id",
+      "code",
+      "code_hash",
+      "kind",
+      "covers",
+      "note",
+      "created_at"
+    ],
+    "ticket_files": [
+      "id",
+      "order_id",
+      "ticket_id",
+      "name",
+      "mime",
+      "bytes",
+      "hash",
+      "created_at",
+      "revoked_at",
+      "revoke_reason",
+      "file_kind",
+      "deleted_at",
+      "partner_shared",
+      "sharing_version"
+    ]
   },
   "existingFieldMappings": {
     "order_actions.note": "jingo_order_actions.data.note",
@@ -18,5 +42,32 @@
     "Copy physical files separately as MEDIA_DIR/.tickets/{id}.bin; bytes and SHA-256 must match metadata.",
     "Retain revoked_at, deleted_at, revoke_reason, file_kind, partner_shared and sharing_version even when their workflows are not exposed in PHP yet.",
     "Do not import staging tables directly into runtime tables without validation, dry-run and support for all related modules."
-  ]
+  ],
+  "postTables": {
+    "post_categories": [
+      "name",
+      "english_name",
+      "version"
+    ],
+    "posts": [
+      "id",
+      "slug",
+      "data",
+      "version",
+      "created_at",
+      "updated_at"
+    ],
+    "post_revisions": [
+      "post_id",
+      "version",
+      "data",
+      "saved_by",
+      "reason",
+      "created_at"
+    ],
+    "post_metrics": [
+      "post_id",
+      "views"
+    ]
+  }
 }

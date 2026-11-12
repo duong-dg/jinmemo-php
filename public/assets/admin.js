@@ -1,6 +1,6 @@
 'use strict';
 const $=s=>document.querySelector(s);
-const names={orders:'Đơn hàng',products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
+const names={posts:'Bài viết',orders:'Đơn hàng',products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
 const labels={ACTIVE:'Hoạt động',ARCHIVED:'Lưu trữ',DRAFT:'Bản nháp',PUBLISHED:'Đã xuất bản',TRASH:'Thùng rác',NEW:'Mới',DONE:'Đã xử lý',TICKET:'Vé',TOUR:'Tour',PAGE:'Trang thường',CONTACT:'Liên hệ'};
 let current='overview',records=[],draft=null,dirty=false,loading=0,contactStatus='NEW',editing=false,editorSection='';
 function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;}
@@ -29,7 +29,7 @@ async function render(){
  if(current==='overview'){
   const intro=el('div',undefined,'overview-intro');intro.append(el('h2','Một nơi để chăm chút nội dung.'),el('p','Các danh mục, trang nội dung và hình ảnh đã sẵn sàng để quản lý. Đơn WEB đã có thể đặt và quản lý. Có ghi nhận thu tiền thủ công. Thanh toán trực tuyến, giao vé, quầy và cộng tác viên sẽ được bổ sung trong các đợt chuyển tiếp.'));screen.append(intro);
   const cards=el('div',undefined,'cards');const descriptions={'product-types':'Phân nhóm vé và tour của bạn.',destinations:'Sắp xếp địa điểm theo khu vực.',media:'Lưu và chọn hình ảnh cho nội dung.',suppliers:'Quản lý thông tin các đối tác.',pages:'Biên tập giới thiệu, chính sách, liên hệ.','contact-requests':'Theo dõi và xử lý lời nhắn của khách.'};
-  descriptions.orders='Theo dõi đơn, liên hệ và xử lý yêu cầu.';descriptions.products='Vé, gói giá và lịch sử dụng.';descriptions.inventory='Sức chứa theo ngày và suất giờ.';descriptions.vouchers='Chương trình giảm giá và phạm vi áp dụng.';descriptions['site-seo']='Tiêu đề, mô tả và ảnh chia sẻ Việt/Anh.';descriptions.brand='Tên, logo và thông tin công ty.';
+  descriptions.posts='Cẩm nang, câu chuyện và lịch xuất bản.';descriptions.orders='Theo dõi đơn, liên hệ và xử lý yêu cầu.';descriptions.products='Vé, gói giá và lịch sử dụng.';descriptions.inventory='Sức chứa theo ngày và suất giờ.';descriptions.vouchers='Chương trình giảm giá và phạm vi áp dụng.';descriptions['site-seo']='Tiêu đề, mô tả và ảnh chia sẻ Việt/Anh.';descriptions.brand='Tên, logo và thông tin công ty.';
   for(const [key,title]of Object.entries(names)){const card=el('a',undefined,'card');card.href='#'+key;card.append(el('h3',title),el('p',descriptions[key]),el('span','Mở quản lý ↗'));cards.append(card);}screen.append(cards);return;
  }
  if(current==='orders'){await renderOrders(screen,id);return;}
@@ -48,7 +48,7 @@ async function render(){
    if(current==='contact-requests')title.append(el('small',record.data.email));
    if(current==='vouchers')title.append(el('small',record.code));
    const info=current==='vouchers'?`${record.value}${record.discountType==='PERCENT'?'%':' VND'} · ${result.usage?.[record.id]||0} lượt đã dùng`:current==='suppliers'?`${record.productCount} sản phẩm · ${record.phone||record.email||'Chưa có liên hệ'}`:current==='contact-requests'?record.data.subject:record.slug;
-   row.append(title,el('td',info||''));const state=el('td');state.append(el('span',current==='vouchers'?(record.enabled?'Đang bật':'Đang tắt'):labels[record.status]||record.status,'tag'));row.append(state);const action=el('td');action.append(button(current==='contact-requests'?'Xem yêu cầu ↗':'Chỉnh sửa ↗',()=>current==='contact-requests'?openContact(record):openEditor(record)));if(current==='pages'&&record.status==='PUBLISHED'){const view=el('a','Xem trang ↗','quiet');view.href=record.kind==='CONTACT'?'/lien-he':'/trang/'+encodeURIComponent(record.slug);view.target='_blank';view.rel='noopener';action.append(document.createTextNode(' · '),view);}row.append(action);body.append(row);
+   row.append(title,el('td',info||''));const state=el('td');state.append(el('span',current==='vouchers'?(record.enabled?'Đang bật':'Đang tắt'):labels[record.status]||record.status,'tag'));row.append(state);const action=el('td');action.append(button(current==='contact-requests'?'Xem yêu cầu ↗':'Chỉnh sửa ↗',()=>current==='contact-requests'?openContact(record):openEditor(record)));if(['posts','pages'].includes(current)&&record.status==='PUBLISHED'){const view=el('a',current==='posts'?'Xem bài ↗':'Xem trang ↗','quiet');view.href=current==='posts'?'/cam-nang/'+encodeURIComponent(record.slug):record.kind==='CONTACT'?'/lien-he':'/trang/'+encodeURIComponent(record.slug);view.target='_blank';view.rel='noopener';action.append(document.createTextNode(' · '),view);}row.append(action);body.append(row);
   });table.append(body);wrap.append(table);screen.append(wrap);
  }catch(error){if(id!==loading)return;screen.replaceChildren(empty('Chưa tải được dữ liệu'));notice(error.message,true);}
 }
@@ -70,6 +70,7 @@ async function openEditor(record,createContact=false){
  editorSection=current;
  draft=record?structuredClone(record):{id:crypto.randomUUID(),version:0,status:'ACTIVE'};delete draft.productCount;delete draft.updatedAt;dirty=false;$('#fields').replaceChildren();$('#edit-error').hidden=true;$('#editor-title').textContent=(record?'Chỉnh sửa · ':'Tạo mới · ')+names[current];$('#edit-form button[type=submit]').hidden=false;
  if(current==='product-types'){baseFields();field('bookingKind','Cách đặt','select',['TICKET','TOUR']);if(!draft.bookingKind)draft.bookingKind='TICKET';field('description','Mô tả','textarea',[],false,1000);if(draft.english){section('English hiện có');$('#fields').append(el('p','Bản dịch được giữ lại khi lưu. Thay đổi nội dung gốc có thể yêu cầu duyệt lại bản dịch.','full muted'));}}
+ if(current==='posts'){try{await buildPostFields(!!record);}catch(error){draft=null;notice(error.message,true);return;}}
  if(current==='products'){try{await buildProductFields(!!record);}catch(error){draft=null;notice(error.message,true);return;}}
  if(current==='vouchers'){try{await buildVoucherFields(!!record);}catch(error){draft=null;notice(error.message,true);return;}}
  if(current==='suppliers'){field('name','Tên nhà cung cấp','text',[],true,150);field('status','Trạng thái','select',['ACTIVE','ARCHIVED']);field('contactName','Người liên hệ','text',[],false,100);field('phone','Điện thoại','tel',[],false,30);field('email','Email','email',[],false,200);field('website','Website','url',[],false,500);field('notes','Ghi chú','textarea',[],false,4000);}
@@ -89,7 +90,7 @@ async function openEditor(record,createContact=false){
   for(const [key,label,type,max]of [['title','Tiêu đề English','text',180],['slug','Đường dẫn English','text',160],['contentHtml','Nội dung HTML English','textarea',200000],['description','Mô tả English','textarea',1000],['menuLabel','Tên menu English','text',60],['seoTitle','Tiêu đề SEO English','text',200],['seoDescription','Mô tả SEO English','textarea',500]])field('_en.'+key,label,type,[],false,max).value=draft.english?.[key]??'';
   field('_en.published','Xuất bản English','checkbox').checked=!!draft.english?.published;
  }
- if(['products','destinations','pages','site-seo','brand'].includes(current)){
+ if(['posts','products','destinations','pages','site-seo','brand'].includes(current)){
   try{const media=(await api('media')).data;const selected=current==='site-seo'?draft.image:current==='brand'?draft.logo:draft.cover;const options=[['','Không có ảnh'],...media.map(m=>[m.id,m.alt||m.filename])];if(selected&&!media.some(m=>m.id===selected.id))options.push([selected.id,selected.alt||'Ảnh hiện tại']);field('_cover',current==='brand'?'Logo':current==='site-seo'?'Ảnh chia sẻ':'Ảnh bìa','select',options).value=selected?.id??'';field('_coverAlt','Mô tả ảnh','text',[],false,300).value=selected?.alt??'';
    if(current==='products'){const existing=draft.gallery||[],options=media.map(m=>[m.id,m.alt||m.filename]);for(const image of existing)if(!media.some(m=>m.id===image.id))options.push([image.id,image.alt||'Ảnh hiện có']);const gallery=field('_gallery','Ảnh bổ sung (tối đa 20 ảnh)','select',options);gallery.multiple=true;for(const option of gallery.options)option.selected=existing.some(image=>image.id===option.value);gallery.oninput=()=>{dirty=true;draft.gallery=Array.from(gallery.selectedOptions).map(o=>({id:o.value,alt:existing.find(i=>i.id===o.value)?.alt||media.find(i=>i.id===o.value)?.alt||''}));};}
   }catch(error){notice('Không tải được thư viện ảnh: '+error.message,true);}
@@ -102,7 +103,7 @@ $('#edit-form').onsubmit=async e=>{
   if(current!==editorSection)throw new Error('Mục quản trị đã thay đổi. Đóng biểu mẫu và mở lại trước khi lưu.');
   const data=structuredClone(draft),form=new FormData(e.target);
   if(current==='destinations'){data.parentId=form.get('parentId')||null;data.sortOrder=Number(form.get('sortOrder')||0);const lat=form.get('_lat'),lon=form.get('_lon');if((lat==='')!==(lon===''))throw new Error('Nhập cả vĩ độ và kinh độ, hoặc để trống cả hai.');data.coordinates=lat===''?null:{lat:Number(lat),lon:Number(lon)};}
-  if(['products','destinations','pages','site-seo','brand'].includes(current)&&form.has('_cover'))data[current==='site-seo'?'image':current==='brand'?'logo':'cover']=form.get('_cover')?{id:form.get('_cover'),alt:form.get('_coverAlt')||''}:null;
+  if(['posts','products','destinations','pages','site-seo','brand'].includes(current)&&form.has('_cover'))data[current==='site-seo'?'image':current==='brand'?'logo':'cover']=form.get('_cover')?{id:form.get('_cover'),alt:form.get('_coverAlt')||''}:null;
   if(current==='products'){for(const key of ['destinationId','supplierId'])if(!data[key])delete data[key];if(!data.destination)data.destination=$('#fields [name=destinationId]')?.selectedOptions[0]?.textContent||'';}
   if(current==='pages'){
    data.sortOrder=Number(form.get('sortOrder')||0);data.showInMenu=form.has('showInMenu');data.showInFooter=form.has('showInFooter');data.english=null;

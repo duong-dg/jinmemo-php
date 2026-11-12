@@ -31,3 +31,9 @@ Tham chiếu exporter tại commit `585cd8a36c106dd3552fb397281f7f2e9c299f50`. [
 - Cấu trúc đã làm ở các đợt trước có chỗ cần adapter: `order_actions.note` ở PHP nằm trong JSON `data.note`; `order_payments.reference` nằm trong bảng `jingo_payment_references` nối qua reference_hash; `payment_methods.method` nằm trong `jingo_order_payments.method`. Phải kiểm cả bản ghi mã giao dịch dùng chung khi nhập tiền cũ.
 - Mã đơn vé `JM…` đã được nhận ở tra cứu PHP cùng mã `JG…`; giữ mã gốc khi nhập. Các mã giỏ/xe/quà/phòng cần module tương ứng, không đưa vào bảng đơn vé một cách tự động.
 - Trước khi viết importer cần kiểm giới hạn ID/chuỗi, độ chính xác thời gian ở các bảng PHP cũ, hash yêu cầu/idempotency và những cột nguồn bổ sung. Chưa có bảo đảm toàn bộ bảng export đã tương thích. Dữ liệu chưa hỗ trợ tiếp tục giữ trong staging và bản backup, không bỏ cột để ép nhập.
+
+## Bài viết từ export
+
+Đợt 19 bổ sung `jingo_post_categories`, `jingo_posts`, `jingo_post_revisions`, `jingo_post_metrics`, giữ đúng tên cột nguồn (danh sách `postTables` trong contract). Fixture SQL sinh bởi exporter thật đã được nhập vào database thử và ánh xạ đủ bốn bảng. Đây là kiểm thử cấu trúc, chưa phải lệnh nhập dữ liệu sản xuất.
+
+Giữ nguyên JSON data gồm English/status/sourceHash, publishedAt, relatedProductIds, relatedRideIds và featured; giữ created_at/updated_at/revision.created_at ở UTC với microsecond, saved_by/reason/version và BIGINT views. Không đưa trường views từ client vào đè bộ đếm đã nhập. Giữ alias POST/POST_EN trong bảng slug_aliases và chép ảnh media theo ID cũ. Bản PHP đọc được nội dung EN đã xuất bản; chưa có trình biên tập bản dịch, luồng xe, quản lý chuyên mục đầy đủ hoặc ghi lượt xem mới.

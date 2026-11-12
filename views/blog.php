@@ -1,0 +1,11 @@
+<?php declare(strict_types=1); ?>
+<?php if($isBlog):?>
+<header class="content-page-heading"><p class="eyebrow"><?=$en?'STORIES FROM HERE':'CÂU CHUYỆN ĐỊA PHƯƠNG'?></p><h1><?=$e($title)?></h1><p><?=$e($description)?></p></header>
+<div class="page-grid blog-grid"><?php foreach($blogPosts as $item):?><a class="page-card" href="<?=$e($item['localePaths'][$lang])?>"><?php if($media($item['cover'])):?><img class="product-thumb" src="<?=$e($media($item['cover']))?>" alt="<?=$e($item['cover']['alt'])?>" loading="lazy"><?php endif;?><p class="eyebrow"><?=$e($item['category'])?></p><h2><?=$e($item['title'])?></h2><p><?=$e($item['excerpt'])?></p><span><?=$en?'Read story':'Đọc bài viết'?> ↗</span></a><?php endforeach;?></div><?php if(!$blogPosts):?><p class="muted"><?=$en?'New stories are coming soon.':'Những câu chuyện mới đang được chuẩn bị.'?></p><?php endif;?>
+<?php else:?>
+<nav class="breadcrumbs" aria-label="<?=$en?'Breadcrumbs':'Đường dẫn'?>"><a href="<?=$en?'/en/blog':'/cam-nang'?>"><?=$en?'Travel journal':'Cẩm nang'?></a><span>/</span><span><?=$e($post['category'])?></span></nav>
+<header class="content-page-heading"><p class="eyebrow"><?=$e($post['category'])?></p><h1><?=$e($post['title'])?></h1><p><?=$e($post['excerpt'])?></p><small><?=$e($post['author'])?><?php if($post['publishedAt']):?> · <time datetime="<?=$e($post['publishedAt'])?>"><?= $e((new DateTimeImmutable($post['publishedAt']))->setTimezone(new DateTimeZone('Asia/Ho_Chi_Minh'))->format('d/m/Y'))?></time><?php endif;?></small></header>
+<?php if($cover):?><img class="content-page-cover" src="<?=$e($cover)?>" alt="<?=$e($post['cover']['alt'])?>"><?php endif;?>
+<article class="prose blog-article"><?=ContentHtml::clean($post['contentHtml'])?></article>
+<?php $related=[];foreach($post['relatedProductIds'] as $productId){try{$related[]=$catalog->publicView($catalog->find($productId,false,false,$lang),$lang);}catch(HttpError){}}if($related):?><section class="page-index"><h2><?=$en?'Explore these experiences':'Trải nghiệm gợi ý'?></h2><div class="page-grid"><?php foreach($related as $item):?><a class="page-card" href="<?=$e(($en?'/en':'').'/ve/'.$item['slug'])?>"><h3><?=$e($item['name'])?></h3><p><?=$e($item['description'])?></p></a><?php endforeach;?></div></section><?php endif;?>
+<?php endif;?>
