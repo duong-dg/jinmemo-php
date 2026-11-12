@@ -70,5 +70,43 @@ final class Orders
         if(array_key_exists('email',$input)&&(!is_string($input['email'])||strlen($input['email'])>200||!filter_var($input['email'],FILTER_VALIDATE_EMAIL)))self::fail();if(!isset($input['accessKey'])&&!isset($input['email']))self::fail();
         $row=$this->query('SELECT * FROM jingo_orders WHERE code=?',[$input['code']])->fetch(PDO::FETCH_ASSOC);$ok=false;if($row){$contact=json_decode($row['contact'],true,512,JSON_THROW_ON_ERROR);$ok=isset($input['accessKey'])?hash_equals($row['access_hash'],hash('sha256',$input['accessKey'])):strtolower(trim($contact['email']))===strtolower(trim($input['email']));}if(!$ok)throw new HttpError(404,'Không tìm thấy đơn.');return $this->detail($row,false);
     }
-    public function get(string $id):array{$row=$this->query('SELECT * FROM jingo_orders WHERE id=?',[$id])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy đơn.');return $this->detail($row,true);}
+    public function get(string $id):array
+    {
+        $row=$this->query('SELECT * FROM jingo_orders WHERE id=?',[$id])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy đơn.');$result=$this->detail($row,true);$result['history']=[];
+        foreach($this->query('SELECT id,admin_id,action,data,created_at FROM jingo_order_actions WHERE order_id=? ORDER BY order_version',[$id])->fetchAll(PDO::FETCH_ASSOC) as $a)$result['history'][]=['id'=>$a['id'],'adminId'=>$a['admin_id'],'action'=>$a['action'],'data'=>json_decode($a['data'],true,512,JSON_THROW_ON_ERROR),'createdAt'=>str_replace(' ','T',$a['created_at']).'Z'];return $result;
+    }
+    public function list(array $input):array
+    {
+        if(array_diff(array_keys($input),['q','booking','payment','page','pageSize']))self::fail('Bộ lọc đơn không hợp lệ.');
+        $q=self::text($input+['q'=>''],'q',0,120);$booking=$input['booking'] ?? 'ALL';$payment=$input['payment'] ?? 'ALL';
+        if(!in_array($booking,['ALL','REQUESTED','CONFIRMED','CANCELLED'],true)||!in_array($payment,['ALL','UNPAID','PAID','CREDIT'],true))self::fail();
+        $numbers=[];foreach(['page'=>1000000,'pageSize'=>100] as $key=>$max){$v=$input[$key] ?? ($key==='page'?1:25);if((!is_int($v)&&(!is_string($v)||!preg_match('/^[1-9][0-9]*$/D',$v)))||(int)$v<1||(int)$v>$max)self::fail();$numbers[$key]=(int)$v;}
+        $where=['1=1'];$args=[];if($booking!=='ALL'){$where[]='booking_status=?';$args[]=$booking;}if($payment!=='ALL'){$where[]='payment_status=?';$args[]=$payment;}
+        if($q!==''){$where[]="LOCATE(LOWER(?),LOWER(CONCAT_WS(' ',code,JSON_UNQUOTE(JSON_EXTRACT(contact,'$.name')),JSON_UNQUOTE(JSON_EXTRACT(contact,'$.email')),JSON_UNQUOTE(JSON_EXTRACT(contact,'$.phone')))))>0";$args[]=$q;}$where=implode(' AND ',$where);
+        $this->db->beginTransaction();try{
+            $s=$this->query("SELECT COUNT(*) AS total,COALESCE(SUM(booking_status='CANCELLED'),0) AS cancelled,COALESCE(SUM(payment_status='UNPAID' AND booking_status<>'CANCELLED'),0) AS unpaid,COALESCE(SUM(IF(payment_status='PAID',CAST(JSON_UNQUOTE(JSON_EXTRACT(snapshot,'$.total')) AS DECIMAL(20,0)),0)),0) AS paid_value FROM jingo_orders WHERE $where",$args)->fetch(PDO::FETCH_ASSOC);
+            $total=(int)$s['total'];$page=min($numbers['page'],max(1,(int)ceil($total/$numbers['pageSize'])));$offset=($page-1)*$numbers['pageSize'];$limit=$numbers['pageSize'];
+            $rows=$this->query("SELECT * FROM jingo_orders WHERE $where ORDER BY created_at DESC,id DESC LIMIT $limit OFFSET $offset",$args)->fetchAll(PDO::FETCH_ASSOC);$data=array_map(fn($row)=>$this->detail($row,true),$rows);$this->db->commit();return ['data'=>$data,'page'=>$page,'pageSize'=>$limit,'summary'=>['total'=>$total,'cancelled'=>(int)$s['cancelled'],'unpaid'=>(int)$s['unpaid'],'paidValue'=>(int)$s['paid_value']]];
+        }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
+    }
+    public function act(string $id,array $input,string $actor):array
+    {
+        $action=$input['action'] ?? null;$keys=['requestId','version','action','note'];if($action==='INSTRUCTIONS')$keys[]='instructions';
+        if(array_diff(array_keys($input),$keys)||!in_array($action,['INSTRUCTIONS','CANCEL'],true)||!self::uuid($input['requestId'] ?? null)||!is_int($input['version'] ?? null)||$input['version']<1||$input['version']>=2147483647)self::fail();
+        $input['note']=self::text($input,'note',1,1000);if($action==='INSTRUCTIONS')$input['instructions']=self::text($input,'instructions',1,4000);
+        $hash=hash('sha256',json_encode(self::canonical(['id'=>$id,'action'=>$input]),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR));
+        $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();try{
+            $row=$this->query('SELECT * FROM jingo_orders WHERE id=? FOR UPDATE',[$id])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy đơn.');
+            $prior=$this->query('SELECT request_hash FROM jingo_order_actions WHERE id=?',[$input['requestId']])->fetchColumn();if($prior!==false){if(!hash_equals($prior,$hash))throw new HttpError(409,'Mã thao tác đã dùng.');$result=$this->get($id);$this->db->commit();return $result;}
+            if((int)$row['version']!==$input['version'])throw new HttpError(409,'Đơn đã thay đổi. Tải lại trước khi xử lý.');if($row['booking_status']==='CANCELLED')throw new HttpError(409,'Đơn đã hủy.');
+            if($action==='CANCEL'){
+                if($row['payment_status']!=='UNPAID')throw new HttpError(409,'Đơn đã thu tiền hoặc ghi công nợ cần quy trình hoàn riêng; không thể hủy trực tiếp.');
+                (new Inventory($this->db))->release($id);(new Vouchers($this->db))->release($id);$this->query("UPDATE jingo_orders SET booking_status='CANCELLED',version=version+1 WHERE id=?",[$id]);
+            }else{
+                if($row['booking_status']!=='CONFIRMED')throw new HttpError(409,'Chỉ cập nhật hướng dẫn cho đơn đã đặt.');$this->query('UPDATE jingo_orders SET instructions=?,version=version+1 WHERE id=?',[$input['instructions'],$id]);
+            }
+            $this->query('INSERT INTO jingo_order_actions(id,order_id,request_hash,admin_id,action,order_version,data) VALUES (?,?,?,?,?,?,?)',[$input['requestId'],$id,$hash,$actor,$action,$input['version']+1,json_encode($input,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR)]);
+            $result=$this->get($id);$this->db->commit();return $result;
+        }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();if($e instanceof PDOException&&($e->errorInfo[1] ?? null)===1062)throw new HttpError(409,'Mã thao tác đã dùng.');throw $e;}
+    }
 }

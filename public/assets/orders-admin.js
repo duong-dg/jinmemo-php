@@ -1,0 +1,43 @@
+'use strict';
+let orderFilters={q:'',booking:'ALL',payment:'ALL',page:1,pageSize:25};
+const orderLabels={CONFIRMED:'Đã đặt',REQUESTED:'Chờ xác nhận',CANCELLED:'Đã hủy',UNPAID:'Chưa thu',PAID:'Đã thu',CREDIT:'Công nợ',CANCEL:'Hủy đơn',INSTRUCTIONS:'Cập nhật hướng dẫn'};
+const orderMoney=value=>new Intl.NumberFormat('vi-VN').format(value)+' đ';
+async function renderOrders(screen,serial){
+ screen.append(el('p','Đang tải đơn…','muted'));
+ try{
+  const result=await api('orders?'+new URLSearchParams(orderFilters));if(serial!==loading||$('#workspace').hidden)return;screen.replaceChildren();orderFilters.page=result.page;
+  const filters=el('form',undefined,'toolbar order-filters'),search=el('input');search.type='search';search.placeholder='Mã đơn, tên, email hoặc điện thoại';search.setAttribute('aria-label','Tìm đơn');search.maxLength=120;search.value=orderFilters.q;
+  filters.append(search);for(const [key,title,values]of [['booking','Trạng thái đơn',['ALL','REQUESTED','CONFIRMED','CANCELLED']],['payment','Thanh toán',['ALL','UNPAID','PAID','CREDIT']]]){const select=el('select');select.setAttribute('aria-label',title);for(const value of values){const option=el('option',value==='ALL'?title+': Tất cả':orderLabels[value]);option.value=value;select.append(option);}select.value=orderFilters[key];select.onchange=()=>{orderFilters.q=search.value.trim();orderFilters[key]=select.value;orderFilters.page=1;render();};filters.append(select);}
+  const submit=el('button','Tìm kiếm','primary');submit.type='submit';filters.append(submit);filters.onsubmit=e=>{e.preventDefault();orderFilters.q=search.value.trim();orderFilters.page=1;render();};screen.append(filters);
+  const summary=toolbar(`${result.summary.total} đơn · ${result.summary.unpaid} chưa thu · ${result.summary.cancelled} đã hủy · Đã thu: ${orderMoney(result.summary.paidValue)}`);summary.append(button('Tải lại',render));screen.append(summary);
+  if(!result.data.length){screen.append(empty('Chưa có đơn phù hợp'));return;}
+  const wrap=el('div',undefined,'table-wrap'),table=el('table'),head=el('thead'),heading=el('tr');for(const text of ['Mã đơn / Khách','Trải nghiệm','Ngày sử dụng','Tổng tiền','Trạng thái',''])heading.append(el('th',text));head.append(heading);table.append(head);const body=el('tbody');
+  for(const order of result.data){const row=el('tr'),who=el('td'),product=el('td'),state=el('td'),action=el('td');who.append(el('strong',order.code),el('small',order.contact.name),el('small',order.contact.email));product.append(el('strong',order.snapshot.productName),el('small',order.snapshot.variantName));state.append(el('span',orderLabels[order.bookingStatus]||order.bookingStatus,'tag'),el('small',orderLabels[order.paymentStatus]||order.paymentStatus));action.append(button('Xem đơn ↗',()=>openOrder(order.id,serial)));row.append(who,product,el('td',order.snapshot.date),el('td',orderMoney(order.snapshot.total)),state,action);body.append(row);}table.append(body);wrap.append(table);screen.append(wrap);
+  const pagination=toolbar(`Trang ${result.page} / ${Math.max(1,Math.ceil(result.summary.total/result.pageSize))}`);for(const [text,delta]of [['← Trước',-1],['Sau →',1]]){const control=button(text,()=>{orderFilters.page+=delta;render();});control.disabled=delta<0?result.page<=1:result.page*result.pageSize>=result.summary.total;pagination.append(control);}screen.append(pagination);
+ }catch(error){if(serial===loading){screen.replaceChildren(empty('Chưa tải được đơn'));notice(error.message,true);}}
+}
+async function openOrder(id,serial){
+ try{const result=await api('orders/'+id);if(serial!==loading||current!=='orders'||$('#workspace').hidden)return;
+  const order=result.data,dialog=$('#editor'),fields=$('#fields');draft=null;dirty=false;$('#edit-error').hidden=true;$('#editor-title').textContent='Đơn '+order.code;$('#edit-form button[type=submit]').hidden=true;fields.replaceChildren();
+  const detail=el('div',undefined,'full order-detail');fields.append(detail);
+  const groupLabels={ADULT:'Người lớn',CHILD:'Trẻ em',SENIOR:'Người cao tuổi',LOCAL_ADULT:'Người lớn địa phương',LOCAL_CHILD:'Trẻ em địa phương',LOCAL_SENIOR:'Người cao tuổi địa phương'};
+  for(const text of [order.snapshot.productName+' · '+order.snapshot.variantName,'Ngày sử dụng: '+order.snapshot.date+(order.snapshot.timeSlot?' · '+order.snapshot.timeSlot.start:''),'Tạo lúc: '+new Date(order.createdAt).toLocaleString('vi-VN'),'Tổng tiền: '+orderMoney(order.snapshot.total),(orderLabels[order.bookingStatus]||order.bookingStatus)+' · '+(orderLabels[order.paymentStatus]||order.paymentStatus)])detail.append(el('p',text));
+  for(const line of order.snapshot.lines){detail.append(el('p',(groupLabels[line.customerType]||line.customerType)+' × '+line.quantity+' · '+orderMoney(line.subtotal)));if(order.snapshot.conditions?.[line.customerType])detail.append(el('small',order.snapshot.conditions[line.customerType]));}
+  if(order.snapshot.discount)detail.append(el('p','Voucher '+order.snapshot.discount.code+' · Giảm '+orderMoney(order.snapshot.discount.amount)));
+  detail.append(el('h3','Liên hệ'));for(const value of [order.contact.name,order.contact.email,order.contact.phone,order.contact.note])if(value)detail.append(el('p',value));if(order.contact.invoice){detail.append(el('h3','Thông tin hóa đơn'));for(const [key,title]of [['name','Tên'],['taxCode','Mã số thuế'],['address','Địa chỉ'],['email','Email']])detail.append(el('p',title+': '+order.contact.invoice[key]));}
+  detail.append(el('h3','Hướng dẫn hiện tại'),el('p',order.instructions||'Chưa có hướng dẫn.'));
+  if(order.history.length){detail.append(el('h3','Lịch sử xử lý'));for(const item of order.history){const entry=el('div',undefined,'order-history');entry.append(el('strong',orderLabels[item.action]||item.action),el('small',new Date(item.createdAt).toLocaleString('vi-VN')+' · Admin '+item.adminId),el('p',item.data.note));if(item.data.instructions)entry.append(el('p',item.data.instructions));detail.append(entry);}}
+  const status=el('p');status.setAttribute('role','status');detail.append(status);
+  if(order.bookingStatus==='CONFIRMED'){
+   const box=el('section',undefined,'order-action'),instructions=el('textarea'),label=el('label','Hướng dẫn mới');instructions.rows=4;instructions.maxLength=4000;instructions.value=order.instructions;label.append(instructions);box.append(el('h3','Cập nhật hướng dẫn'),label);addAction(box,'INSTRUCTIONS',instructions);detail.append(box);
+  }
+  if(order.bookingStatus!=='CANCELLED'&&order.paymentStatus==='UNPAID'){const box=el('section',undefined,'order-action');box.append(el('h3','Hủy đơn'),el('p','Hủy đơn sẽ trả lại tồn vé và lượt voucher. Thao tác này không hoàn tiền và không gửi email.'));addAction(box,'CANCEL');detail.append(box);}
+  function addAction(box,action,instructions){
+   const label=el('label',action==='CANCEL'?'Lý do hủy':'Lý do cập nhật'),note=el('textarea');note.rows=2;note.maxLength=1000;label.append(note);box.append(label);const controls=el('div',undefined,'toolbar');box.append(controls);let payload=null;
+   const start=button(action==='CANCEL'?'Hủy đơn này':'Lưu hướng dẫn',()=>{if(!note.value.trim()||(instructions&&!instructions.value.trim())){status.textContent='Nhập đầy đủ lý do và hướng dẫn.';return;}payload={requestId:crypto.randomUUID(),version:order.version,action,note:note.value.trim()};if(instructions)payload.instructions=instructions.value.trim();note.disabled=true;if(instructions)instructions.disabled=true;controls.replaceChildren(el('span',action==='CANCEL'?'Xác nhận hủy đơn '+order.code+'?':'Xác nhận lưu hướng dẫn?'),confirmButton,back);},action==='CANCEL'?'secondary':'primary');
+   const back=button('Quay lại',()=>{payload=null;note.disabled=false;if(instructions)instructions.disabled=false;controls.replaceChildren(start);});
+   const confirmButton=button('Xác nhận',async()=>{if(!payload||editing)return;editing=true;for(const control of detail.querySelectorAll('button'))control.disabled=true;status.textContent='Đang xử lý…';try{await api('orders/'+id+'/actions',payload);dirty=false;dialog.close();await render();notice('Đã cập nhật đơn.');}catch(error){status.textContent=error.message+' Nếu mất kết nối, bấm Xác nhận để gửi lại cùng thao tác; nếu đơn đã đổi, đóng và tải lại.';}finally{editing=false;for(const control of detail.querySelectorAll('button'))control.disabled=false;}} ,'primary');controls.append(start);
+  }
+  dialog.showModal();
+ }catch(error){notice(error.message,true);}
+}
