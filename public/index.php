@@ -18,6 +18,7 @@ require dirname(__DIR__) . '/src/Inventory.php';
 require dirname(__DIR__) . '/src/Quotes.php';
 require dirname(__DIR__) . '/src/Vouchers.php';
 require dirname(__DIR__) . '/src/Orders.php';
+require dirname(__DIR__) . '/src/TicketFiles.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
@@ -41,12 +42,19 @@ try {
         header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
         require dirname(__DIR__).'/views/admin.php'; exit;
     }
+    if(preg_match('#^/api/v1/admin/orders/([a-f0-9-]{36})/files(?:/([a-f0-9-]{36}))?$#D',(string)$path,$ticketMatch)){
+        $method=$_SERVER['REQUEST_METHOD'] ?? 'GET';$download=isset($ticketMatch[2]);if(!in_array($method,$download?['GET']:['GET','POST'],true)){header('Allow: '.($download?'GET':'GET, POST'));throw new HttpError(405,'Phương thức không được hỗ trợ.');}
+        $config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me();$files=new TicketFiles($db,($config['MEDIA_DIR'] ?? dirname(__DIR__).'/storage/media').'/.tickets');
+        if($download)jingoTicketDownload($files->download($ticketMatch[1],$ticketMatch[2]));if($method==='GET')jingoJson(['data'=>$files->list($ticketMatch[1])]);
+        if(!str_starts_with(strtolower($_SERVER['CONTENT_TYPE'] ?? ''),'multipart/form-data;'))throw new HttpError(415,'Yêu cầu multipart/form-data.');if(array_diff(array_keys($_FILES),['file']))throw new HttpError(400,'Chỉ nhận một file vé.');$upload=$_FILES['file'] ?? null;if(!is_array($upload)||($upload['error'] ?? null)!==UPLOAD_ERR_OK||!is_string($upload['tmp_name'] ?? null)||!is_uploaded_file($upload['tmp_name']))throw new HttpError(400,'Chọn file tối đa 10 MB và kiểm tra giới hạn upload hosting.');
+        jingoJson($files->upload($ticketMatch[1],$_POST,$upload['tmp_name'],(string)$upload['name'],$actor['id']));
+    }
     if($path==='/api/v1/admin/orders'||preg_match('#^/api/v1/admin/orders/([a-f0-9-]{36})/actions$#D',(string)$path,$orderActionMatch)){
         $list=$path==='/api/v1/admin/orders';$expected=$list?'GET':'POST';if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!==$expected){header('Allow: '.$expected);throw new HttpError(405,'Phương thức không được hỗ trợ.');}
         $config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if(!$list)$auth->mutation();$actor=$auth->me();$orders=new Orders($db);
         jingoJson($list?$orders->list($_GET):['data'=>$orders->act($orderActionMatch[1],jingoRequestBody(),$actor['id'])]);
     }
-    if(in_array($path,['/api/v1/orders','/api/v1/orders/lookup'],true)||preg_match('#^/api/v1/admin/orders/([a-f0-9-]{36})$#D',(string)$path,$orderMatch)) {
+    if(in_array($path,['/api/v1/orders','/api/v1/orders/lookup','/api/v1/orders/lookup/files'],true)||preg_match('#^/api/v1/orders/lookup/files/([a-f0-9-]{36})$#D',(string)$path,$customerFileMatch)||preg_match('#^/api/v1/admin/orders/([a-f0-9-]{36})$#D',(string)$path,$orderMatch)) {
         $admin=isset($orderMatch[1]);$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';
         if($method!==($admin?'GET':'POST')){header('Allow: '.($admin?'GET':'POST'));throw new HttpError(405,'Phương thức không được hỗ trợ.');}
         $config=jingoConfig();$db=jingoDatabase($config);$orders=new Orders($db);
@@ -54,10 +62,11 @@ try {
         $parts=parse_url($config['PUBLIC_BASE_URL'] ?? '');$origin=$parts&&isset($parts['scheme'],$parts['host'])?$parts['scheme'].'://'.$parts['host'].(isset($parts['port'])?':'.$parts['port']:''):'';
         if($origin==='')throw new HttpError(503,'Chưa cấu hình URL website.');
         if(($_SERVER['HTTP_ORIGIN'] ?? '')!==$origin||($_SERVER['HTTP_X_JINGO_ORDER'] ?? '')!=='1')throw new HttpError(403,'Nguồn yêu cầu không hợp lệ.');
-        $lookup=$path==='/api/v1/orders/lookup';$key=hash('sha256',($lookup?'lookup:':'create:').($_SERVER['REMOTE_ADDR'] ?? 'unknown'));$max=$lookup?240:30;
+        $lookup=$path!=='/api/v1/orders';$key=hash('sha256',($lookup?'lookup:':'create:').($_SERVER['REMOTE_ADDR'] ?? 'unknown'));$max=$lookup?240:30;
         $s=$db->prepare('INSERT INTO jingo_order_limits(id,attempts,until_at) VALUES (?,1,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 60 SECOND)) ON DUPLICATE KEY UPDATE attempts=IF(until_at<=UTC_TIMESTAMP(),1,attempts+1),until_at=IF(until_at<=UTC_TIMESTAMP(),DATE_ADD(UTC_TIMESTAMP(),INTERVAL 60 SECOND),until_at)');$s->execute([$key]);
         $s=$db->prepare('SELECT attempts FROM jingo_order_limits WHERE id=?');$s->execute([$key]);if((int)$s->fetchColumn()>$max){header('Retry-After: 60');throw new HttpError(429,'Quá nhiều yêu cầu. Thử lại sau một phút.');}
         if(random_int(1,100)===1)$db->exec('DELETE FROM jingo_order_limits WHERE until_at<UTC_TIMESTAMP() LIMIT 1000');
+        if(str_starts_with($path,'/api/v1/orders/lookup/files')){$files=new TicketFiles($db,($config['MEDIA_DIR'] ?? dirname(__DIR__).'/storage/media').'/.tickets');$body=jingoRequestBody();if(isset($customerFileMatch[1]))jingoTicketDownload($files->download($files->customer($body)['id'],$customerFileMatch[1],true));jingoJson(['data'=>$files->customerList($body)]);}
         jingoJson($lookup?$orders->lookup(jingoRequestBody()):$orders->create(jingoRequestBody()));
     }
     if ($path === '/api/v1/health') {

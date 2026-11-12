@@ -1,0 +1,22 @@
+{
+  "format": "jinmemo-mysql-transfer-v1",
+  "sourceCommit": "585cd8a36c106dd3552fb397281f7f2e9c299f50",
+  "stagingPrefix": "jm_transfer_",
+  "runtimePrefix": "jingo_",
+  "tables": {
+    "order_tickets": ["id", "order_id", "code", "code_hash", "kind", "covers", "note", "created_at"],
+    "ticket_files": ["id", "order_id", "ticket_id", "name", "mime", "bytes", "hash", "created_at", "revoked_at", "revoke_reason", "file_kind", "deleted_at", "partner_shared", "sharing_version"]
+  },
+  "existingFieldMappings": {
+    "order_actions.note": "jingo_order_actions.data.note",
+    "order_payments.reference": "jingo_payment_references.reference via reference_hash",
+    "payment_methods.method": "jingo_order_payments.method via payment_id = order_payments.id"
+  },
+  "rules": [
+    "Preserve source IDs, order codes, snapshots, hashes, references and UTC timestamps; do not regenerate them during transfer.",
+    "New ticket timestamps use DATETIME(6). Existing runtime tables must be checked separately for precision and ID length before importing.",
+    "Copy physical files separately as MEDIA_DIR/.tickets/{id}.bin; bytes and SHA-256 must match metadata.",
+    "Retain revoked_at, deleted_at, revoke_reason, file_kind, partner_shared and sharing_version even when their workflows are not exposed in PHP yet.",
+    "Do not import staging tables directly into runtime tables without validation, dry-run and support for all related modules."
+  ]
+}

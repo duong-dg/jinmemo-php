@@ -1,6 +1,6 @@
 'use strict';
 let orderFilters={q:'',booking:'ALL',payment:'ALL',page:1,pageSize:25};
-const orderLabels={CONFIRMED:'Đã đặt',REQUESTED:'Chờ xác nhận',CANCELLED:'Đã hủy',UNPAID:'Chưa thu',PAID:'Đã thu',CREDIT:'Công nợ',CANCEL:'Hủy đơn',INSTRUCTIONS:'Cập nhật hướng dẫn',PAY:'Ghi nhận thu tiền'};
+const orderLabels={CONFIRMED:'Đã đặt',REQUESTED:'Chờ xác nhận',CANCELLED:'Đã hủy',UNPAID:'Chưa thu',PAID:'Đã thu',CREDIT:'Công nợ',CANCEL:'Hủy đơn',INSTRUCTIONS:'Cập nhật hướng dẫn',PAY:'Ghi nhận thu tiền',ATTACH_FILE:'Giao file vé'};
 const orderMoney=value=>new Intl.NumberFormat('vi-VN').format(value)+' đ';
 async function renderOrders(screen,serial){
  screen.append(el('p','Đang tải đơn…','muted'));
@@ -17,7 +17,7 @@ async function renderOrders(screen,serial){
  }catch(error){if(serial===loading){screen.replaceChildren(empty('Chưa tải được đơn'));notice(error.message,true);}}
 }
 async function openOrder(id,serial){
- try{const result=await api('orders/'+id);if(serial!==loading||current!=='orders'||$('#workspace').hidden)return;
+ try{const result=await api('orders/'+id),fileResult=await api('orders/'+id+'/files');if(serial!==loading||current!=='orders'||$('#workspace').hidden)return;
   const order=result.data,dialog=$('#editor'),fields=$('#fields');draft=null;dirty=false;$('#edit-error').hidden=true;$('#editor-title').textContent='Đơn '+order.code;$('#edit-form button[type=submit]').hidden=true;fields.replaceChildren();
   const detail=el('div',undefined,'full order-detail');fields.append(detail);
   const groupLabels={ADULT:'Người lớn',CHILD:'Trẻ em',SENIOR:'Người cao tuổi',LOCAL_ADULT:'Người lớn địa phương',LOCAL_CHILD:'Trẻ em địa phương',LOCAL_SENIOR:'Người cao tuổi địa phương'};
@@ -29,6 +29,14 @@ async function openOrder(id,serial){
   if(order.history.length){detail.append(el('h3','Lịch sử xử lý'));for(const item of order.history){const entry=el('div',undefined,'order-history');entry.append(el('strong',orderLabels[item.action]||item.action),el('small',new Date(item.createdAt).toLocaleString('vi-VN')+' · Admin '+item.adminId),el('p',item.data.note));if(item.data.instructions)entry.append(el('p',item.data.instructions));detail.append(entry);}}
   if(order.payments.length){detail.append(el('h3','Khoản thu đã ghi nhận'));for(const payment of order.payments){const entry=el('div',undefined,'order-history');entry.append(el('strong',orderMoney(payment.amount)+' · '+(payment.method==='CASH'?'Tiền mặt':'Chuyển khoản')),el('p','Mã giao dịch / phiếu thu: '+payment.reference),el('small',new Date(payment.createdAt).toLocaleString('vi-VN')+' · Admin '+payment.adminId));detail.append(entry);}}
   const status=el('p');status.setAttribute('role','status');detail.append(status);
+  detail.append(el('h3','File vé · '+order.deliveredGuests+'/'+order.totalGuests+' khách đã giao'));
+  for(const file of fileResult.data){const row=el('div',undefined,'order-history');row.append(el('p',file.name+' · '+new Intl.NumberFormat('vi-VN').format(file.bytes)+' bytes'));if(file.deleted_at||file.revoked_at)row.append(el('small',file.deleted_at?'File đã xóa':'File đã thu hồi'));else{const link=el('a','Tải file gốc ↗','quiet');link.href='/api/v1/admin/orders/'+id+'/files/'+file.id;row.append(link);}detail.append(row);}
+  if(order.bookingStatus==='CONFIRMED'&&order.paymentStatus==='PAID'&&order.deliveredGuests<order.totalGuests){
+   const box=el('section',undefined,'order-action'),fileLabel=el('label','File vé gốc (PDF/JPG/PNG/WebP, tối đa 10 MB)'),file=el('input'),coversLabel=el('label','Số khách được file này bao phủ'),covers=el('input');file.type='file';file.accept='.pdf,.jpg,.jpeg,.png,.webp';covers.type='number';covers.min='1';covers.max=String(order.totalGuests-order.deliveredGuests);covers.step='1';covers.value=covers.max;fileLabel.append(file);coversLabel.append(covers);box.append(el('h3','Đính kèm và giao vé'),el('p','Giữ nguyên file gốc, không tách QR hoặc dựng lại PDF. Khách tải file tại trang tra cứu; hiện chưa gửi email.'),fileLabel,coversLabel);const controls=el('div',undefined,'toolbar');box.append(controls);detail.append(box);let pending=null;
+   const start=button('Đính kèm và giao',()=>{const selected=file.files[0],count=Number(covers.value);if(!selected||selected.size>10*1024*1024||!Number.isInteger(count)||count<1||count>Number(covers.max)){status.textContent='Chọn file tối đa 10 MB và số khách còn lại hợp lệ.';return;}pending={requestId:crypto.randomUUID(),version:order.version,covers:count,file:selected};file.disabled=true;covers.disabled=true;controls.replaceChildren(el('span','Giao '+selected.name+' cho '+count+' khách?'),confirmUpload,back);},'primary');
+   const back=button('Quay lại',()=>{pending=null;file.disabled=false;covers.disabled=false;controls.replaceChildren(start);});
+   const confirmUpload=button('Xác nhận giao file',async()=>{if(!pending||editing)return;editing=true;for(const b of detail.querySelectorAll('button'))b.disabled=true;status.textContent='Đang lưu file…';try{const body=new FormData();for(const [key,value]of Object.entries(pending))body.append(key,value);await api('orders/'+id+'/files',body);dialog.close();await render();notice('Đã giao file. Khách có thể tải tại trang tra cứu.');}catch(error){status.textContent=error.message+' Nếu lỗi mạng, bấm Xác nhận giao file để gửi lại cùng yêu cầu.';}finally{editing=false;for(const b of detail.querySelectorAll('button'))b.disabled=false;}},'primary');controls.append(start);
+  }
   if(order.bookingStatus==='CONFIRMED'&&order.paymentStatus==='UNPAID'){
    const box=el('section',undefined,'order-action');box.append(el('h3','Ghi nhận đã thu tiền'),el('p','Chỉ xác nhận sau khi đã kiểm tra tiền thực nhận. Thao tác này ghi sổ, không chuyển tiền hoặc gọi ngân hàng. Số tiền phải đúng tổng đơn.'));
    const method=el('select'),methodLabel=el('label','Hình thức thu');for(const [value,title]of [['BANK','Chuyển khoản'],['CASH','Tiền mặt']]){const option=el('option',title);option.value=value;method.append(option);}methodLabel.append(method);

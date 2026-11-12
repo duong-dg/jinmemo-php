@@ -59,3 +59,10 @@ function jingoJson(array $body, int $status = 200): never
     echo json_encode($body, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
     exit;
 }
+
+function jingoTicketDownload(array $file):never
+{
+    $stream=fopen($file['path'],'rb');if(!$stream)throw new HttpError(404,'Không tìm thấy file vé.');
+    $ext=['application/pdf'=>'pdf','image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp'][$file['mime']] ?? 'bin';
+    header('Content-Type: '.$file['mime']);header('Content-Disposition: attachment; filename="ticket-'.$file['id'].'.'.$ext.'"');header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');header('Referrer-Policy: no-referrer');header("Content-Security-Policy: sandbox; default-src 'none'");header('Content-Length: '.fstat($stream)['size']);fpassthru($stream);fclose($stream);exit;
+}

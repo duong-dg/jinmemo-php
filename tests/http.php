@@ -280,6 +280,13 @@ try {
     $paidPublic=request($base,'/api/v1/orders/lookup',200,'POST',$orderHeaders,$payCreated);if($paidPublic['paymentStatus']!=='PAID'||isset($paidPublic['payments']))throw new RuntimeException('Public payment privacy');
     request($base,$payPath,409,'POST',$headers,['requestId'=>'00000000-0000-4000-8000-000000000085','version'=>2,'action'=>'CANCEL','note'=>'Cannot cancel paid']);
     $paidList=request($base,'/api/v1/admin/orders?payment=PAID',200,'GET',[$cookie]);if($paidList['summary']['paidValue']!==100)throw new RuntimeException('Paid list summary');
+    $filePath='/api/v1/admin/orders/'.$payOrder['id'].'/files';request($base,$filePath,401);request($base,$filePath,403,'POST',[$cookie],[]);request($base,$filePath,415,'POST',$headers,[]);
+    $pdf="%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\n%%EOF\n";file_put_contents($fixture,$pdf);
+    $curl=curl_init($base.$filePath);curl_setopt_array($curl,[CURLOPT_POST=>true,CURLOPT_RETURNTRANSFER=>true,CURLOPT_TIMEOUT=>10,CURLOPT_HTTPHEADER=>$headers,CURLOPT_POSTFIELDS=>['file'=>new CURLFile($fixture,'application/pdf','vé gốc.pdf'),'requestId'=>'00000000-0000-4000-8000-000000000086','version'=>'2','covers'=>'1']]);$fileRaw=curl_exec($curl);if(curl_getinfo($curl,CURLINFO_RESPONSE_CODE)!==200)throw new RuntimeException('Ticket upload: '.$fileRaw);$ticketFile=json_decode($fileRaw,true,512,JSON_THROW_ON_ERROR);$fileRaw=curl_exec($curl);$duplicate=json_decode($fileRaw,true,512,JSON_THROW_ON_ERROR);if($duplicate['id']!==$ticketFile['id']||!$duplicate['duplicate'])throw new RuntimeException('Ticket upload replay');unset($curl);
+    $fileList=request($base,'/api/v1/orders/lookup/files',200,'POST',$orderHeaders,$payCreated);if(count($fileList['data'])!==1||isset($fileList['data'][0]['hash']))throw new RuntimeException('Customer file list/privacy');request($base,'/api/v1/orders/lookup/files',403,'POST',[],$payCreated);request($base,'/api/v1/orders/lookup/files',404,'POST',$orderHeaders,array_merge($payCreated,['accessKey'=>str_repeat('b',64)]));
+    $fileRequest=stream_context_create(['http'=>['method'=>'POST','header'=>implode("\r\n",array_merge($orderHeaders,['Content-Type: application/json'])),'content'=>json_encode($payCreated),'ignore_errors'=>true]]);$original=file_get_contents($base.'/api/v1/orders/lookup/files/'.$ticketFile['id'],false,$fileRequest);if($original!==$pdf||!in_array('Cache-Control: private, no-store',$http_response_header,true)||!in_array("Content-Security-Policy: sandbox; default-src 'none'",$http_response_header,true))throw new RuntimeException('Original private ticket download');
+    $adminFile=file_get_contents($base.$filePath.'/'.$ticketFile['id'],false,stream_context_create(['http'=>['header'=>$cookie]]));if($adminFile!==$pdf)throw new RuntimeException('Admin ticket download');$delivered=request($base,'/api/v1/orders/lookup',200,'POST',$orderHeaders,$payCreated);if($delivered['fulfillmentStatus']!=='DELIVERED'||$delivered['deliveredGuests']!==1)throw new RuntimeException('Delivery status');
+    $db->prepare('UPDATE jingo_orders SET code=? WHERE id=?')->execute(['JM012345ABCD',$payOrder['id']]);$payCreated['code']='JM012345ABCD';request($base,'/api/v1/orders/lookup/files',200,'POST',$orderHeaders,$payCreated);
     for($attempt=0;$attempt<27;$attempt++)request($base,'/api/v1/orders',200,'POST',$orderHeaders,$orderInput);
     request($base,'/api/v1/orders',429,'POST',$orderHeaders,$orderInput);
     echo "PASS: order HTTP guard, replay, private lookup, admin permission and rate limit.\n";
@@ -289,6 +296,7 @@ try {
     if(is_resource($process)) { proc_terminate($process); foreach($pipes as $pipe) fclose($pipe); proc_close($process); }
     $db=null; $server->exec("DROP DATABASE `$name`");
     foreach(glob($mediaDir.'/*') as $file) if(is_file($file)) unlink($file);
+    foreach(glob($mediaDir.'/.tickets/*.bin')?:[] as $file)unlink($file);if(is_dir($mediaDir.'/.tickets'))rmdir($mediaDir.'/.tickets');
     foreach(['.processing.lock','.share.lock'] as $lock) if(is_file($mediaDir.'/'.$lock)) unlink($mediaDir.'/'.$lock);
     for($i=0;$i<20;$i++) { if(@rmdir($mediaDir)) break; usleep(50000); }
     if(is_dir($mediaDir)) throw new RuntimeException('Test temporary directory could not be removed: '.$mediaDir);
