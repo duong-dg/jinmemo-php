@@ -73,7 +73,8 @@ final class Orders
     public function get(string $id):array
     {
         $row=$this->query('SELECT * FROM jingo_orders WHERE id=?',[$id])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy đơn.');$result=$this->detail($row,true);$result['history']=[];
-        foreach($this->query('SELECT id,admin_id,action,data,created_at FROM jingo_order_actions WHERE order_id=? ORDER BY order_version',[$id])->fetchAll(PDO::FETCH_ASSOC) as $a)$result['history'][]=['id'=>$a['id'],'adminId'=>$a['admin_id'],'action'=>$a['action'],'data'=>json_decode($a['data'],true,512,JSON_THROW_ON_ERROR),'createdAt'=>str_replace(' ','T',$a['created_at']).'Z'];return $result;
+        foreach($this->query('SELECT id,admin_id,action,data,created_at FROM jingo_order_actions WHERE order_id=? ORDER BY order_version',[$id])->fetchAll(PDO::FETCH_ASSOC) as $a)$result['history'][]=['id'=>$a['id'],'adminId'=>$a['admin_id'],'action'=>$a['action'],'data'=>json_decode($a['data'],true,512,JSON_THROW_ON_ERROR),'createdAt'=>str_replace(' ','T',$a['created_at']).'Z'];
+        $result['payments']=[];foreach($this->query('SELECT p.id,p.amount,p.method,p.admin_id,p.created_at,r.reference FROM jingo_order_payments p JOIN jingo_payment_references r ON r.reference_hash=p.reference_hash WHERE p.order_id=? ORDER BY p.created_at,p.id',[$id])->fetchAll(PDO::FETCH_ASSOC) as $p)$result['payments'][]=['id'=>$p['id'],'amount'=>(int)$p['amount'],'method'=>$p['method'],'reference'=>$p['reference'],'adminId'=>$p['admin_id'],'createdAt'=>str_replace(' ','T',$p['created_at']).'Z'];return $result;
     }
     public function list(array $input):array
     {
@@ -91,9 +92,15 @@ final class Orders
     }
     public function act(string $id,array $input,string $actor):array
     {
-        $action=$input['action'] ?? null;$keys=['requestId','version','action','note'];if($action==='INSTRUCTIONS')$keys[]='instructions';
-        if(array_diff(array_keys($input),$keys)||!in_array($action,['INSTRUCTIONS','CANCEL'],true)||!self::uuid($input['requestId'] ?? null)||!is_int($input['version'] ?? null)||$input['version']<1||$input['version']>=2147483647)self::fail();
+        $action=$input['action'] ?? null;$keys=['requestId','version','action','note'];if($action==='INSTRUCTIONS')$keys[]='instructions';if($action==='PAY')$keys=array_merge($keys,['method','amount','reference']);
+        if(array_diff(array_keys($input),$keys)||!in_array($action,['INSTRUCTIONS','CANCEL','PAY'],true)||!self::uuid($input['requestId'] ?? null)||!is_int($input['version'] ?? null)||$input['version']<1||$input['version']>=2147483647)self::fail();
         $input['note']=self::text($input,'note',1,1000);if($action==='INSTRUCTIONS')$input['instructions']=self::text($input,'instructions',1,4000);
+        if($action==='PAY'){
+            if(array_key_exists('method',$input)&&$input['method']===null)self::fail();$input['method']=$input['method'] ?? 'BANK';if(!in_array($input['method'],['BANK','CASH'],true)||!is_int($input['amount'] ?? null)||$input['amount']<0||$input['amount']>15000000000)self::fail();
+            $reference=mb_strtoupper(preg_replace('/^[\s\x{FEFF}]+|[\s\x{FEFF}]+$/u','',self::text($input,'reference',1,200)) ?? '','UTF-8');if($reference===''||mb_strlen($reference,'UTF-8')>200||preg_match('/[\x00-\x1f\x7f]/u',$reference))self::fail('Mã giao dịch không hợp lệ.');
+            if($input['method']==='BANK'&&str_starts_with($reference,'CASH:'))self::fail('Tiền tố CASH: dành cho phiếu thu tiền mặt.');
+            $input['reference']=$input['method']==='CASH'?'CASH:'.$input['requestId']:$reference;
+        }
         $hash=hash('sha256',json_encode(self::canonical(['id'=>$id,'action'=>$input]),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR));
         $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();try{
             $row=$this->query('SELECT * FROM jingo_orders WHERE id=? FOR UPDATE',[$id])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy đơn.');
@@ -102,11 +109,18 @@ final class Orders
             if($action==='CANCEL'){
                 if($row['payment_status']!=='UNPAID')throw new HttpError(409,'Đơn đã thu tiền hoặc ghi công nợ cần quy trình hoàn riêng; không thể hủy trực tiếp.');
                 (new Inventory($this->db))->release($id);(new Vouchers($this->db))->release($id);$this->query("UPDATE jingo_orders SET booking_status='CANCELLED',version=version+1 WHERE id=?",[$id]);
+            }elseif($action==='PAY'){
+                if($row['booking_status']!=='CONFIRMED'||$row['payment_status']!=='UNPAID')throw new HttpError(409,'Chỉ ghi nhận thu tiền cho đơn đã đặt và chưa thanh toán.');
+                $snapshot=json_decode($row['snapshot'],true,512,JSON_THROW_ON_ERROR);if($input['amount']!==$snapshot['total'])self::fail('Số tiền phải đúng tổng đơn. Thanh toán thiếu/thừa cần xử lý riêng.');
+                $referenceHash=hash('sha256',$input['reference']);$this->query("INSERT INTO jingo_payment_references(reference_hash,reference,kind,entity_id,amount) VALUES (?,?,'ORDER_PAYMENT',?,?)",[$referenceHash,$input['reference'],$id,$input['amount']]);
+                $hex=bin2hex(random_bytes(16));$paymentId=substr($hex,0,8).'-'.substr($hex,8,4).'-4'.substr($hex,13,3).'-8'.substr($hex,17,3).'-'.substr($hex,20,12);
+                $this->query('INSERT INTO jingo_order_payments(id,order_id,reference_hash,amount,method,admin_id) VALUES (?,?,?,?,?,?)',[$paymentId,$id,$referenceHash,$input['amount'],$input['method'],$actor]);
+                $this->query("UPDATE jingo_orders SET payment_status='PAID',version=version+1 WHERE id=?",[$id]);
             }else{
                 if($row['booking_status']!=='CONFIRMED')throw new HttpError(409,'Chỉ cập nhật hướng dẫn cho đơn đã đặt.');$this->query('UPDATE jingo_orders SET instructions=?,version=version+1 WHERE id=?',[$input['instructions'],$id]);
             }
             $this->query('INSERT INTO jingo_order_actions(id,order_id,request_hash,admin_id,action,order_version,data) VALUES (?,?,?,?,?,?,?)',[$input['requestId'],$id,$hash,$actor,$action,$input['version']+1,json_encode($input,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR)]);
             $result=$this->get($id);$this->db->commit();return $result;
-        }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();if($e instanceof PDOException&&($e->errorInfo[1] ?? null)===1062)throw new HttpError(409,'Mã thao tác đã dùng.');throw $e;}
+        }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();if($e instanceof PDOException&&($e->errorInfo[1] ?? null)===1062)throw new HttpError(409,$action==='PAY'?'Mã giao dịch hoặc thao tác đã được ghi nhận. Kiểm tra lại trước khi thu.':'Mã thao tác đã dùng.');throw $e;}
     }
 }

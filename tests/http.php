@@ -273,7 +273,14 @@ try {
     $cancelAction=['requestId'=>'00000000-0000-4000-8000-000000000083','version'=>2,'action'=>'CANCEL','note'=>'Khách hủy'];request($base,$actionPath,200,'POST',$headers,$cancelAction);
     $cancelledPublic=request($base,'/api/v1/orders/lookup',200,'POST',$orderHeaders,$created);if($cancelledPublic['bookingStatus']!=='CANCELLED'||isset($cancelledPublic['history']))throw new RuntimeException('Public cancellation privacy');
     $adminCancelled=request($base,'/api/v1/admin/orders?booking=CANCELLED',200,'GET',[$cookie]);if($adminCancelled['summary']['cancelled']!==1)throw new RuntimeException('Order cancellation filter');
-    for($attempt=0;$attempt<28;$attempt++)request($base,'/api/v1/orders',200,'POST',$orderHeaders,$orderInput);
+    $payOrderInput=array_merge($orderInput,['requestId'=>'00000000-0000-4000-8000-000000000099']);$payCreated=request($base,'/api/v1/orders',200,'POST',$orderHeaders,$payOrderInput);$payOrder=request($base,'/api/v1/orders/lookup',200,'POST',$orderHeaders,$payCreated);$payPath='/api/v1/admin/orders/'.$payOrder['id'].'/actions';
+    $payAction=['requestId'=>'00000000-0000-4000-8000-000000000084','version'=>1,'action'=>'PAY','note'=>'Đã kiểm tra khoản chuyển','method'=>'BANK','amount'=>100,'reference'=>' http-bank-001 '];
+    request($base,$payPath,403,'POST',[$cookie],$payAction);request($base,$payPath,400,'POST',$headers,array_merge($payAction,['amount'=>99]));$payDetail=request($base,$payPath,200,'POST',$headers,$payAction)['data'];
+    if($payDetail['paymentStatus']!=='PAID'||count($payDetail['payments'])!==1||$payDetail['payments'][0]['reference']!=='HTTP-BANK-001')throw new RuntimeException('HTTP receipt');request($base,$payPath,200,'POST',$headers,$payAction);
+    $paidPublic=request($base,'/api/v1/orders/lookup',200,'POST',$orderHeaders,$payCreated);if($paidPublic['paymentStatus']!=='PAID'||isset($paidPublic['payments']))throw new RuntimeException('Public payment privacy');
+    request($base,$payPath,409,'POST',$headers,['requestId'=>'00000000-0000-4000-8000-000000000085','version'=>2,'action'=>'CANCEL','note'=>'Cannot cancel paid']);
+    $paidList=request($base,'/api/v1/admin/orders?payment=PAID',200,'GET',[$cookie]);if($paidList['summary']['paidValue']!==100)throw new RuntimeException('Paid list summary');
+    for($attempt=0;$attempt<27;$attempt++)request($base,'/api/v1/orders',200,'POST',$orderHeaders,$orderInput);
     request($base,'/api/v1/orders',429,'POST',$orderHeaders,$orderInput);
     echo "PASS: order HTTP guard, replay, private lookup, admin permission and rate limit.\n";
 } finally {

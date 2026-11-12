@@ -1,0 +1,19 @@
+CREATE TABLE IF NOT EXISTS jingo_payment_references (
+ reference_hash CHAR(64) CHARACTER SET ascii PRIMARY KEY,
+ reference VARCHAR(200) NOT NULL,
+ kind VARCHAR(32) NOT NULL,
+ entity_id CHAR(36) CHARACTER SET ascii NOT NULL,
+ amount BIGINT UNSIGNED NOT NULL,
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS jingo_order_payments (
+ id CHAR(36) CHARACTER SET ascii PRIMARY KEY,
+ order_id CHAR(36) CHARACTER SET ascii NOT NULL UNIQUE,
+ reference_hash CHAR(64) CHARACTER SET ascii NOT NULL UNIQUE,
+ amount BIGINT UNSIGNED NOT NULL,
+ method VARCHAR(8) NOT NULL,
+ admin_id VARCHAR(64) NOT NULL,
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY(order_id) REFERENCES jingo_orders(id),
+ FOREIGN KEY(reference_hash) REFERENCES jingo_payment_references(reference_hash)
+) ENGINE=InnoDB;
