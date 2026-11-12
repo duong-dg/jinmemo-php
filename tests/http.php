@@ -72,6 +72,29 @@ try {
     if(count(request($base,'/api/v1/admin/suppliers',200,'GET',[$cookie])['data'])!==1) throw new RuntimeException('Supplier list');
     request($base,'/api/v1/admin/suppliers',409,'POST',$headers,$supplier);
     request($base,'/api/v1/suppliers',404);
+    request($base,'/api/v1/admin/site-seo',401);
+    request($base,'/api/v1/admin/brand',401);
+    $seo=request($base,'/api/v1/admin/site-seo',200,'GET',[$cookie]);
+    if($seo['version']!==0 || isset(request($base,'/api/v1/site/seo',200)['data']['version'])) throw new RuntimeException('SEO default/public projection');
+    $seo['vi']['title']='Vé & trải nghiệm';
+    request($base,'/api/v1/admin/site-seo',403,'POST',[$cookie],$seo);
+    $savedSeo=request($base,'/api/v1/admin/site-seo',200,'POST',$headers,$seo);
+    if($savedSeo['version']!==1 || request($base,'/api/v1/site/seo',200)['data']['vi']['title']!=='Vé & trải nghiệm') throw new RuntimeException('SEO save/public');
+    request($base,'/api/v1/admin/site-seo',409,'POST',$headers,$seo);
+    request($base,'/api/v1/admin/site-seo',400,'POST',$headers,array_merge($savedSeo,['vi'=>['title'=>'','description'=>'Missing title']]));
+    request($base,'/api/v1/admin/site-seo',400,'POST',$headers,array_merge($savedSeo,['extra'=>true]));
+    request($base,'/api/v1/admin/site-seo',400,'POST',$headers,array_merge($savedSeo,['image'=>['id'=>'00000000-0000-4000-8000-000000000099','alt'=>'Missing image']]));
+    request($base,'/api/v1/site/seo',405,'POST',$headers,$savedSeo);
+    $brand=request($base,'/api/v1/admin/brand',200,'GET',[$cookie]);
+    $brand['name']='Atlas & <Tours>';$brand['companyName']='Atlas Travel';$brand['email']='info@example.test';
+    request($base,'/api/v1/admin/brand',403,'POST',[$cookie],$brand);
+    $savedBrand=request($base,'/api/v1/admin/brand',200,'POST',$headers,$brand);
+    request($base,'/api/v1/admin/brand',409,'POST',$headers,$brand);
+    request($base,'/api/v1/admin/brand',400,'POST',$headers,array_merge($savedBrand,['email'=>'bad']));
+    $publicBrand=request($base,'/api/v1/site/brand',200)['data'];
+    if(isset($publicBrand['version']) || $publicBrand['name']!==$brand['name']) throw new RuntimeException('Brand projection');
+    $brandHtml=file_get_contents($base.'/admin');
+    if(!str_contains($brandHtml,'Atlas &amp; &lt;Tours&gt;') || str_contains($brandHtml,'Atlas & <Tours>')) throw new RuntimeException('Brand HTML escaping');
     request($base,'/api/v1/admin/pages',401);
     $page=['id'=>'00000000-0000-4000-8000-000000000020','slug'=>'gioi-thieu','kind'=>'PAGE','title'=>'Giới thiệu','contentHtml'=>'<p>JinMemo</p><script>bad()</script>','status'=>'PUBLISHED','version'=>0,'showInMenu'=>true,'showInFooter'=>false,'sortOrder'=>0];
     request($base,'/api/v1/admin/pages',403,'POST',[$cookie],$page);
@@ -138,13 +161,16 @@ try {
     }
     $saved=request($base,'/api/v1/admin/destinations',200,'GET',[$cookie])['data'][0];
     $saved['cover']=['id'=>$uploaded['id'],'alt'=>'Ảnh bìa']; request($base,'/api/v1/admin/destinations',200,'POST',$headers,$saved);
+    $savedSeo['image']=['id'=>$uploaded['id'],'alt'=>'Ảnh chia sẻ'];request($base,'/api/v1/admin/site-seo',200,'POST',$headers,$savedSeo);
+    $savedBrand['logo']=['id'=>$uploaded['id'],'alt'=>'Logo'];request($base,'/api/v1/admin/brand',200,'POST',$headers,$savedBrand);
+    if(!str_contains(file_get_contents($base.'/admin'),'class="brand-logo"')) throw new RuntimeException('Brand logo rendering');
     $curl=curl_init($base.'/api/v1/admin/media'); file_put_contents($fixture,'not an image');
     curl_setopt_array($curl,[CURLOPT_POST=>true,CURLOPT_RETURNTRANSFER=>true,CURLOPT_TIMEOUT=>10,CURLOPT_HTTPHEADER=>$headers,CURLOPT_POSTFIELDS=>['file'=>new CURLFile($fixture,'image/png','fake.png')]]);
     curl_exec($curl); $code=curl_getinfo($curl,CURLINFO_RESPONSE_CODE); curl_close($curl); if($code!==400) throw new RuntimeException('Spoofed image accepted');
     request($base,'/api/v1/media/not-a-uuid',404);
     request($base,'/api/v1/admin/logout',200,'POST',$headers);
     request($base,'/api/v1/admin/product-types',401,'GET',[$cookie]);
-    echo "PASS: HTTP modules, contact origin/validation/honeypot/idempotency/quotas/publication/private inbox/status, media, session revocation.\n";
+    echo "PASS: HTTP modules, SEO/brand defaults/save/version/validation/public projection/escaping/logo, contact quotas, media, session revocation.\n";
 } finally {
     // PHP 8 curl_close does not release CurlHandle references; release uploads before unlink on Windows.
     unset($curl);

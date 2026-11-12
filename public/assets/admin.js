@@ -1,6 +1,6 @@
 'use strict';
 const $=s=>document.querySelector(s);
-const names={'product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ'};
+const names={'product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
 const labels={ACTIVE:'Hoạt động',ARCHIVED:'Lưu trữ',DRAFT:'Bản nháp',PUBLISHED:'Đã xuất bản',TRASH:'Thùng rác',NEW:'Mới',DONE:'Đã xử lý',TICKET:'Vé',TOUR:'Tour',PAGE:'Trang thường',CONTACT:'Liên hệ'};
 let current='overview',records=[],draft=null,dirty=false,loading=0,contactStatus='NEW',editing=false;
 function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;}
@@ -29,11 +29,13 @@ async function render(){
  if(current==='overview'){
   const intro=el('div',undefined,'overview-intro');intro.append(el('h2','Một nơi để chăm chút nội dung.'),el('p','Các danh mục, trang nội dung và hình ảnh đã sẵn sàng để quản lý. Đặt vé, thanh toán, quầy và cộng tác viên sẽ được bổ sung trong các đợt chuyển tiếp.'));screen.append(intro);
   const cards=el('div',undefined,'cards');const descriptions={'product-types':'Phân nhóm vé và tour của bạn.',destinations:'Sắp xếp địa điểm theo khu vực.',media:'Lưu và chọn hình ảnh cho nội dung.',suppliers:'Quản lý thông tin các đối tác.',pages:'Biên tập giới thiệu, chính sách, liên hệ.','contact-requests':'Theo dõi và xử lý lời nhắn của khách.'};
+  descriptions['site-seo']='Tiêu đề, mô tả và ảnh chia sẻ Việt/Anh.';descriptions.brand='Tên, logo và thông tin công ty.';
   for(const [key,title]of Object.entries(names)){const card=el('a',undefined,'card');card.href='#'+key;card.append(el('h3',title),el('p',descriptions[key]),el('span','Mở quản lý ↗'));cards.append(card);}screen.append(cards);return;
  }
  screen.append(el('p','Đang tải…','muted'));
  try{
-  const route=current==='contact-requests'?current+'?status='+contactStatus:current;const result=await api(route);if(id!==loading||$('#workspace').hidden)return;records=result.data;screen.replaceChildren();
+  const route=current==='contact-requests'?current+'?status='+contactStatus:current;const result=await api(route);if(id!==loading||$('#workspace').hidden)return;screen.replaceChildren();
+  if(['site-seo','brand'].includes(current)){renderSettings(screen,result);return;}records=result.data;
   if(current==='media'){renderMedia(screen);return;}
   const bar=toolbar(current==='contact-requests'?`${records.length} yêu cầu trong danh sách`:`${records.length} mục`);
   if(current==='contact-requests'){const select=el('select');select.setAttribute('aria-label','Trạng thái yêu cầu');for(const value of ['NEW','DONE','TRASH']){const o=el('option',labels[value]);o.value=value;select.append(o);}select.value=contactStatus;select.onchange=()=>{contactStatus=select.value;render();};bar.append(select);}
@@ -65,6 +67,8 @@ async function openEditor(record,createContact=false){
  draft=record?structuredClone(record):{id:crypto.randomUUID(),version:0,status:'ACTIVE'};delete draft.productCount;delete draft.updatedAt;dirty=false;$('#fields').replaceChildren();$('#edit-error').hidden=true;$('#editor-title').textContent=(record?'Chỉnh sửa · ':'Tạo mới · ')+names[current];$('#edit-form button[type=submit]').hidden=false;
  if(current==='product-types'){baseFields();field('bookingKind','Cách đặt','select',['TICKET','TOUR']);if(!draft.bookingKind)draft.bookingKind='TICKET';field('description','Mô tả','textarea',[],false,1000);if(draft.english){section('English hiện có');$('#fields').append(el('p','Bản dịch được giữ lại khi lưu. Thay đổi nội dung gốc có thể yêu cầu duyệt lại bản dịch.','full muted'));}}
  if(current==='suppliers'){field('name','Tên nhà cung cấp','text',[],true,150);field('status','Trạng thái','select',['ACTIVE','ARCHIVED']);field('contactName','Người liên hệ','text',[],false,100);field('phone','Điện thoại','tel',[],false,30);field('email','Email','email',[],false,200);field('website','Website','url',[],false,500);field('notes','Ghi chú','textarea',[],false,4000);}
+ if(current==='site-seo'){for(const lang of ['vi','en']){section(lang==='vi'?'Tiếng Việt':'English');field(lang+'.title','Tiêu đề SEO '+(lang==='vi'?'Việt':'English'),'text',[],true,200);field(lang+'.description','Mô tả '+(lang==='vi'?'Việt':'English'),'textarea',[],true,500);}}
+ if(current==='brand'){field('name','Tên thương hiệu','text',[],true,100);field('companyName','Tên công ty','text',[],false,200);field('email','Email công khai','email',[],false,200);field('phone','Điện thoại','tel',[],false,40);field('address','Địa chỉ','textarea',[],false,500);}
  if(current==='destinations'){
   baseFields();field('parentId','Điểm đến cha','select',[['','Không có cấp cha'],...records.filter(r=>r.id!==draft.id).map(r=>[r.id,r.name])]);field('sortOrder','Thứ tự','number');if(draft.sortOrder===undefined)draft.sortOrder=0;
   field('description','Mô tả','textarea',[],false,2000);field('englishName','Tên English','text',[],false,150);field('englishSlug','Đường dẫn English','text',[],false,160);field('englishDescription','Mô tả English','textarea',[],false,2000);
@@ -79,8 +83,8 @@ async function openEditor(record,createContact=false){
   for(const [key,label,type,max]of [['title','Tiêu đề English','text',180],['slug','Đường dẫn English','text',160],['contentHtml','Nội dung HTML English','textarea',200000],['description','Mô tả English','textarea',1000],['menuLabel','Tên menu English','text',60],['seoTitle','Tiêu đề SEO English','text',200],['seoDescription','Mô tả SEO English','textarea',500]])field('_en.'+key,label,type,[],false,max).value=draft.english?.[key]??'';
   field('_en.published','Xuất bản English','checkbox').checked=!!draft.english?.published;
  }
- if(['destinations','pages'].includes(current)){
-  try{const media=(await api('media')).data;const options=[['','Không có ảnh'],...media.map(m=>[m.id,m.alt||m.filename])];if(draft.cover&&!media.some(m=>m.id===draft.cover.id))options.push([draft.cover.id,draft.cover.alt||'Ảnh bìa hiện tại']);field('_cover','Ảnh bìa','select',options).value=draft.cover?.id??'';field('_coverAlt','Mô tả ảnh bìa','text',[],false,300).value=draft.cover?.alt??'';}catch(error){notice('Không tải được thư viện ảnh: '+error.message,true);}
+ if(['destinations','pages','site-seo','brand'].includes(current)){
+  try{const media=(await api('media')).data;const selected=current==='site-seo'?draft.image:current==='brand'?draft.logo:draft.cover;const options=[['','Không có ảnh'],...media.map(m=>[m.id,m.alt||m.filename])];if(selected&&!media.some(m=>m.id===selected.id))options.push([selected.id,selected.alt||'Ảnh hiện tại']);field('_cover',current==='brand'?'Logo':current==='site-seo'?'Ảnh chia sẻ':'Ảnh bìa','select',options).value=selected?.id??'';field('_coverAlt','Mô tả ảnh','text',[],false,300).value=selected?.alt??'';}catch(error){notice('Không tải được thư viện ảnh: '+error.message,true);}
  }
  if($('#workspace').hidden){draft=null;return;}$('#editor').showModal();$('#editor input')?.focus();dirty=false;
 }
@@ -89,14 +93,14 @@ $('#edit-form').onsubmit=async e=>{
  try{
   const data=structuredClone(draft),form=new FormData(e.target);
   if(current==='destinations'){data.parentId=form.get('parentId')||null;data.sortOrder=Number(form.get('sortOrder')||0);const lat=form.get('_lat'),lon=form.get('_lon');if((lat==='')!==(lon===''))throw new Error('Nhập cả vĩ độ và kinh độ, hoặc để trống cả hai.');data.coordinates=lat===''?null:{lat:Number(lat),lon:Number(lon)};}
-  if(['destinations','pages'].includes(current)&&form.has('_cover'))data.cover=form.get('_cover')?{id:form.get('_cover'),alt:form.get('_coverAlt')||''}:null;
+  if(['destinations','pages','site-seo','brand'].includes(current)&&form.has('_cover'))data[current==='site-seo'?'image':current==='brand'?'logo':'cover']=form.get('_cover')?{id:form.get('_cover'),alt:form.get('_coverAlt')||''}:null;
   if(current==='pages'){
    data.sortOrder=Number(form.get('sortOrder')||0);data.showInMenu=form.has('showInMenu');data.showInFooter=form.has('showInFooter');data.english=null;
    if(data.kind==='CONTACT'){data.contact={};for(const key of ['phone','email','address','hours','mapUrl'])data.contact[key]=form.get('contact.'+key)||'';}
    if(form.has('_english')){data.english={};for(const key of ['title','slug','contentHtml','description','menuLabel','seoTitle','seoDescription'])data.english[key]=form.get('_en.'+key)||'';data.english.published=form.has('_en.published');}
   }
   for(const key of Object.keys(data))if(key.startsWith('_'))delete data[key];
-  await api(current,data);dirty=false;$('#editor').close();draft=null;await render();notice('Đã lưu thay đổi.');
+  await api(current,data);if(current==='brand')refreshBrand(data);dirty=false;$('#editor').close();draft=null;await render();notice('Đã lưu thay đổi.');
  }catch(error){$('#edit-error').textContent=error.message;$('#edit-error').hidden=false;}finally{editing=false;submit.disabled=false;}
 };
 function openContact(record){
@@ -108,5 +112,16 @@ function renderMedia(screen){
  const form=el('form',undefined,'upload');const fileLabel=el('label','Chọn ảnh (JPG, PNG, WebP · tối đa 5 MB)'),file=el('input');file.type='file';file.name='file';file.accept='image/jpeg,image/png,image/webp';file.required=true;fileLabel.append(file);const altLabel=el('label','Mô tả ảnh'),alt=el('input');alt.name='alt';alt.maxLength=300;altLabel.append(alt);const submit=el('button','Tải ảnh lên','primary');submit.type='submit';form.append(fileLabel,altLabel,submit);
  form.onsubmit=async e=>{e.preventDefault();submit.disabled=true;try{await api('media',new FormData(form));await render();notice('Đã thêm ảnh vào thư viện.');}catch(error){notice(error.message,true);}finally{submit.disabled=false;}};screen.append(form);
  if(!records.length){screen.append(empty('Thư viện chưa có ảnh'));return;}const grid=el('div',undefined,'media-grid');for(const record of records){const card=el('article',undefined,'media-card'),image=el('img');image.src=record.url;image.alt=record.alt;image.loading='lazy';const meta=el('div',record.alt||record.filename);meta.append(el('small',`${record.width} × ${record.height} · ${Math.ceil(record.bytes/1024)} KB`));card.append(image,meta);grid.append(card);}screen.append(grid);
+}
+function refreshBrand(data){
+ for(const mark of document.querySelectorAll('.wordmark')){const text=Array.from(mark.childNodes).find(n=>n.nodeType===Node.TEXT_NODE);if(text)text.textContent=data.name;mark.querySelector('.brand-logo')?.remove();if(data.logo){const logo=el('img',undefined,'brand-logo');logo.src='/api/v1/media/'+encodeURIComponent(data.logo.id);logo.alt='';mark.prepend(logo);}}
+ document.title='Quản trị · '+data.name;
+}
+function renderSettings(screen,settings){
+ const bar=toolbar(current==='brand'?'Thông tin thương hiệu dùng trên website.':'Nội dung tìm kiếm và chia sẻ cho trang chủ Việt/English.');bar.append(button('Chỉnh sửa',()=>openEditor(settings),'primary'));screen.append(bar);
+ const box=el('div',undefined,'overview-intro');
+ if(current==='brand'){box.append(el('h2',settings.name),el('p',settings.companyName||'Chưa có tên công ty'),el('p',[settings.email,settings.phone,settings.address].filter(Boolean).join(' · ')||'Chưa có thông tin liên hệ'));screen.append(box);screen.append(el('p','Thông tin này hiển thị công khai. Nội dung SEO, trang Liên hệ và email cần cập nhật tại từng mục tương ứng khi đổi thương hiệu.','muted'));}
+ else {for(const lang of ['vi','en']){const card=el('article',undefined,'overview-intro');card.append(el('p',lang==='vi'?'TIẾNG VIỆT':'ENGLISH','eyebrow'),el('h2',settings[lang].title),el('p',settings[lang].description));screen.append(card);}screen.append(el('p','Website khách đang được chuyển tiếp. Cấu hình được lưu để sử dụng khi giao diện công khai sẵn sàng.','muted'));}
+ const image=current==='brand'?settings.logo:settings.image;if(image){const img=el('img');img.src='/api/v1/media/'+encodeURIComponent(image.id);img.alt=image.alt;img.className='settings-image';screen.append(img);}
 }
 (async()=>{try{const me=await api('me');showWorkspace(me.email);}catch(error){showLogin();if(error.message!=='Vui lòng đăng nhập.'&&error.message!=='Phiên đăng nhập đã hết hạn.'){$('#login-error').textContent=error.message;$('#login-error').hidden=false;}}})();

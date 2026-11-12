@@ -9,6 +9,7 @@ require dirname(__DIR__) . '/src/Suppliers.php';
 require dirname(__DIR__) . '/src/ContentHtml.php';
 require dirname(__DIR__) . '/src/Pages.php';
 require dirname(__DIR__) . '/src/ContactRequests.php';
+require dirname(__DIR__) . '/src/SiteSettings.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
@@ -17,6 +18,9 @@ try {
     if($path==='/admin' || $path==='/admin/' || preg_match('#^/(jingo-[a-f0-9]{24})/?$#D',(string)$path,$entryMatch)) {
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET') { header('Allow: GET'); throw new HttpError(405,'Phương thức không được hỗ trợ.'); }
         $config=jingoConfig(); $entry=$entryMatch[1] ?? '';
+        $branding=null;
+        try { $branding=(new SiteSettings(jingoDatabase($config),$config))->get('brand',true); $config['APP_NAME']=$branding['name']; }
+        catch(Throwable $error) { error_log('JinMemo branding unavailable: '.$error->getMessage()); }
         if($entry!=='') {
             $policy=(new AdminAuth(jingoDatabase($config),$config))->policy();
             if(empty($policy['entrySlug']) || !hash_equals($policy['entrySlug'],$entry)) throw new HttpError(404,'Không tìm thấy.');
@@ -99,6 +103,14 @@ try {
         if($public) jingoJson($contacts->submit(jingoRequestBody()));
         $auth=new AdminAuth($db,$config); if(!$listing) $auth->mutation(); $actor=$auth->me();
         jingoJson($listing?$contacts->list($_GET['status'] ?? 'NEW'):$contacts->update(rawurldecode($contactMatch[1]),jingoRequestBody(),$actor['id']));
+    }
+    if(in_array($path,['/api/v1/site/seo','/api/v1/site/brand','/api/v1/admin/site-seo','/api/v1/admin/brand'],true)) {
+        $admin=str_starts_with($path,'/api/v1/admin/');$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';
+        if(!in_array($method,$admin?['GET','POST']:['GET'],true)){header('Allow: '.($admin?'GET, POST':'GET'));throw new HttpError(405,'Phương thức không được hỗ trợ.');}
+        $config=jingoConfig();$db=jingoDatabase($config);$settings=new SiteSettings($db,$config);$key=str_ends_with($path,'brand')?'brand':'site-seo';
+        if(!$admin)jingoJson(['data'=>$settings->get($key,true)]);
+        $auth=new AdminAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me();
+        jingoJson($method==='POST'?$settings->save($key,jingoRequestBody(),$actor['id']):$settings->get($key));
     }
     $routes = ['login'=>'POST','me'=>'GET','logout'=>'POST','login-policy'=>'GET'];
     $action = str_starts_with((string)$path, '/api/v1/admin/') ? substr($path, strlen('/api/v1/admin/')) : '';

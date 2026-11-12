@@ -1,6 +1,6 @@
 # JinMemo — PHP + MySQL cho hosting
 
-Đây là bản chuyển đổi riêng. Hiện có giao diện đăng nhập/quản trị PHP và các API danh mục, điểm đến, ảnh, nhà cung cấp, trang nội dung, yêu cầu liên hệ. Chưa có website bán vé công khai hoặc công cụ chuyển dữ liệu; chưa thay thế hệ thống hiện tại.
+Đây là bản chuyển đổi riêng. Hiện có giao diện đăng nhập/quản trị PHP và các API danh mục, điểm đến, ảnh, nhà cung cấp, trang nội dung, yêu cầu liên hệ, SEO và thương hiệu. Chưa có website bán vé công khai hoặc công cụ chuyển dữ liệu; chưa thay thế hệ thống hiện tại.
 
 ## Cài đặt bộ khung
 
@@ -44,7 +44,7 @@ Không dùng hai database độc lập để cùng ghi đơn và trừ tồn tro
 - Giữ hash nguồn bản dịch tương thích Node; thay đổi tên/mô tả sẽ chuyển English đã xuất bản sang NEEDS_REVIEW. Công cụ biên tập/dịch riêng chưa chuyển; không tự xuất bản bản dịch thiếu sourceHash.
 - Schema `002-product-types.sql` có sẵn bảng sản phẩm phục vụ kiểm tra tham chiếu; **chưa có API sản phẩm/giá/tồn**. Khi chuyển thao tác ghi sản phẩm phải lấy khóa `jingo_catalog_locks.id=catalog` trước để đồng bộ với việc lưu trữ loại.
 - Chạy `php tests/product-types.php` với cấu hình database thử như test admin. Cần extension `mbstring` để kiểm tra độ dài Unicode.
-- `APP_NAME=JinMemo` trong `.env` điều khiển tên ứng dụng ở health API. Tên bảng/cookie kỹ thuật vẫn giữ tiền tố `jingo`. Logo, email và các thông tin thương hiệu khác sẽ được gắn cấu hình khi chuyển các module tương ứng.
+- `APP_NAME=JinMemo` trong `.env` là tên mặc định khi chưa lưu thương hiệu, cũng là tên chẩn đoán ở health API. Tên bảng/cookie kỹ thuật vẫn giữ tiền tố `jingo`. Tên và logo trên giao diện quản trị ưu tiên cấu hình thương hiệu trong database (xem đợt 8).
 
 ## Module điểm đến — đợt 3
 
@@ -102,10 +102,20 @@ Không dùng hai database độc lập để cùng ghi đơn và trừ tồn tro
 1. Đặt document root vào `public`, bật rewrite và cấu hình `.env` theo hướng dẫn cài ở đầu tài liệu. `PUBLIC_BASE_URL` phải đúng origin truy cập; dùng HTTPS khi APP_ENV=production.
 2. Chạy `php bin/install.php`, rồi `php bin/create-admin.php email-cua-ban@example.com` và nhập mật khẩu 12–72 byte. Không có tài khoản hoặc mật khẩu mặc định. Tài khoản Node cũ cần tạo lại mật khẩu khi chuyển.
 3. Mở `https://ten-mien-cua-ban/admin`, đăng nhập bằng tài khoản vừa tạo. `/` chuyển về `/admin` trong giai đoạn hiện tại. Nếu dùng policy đường dẫn riêng, truy cập `/<entrySlug>` để form truyền đúng mã đường dẫn.
-4. Sau đăng nhập có tổng quan, loại sản phẩm, điểm đến, thư viện ảnh, nhà cung cấp, trang nội dung và hộp thư liên hệ. Form hỗ trợ tạo/sửa, chọn trạng thái, chọn ảnh; trang Liên hệ có nút tạo riêng khi chưa có. Menu không hiển thị module bán vé chưa chuyển.
+4. Sau đăng nhập có tổng quan, loại sản phẩm, điểm đến, thư viện ảnh, nhà cung cấp, trang nội dung, hộp thư liên hệ, SEO và thương hiệu. Form hỗ trợ tạo/sửa, chọn trạng thái, chọn ảnh; trang Liên hệ có nút tạo riêng khi chưa có. Menu không hiển thị module bán vé chưa chuyển.
 
 Trang quản trị dùng HTML/CSS/JS thuần, không cần Node/npm trên hosting. Cookie HttpOnly do API cấp, không lưu token trong localStorage. Đăng xuất thu hồi phiên ở database. Trang HTML không chứa dữ liệu quản trị; API kiểm tra quyền trước khi trả dữ liệu. CSP hạn chế tài nguyên cùng origin, chống nhúng iframe; brand được escape khi hiển thị HTML.
 
 Giới hạn: chưa có OTP, tài khoản POS/CTV, sửa bản dịch loại sản phẩm, editor HTML trực quan, giao diện website khách và nghiệp vụ bán vé. Bản dịch loại hiện có được giữ khi sửa thông tin gốc. Không tự import nội dung/dữ liệu từ hệ thống Node.
 
 Đã thử trình duyệt: sai/đúng mật khẩu, tạo loại sản phẩm, tạo điểm đến, tạo trang Liên hệ, tải lại giữ phiên và đăng xuất. Đã xem bố cục ở 1366px và 390px. Bộ HTTP kiểm tra HTML/assets, đăng nhập thực/cookie/thu hồi phiên và các API hiện có trên database thử riêng.
+
+## SEO và thương hiệu — đợt 8
+
+- Chạy lại `php bin/install.php` hoặc import `database/008-site-settings.sql` trước khi dùng hai mục mới trong admin. Bảng `jingo_settings` lưu từng cấu hình với version riêng.
+- SEO: admin `GET/POST /api/v1/admin/site-seo` giữ hợp đồng bản Node (trả object trực tiếp). Payload `{version,vi:{title,description},en:{title,description},image:null|{id,alt}}`. Tiêu đề tối đa 200, mô tả tối đa 500 ký tự, cả hai ngôn ngữ bắt buộc có nội dung. Public `GET /api/v1/site/seo` trả `{data:...}` không chứa version. Ảnh dùng ID trong thư viện.
+- Thương hiệu: admin `GET/POST /api/v1/admin/brand`; payload `{version,name,companyName,email,phone,address,logo:null|{id,alt}}`. Tên bắt buộc tối đa 100 ký tự; thông tin liên hệ là nội dung công khai. Public `GET /api/v1/site/brand` trả cấu hình không có version. API này được bổ sung riêng cho bản PHP để hỗ trợ đóng gói đổi thương hiệu.
+- Cả hai mục đều cần phiên admin khi đọc quản trị, header/Origin khi lưu; kiểm version chống ghi đè, kiểm ảnh và audit trong transaction. GET chưa có bản ghi trả cấu hình mặc định với version 0; lần lưu đầu tạo version 1.
+- Tên và logo thương hiệu được áp dụng lên trang đăng nhập/quản trị, cả sau tải lại. Đổi tên không tự thay nội dung SEO, trang Liên hệ, SMTP, domain, callback thanh toán hay tên bảng/cookie. Logo lấy từ thư viện ảnh; favicon và tên gửi email chưa nối cấu hình.
+- Giao diện admin có hai mục **SEO website** và **Thương hiệu**, chỉnh bằng biểu mẫu, chọn ảnh từ thư viện. Website công khai, canonical/hreflang, robots và sitemap chưa chuyển; việc lưu SEO chưa có nghĩa website bán vé đã hoạt động.
+- Đã thử trình duyệt lưu SEO, đổi tên thương hiệu và kiểm tra tên trên màn hình đăng nhập sau tải lại. Bộ HTTP kiểm tra default, quyền, lưu/xung đột, kiểm dữ liệu/ảnh, public projection, escape tên trong HTML và logo.
