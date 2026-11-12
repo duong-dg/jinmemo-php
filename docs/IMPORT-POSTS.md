@@ -7,9 +7,11 @@ Công cụ CLI chỉ nhập bốn bảng bài viết và alias POST/POST_EN. Đ�
 1. Sao lưu database PHP và giữ bản backup PostgreSQL/file upload cũ.
 2. Xuất MySQL (.sql) từ bản Node. Kiểm tra file tải đủ và có dòng cuối `TRANSFER COMPLETE`; công cụ này không xác minh dòng cuối của file vì nó đọc database staging đã nhập. Đối chiếu số dòng trong báo cáo với bản export, không nhập một staging đang dở.
 3. Tạo database riêng, ví dụ `mylinhtr_transfer`. Trong phpMyAdmin chọn đúng database đó rồi Import SQL nguyên bản để tạo `jm_transfer_*`. Không đổi tiền tố và không import SQL này vào database PHP.
-4. Cấp cho user MySQL đang dùng trong `.env` quyền SELECT vào database staging. User cần quyền INSERT/SELECT trên database PHP để nhập thật. Hai database phải nằm trên cùng server đã cấu hình trong `.env`; không dùng tên database giống nhau.
+4. Cấp cho user MySQL đang dùng trong `.env` quyền SELECT vào database staging. User cần đủ quyền vận hành các bảng PHP đích, gồm chèn dữ liệu và locking read, để nhập thật. Hai database phải nằm trên cùng server đã cấu hình trong `.env`; không dùng tên database giống nhau.
 5. Cập nhật code và chạy `php bin/install.php`. Các bảng blog đích phải trống: posts, post_categories, post_revisions, post_metrics và alias POST/POST_EN. Dữ liệu module khác và alias PAGE/PRODUCT được giữ nguyên. Nếu đã có bài thử hoặc dữ liệu thật, công cụ sẽ dừng; dùng database đích mới hoặc bản khôi phục phù hợp thay vì xóa bài để ép nhập.
 6. Tạm dừng chỉnh sửa bài ở hai bản trong lúc chuyển và giữ staging cố định. Ảnh đang dùng phải được chuyển metadata/file WebP theo ID vào PHP trước; sản phẩm liên quan cũng phải tồn tại. Công cụ báo lỗi nếu thiếu, không bỏ ảnh hay cắt danh sách liên quan để ép chạy. relatedRideIds được giữ nhưng chưa có module xe để hiện liên kết.
+
+Đã có công cụ chuyển metadata ảnh: xem [IMPORT-MEDIA.md](IMPORT-MEDIA.md). Nên hoàn tất ảnh trước khi chạy kiểm tra bài viết. Tên bảng trong notImportedTables chỉ nói phạm vi của mỗi lệnh, không nói dữ liệu đó chưa từng được chuyển bởi lệnh khác.
 
 ## Kiểm tra trước, rồi nhập
 

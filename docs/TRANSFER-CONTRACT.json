@@ -69,5 +69,17 @@
       "post_id",
       "views"
     ]
+  },
+  "mediaTables": {
+    "media": [
+      "id",
+      "filename",
+      "alt",
+      "width",
+      "height",
+      "bytes",
+      "created_by",
+      "created_at"
+    ]
   }
 }

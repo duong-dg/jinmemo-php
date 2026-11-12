@@ -1,0 +1,7 @@
+<?php
+declare(strict_types=1);
+if(PHP_SAPI!=='cli'){http_response_code(404);exit;}
+foreach(['bootstrap','MediaTransfer'] as $class)require dirname(__DIR__).'/src/'.$class.'.php';
+try{
+    $source=null;$apply=false;foreach(array_slice($argv,1) as $argument){if($argument==='--help'){echo "php bin/import-media.php --source-db=DATABASE [--apply]\nMặc định chỉ kiểm tra. Chép các file ID.webp gốc vào MEDIA_DIR trước; công cụ không chép/ghi đè/xử lý ảnh hoặc đổi ID.\n";exit;}if($argument==='--apply'&&!$apply){$apply=true;continue;}if(str_starts_with($argument,'--source-db=')&&$source===null){$source=substr($argument,12);continue;}throw new InvalidArgumentException('Tham số không hợp lệ. Dùng --help.');}if(!$source)throw new InvalidArgumentException('Thiếu --source-db=DATABASE.');$config=jingoConfig();$report=(new MediaTransfer(jingoDatabase($config),$config['MEDIA_DIR'] ?? dirname(__DIR__).'/storage/media'))->run($source,$apply);echo json_encode($report,JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR)."\n";exit($report['ready']?0:2);
+}catch(InvalidArgumentException $error){fwrite(STDERR,$error->getMessage()."\n");exit(1);}catch(Throwable){fwrite(STDERR,"Không hoàn tất nhập metadata ảnh. Kiểm tra kết nối/quyền, schema, file gốc và giới hạn 16 MB metadata/50.000 dòng mỗi bảng/10 MB mỗi file. Metadata không được ghi một phần; file gốc không bị sửa.\n");exit(1);}

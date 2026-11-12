@@ -4,6 +4,8 @@ Có thể chuyển dữ liệu. Bản Node hiện có **Xuất dữ liệu MySQL
 
 Đợt 20 đã có **bộ nhập riêng cho bài viết**, mặc định chỉ kiểm tra; xem [IMPORT-POSTS.md](IMPORT-POSTS.md). Nó chưa nhập đơn hoặc các module khác. Các ghi chú “chưa có importer toàn bộ” bên dưới vẫn áp dụng.
 
+Đợt 21 thêm [bộ nhập metadata ảnh](IMPORT-MEDIA.md), dùng sau khi chép file ID.webp gốc vào thư mục media PHP. Nó giữ đủ trường media nguồn, bỏ qua metadata trùng khớp và không ghi đè ảnh/metadata khác. Migration 016 giữ được microsecond của created_at.
+
 ## Cách chuyển dự kiến
 
 1. Sao lưu PostgreSQL và toàn bộ file upload. Giữ bản gốc để phục hồi.
