@@ -1,8 +1,8 @@
 'use strict';
 const $=s=>document.querySelector(s);
-const names={'product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
+const names={products:'Sản phẩm','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
 const labels={ACTIVE:'Hoạt động',ARCHIVED:'Lưu trữ',DRAFT:'Bản nháp',PUBLISHED:'Đã xuất bản',TRASH:'Thùng rác',NEW:'Mới',DONE:'Đã xử lý',TICKET:'Vé',TOUR:'Tour',PAGE:'Trang thường',CONTACT:'Liên hệ'};
-let current='overview',records=[],draft=null,dirty=false,loading=0,contactStatus='NEW',editing=false;
+let current='overview',records=[],draft=null,dirty=false,loading=0,contactStatus='NEW',editing=false,editorSection='';
 function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;}
 function button(text,action,cls='quiet'){const n=el('button',text,cls);n.type='button';n.addEventListener('click',action);return n;}
 function notice(message,error=false){const n=$('#notice');n.textContent=message;n.className=error?'error':'';n.hidden=!message;}
@@ -29,7 +29,7 @@ async function render(){
  if(current==='overview'){
   const intro=el('div',undefined,'overview-intro');intro.append(el('h2','Một nơi để chăm chút nội dung.'),el('p','Các danh mục, trang nội dung và hình ảnh đã sẵn sàng để quản lý. Đặt vé, thanh toán, quầy và cộng tác viên sẽ được bổ sung trong các đợt chuyển tiếp.'));screen.append(intro);
   const cards=el('div',undefined,'cards');const descriptions={'product-types':'Phân nhóm vé và tour của bạn.',destinations:'Sắp xếp địa điểm theo khu vực.',media:'Lưu và chọn hình ảnh cho nội dung.',suppliers:'Quản lý thông tin các đối tác.',pages:'Biên tập giới thiệu, chính sách, liên hệ.','contact-requests':'Theo dõi và xử lý lời nhắn của khách.'};
-  descriptions['site-seo']='Tiêu đề, mô tả và ảnh chia sẻ Việt/Anh.';descriptions.brand='Tên, logo và thông tin công ty.';
+  descriptions.products='Vé, gói giá và lịch sử dụng.';descriptions['site-seo']='Tiêu đề, mô tả và ảnh chia sẻ Việt/Anh.';descriptions.brand='Tên, logo và thông tin công ty.';
   for(const [key,title]of Object.entries(names)){const card=el('a',undefined,'card');card.href='#'+key;card.append(el('h3',title),el('p',descriptions[key]),el('span','Mở quản lý ↗'));cards.append(card);}screen.append(cards);return;
  }
  screen.append(el('p','Đang tải…','muted'));
@@ -51,7 +51,7 @@ async function render(){
 }
 function get(obj,path){return path.split('.').reduce((o,k)=>o?.[k],obj);}
 function set(obj,path,value){const keys=path.split('.');let node=obj;for(const key of keys.slice(0,-1)){if(!node[key])node[key]={};node=node[key];}node[keys.at(-1)]=value;}
-function field(path,label,type='text',options=[],required=false,max){
+function field(path,label,type='text',options=[],required=false,max,parent=$('#fields')){
  const wrapper=el('label',label);if(type==='textarea'||path.includes('contentHtml'))wrapper.className='full';let input;
  if(type==='select'){input=el('select');for(const option of options){const [value,title]=Array.isArray(option)?option:[option,labels[option]||option];const o=el('option',title);o.value=value;input.append(o);}}
  else if(type==='textarea'){input=el('textarea');input.rows=path.includes('contentHtml')?8:3;}
@@ -59,13 +59,15 @@ function field(path,label,type='text',options=[],required=false,max){
  input.name=path;input.required=required;if(max)input.maxLength=max;
  if(type==='checkbox')input.checked=!!get(draft,path);else input.value=get(draft,path)??(type==='select'?(Array.isArray(options[0])?options[0][0]:options[0]??''):'');
  input.oninput=()=>{dirty=true;set(draft,path,type==='checkbox'?input.checked:type==='number'?(input.value===''?null:Number(input.value)):input.value);};
- wrapper.append(input);$('#fields').append(wrapper);return input;
+ wrapper.append(input);parent.append(wrapper);return input;
 }
 function section(title){$('#fields').append(el('h3',title));}
 function baseFields(){field('name','Tên','text',[],true,150);field('slug','Đường dẫn','text',[],true,160);field('status','Trạng thái','select',['ACTIVE','ARCHIVED']);}
 async function openEditor(record,createContact=false){
+ editorSection=current;
  draft=record?structuredClone(record):{id:crypto.randomUUID(),version:0,status:'ACTIVE'};delete draft.productCount;delete draft.updatedAt;dirty=false;$('#fields').replaceChildren();$('#edit-error').hidden=true;$('#editor-title').textContent=(record?'Chỉnh sửa · ':'Tạo mới · ')+names[current];$('#edit-form button[type=submit]').hidden=false;
  if(current==='product-types'){baseFields();field('bookingKind','Cách đặt','select',['TICKET','TOUR']);if(!draft.bookingKind)draft.bookingKind='TICKET';field('description','Mô tả','textarea',[],false,1000);if(draft.english){section('English hiện có');$('#fields').append(el('p','Bản dịch được giữ lại khi lưu. Thay đổi nội dung gốc có thể yêu cầu duyệt lại bản dịch.','full muted'));}}
+ if(current==='products'){try{await buildProductFields(!!record);}catch(error){draft=null;notice(error.message,true);return;}}
  if(current==='suppliers'){field('name','Tên nhà cung cấp','text',[],true,150);field('status','Trạng thái','select',['ACTIVE','ARCHIVED']);field('contactName','Người liên hệ','text',[],false,100);field('phone','Điện thoại','tel',[],false,30);field('email','Email','email',[],false,200);field('website','Website','url',[],false,500);field('notes','Ghi chú','textarea',[],false,4000);}
  if(current==='site-seo'){for(const lang of ['vi','en']){section(lang==='vi'?'Tiếng Việt':'English');field(lang+'.title','Tiêu đề SEO '+(lang==='vi'?'Việt':'English'),'text',[],true,200);field(lang+'.description','Mô tả '+(lang==='vi'?'Việt':'English'),'textarea',[],true,500);}}
  if(current==='brand'){field('name','Tên thương hiệu','text',[],true,100);field('companyName','Tên công ty','text',[],false,200);field('email','Email công khai','email',[],false,200);field('phone','Điện thoại','tel',[],false,40);field('address','Địa chỉ','textarea',[],false,500);}
@@ -83,17 +85,21 @@ async function openEditor(record,createContact=false){
   for(const [key,label,type,max]of [['title','Tiêu đề English','text',180],['slug','Đường dẫn English','text',160],['contentHtml','Nội dung HTML English','textarea',200000],['description','Mô tả English','textarea',1000],['menuLabel','Tên menu English','text',60],['seoTitle','Tiêu đề SEO English','text',200],['seoDescription','Mô tả SEO English','textarea',500]])field('_en.'+key,label,type,[],false,max).value=draft.english?.[key]??'';
   field('_en.published','Xuất bản English','checkbox').checked=!!draft.english?.published;
  }
- if(['destinations','pages','site-seo','brand'].includes(current)){
-  try{const media=(await api('media')).data;const selected=current==='site-seo'?draft.image:current==='brand'?draft.logo:draft.cover;const options=[['','Không có ảnh'],...media.map(m=>[m.id,m.alt||m.filename])];if(selected&&!media.some(m=>m.id===selected.id))options.push([selected.id,selected.alt||'Ảnh hiện tại']);field('_cover',current==='brand'?'Logo':current==='site-seo'?'Ảnh chia sẻ':'Ảnh bìa','select',options).value=selected?.id??'';field('_coverAlt','Mô tả ảnh','text',[],false,300).value=selected?.alt??'';}catch(error){notice('Không tải được thư viện ảnh: '+error.message,true);}
+ if(['products','destinations','pages','site-seo','brand'].includes(current)){
+  try{const media=(await api('media')).data;const selected=current==='site-seo'?draft.image:current==='brand'?draft.logo:draft.cover;const options=[['','Không có ảnh'],...media.map(m=>[m.id,m.alt||m.filename])];if(selected&&!media.some(m=>m.id===selected.id))options.push([selected.id,selected.alt||'Ảnh hiện tại']);field('_cover',current==='brand'?'Logo':current==='site-seo'?'Ảnh chia sẻ':'Ảnh bìa','select',options).value=selected?.id??'';field('_coverAlt','Mô tả ảnh','text',[],false,300).value=selected?.alt??'';
+   if(current==='products'){const existing=draft.gallery||[],options=media.map(m=>[m.id,m.alt||m.filename]);for(const image of existing)if(!media.some(m=>m.id===image.id))options.push([image.id,image.alt||'Ảnh hiện có']);const gallery=field('_gallery','Ảnh bổ sung (tối đa 20 ảnh)','select',options);gallery.multiple=true;for(const option of gallery.options)option.selected=existing.some(image=>image.id===option.value);gallery.oninput=()=>{dirty=true;draft.gallery=Array.from(gallery.selectedOptions).map(o=>({id:o.value,alt:existing.find(i=>i.id===o.value)?.alt||media.find(i=>i.id===o.value)?.alt||''}));};}
+  }catch(error){notice('Không tải được thư viện ảnh: '+error.message,true);}
  }
  if($('#workspace').hidden){draft=null;return;}$('#editor').showModal();$('#editor input')?.focus();dirty=false;
 }
 $('#edit-form').onsubmit=async e=>{
  e.preventDefault();if(!draft||editing)return;const submit=e.submitter;editing=true;submit.disabled=true;$('#edit-error').hidden=true;
  try{
+  if(current!==editorSection)throw new Error('Mục quản trị đã thay đổi. Đóng biểu mẫu và mở lại trước khi lưu.');
   const data=structuredClone(draft),form=new FormData(e.target);
   if(current==='destinations'){data.parentId=form.get('parentId')||null;data.sortOrder=Number(form.get('sortOrder')||0);const lat=form.get('_lat'),lon=form.get('_lon');if((lat==='')!==(lon===''))throw new Error('Nhập cả vĩ độ và kinh độ, hoặc để trống cả hai.');data.coordinates=lat===''?null:{lat:Number(lat),lon:Number(lon)};}
-  if(['destinations','pages','site-seo','brand'].includes(current)&&form.has('_cover'))data[current==='site-seo'?'image':current==='brand'?'logo':'cover']=form.get('_cover')?{id:form.get('_cover'),alt:form.get('_coverAlt')||''}:null;
+  if(['products','destinations','pages','site-seo','brand'].includes(current)&&form.has('_cover'))data[current==='site-seo'?'image':current==='brand'?'logo':'cover']=form.get('_cover')?{id:form.get('_cover'),alt:form.get('_coverAlt')||''}:null;
+  if(current==='products'){for(const key of ['destinationId','supplierId'])if(!data[key])delete data[key];if(!data.destination)data.destination=$('#fields [name=destinationId]')?.selectedOptions[0]?.textContent||'';}
   if(current==='pages'){
    data.sortOrder=Number(form.get('sortOrder')||0);data.showInMenu=form.has('showInMenu');data.showInFooter=form.has('showInFooter');data.english=null;
    if(data.kind==='CONTACT'){data.contact={};for(const key of ['phone','email','address','hours','mapUrl'])data.contact[key]=form.get('contact.'+key)||'';}

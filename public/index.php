@@ -12,11 +12,13 @@ require dirname(__DIR__) . '/src/ContactRequests.php';
 require dirname(__DIR__) . '/src/SiteSettings.php';
 require dirname(__DIR__) . '/src/Pricing.php';
 require dirname(__DIR__) . '/src/PublicSite.php';
+require dirname(__DIR__) . '/src/ProductSchema.php';
+require dirname(__DIR__) . '/src/Products.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js'],true)) return false;
-    if(in_array($path,['/','/en','/en/','/lien-he','/lien-he/','/en/contact','/en/contact/'],true) || preg_match('#^/(?:trang|en/pages)/[^/]+/?$#D',(string)$path)) {
+    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js'],true)) return false;
+    if(in_array($path,['/','/en','/en/','/lien-he','/lien-he/','/en/contact','/en/contact/'],true) || preg_match('#^/(?:trang|en/pages|ve|en/ve)/[^/]+/?$#D',(string)$path)) {
         $publicRequest=true;
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
         $config=jingoConfig();(new PublicSite(jingoDatabase($config),$config))->render($path);
@@ -125,6 +127,23 @@ try {
         $statement=$db->prepare('SELECT data FROM jingo_products WHERE id=?');$statement->execute([$input['productId']]);$raw=$statement->fetchColumn();if($raw===false)throw new HttpError(404,'Không tìm thấy sản phẩm.');$product=json_decode($raw,true,512,JSON_THROW_ON_ERROR);
         $quote=Pricing::online($product,$input['variantId'],$input['date'],$input['quantities'],$product['rules'] ?? [],$product['closures'] ?? [],$input['slotId'] ?? null);
         jingoJson(array_merge($quote,['preview'=>true,'inventoryChecked'=>false,'voucherChecked'=>false]));
+    }
+    if(preg_match('#^/api/v1/admin/products/([^/]+)/archive$#D',(string)$path,$archiveMatch)){
+        if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='POST'){header('Allow: POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);$auth->mutation();$actor=$auth->me();jingoJson(['data'=>(new Products($db))->archive(rawurldecode($archiveMatch[1]),jingoRequestBody(),$actor['id'])]);
+    }
+    if($path==='/api/v1/admin/products'){
+        $method=$_SERVER['REQUEST_METHOD'] ?? 'GET';if(!in_array($method,['GET','POST'],true)){header('Allow: GET, POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
+        $config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me();$products=new Products($db);jingoJson(['data'=>$method==='POST'?$products->save(jingoRequestBody(1048576),$actor['id']):$products->list(true)]);
+    }
+    if($path==='/api/v1/products'||preg_match('#^/api/v1/products/([^/]+)(/sale-calendar)?$#D',(string)$path,$productMatch)){
+        if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
+        $db=jingoDatabase(jingoConfig());$products=new Products($db);$lang=($_GET['lang'] ?? '')==='en'?'en':'vi';
+        if(!empty($productMatch[2])){$p=$products->find(rawurldecode($productMatch[1]));$view=$products->publicView($p,$lang);jingoJson(['data'=>['variants'=>array_map(fn($v)=>['id'=>$v['id'],'timeSlots'=>$v['timeSlots'] ?? []],$p['variants']),'saleClosures'=>$view['saleClosures']]]);}
+        if(isset($productMatch[1]))jingoJson(['data'=>$products->publicView($products->find(rawurldecode($productMatch[1]),true,false,$lang),$lang)]);
+        $items=$products->list(false,$lang);foreach(['type','destination','q'] as $filter)if(isset($_GET[$filter])&&!is_string($_GET[$filter]))throw new HttpError(400,'Bộ lọc không hợp lệ.');
+        if(!empty($_GET['type']))$items=array_values(array_filter($items,fn($p)=>$p['type']===$_GET['type']));
+        if(!empty($_GET['destination'])){$ids=[$_GET['destination']=>true];$nodes=(new Destinations($db))->list();do{$changed=false;foreach($nodes as $node)if($node['parentId']&&isset($ids[$node['parentId']])&&!isset($ids[$node['id']])){$ids[$node['id']]=true;$changed=true;}}while($changed);$items=array_values(array_filter($items,fn($p)=>isset($ids[$p['destinationId'] ?? ''])));}
+        if(!empty($_GET['q'])){$fold=static fn($s)=>strtolower(iconv('UTF-8','ASCII//TRANSLIT//IGNORE',str_replace(['đ','Đ'],['d','D'],$s)) ?: '');$needle=$fold(mb_substr($_GET['q'],0,200));$items=array_values(array_filter($items,fn($p)=>str_contains($fold($p['name'].' '.$p['destination']),$needle)));}jingoJson(['data'=>$items]);
     }
     $routes = ['login'=>'POST','me'=>'GET','logout'=>'POST','login-policy'=>'GET'];
     $action = str_starts_with((string)$path, '/api/v1/admin/') ? substr($path, strlen('/api/v1/admin/')) : '';

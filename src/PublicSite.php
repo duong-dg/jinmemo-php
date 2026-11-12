@@ -14,8 +14,9 @@ final class PublicSite
         $base=rtrim($this->config['PUBLIC_BASE_URL'] ?? '','/');$parts=parse_url($base);
         if(!$parts || !isset($parts['scheme'],$parts['host']) || !in_array($parts['scheme'],['http','https'],true) || isset($parts['query']) || isset($parts['fragment']) || isset($parts['user']))throw new HttpError(503,'Chưa cấu hình URL website.');
         $base=$parts['scheme'].'://'.$parts['host'].(isset($parts['port'])?':'.$parts['port']:'');
-        $home=in_array($path,['/','/en','/en/'],true);$page=null;$published=$pages->published($lang);$navigation=$pages->navigation($lang);
+        $home=in_array($path,['/','/en','/en/'],true);$isProduct=(bool)preg_match('#^/(?:en/)?ve/[^/]+/?$#D',$path);$page=null;$product=null;$published=$pages->published($lang);$navigation=$pages->navigation($lang);$catalog=new Products($this->db);$publicProducts=$home?$catalog->list(false,$lang):[];
         if($home){$canonicalPath=$en?'/en':'/';$title=$seo[$lang]['title'];$description=$seo[$lang]['description'];$image=$seo['image'];$languagePaths=['vi'=>'/','en'=>'/en'];}
+        elseif($isProduct){$raw=$catalog->find(rawurldecode(basename(rtrim($path,'/'))),true,false,$lang);$product=$catalog->publicView($raw,$lang);$canonicalPath=($en?'/en':'').'/ve/'.$product['slug'];$languagePaths=['vi'=>'/ve/'.$product['slug']];if(Products::translated($raw))$languagePaths['en']='/en/ve/'.$product['slug'];$title=$product['seoTitle'] ?: $product['name'];$description=$product['seoDescription'] ?: $product['description'];$image=$product['cover'];}
         else {
             $contact=in_array($path,['/lien-he','/lien-he/','/en/contact','/en/contact/'],true);
             $slug=$contact?'':rawurldecode(basename(rtrim($path,'/')));$page=$pages->find($slug,$lang,$contact);$canonicalPath=$page['localePaths'][$lang];$languagePaths=$page['localePaths'];

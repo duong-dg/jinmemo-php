@@ -1,0 +1,1051 @@
+[
+  {
+    "name": "defaults",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ]
+    },
+    "valid": true,
+    "expected": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "cover": null,
+      "gallery": [],
+      "detailHtml": "",
+      "status": "DRAFT",
+      "demo": false,
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          },
+          "timeSlots": []
+        }
+      ],
+      "rules": [],
+      "closures": [],
+      "seoTitle": "",
+      "seoDescription": ""
+    },
+    "hash": "156f94dcdadac0cc122fc07d0f03a5eb2c2aac91be525d95d1abb93ff1739339"
+  },
+  {
+    "name": "local conditions",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          },
+          "conditions": {
+            "ADULT": "Người lớn",
+            "LOCAL_CHILD": "Cư trú địa phương"
+          }
+        }
+      ]
+    },
+    "valid": true,
+    "expected": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "cover": null,
+      "gallery": [],
+      "detailHtml": "",
+      "status": "DRAFT",
+      "demo": false,
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          },
+          "timeSlots": [],
+          "conditions": {
+            "ADULT": "Người lớn",
+            "LOCAL_CHILD": "Cư trú địa phương"
+          }
+        }
+      ],
+      "rules": [],
+      "closures": [],
+      "seoTitle": "",
+      "seoDescription": ""
+    },
+    "hash": "46286420e6895f5527df5d4495910a6af6dff06e6ec469a2eacd247aa00c2b9b"
+  },
+  {
+    "name": "slots",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          },
+          "timeSlots": [
+            {
+              "id": "am",
+              "start": "09:00",
+              "end": "12:00"
+            }
+          ]
+        }
+      ]
+    },
+    "valid": true,
+    "expected": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "cover": null,
+      "gallery": [],
+      "detailHtml": "",
+      "status": "DRAFT",
+      "demo": false,
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          },
+          "timeSlots": [
+            {
+              "id": "am",
+              "start": "09:00",
+              "end": "12:00"
+            }
+          ]
+        }
+      ],
+      "rules": [],
+      "closures": [],
+      "seoTitle": "",
+      "seoDescription": ""
+    },
+    "hash": "156f94dcdadac0cc122fc07d0f03a5eb2c2aac91be525d95d1abb93ff1739339"
+  },
+  {
+    "name": "empty prices",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {}
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "name": "duplicate packages",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          }
+        },
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "name": "duplicate slots",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          },
+          "timeSlots": [
+            {
+              "id": "a",
+              "start": "09:00"
+            },
+            {
+              "id": "b",
+              "start": "09:00"
+            }
+          ]
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "name": "reverse slot",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          },
+          "timeSlots": [
+            {
+              "id": "a",
+              "start": "12:00",
+              "end": "09:00"
+            }
+          ]
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "name": "unknown field",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ],
+      "extra": true
+    },
+    "valid": false
+  },
+  {
+    "name": "unknown price",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0,
+            "BABY": 0
+          }
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "name": "negative price",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": -1,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "name": "overprice",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 100000001,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "name": "online",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ],
+      "onlineDiscount": {
+        "type": "PERCENT",
+        "value": 15
+      }
+    },
+    "valid": true,
+    "expected": {
+      "onlineDiscount": {
+        "type": "PERCENT",
+        "value": 15
+      },
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "cover": null,
+      "gallery": [],
+      "detailHtml": "",
+      "status": "DRAFT",
+      "demo": false,
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          },
+          "timeSlots": []
+        }
+      ],
+      "rules": [],
+      "closures": [],
+      "seoTitle": "",
+      "seoDescription": ""
+    },
+    "hash": "156f94dcdadac0cc122fc07d0f03a5eb2c2aac91be525d95d1abb93ff1739339"
+  },
+  {
+    "name": "invalid online",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ],
+      "onlineDiscount": {
+        "type": "PERCENT",
+        "value": 0
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "float price",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 1.5,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "name": "missing description",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "name": "null slots",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          },
+          "timeSlots": null
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "name": "rule",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ],
+      "rules": [
+        {
+          "id": "r",
+          "productId": "p",
+          "variantId": "eco",
+          "customerType": "ADULT",
+          "startDate": "2099-06-01",
+          "endDate": "2099-06-30",
+          "priority": 10,
+          "amount": 700000
+        }
+      ]
+    },
+    "valid": true,
+    "expected": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "cover": null,
+      "gallery": [],
+      "detailHtml": "",
+      "status": "DRAFT",
+      "demo": false,
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          },
+          "timeSlots": []
+        }
+      ],
+      "rules": [
+        {
+          "id": "r",
+          "productId": "p",
+          "variantId": "eco",
+          "customerType": "ADULT",
+          "startDate": "2099-06-01",
+          "endDate": "2099-06-30",
+          "priority": 10,
+          "amount": 700000
+        }
+      ],
+      "closures": [],
+      "seoTitle": "",
+      "seoDescription": ""
+    },
+    "hash": "156f94dcdadac0cc122fc07d0f03a5eb2c2aac91be525d95d1abb93ff1739339"
+  },
+  {
+    "name": "overlap",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ],
+      "rules": [
+        {
+          "id": "r",
+          "productId": "p",
+          "variantId": "eco",
+          "customerType": "ADULT",
+          "startDate": "2099-06-01",
+          "endDate": "2099-06-30",
+          "priority": 10,
+          "amount": 700000
+        },
+        {
+          "id": "r2",
+          "productId": "p",
+          "variantId": "eco",
+          "customerType": "ADULT",
+          "startDate": "2099-06-01",
+          "endDate": "2099-06-30",
+          "priority": 10,
+          "amount": 700000
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "name": "different weekdays",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ],
+      "rules": [
+        {
+          "id": "r",
+          "productId": "p",
+          "variantId": "eco",
+          "customerType": "ADULT",
+          "startDate": "2099-06-01",
+          "endDate": "2099-06-30",
+          "priority": 10,
+          "amount": 700000,
+          "weekdays": [
+            1
+          ]
+        },
+        {
+          "id": "r2",
+          "productId": "p",
+          "variantId": "eco",
+          "customerType": "ADULT",
+          "startDate": "2099-06-01",
+          "endDate": "2099-06-30",
+          "priority": 10,
+          "amount": 700000,
+          "weekdays": [
+            2
+          ]
+        }
+      ]
+    },
+    "valid": true,
+    "expected": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "cover": null,
+      "gallery": [],
+      "detailHtml": "",
+      "status": "DRAFT",
+      "demo": false,
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          },
+          "timeSlots": []
+        }
+      ],
+      "rules": [
+        {
+          "id": "r",
+          "productId": "p",
+          "variantId": "eco",
+          "customerType": "ADULT",
+          "startDate": "2099-06-01",
+          "endDate": "2099-06-30",
+          "weekdays": [
+            1
+          ],
+          "priority": 10,
+          "amount": 700000
+        },
+        {
+          "id": "r2",
+          "productId": "p",
+          "variantId": "eco",
+          "customerType": "ADULT",
+          "startDate": "2099-06-01",
+          "endDate": "2099-06-30",
+          "weekdays": [
+            2
+          ],
+          "priority": 10,
+          "amount": 700000
+        }
+      ],
+      "closures": [],
+      "seoTitle": "",
+      "seoDescription": ""
+    },
+    "hash": "156f94dcdadac0cc122fc07d0f03a5eb2c2aac91be525d95d1abb93ff1739339"
+  },
+  {
+    "name": "unknown package rule",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ],
+      "rules": [
+        {
+          "id": "r",
+          "productId": "p",
+          "variantId": "no",
+          "customerType": "ADULT",
+          "startDate": "2099-06-01",
+          "endDate": "2099-06-30",
+          "priority": 10,
+          "amount": 700000
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "name": "unsupported group rule",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ],
+      "rules": [
+        {
+          "id": "r",
+          "productId": "p",
+          "variantId": "eco",
+          "customerType": "SENIOR",
+          "startDate": "2099-06-01",
+          "endDate": "2099-06-30",
+          "priority": 10,
+          "amount": 700000
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "name": "foreign product",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ],
+      "rules": [
+        {
+          "id": "r",
+          "productId": "other",
+          "variantId": "eco",
+          "customerType": "ADULT",
+          "startDate": "2099-06-01",
+          "endDate": "2099-06-30",
+          "priority": 10,
+          "amount": 700000
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "name": "reverse dates",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ],
+      "rules": [
+        {
+          "id": "r",
+          "productId": "p",
+          "variantId": "eco",
+          "customerType": "ADULT",
+          "startDate": "2099-06-01",
+          "endDate": "2099-05-01",
+          "priority": 10,
+          "amount": 700000
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "name": "closure",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ],
+      "closures": [
+        {
+          "productId": "p",
+          "startDate": "2099-06-01",
+          "endDate": "2099-06-30",
+          "weekdays": [
+            2,
+            7
+          ],
+          "reason": "Nội bộ"
+        }
+      ]
+    },
+    "valid": true,
+    "expected": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "cover": null,
+      "gallery": [],
+      "detailHtml": "",
+      "status": "DRAFT",
+      "demo": false,
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          },
+          "timeSlots": []
+        }
+      ],
+      "rules": [],
+      "closures": [
+        {
+          "weekdays": [
+            2,
+            7
+          ],
+          "productId": "p",
+          "startDate": "2099-06-01",
+          "endDate": "2099-06-30",
+          "reason": "Nội bộ"
+        }
+      ],
+      "seoTitle": "",
+      "seoDescription": ""
+    },
+    "hash": "156f94dcdadac0cc122fc07d0f03a5eb2c2aac91be525d95d1abb93ff1739339"
+  },
+  {
+    "name": "duplicate closure weekday",
+    "input": {
+      "id": "p",
+      "slug": "ve-thu",
+      "name": "Vé thử Đà Nẵng",
+      "destination": "Đà Nẵng",
+      "type": "ticket",
+      "description": "Trải nghiệm địa phương",
+      "status": "DRAFT",
+      "version": 0,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "LOCAL_CHILD": 0
+          }
+        }
+      ],
+      "closures": [
+        {
+          "productId": "p",
+          "startDate": "2099-06-01",
+          "endDate": "2099-06-30",
+          "weekdays": [
+            2,
+            2
+          ]
+        }
+      ]
+    },
+    "valid": false
+  }
+]
