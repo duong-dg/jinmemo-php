@@ -2,6 +2,8 @@
 
 Có thể chuyển dữ liệu. Bản Node hiện có **Xuất dữ liệu MySQL (.sql)** tạo các bảng staging `jm_transfer_*`, giữ tên cột nguồn. File này nhập được vào database chuyển dữ liệu riêng, nhưng chưa phải schema vận hành của PHP. Repo PHP chưa có bộ nhập toàn bộ staging vào bảng `jingo_*`.
 
+Đợt 20 đã có **bộ nhập riêng cho bài viết**, mặc định chỉ kiểm tra; xem [IMPORT-POSTS.md](IMPORT-POSTS.md). Nó chưa nhập đơn hoặc các module khác. Các ghi chú “chưa có importer toàn bộ” bên dưới vẫn áp dụng.
+
 ## Cách chuyển dự kiến
 
 1. Sao lưu PostgreSQL và toàn bộ file upload. Giữ bản gốc để phục hồi.
