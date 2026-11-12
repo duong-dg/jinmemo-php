@@ -1,0 +1,30 @@
+'use strict';
+let inventorySelection='',inventoryFrom='',inventoryTo='';
+async function renderInventory(screen,renderId){
+ screen.replaceChildren(el('p','Đang tải tồn vé…','muted'));
+ try{
+  const products=(await api('products')).data;if(renderId!==loading||$('#workspace').hidden)return;
+  if(!products.length){screen.replaceChildren(empty('Tạo sản phẩm trước khi cấu hình tồn vé'));return;}
+  const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());inventoryFrom||=today;inventoryTo||=today;
+  const product=products.find(p=>p.id===inventorySelection)||products[0];inventorySelection=product.id;screen.replaceChildren();
+  const filter=el('form',undefined,'upload');const select=el('select');select.setAttribute('aria-label','Sản phẩm');for(const p of products){const option=el('option',p.name);option.value=p.id;select.append(option);}select.value=product.id;
+  const from=el('input');from.type='date';from.required=true;from.value=inventoryFrom;const to=el('input');to.type='date';to.required=true;to.value=inventoryTo;
+  for(const [name,input]of [['Sản phẩm',select],['Từ ngày',from],['Đến ngày',to]]){const label=el('label',name);label.append(input);filter.append(label);}const load=el('button','Xem tồn','primary');load.type='submit';filter.append(load);screen.append(filter);
+  filter.onsubmit=e=>{e.preventDefault();inventorySelection=select.value;inventoryFrom=from.value;inventoryTo=to.value;render();};
+  const config=await api('inventory?'+new URLSearchParams({productId:product.id,from:inventoryFrom,to:inventoryTo}));if(renderId!==loading||$('#workspace').hidden)return;
+  const summary=el('div',undefined,'overview-intro');summary.append(el('h2',config.enabled?'Đang giới hạn tồn vé':'Chưa giới hạn tồn vé'),el('p','Giới hạn ngày và suất giờ áp dụng đồng thời; khách miễn phí vẫn tính một suất. Báo giá không giữ chỗ.'));
+  const confirmation=el('div');confirmation.hidden=true;confirmation.append(el('p',config.enabled?'Tắt giới hạn tồn vé cho sản phẩm này?':'Bật giới hạn? Các ngày chưa cấu hình tồn sẽ không nhận khách.'));
+  const toggle=button(config.enabled?'Tắt giới hạn':'Bật giới hạn',()=>{confirmation.hidden=false;toggle.hidden=true;},'secondary');
+  const confirmButton=button(config.enabled?'Xác nhận tắt':'Xác nhận bật',async()=>{confirmButton.disabled=true;try{await api('inventory/config',{productId:product.id,version:config.version,enabled:!config.enabled});await render();notice('Đã cập nhật giới hạn tồn.');}catch(error){notice(error.message,true);}finally{confirmButton.disabled=false;}},'primary');confirmation.append(confirmButton,button('Hủy',()=>{confirmation.hidden=true;toggle.hidden=false;},'quiet'));summary.append(toggle,confirmation);screen.append(summary);
+  const capacity=el('form',undefined,'package-editor fields');capacity.append(el('h3','Đặt tổng sức chứa','full'));const variant=el('select');for(const v of product.variants){const o=el('option',v.name);o.value=v.id;variant.append(o);}const slot=el('select');
+  const fillSlots=()=>{slot.replaceChildren();const all=el('option','Tổng cả ngày (dùng chung các suất)');all.value='';slot.append(all);for(const s of product.variants.find(v=>v.id===variant.value)?.timeSlots||[]){const o=el('option',s.start+(s.end?'–'+s.end:''));o.value=s.id;slot.append(o);}};variant.onchange=fillSlots;fillSlots();
+  const start=el('input');start.type='date';start.required=true;start.value=inventoryFrom;const end=el('input');end.type='date';end.required=true;end.value=inventoryTo;
+  const count=el('input');count.type='number';count.required=true;count.min='0';count.max='1000000';count.step='1';count.value='0';const threshold=el('input');threshold.type='number';threshold.min='0';threshold.max='1000000';threshold.step='1';threshold.value='5';
+  for(const [name,input]of [['Gói vé',variant],['Phạm vi',slot],['Từ ngày',start],['Đến ngày',end],['Tổng sức chứa (0 = hết chỗ)',count],['Cảnh báo khi còn tối đa',threshold]]){const label=el('label',name);label.append(input);capacity.append(label);}
+  const weekdays=el('div',undefined,'full weekday-options');for(let day=1;day<=7;day++){const label=el('label',day===7?'Chủ nhật':'Thứ '+(day+1)),check=el('input');check.type='checkbox';check.value=String(day);check.checked=true;label.prepend(check);weekdays.append(label);}capacity.append(weekdays);
+  const save=el('button','Lưu tổng sức chứa','primary');save.type='submit';capacity.append(save);capacity.onsubmit=async e=>{e.preventDefault();save.disabled=true;try{await api('inventory/capacity',{productId:product.id,version:config.version,variantId:variant.value,slotId:slot.value,startDate:start.value,endDate:end.value,capacity:Number(count.value),lowStockThreshold:Number(threshold.value),weekdays:Array.from(weekdays.querySelectorAll('input:checked')).map(c=>Number(c.value))});await render();notice('Đã lưu sức chứa cho các ngày đã chọn.');}catch(error){notice(error.message,true);}finally{save.disabled=false;}};screen.append(capacity);
+  screen.append(el('p','Nhập tổng sức chứa, không phải số chỗ cộng thêm. Khoảng ngày tối đa 367 ngày.','muted'));
+  if(!config.rows.length){screen.append(empty('Chưa có sức chứa trong khoảng ngày này'));return;}
+  const wrap=el('div',undefined,'table-wrap'),table=el('table'),head=el('thead'),heading=el('tr');for(const title of ['Ngày','Gói','Phạm vi','Tổng','Đã phân bổ','Còn lại'])heading.append(el('th',title));head.append(heading);table.append(head);const body=el('tbody');for(const row of config.rows){const tr=el('tr');for(const value of [row.visit_date,product.variants.find(v=>v.id===row.variant_id)?.name||row.variant_id,row.slot_id?product.variants.flatMap(v=>v.timeSlots||[]).find(s=>s.id===row.slot_id)?.start||row.slot_id:'Cả ngày',row.capacity,row.used,row.remaining+(row.lowStock?' · Sắp hết':'')])tr.append(el('td',String(value)));body.append(tr);}table.append(body);wrap.append(table);screen.append(wrap);
+ }catch(error){if(renderId===loading){screen.replaceChildren(empty('Chưa tải được tồn vé'));notice(error.message,true);}}
+}

@@ -1,6 +1,6 @@
 'use strict';
 const $=s=>document.querySelector(s);
-const names={products:'Sản phẩm','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
+const names={products:'Sản phẩm',inventory:'Tồn vé','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
 const labels={ACTIVE:'Hoạt động',ARCHIVED:'Lưu trữ',DRAFT:'Bản nháp',PUBLISHED:'Đã xuất bản',TRASH:'Thùng rác',NEW:'Mới',DONE:'Đã xử lý',TICKET:'Vé',TOUR:'Tour',PAGE:'Trang thường',CONTACT:'Liên hệ'};
 let current='overview',records=[],draft=null,dirty=false,loading=0,contactStatus='NEW',editing=false,editorSection='';
 function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;}
@@ -29,9 +29,10 @@ async function render(){
  if(current==='overview'){
   const intro=el('div',undefined,'overview-intro');intro.append(el('h2','Một nơi để chăm chút nội dung.'),el('p','Các danh mục, trang nội dung và hình ảnh đã sẵn sàng để quản lý. Đặt vé, thanh toán, quầy và cộng tác viên sẽ được bổ sung trong các đợt chuyển tiếp.'));screen.append(intro);
   const cards=el('div',undefined,'cards');const descriptions={'product-types':'Phân nhóm vé và tour của bạn.',destinations:'Sắp xếp địa điểm theo khu vực.',media:'Lưu và chọn hình ảnh cho nội dung.',suppliers:'Quản lý thông tin các đối tác.',pages:'Biên tập giới thiệu, chính sách, liên hệ.','contact-requests':'Theo dõi và xử lý lời nhắn của khách.'};
-  descriptions.products='Vé, gói giá và lịch sử dụng.';descriptions['site-seo']='Tiêu đề, mô tả và ảnh chia sẻ Việt/Anh.';descriptions.brand='Tên, logo và thông tin công ty.';
+  descriptions.products='Vé, gói giá và lịch sử dụng.';descriptions.inventory='Sức chứa theo ngày và suất giờ.';descriptions['site-seo']='Tiêu đề, mô tả và ảnh chia sẻ Việt/Anh.';descriptions.brand='Tên, logo và thông tin công ty.';
   for(const [key,title]of Object.entries(names)){const card=el('a',undefined,'card');card.href='#'+key;card.append(el('h3',title),el('p',descriptions[key]),el('span','Mở quản lý ↗'));cards.append(card);}screen.append(cards);return;
  }
+ if(current==='inventory'){await renderInventory(screen,id);return;}
  screen.append(el('p','Đang tải…','muted'));
  try{
   const route=current==='contact-requests'?current+'?status='+contactStatus:current;const result=await api(route);if(id!==loading||$('#workspace').hidden)return;screen.replaceChildren();
@@ -130,4 +131,5 @@ function renderSettings(screen,settings){
  else {for(const lang of ['vi','en']){const card=el('article',undefined,'overview-intro');card.append(el('p',lang==='vi'?'TIẾNG VIỆT':'ENGLISH','eyebrow'),el('h2',settings[lang].title),el('p',settings[lang].description));screen.append(card);}screen.append(el('p','Website khách đang được chuyển tiếp. Cấu hình được lưu để sử dụng khi giao diện công khai sẵn sàng.','muted'));}
  const image=current==='brand'?settings.logo:settings.image;if(image){const img=el('img');img.src='/api/v1/media/'+encodeURIComponent(image.id);img.alt=image.alt;img.className='settings-image';screen.append(img);}
 }
-(async()=>{try{const me=await api('me');showWorkspace(me.email);}catch(error){showLogin();if(error.message!=='Vui lòng đăng nhập.'&&error.message!=='Phiên đăng nhập đã hết hạn.'){$('#login-error').textContent=error.message;$('#login-error').hidden=false;}}})();
+async function startAdmin(){try{const me=await api('me');showWorkspace(me.email);}catch(error){showLogin();if(error.message!=='Vui lòng đăng nhập.'&&error.message!=='Phiên đăng nhập đã hết hạn.'){$('#login-error').textContent=error.message;$('#login-error').hidden=false;}}}
+if(document.readyState==='complete')startAdmin();else document.addEventListener('DOMContentLoaded',startAdmin,{once:true});

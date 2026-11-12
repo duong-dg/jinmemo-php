@@ -14,10 +14,12 @@ require dirname(__DIR__) . '/src/Pricing.php';
 require dirname(__DIR__) . '/src/PublicSite.php';
 require dirname(__DIR__) . '/src/ProductSchema.php';
 require dirname(__DIR__) . '/src/Products.php';
+require dirname(__DIR__) . '/src/Inventory.php';
+require dirname(__DIR__) . '/src/Quotes.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js'],true)) return false;
+    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js'],true)) return false;
     if(in_array($path,['/','/en','/en/','/lien-he','/lien-he/','/en/contact','/en/contact/'],true) || preg_match('#^/(?:trang|en/pages|ve|en/ve)/[^/]+/?$#D',(string)$path)) {
         $publicRequest=true;
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
@@ -144,6 +146,17 @@ try {
         if(!empty($_GET['type']))$items=array_values(array_filter($items,fn($p)=>$p['type']===$_GET['type']));
         if(!empty($_GET['destination'])){$ids=[$_GET['destination']=>true];$nodes=(new Destinations($db))->list();do{$changed=false;foreach($nodes as $node)if($node['parentId']&&isset($ids[$node['parentId']])&&!isset($ids[$node['id']])){$ids[$node['id']]=true;$changed=true;}}while($changed);$items=array_values(array_filter($items,fn($p)=>isset($ids[$p['destinationId'] ?? ''])));}
         if(!empty($_GET['q'])){$fold=static fn($s)=>strtolower(iconv('UTF-8','ASCII//TRANSLIT//IGNORE',str_replace(['đ','Đ'],['d','D'],$s)) ?: '');$needle=$fold(mb_substr($_GET['q'],0,200));$items=array_values(array_filter($items,fn($p)=>str_contains($fold($p['name'].' '.$p['destination']),$needle)));}jingoJson(['data'=>$items]);
+    }
+    if($path==='/api/v1/admin/inventory'||in_array($path,['/api/v1/admin/inventory/config','/api/v1/admin/inventory/capacity'],true)){
+        $read=$path==='/api/v1/admin/inventory';$expected=$read?'GET':'POST';if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!==$expected){header('Allow: '.$expected);throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if(!$read)$auth->mutation();$actor=$auth->me();$inventory=new Inventory($db);
+        if($read){foreach(['productId','from','to'] as $key)if(!is_string($_GET[$key] ?? null))throw new HttpError(400,'Chọn sản phẩm và khoảng ngày.');jingoJson($inventory->read($_GET['productId'],$_GET['from'],$_GET['to']));}
+        jingoJson(str_ends_with($path,'config')?$inventory->configure(jingoRequestBody(),$actor['id']):$inventory->capacity(jingoRequestBody(),$actor['id']));
+    }
+    if($path==='/api/v1/quotes'){
+        if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='POST'){header('Allow: POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}jingoJson((new Quotes(jingoDatabase(jingoConfig())))->quote(jingoRequestBody(),($_GET['lang'] ?? '')==='en'?'en':'vi'));
+    }
+    if(preg_match('#^/api/v1/products/([^/]+)/prices$#D',(string)$path,$priceMatch)){
+        if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}foreach(['variantId','date'] as $key)if(!is_string($_GET[$key] ?? null))throw new HttpError(400,'Chọn gói và ngày.');if(isset($_GET['slotId'])&&!is_string($_GET['slotId']))throw new HttpError(400,'Suất giờ không hợp lệ.');jingoJson((new Quotes(jingoDatabase(jingoConfig())))->prices(rawurldecode($priceMatch[1]),$_GET['variantId'],$_GET['date'],$_GET['slotId'] ?? null,($_GET['lang'] ?? '')==='en'?'en':'vi'));
     }
     $routes = ['login'=>'POST','me'=>'GET','logout'=>'POST','login-policy'=>'GET'];
     $action = str_starts_with((string)$path, '/api/v1/admin/') ? substr($path, strlen('/api/v1/admin/')) : '';

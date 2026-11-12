@@ -4,12 +4,13 @@ $e=static fn(mixed $text):string=>htmlspecialchars((string)$text,ENT_QUOTES|ENT_
 $media=static fn(?array $ref):string=>isset($ref['id']) && preg_match('/^[a-f0-9-]{36}$/iD',$ref['id'])?'/api/v1/media/'.$ref['id']:'';
 $logo=$media($branding['logo']);$cover=$media($image);$contact=$page && $page['kind']==='CONTACT'?$page['contact']:null;
 $homePath=$en?'/en':'/';
+$asset=static fn(string $name):string=>'/assets/'.$name.'?v='.filemtime(dirname(__DIR__).'/public/assets/'.$name);
 ?>
 <!doctype html><html lang="<?=$lang?>"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title><?=$e($title)?></title><meta name="description" content="<?=$e($description)?>"><meta name="robots" content="<?=$indexing?'index,follow':'noindex,follow'?>"><link rel="canonical" href="<?=$e($canonical)?>">
 <?php foreach($languagePaths as $locale=>$url):?><link rel="alternate" hreflang="<?=$e($locale)?>" href="<?=$e($base.$url)?>"><?php endforeach;?><link rel="alternate" hreflang="x-default" href="<?=$e($base.$languagePaths['vi'])?>">
 <meta property="og:title" content="<?=$e($title)?>"><meta property="og:description" content="<?=$e($description)?>"><meta property="og:url" content="<?=$e($canonical)?>"><meta property="og:type" content="website"><meta property="og:site_name" content="<?=$e($branding['name'])?>"><meta property="og:locale" content="<?=$en?'en_US':'vi_VN'?>">
 <?php if($cover):?><meta property="og:image" content="<?=$e($base.$cover.'/share.jpg')?>"><meta name="twitter:card" content="summary_large_image"><?php endif;?>
-<link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/content-page.css"><script src="/assets/contact.js" defer></script></head>
+<link rel="stylesheet" href="<?=$asset('site.css')?>"><link rel="stylesheet" href="<?=$asset('content-page.css')?>"><script src="<?=$asset('contact.js')?>" defer></script><script src="<?=$asset('quote.js')?>" defer></script></head>
 <body><a class="skip" href="#main"><?=$en?'Skip to content':'Đến nội dung'?></a><header class="site-header"><div class="site-header-inner"><a class="brand" href="<?=$homePath?>"><?php if($logo):?><img src="<?=$e($logo)?>" alt=""><?php endif;?><?=$e($branding['name'])?><span aria-hidden="true">✳</span></a><nav aria-label="<?=$en?'Main navigation':'Điều hướng chính'?>"><?php foreach($navigation as $item)if($item['menu']):?><a href="<?=$e($item['href'])?>"<?=$item['href']===$canonicalPath?' aria-current="page"':''?>><?=$e($item['label'])?></a><?php endif;?></nav><div class="language"><?php foreach($languagePaths as $locale=>$url):?><a href="<?=$e($url)?>" lang="<?=$locale?>"<?=$lang===$locale?' aria-current="true"':''?>><?=$locale==='vi'?'VI':'EN'?></a><?php endforeach;?></div></div></header>
 <main id="main" class="section">
 <?php if($home):?>
