@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS jingo_contact_requests (
+ id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+ data JSON NOT NULL,
+ status VARCHAR(10) NOT NULL DEFAULT 'NEW',
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ INDEX(status,created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS jingo_contact_limits (
+ id CHAR(64) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+ attempts INT NOT NULL,
+ until_at DATETIME NOT NULL,
+ INDEX(until_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
