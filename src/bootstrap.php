@@ -14,7 +14,7 @@ function jingoConfig(): array
             $values[trim($pair[0])] = trim(trim($pair[1]), "\"'");
         }
     }
-    foreach (['APP_ENV', 'APP_NAME', 'MEDIA_DIR', 'PUBLIC_BASE_URL', 'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD'] as $key) {
+    foreach (['APP_ENV', 'APP_NAME', 'SEO_INDEXING', 'MEDIA_DIR', 'PUBLIC_BASE_URL', 'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD'] as $key) {
         $value = getenv($key);
         if ($value !== false) $values[$key] = $value;
     }

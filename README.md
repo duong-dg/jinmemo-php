@@ -1,6 +1,6 @@
 # JinMemo — PHP + MySQL cho hosting
 
-Đây là bản chuyển đổi riêng. Hiện có giao diện đăng nhập/quản trị PHP và các API danh mục, điểm đến, ảnh, nhà cung cấp, trang nội dung, yêu cầu liên hệ, SEO và thương hiệu. Chưa có website bán vé công khai hoặc công cụ chuyển dữ liệu; chưa thay thế hệ thống hiện tại.
+Đây là bản chuyển đổi riêng. Hiện có trang chủ thông tin, trang nội dung và Liên hệ công khai; giao diện quản trị PHP cùng các API danh mục, điểm đến, ảnh, nhà cung cấp, nội dung, liên hệ, SEO/thương hiệu và lõi tính giá. Chưa có luồng bán vé hoặc công cụ chuyển dữ liệu; chưa thay thế hệ thống hiện tại.
 
 ## Cài đặt bộ khung
 
@@ -83,7 +83,7 @@ Không dùng hai database độc lập để cùng ghi đơn và trừ tồn tro
 - HTML được lọc qua DOM theo danh sách thẻ cho phép; bỏ script, iframe, SVG/MathML, thuộc tính sự kiện và URL không an toàn. Ảnh chỉ dùng URL `/api/v1/media/:uuid` và ID phải có trong thư viện. Bộ lọc PHP có thể chuẩn hóa markup khác thư viện sanitize-html của Node.
 - Chống ghi đè bằng version, kiểm slug trùng/alias và audit cùng transaction. Chuyển TRASH rồi khôi phục DRAFT không tự xuất bản. Nội dung rỗng sau lọc không được xuất bản; English xuất bản cần tiêu đề/nội dung.
 - Liên hệ dùng ID cố định `00000000-0000-4000-8000-000000000001`, kind CONTACT; không cho đưa vào thùng rác. Map URL chỉ nhận HTTPS. Schema chưa tự thêm nội dung liên hệ mẫu hoặc nhập dữ liệu hiện tại; admin có thể tạo bản ghi bằng API. Không có form gửi yêu cầu liên hệ trong module này.
-- Đã có giao diện biên tập cơ bản bằng ô nội dung HTML; chưa có editor trực quan, trang công khai PHP, công cụ chuyển dữ liệu, sitemap hay metadata giao diện. Danh sách cùng sortOrder dùng so sánh tự nhiên PHP thay vì collator tiếng Việt.
+- Đã có biên tập cơ bản bằng ô nội dung HTML và trang công khai PHP với metadata (đợt 10). Chưa có editor trực quan, công cụ chuyển dữ liệu hoặc sitemap. Danh sách cùng sortOrder dùng so sánh tự nhiên PHP thay vì collator tiếng Việt.
 - Test `php tests/pages.php` và bộ HTTP trên database thử riêng như trên. POST trang cho phép JSON tối đa 1 MB để chứa HTML hai ngôn ngữ; các API JSON còn lại vẫn giới hạn 64 KB.
 
 ## Module yêu cầu liên hệ — đợt 7
@@ -94,19 +94,19 @@ Không dùng hai database độc lập để cùng ghi đơn và trừ tồn tro
 - Idempotency theo UUID: cùng mã/nội dung trả thành công, khác nội dung trả 409. Sau khi trang ngừng xuất bản, gửi lại cũng bị từ chối như bản Node.
 - Tối đa 3 yêu cầu/email và 100 toàn website trong 15 phút. Bản PHP lưu bộ đếm trong MySQL thay vì RAM để dùng chung giữa các tiến trình/requests, tự dọn bộ đếm hết hạn khi có yêu cầu mới. Gửi lại bản ghi đã có không tốn lượt; yêu cầu bị từ chối không tăng quota. Khóa catalog chung đồng bộ với việc thay đổi trạng thái trang.
 - Admin `GET /api/v1/admin/contact-requests?status=NEW` (NEW/DONE/TRASH): tối đa 100 bản ghi mới nhất, có thông tin khách. `POST /api/v1/admin/contact-requests/:id` với `{ "status": "DONE" }` để chuyển trạng thái hoặc khôi phục NEW. Cần phiên admin; POST cần header/Origin, ghi audit cùng transaction. Không xóa hẳn bản ghi và không công khai danh sách khách.
-- Đã có hộp thư admin PHP. Chưa có biểu mẫu gửi liên hệ công khai PHP, email thông báo, chống spam dịch vụ ngoài hoặc nhập dữ liệu bản Node.
+- Đã có hộp thư admin và biểu mẫu liên hệ công khai PHP (đợt 10). Chưa có email thông báo, chống spam dịch vụ ngoài hoặc nhập dữ liệu bản Node.
 - Bộ `php -d extension=gd tests/http.php` kiểm tra quyền, Origin, dữ liệu, honeypot, gửi lặp/xung đột, quota email/toàn website/hết hạn, xuất bản và cập nhật trạng thái. Dùng server database thử riêng như trên.
 
 ## Đăng nhập và giao diện quản trị
 
 1. Đặt document root vào `public`, bật rewrite và cấu hình `.env` theo hướng dẫn cài ở đầu tài liệu. `PUBLIC_BASE_URL` phải đúng origin truy cập; dùng HTTPS khi APP_ENV=production.
 2. Chạy `php bin/install.php`, rồi `php bin/create-admin.php email-cua-ban@example.com` và nhập mật khẩu 12–72 byte. Không có tài khoản hoặc mật khẩu mặc định. Tài khoản Node cũ cần tạo lại mật khẩu khi chuyển.
-3. Mở `https://ten-mien-cua-ban/admin`, đăng nhập bằng tài khoản vừa tạo. `/` chuyển về `/admin` trong giai đoạn hiện tại. Nếu dùng policy đường dẫn riêng, truy cập `/<entrySlug>` để form truyền đúng mã đường dẫn.
+3. Mở `https://ten-mien-cua-ban/admin`, đăng nhập bằng tài khoản vừa tạo. `/` hiện mở trang thông tin công khai. Nếu dùng policy đường dẫn riêng, truy cập `/<entrySlug>` để form truyền đúng mã đường dẫn.
 4. Sau đăng nhập có tổng quan, loại sản phẩm, điểm đến, thư viện ảnh, nhà cung cấp, trang nội dung, hộp thư liên hệ, SEO và thương hiệu. Form hỗ trợ tạo/sửa, chọn trạng thái, chọn ảnh; trang Liên hệ có nút tạo riêng khi chưa có. Menu không hiển thị module bán vé chưa chuyển.
 
 Trang quản trị dùng HTML/CSS/JS thuần, không cần Node/npm trên hosting. Cookie HttpOnly do API cấp, không lưu token trong localStorage. Đăng xuất thu hồi phiên ở database. Trang HTML không chứa dữ liệu quản trị; API kiểm tra quyền trước khi trả dữ liệu. CSP hạn chế tài nguyên cùng origin, chống nhúng iframe; brand được escape khi hiển thị HTML.
 
-Giới hạn: chưa có OTP, tài khoản POS/CTV, sửa bản dịch loại sản phẩm, editor HTML trực quan, giao diện website khách và nghiệp vụ bán vé. Bản dịch loại hiện có được giữ khi sửa thông tin gốc. Không tự import nội dung/dữ liệu từ hệ thống Node.
+Giới hạn: chưa có OTP, tài khoản POS/CTV, sửa bản dịch loại sản phẩm, editor HTML trực quan hoặc nghiệp vụ bán vé. Bản dịch loại hiện có được giữ khi sửa thông tin gốc. Không tự import nội dung/dữ liệu từ hệ thống Node.
 
 Đã thử trình duyệt: sai/đúng mật khẩu, tạo loại sản phẩm, tạo điểm đến, tạo trang Liên hệ, tải lại giữ phiên và đăng xuất. Đã xem bố cục ở 1366px và 390px. Bộ HTTP kiểm tra HTML/assets, đăng nhập thực/cookie/thu hồi phiên và các API hiện có trên database thử riêng.
 
@@ -117,7 +117,7 @@ Giới hạn: chưa có OTP, tài khoản POS/CTV, sửa bản dịch loại s�
 - Thương hiệu: admin `GET/POST /api/v1/admin/brand`; payload `{version,name,companyName,email,phone,address,logo:null|{id,alt}}`. Tên bắt buộc tối đa 100 ký tự; thông tin liên hệ là nội dung công khai. Public `GET /api/v1/site/brand` trả cấu hình không có version. API này được bổ sung riêng cho bản PHP để hỗ trợ đóng gói đổi thương hiệu.
 - Cả hai mục đều cần phiên admin khi đọc quản trị, header/Origin khi lưu; kiểm version chống ghi đè, kiểm ảnh và audit trong transaction. GET chưa có bản ghi trả cấu hình mặc định với version 0; lần lưu đầu tạo version 1.
 - Tên và logo thương hiệu được áp dụng lên trang đăng nhập/quản trị, cả sau tải lại. Đổi tên không tự thay nội dung SEO, trang Liên hệ, SMTP, domain, callback thanh toán hay tên bảng/cookie. Logo lấy từ thư viện ảnh; favicon và tên gửi email chưa nối cấu hình.
-- Giao diện admin có hai mục **SEO website** và **Thương hiệu**, chỉnh bằng biểu mẫu, chọn ảnh từ thư viện. Website công khai, canonical/hreflang, robots và sitemap chưa chuyển; việc lưu SEO chưa có nghĩa website bán vé đã hoạt động.
+- Giao diện admin có **SEO website** và **Thương hiệu**, chỉnh bằng biểu mẫu, chọn ảnh từ thư viện. Trang thông tin công khai đã dùng SEO, canonical/hreflang (đợt 10); robots.txt và sitemap chưa chuyển. Website bán vé chưa hoạt động.
 - Đã thử trình duyệt lưu SEO, đổi tên thương hiệu và kiểm tra tên trên màn hình đăng nhập sau tải lại. Bộ HTTP kiểm tra default, quyền, lưu/xung đột, kiểm dữ liệu/ảnh, public projection, escape tên trong HTML và logo.
 
 ## Lõi tính giá — đợt 9
@@ -130,3 +130,14 @@ Giới hạn: chưa có OTP, tài khoản POS/CTV, sửa bản dịch loại s�
 - API mới `POST /api/v1/admin/pricing-preview`, cần phiên admin và header/Origin. Payload `{productId,variantId,date,quantities:{ADULT:2},slotId?}`. Server lấy sản phẩm và lịch giá từ database, không nhận giá do client gửi. Cho phép xem trước cả sản phẩm nháp. Response có `preview:true`, `inventoryChecked:false`, `voucherChecked:false`.
 - Chưa có giao diện calculator hoặc API tạo/sửa sản phẩm. Chưa mở public `/api/v1/quotes`: còn chờ kiểm tồn, voucher, bản dịch sản phẩm và luồng đặt vé. Preview không giữ tồn, không phát hành vé, không kiểm/cộng giảm voucher và không có giá trị xác nhận đơn.
 - Chạy `php tests/pricing.php` không cần database. File `tests/fixtures/pricing-node.json` chứa 49 kết quả/lỗi chạy từ lõi Node hiện tại, cùng thời gian kiểm tra cố định: giá gốc/địa phương, lịch ưu tiên/xung đột, ngày/thứ, miễn phí, số khách, tràn tiền, suất giờ và ưu đãi online. Các test bổ sung kiểm giá public, chặn cộng voucher và tính độc lập múi giờ host. Bộ HTTP kiểm quyền preview, giá server, payload lỗi và không có public quote chưa kiểm tồn.
+
+## Trang công khai và biểu mẫu Liên hệ — đợt 10
+
+- `/` và `/en` là trang chủ thông tin, hiển thị các trang đã xuất bản. Không còn tự chuyển khách vào admin. Chưa có danh sách sản phẩm, đặt vé hoặc thanh toán. `/admin` vẫn là quản trị.
+- Các URL `/trang/:slug`, `/en/pages/:slug`, `/lien-he`, `/en/contact` dựng HTML bằng PHP. Chỉ trả nội dung PUBLISHED; English cần published riêng. Slug cũ và dấu `/` cuối chuyển hướng 308 về URL chính; trang nháp, thùng rác hoặc bản dịch chưa xuất bản trả HTML 404.
+- Giữ bố cục/màu sắc trang nội dung của bản Next và dùng lại CSS content-page. Menu/footer lấy từ cấu hình trang; logo/tên lấy từ thương hiệu. Chuyển ngôn ngữ chỉ hiện khi trang có bản tương ứng. HTML nội dung được lọc lại trước khi hiển thị; dữ liệu còn lại escape trong template.
+- Có title/description, canonical, hreflang, Open Graph và ảnh chia sẻ từ thư viện. `SEO_INDEXING=false` mặc định đặt noindex; chỉ bật true khi website/domain/nội dung sẵn sàng. Chưa có robots.txt/sitemap hoặc dữ liệu có cấu trúc đầy đủ. URL chuẩn lấy từ `PUBLIC_BASE_URL`, không lấy Host người gửi.
+- Biểu mẫu Liên hệ gửi API hiện có, có trạng thái gửi/thành công/lỗi, honeypot và mã idempotency giữ lại khi thử lại nội dung giống nhau. Không gửi email hoặc xác nhận đặt vé. Lời nhắn được đọc tại admin → Yêu cầu liên hệ. JavaScript cần HTTPS (hoặc localhost) cho UUID; hosting production vốn yêu cầu HTTPS.
+- Cách dùng: admin → Trang nội dung → Tạo trang Liên hệ nếu chưa có → nhập nội dung/liên hệ → chọn PUBLISHED → lưu. Chọn hiện menu/footer nếu muốn. Có nút **Xem trang** cạnh trang đã xuất bản. Tạo trang thường và bản English tương tự. Không tự thêm thông tin mẫu hoặc liên hệ giả khi cài hosting.
+- Khi cập nhật: upload cả `src`, `views`, các file mới trong `public/assets` và `public/index.php`; giữ `.env`/`storage` hiện tại. Không có migration SQL mới trong đợt này; vẫn nên chạy installer nếu bỏ qua các đợt trước.
+- Đã kiểm thử HTTP cho root công khai, ngôn ngữ, canonical/alias, nội dung an toàn, ẩn nháp và biểu mẫu liên hệ; thử trình duyệt gửi lời nhắn rồi đọc đúng nội dung trong admin. Đã kiểm bố cục trang English ở 390px không tràn ngang. Dữ liệu ví dụ/chụp ảnh chỉ nằm trong database thử riêng.

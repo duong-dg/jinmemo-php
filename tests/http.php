@@ -16,6 +16,12 @@ function request(string $base,string $path,int $expected,string $method='GET',ar
     if(!str_contains($http_response_header[0],' '.$expected.' ')) throw new RuntimeException($path.': '.$http_response_header[0].' '.$raw);
     return json_decode($raw,true,512,JSON_THROW_ON_ERROR);
 }
+function publicHtml(string $base,string $path,int $status=200,?string $location=null): string {
+    $context=stream_context_create(['http'=>['ignore_errors'=>true,'follow_location'=>0,'timeout'=>5]]);$html=file_get_contents($base.$path,false,$context);
+    if($html===false || !str_contains($http_response_header[0] ?? '', ' '.$status.' '))throw new RuntimeException('Public route '.$path.': '.($http_response_header[0] ?? 'no response'));
+    if($location!==null && !in_array('Location: '.$location,$http_response_header,true))throw new RuntimeException('Canonical redirect '.$path);
+    return $html;
+}
 try {
     $db=new PDO($dsn.';dbname='.$name,getenv('JINGO_TEST_USER')?:'root',getenv('JINGO_TEST_PASSWORD')?:'',[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
     foreach(glob(dirname(__DIR__).'/database/*.sql') as $file) foreach(explode(';',file_get_contents($file)) as $sql) if(trim($sql)!=='') $db->exec($sql);
@@ -33,6 +39,10 @@ try {
     for($i=0;$i<40;$i++) { $s=@stream_socket_client('tcp://'.$address,$errno,$error,0.1); if($s) { fclose($s); $ready=true; break; } usleep(50000); }
     if(!$ready) throw new RuntimeException('PHP server not ready.');
     if(request($base,'/api/v1/health',200)['application']!=='JinMemo Test') throw new RuntimeException('Brand config');
+    $homeHtml=publicHtml($base,'/');
+    if(!str_contains($homeHtml,'Chuyến đi nhỏ.') || !str_contains($homeHtml,'noindex,follow') || str_contains($homeHtml,'id="login-form"'))throw new RuntimeException('Public homepage');
+    publicHtml($base,'/en/',308,'/en');
+    if(!str_contains(publicHtml($base,'/en'),'Small journeys.'))throw new RuntimeException('English homepage');
     $html=file_get_contents($base.'/admin');
     if(!str_contains($html,'id="login-form"') || !str_contains($html,'JinMemo Test') || !str_contains($html,'/assets/admin.js')) throw new RuntimeException('Admin HTML shell');
     foreach(['/assets/admin.js','/assets/admin.css'] as $asset) if(strlen(file_get_contents($base.$asset))<100) throw new RuntimeException('Missing admin asset');
@@ -116,10 +126,21 @@ try {
     if(str_contains($view['contentHtml'],'script') || isset($view['version'])) throw new RuntimeException('Public page projection');
     if(request($base,'/api/v1/site/navigation',200)['data'][0]['href']!=='/trang/gioi-thieu') throw new RuntimeException('Page navigation');
     request($base,'/api/v1/site/pages/gioi-thieu?lang=en',404);
+    $publicPage=publicHtml($base,'/trang/gioi-thieu');
+    if(str_contains($publicPage,'<script>bad()') || !str_contains($publicPage,'rel="canonical" href="'.$base.'/trang/gioi-thieu"'))throw new RuntimeException('Public page metadata/sanitization');
+    publicHtml($base,'/en/pages/about',404);
+    $pageSaved=null;foreach(request($base,'/api/v1/admin/pages',200,'GET',[$cookie])['data'] as $candidate)if($candidate['id']===$page['id'])$pageSaved=$candidate;
+    unset($pageSaved['updatedAt']);$pageSaved['slug']='ve-chung-toi';$pageSaved['english']=['title'=>'About us','slug'=>'about','contentHtml'=>'<p>Local journeys.</p>','published'=>true];
+    $pageSaved=request($base,'/api/v1/admin/pages',200,'POST',$headers,$pageSaved)['data'];
+    publicHtml($base,'/trang/gioi-thieu',308,'/trang/ve-chung-toi');
+    $englishPage=publicHtml($base,'/en/pages/about');
+    if(!str_contains($englishPage,'<html lang="en">') || !str_contains($englishPage,'hreflang="vi"') || !str_contains($englishPage,'Local journeys.'))throw new RuntimeException('Public English page');
+    unset($pageSaved['updatedAt']);$pageSaved['status']='DRAFT';request($base,'/api/v1/admin/pages',200,'POST',$headers,$pageSaved);publicHtml($base,'/trang/ve-chung-toi',404);publicHtml($base,'/en/pages/about',404);
     request($base,'/api/v1/site/pages',405,'POST',$headers,$page);
     request($base,'/api/v1/admin/contact-requests',401);
     $contactPage=array_merge($page,['id'=>'00000000-0000-4000-8000-000000000001','kind'=>'CONTACT','slug'=>'lien-he','title'=>'Liên hệ']);
     request($base,'/api/v1/admin/pages',200,'POST',$headers,$contactPage);
+    $contactHtml=publicHtml($base,'/lien-he');if(!str_contains($contactHtml,'id="contact-form"'))throw new RuntimeException('Public contact form');publicHtml($base,'/en/contact',404);
     $contact=['id'=>'00000000-0000-4000-8000-000000000030','name'=>'Khách liên hệ','email'=>'guest@example.test','phone'=>'0901234567','subject'=>'Tư vấn vé','message'=>'Cần tư vấn vé cho đoàn 30 người.','locale'=>'vi','website'=>''];
     $contactHeaders=['X-Jingo-Contact: 1','Origin: '.$base];
     request($base,'/api/v1/site/contact/requests',403,'POST',[],$contact);
@@ -154,6 +175,7 @@ try {
     $storedContact=request($base,'/api/v1/admin/pages',200,'GET',[$cookie])['data'];
     foreach($storedContact as $stored) if($stored['kind']==='CONTACT') { unset($stored['updatedAt']); $stored['status']='DRAFT'; request($base,'/api/v1/admin/pages',200,'POST',$headers,$stored); }
     request($base,'/api/v1/site/contact/requests',404,'POST',$contactHeaders,$contact);
+    if(str_contains(publicHtml($base,'/lien-he',404),'id="contact-form"'))throw new RuntimeException('Draft contact page leaked');
     request($base,'/api/v1/site/contact-requests',404);
     request($base,'/api/v1/admin/media',401);
     file_put_contents($fixture,base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl6lEAAAAAASUVORK5CYII='));

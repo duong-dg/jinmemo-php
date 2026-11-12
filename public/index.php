@@ -11,11 +11,16 @@ require dirname(__DIR__) . '/src/Pages.php';
 require dirname(__DIR__) . '/src/ContactRequests.php';
 require dirname(__DIR__) . '/src/SiteSettings.php';
 require dirname(__DIR__) . '/src/Pricing.php';
+require dirname(__DIR__) . '/src/PublicSite.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js'],true)) return false;
-    if($path==='/') { header('Location: /admin',true,303); exit; }
+    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js'],true)) return false;
+    if(in_array($path,['/','/en','/en/','/lien-he','/lien-he/','/en/contact','/en/contact/'],true) || preg_match('#^/(?:trang|en/pages)/[^/]+/?$#D',(string)$path)) {
+        $publicRequest=true;
+        if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
+        $config=jingoConfig();(new PublicSite(jingoDatabase($config),$config))->render($path);
+    }
     if($path==='/admin' || $path==='/admin/' || preg_match('#^/(jingo-[a-f0-9]{24})/?$#D',(string)$path,$entryMatch)) {
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET') { header('Allow: GET'); throw new HttpError(405,'Phương thức không được hỗ trợ.'); }
         $config=jingoConfig(); $entry=$entryMatch[1] ?? '';
@@ -146,8 +151,10 @@ try {
     }
     jingoJson(['message' => 'Chức năng chưa có trong bản PHP.'], 404);
 } catch (HttpError $error) {
+    if($publicRequest ?? false)PublicSite::error($error->status);
     jingoJson(['message'=>$error->getMessage()],$error->status);
 } catch (Throwable $error) {
     error_log('JinMemo PHP: ' . $error->getMessage());
+    if($publicRequest ?? false)PublicSite::error(500);
     jingoJson(['message' => 'Không xử lý được yêu cầu.'], 500);
 }

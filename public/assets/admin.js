@@ -45,7 +45,7 @@ async function render(){
   records.forEach(record=>{const row=el('tr');const title=el('td');title.append(el('strong',record.name||record.title||record.data?.name||''));
    if(current==='contact-requests')title.append(el('small',record.data.email));
    const info=current==='suppliers'?`${record.productCount} sản phẩm · ${record.phone||record.email||'Chưa có liên hệ'}`:current==='contact-requests'?record.data.subject:record.slug;
-   row.append(title,el('td',info||''));const state=el('td');state.append(el('span',labels[record.status]||record.status,'tag'));row.append(state);const action=el('td');action.append(button(current==='contact-requests'?'Xem yêu cầu ↗':'Chỉnh sửa ↗',()=>current==='contact-requests'?openContact(record):openEditor(record)));row.append(action);body.append(row);
+   row.append(title,el('td',info||''));const state=el('td');state.append(el('span',labels[record.status]||record.status,'tag'));row.append(state);const action=el('td');action.append(button(current==='contact-requests'?'Xem yêu cầu ↗':'Chỉnh sửa ↗',()=>current==='contact-requests'?openContact(record):openEditor(record)));if(current==='pages'&&record.status==='PUBLISHED'){const view=el('a','Xem trang ↗','quiet');view.href=record.kind==='CONTACT'?'/lien-he':'/trang/'+encodeURIComponent(record.slug);view.target='_blank';view.rel='noopener';action.append(document.createTextNode(' · '),view);}row.append(action);body.append(row);
   });table.append(body);wrap.append(table);screen.append(wrap);
  }catch(error){if(id!==loading)return;screen.replaceChildren(empty('Chưa tải được dữ liệu'));notice(error.message,true);}
 }
