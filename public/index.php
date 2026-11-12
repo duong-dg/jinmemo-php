@@ -10,6 +10,7 @@ require dirname(__DIR__) . '/src/ContentHtml.php';
 require dirname(__DIR__) . '/src/Pages.php';
 require dirname(__DIR__) . '/src/ContactRequests.php';
 require dirname(__DIR__) . '/src/SiteSettings.php';
+require dirname(__DIR__) . '/src/Pricing.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
@@ -111,6 +112,14 @@ try {
         if(!$admin)jingoJson(['data'=>$settings->get($key,true)]);
         $auth=new AdminAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me();
         jingoJson($method==='POST'?$settings->save($key,jingoRequestBody(),$actor['id']):$settings->get($key));
+    }
+    if($path==='/api/v1/admin/pricing-preview') {
+        if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='POST'){header('Allow: POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
+        $config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);$auth->mutation();$auth->me();$input=jingoRequestBody();
+        if(array_diff(array_keys($input),['productId','variantId','date','quantities','slotId']) || !is_string($input['productId'] ?? null) || strlen($input['productId'])>80 || !is_string($input['variantId'] ?? null) || strlen($input['variantId'])>80 || !is_string($input['date'] ?? null) || !is_array($input['quantities'] ?? null) || (isset($input['slotId']) && !is_string($input['slotId'])))throw new HttpError(400,'Dữ liệu xem trước giá không hợp lệ.');
+        $statement=$db->prepare('SELECT data FROM jingo_products WHERE id=?');$statement->execute([$input['productId']]);$raw=$statement->fetchColumn();if($raw===false)throw new HttpError(404,'Không tìm thấy sản phẩm.');$product=json_decode($raw,true,512,JSON_THROW_ON_ERROR);
+        $quote=Pricing::online($product,$input['variantId'],$input['date'],$input['quantities'],$product['rules'] ?? [],$product['closures'] ?? [],$input['slotId'] ?? null);
+        jingoJson(array_merge($quote,['preview'=>true,'inventoryChecked'=>false,'voucherChecked'=>false]));
     }
     $routes = ['login'=>'POST','me'=>'GET','logout'=>'POST','login-policy'=>'GET'];
     $action = str_starts_with((string)$path, '/api/v1/admin/') ? substr($path, strlen('/api/v1/admin/')) : '';

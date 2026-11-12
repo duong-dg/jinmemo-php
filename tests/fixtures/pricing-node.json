@@ -1,0 +1,2711 @@
+[
+  {
+    "name": "base",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 600000,
+          "subtotal": 1200000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1500000,
+      "demo": false
+    }
+  },
+  {
+    "name": "free child",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "LOCAL_CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "LOCAL_CHILD",
+          "quantity": 1,
+          "unitPrice": 0,
+          "subtotal": 0,
+          "ruleId": "base"
+        }
+      ],
+      "total": 0,
+      "demo": false
+    }
+  },
+  {
+    "name": "independent local",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 1,
+      "LOCAL_ADULT": 2,
+      "LOCAL_CHILD": 1
+    },
+    "rules": [
+      {
+        "id": "summer",
+        "productId": "p",
+        "variantId": "eco",
+        "customerType": "LOCAL_ADULT",
+        "startDate": "2099-06-01",
+        "endDate": "2099-08-31",
+        "priority": 10,
+        "amount": 370000
+      }
+    ],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 1,
+          "unitPrice": 600000,
+          "subtotal": 600000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "LOCAL_ADULT",
+          "quantity": 2,
+          "unitPrice": 370000,
+          "subtotal": 740000,
+          "ruleId": "summer"
+        },
+        {
+          "customerType": "LOCAL_CHILD",
+          "quantity": 1,
+          "unitPrice": 0,
+          "subtotal": 0,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1340000,
+      "demo": false
+    }
+  },
+  {
+    "name": "missing local",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "high",
+    "date": "2099-06-01",
+    "quantities": {
+      "LOCAL_ADULT": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Gói không áp dụng cho nhóm khách này."
+  },
+  {
+    "name": "missing senior",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "SENIOR": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Gói không áp dụng cho nhóm khách này."
+  },
+  {
+    "name": "rule",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [
+      {
+        "id": "summer",
+        "productId": "p",
+        "variantId": "eco",
+        "customerType": "ADULT",
+        "startDate": "2099-06-01",
+        "endDate": "2099-08-31",
+        "priority": 10,
+        "amount": 450000
+      }
+    ],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 450000,
+          "subtotal": 900000,
+          "ruleId": "summer"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1200000,
+      "demo": false
+    }
+  },
+  {
+    "name": "free priority",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [
+      {
+        "id": "summer",
+        "productId": "p",
+        "variantId": "eco",
+        "customerType": "ADULT",
+        "startDate": "2099-06-01",
+        "endDate": "2099-08-31",
+        "priority": 10,
+        "amount": 450000
+      },
+      {
+        "id": "free",
+        "productId": "p",
+        "variantId": "eco",
+        "customerType": "ADULT",
+        "startDate": "2099-06-01",
+        "endDate": "2099-08-31",
+        "priority": 20,
+        "amount": 0
+      }
+    ],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 0,
+          "subtotal": 0,
+          "ruleId": "free"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 300000,
+      "demo": false
+    }
+  },
+  {
+    "name": "conflict",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [
+      {
+        "id": "summer",
+        "productId": "p",
+        "variantId": "eco",
+        "customerType": "ADULT",
+        "startDate": "2099-06-01",
+        "endDate": "2099-08-31",
+        "priority": 10,
+        "amount": 450000
+      },
+      {
+        "id": "duplicate",
+        "productId": "p",
+        "variantId": "eco",
+        "customerType": "ADULT",
+        "startDate": "2099-06-01",
+        "endDate": "2099-08-31",
+        "priority": 10,
+        "amount": 450000
+      }
+    ],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Lịch giá bị xung đột."
+  },
+  {
+    "name": "date boundary 2099-05-31",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-05-31",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [
+      {
+        "id": "summer",
+        "productId": "p",
+        "variantId": "eco",
+        "customerType": "ADULT",
+        "startDate": "2099-06-01",
+        "endDate": "2099-08-31",
+        "priority": 10,
+        "amount": 450000
+      }
+    ],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-05-31",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 600000,
+          "subtotal": 1200000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1500000,
+      "demo": false
+    }
+  },
+  {
+    "name": "date boundary 2099-08-31",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-08-31",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [
+      {
+        "id": "summer",
+        "productId": "p",
+        "variantId": "eco",
+        "customerType": "ADULT",
+        "startDate": "2099-06-01",
+        "endDate": "2099-08-31",
+        "priority": 10,
+        "amount": 450000
+      }
+    ],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-08-31",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 450000,
+          "subtotal": 900000,
+          "ruleId": "summer"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1200000,
+      "demo": false
+    }
+  },
+  {
+    "name": "date boundary 2099-09-01",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-09-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [
+      {
+        "id": "summer",
+        "productId": "p",
+        "variantId": "eco",
+        "customerType": "ADULT",
+        "startDate": "2099-06-01",
+        "endDate": "2099-08-31",
+        "priority": 10,
+        "amount": 450000
+      }
+    ],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-09-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 600000,
+          "subtotal": 1200000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1500000,
+      "demo": false
+    }
+  },
+  {
+    "name": "weekday mismatch",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [
+      {
+        "id": "summer",
+        "productId": "p",
+        "variantId": "eco",
+        "customerType": "ADULT",
+        "startDate": "2099-06-01",
+        "endDate": "2099-08-31",
+        "priority": 10,
+        "amount": 450000,
+        "weekdays": [
+          7
+        ]
+      }
+    ],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 600000,
+          "subtotal": 1200000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1500000,
+      "demo": false
+    }
+  },
+  {
+    "name": "closed",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [
+      {
+        "productId": "p",
+        "startDate": "2099-06-01",
+        "endDate": "2099-06-01"
+      }
+    ],
+    "now": 4083962399999,
+    "error": "Ngày này đã khóa bán."
+  },
+  {
+    "name": "other package open",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [
+      {
+        "productId": "p",
+        "variantId": "high",
+        "startDate": "2099-06-01",
+        "endDate": "2099-06-01"
+      }
+    ],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 600000,
+          "subtotal": 1200000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1500000,
+      "demo": false
+    }
+  },
+  {
+    "name": "weekday closed",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [
+      {
+        "productId": "p",
+        "weekdays": [
+          1
+        ],
+        "startDate": "2099-06-01",
+        "endDate": "2099-06-30"
+      }
+    ],
+    "now": 4083962399999,
+    "error": "Ngày này đã khóa bán."
+  },
+  {
+    "name": "date 2099-02-29",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-02-29",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Ngày không hợp lệ."
+  },
+  {
+    "name": "date 2100-02-29",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2100-02-29",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Ngày không hợp lệ."
+  },
+  {
+    "name": "date 2099-02-30",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-02-30",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Ngày không hợp lệ."
+  },
+  {
+    "name": "date 2099-1-01",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-1-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Ngày không hợp lệ."
+  },
+  {
+    "name": "date 2000-02-29",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2000-02-29",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2000-02-29",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 600000,
+          "subtotal": 1200000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1500000,
+      "demo": false
+    }
+  },
+  {
+    "name": "date 0000-02-29",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "0000-02-29",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "0000-02-29",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 600000,
+          "subtotal": 1200000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1500000,
+      "demo": false
+    }
+  },
+  {
+    "name": "quantity {}",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {},
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Chọn ít nhất một khách."
+  },
+  {
+    "name": "quantity {\"ADULT\":0}",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 0
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Chọn ít nhất một khách."
+  },
+  {
+    "name": "quantity {\"ADULT\":1.5}",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 1.5
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Số khách phải từ 0 đến 50."
+  },
+  {
+    "name": "quantity {\"ADULT\":-1}",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": -1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Số khách phải từ 0 đến 50."
+  },
+  {
+    "name": "quantity {\"ADULT\":51}",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 51
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Số khách phải từ 0 đến 50."
+  },
+  {
+    "name": "quantity {\"ADULT\":true}",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": true
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Số khách phải từ 0 đến 50."
+  },
+  {
+    "name": "quantity {\"UNKNOWN\":1}",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "UNKNOWN": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Nhóm khách không hợp lệ."
+  },
+  {
+    "name": "quantity {\"ADULT\":50,\"CHILD\":50,\"LOCAL_ADULT\":50}",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 50,
+      "CHILD": 50,
+      "LOCAL_ADULT": 50
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 50,
+          "unitPrice": 600000,
+          "subtotal": 30000000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 50,
+          "unitPrice": 300000,
+          "subtotal": 15000000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "LOCAL_ADULT",
+          "quantity": 50,
+          "unitPrice": 350000,
+          "subtotal": 17500000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 62500000,
+      "demo": false
+    }
+  },
+  {
+    "name": "quantity {\"ADULT\":50,\"CHILD\":50,\"LOCAL_ADULT\":50,\"LOCAL_CHILD\":1}",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 50,
+      "CHILD": 50,
+      "LOCAL_ADULT": 50,
+      "LOCAL_CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Mỗi đơn tối đa 150 khách."
+  },
+  {
+    "name": "missing package",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "none",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Gói vé không tồn tại."
+  },
+  {
+    "name": "unexpected slot",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "slotId": "am",
+    "error": "Gói này không sử dụng khung giờ."
+  },
+  {
+    "name": "select slot",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          },
+          "timeSlots": [
+            {
+              "id": "am",
+              "start": "09:00",
+              "end": "12:00"
+            },
+            {
+              "id": "pm",
+              "start": "15:00"
+            }
+          ]
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Chọn khung giờ sử dụng."
+  },
+  {
+    "name": "before cutoff",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          },
+          "timeSlots": [
+            {
+              "id": "am",
+              "start": "09:00",
+              "end": "12:00"
+            },
+            {
+              "id": "pm",
+              "start": "15:00"
+            }
+          ]
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "slotId": "am",
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "timeSlot": {
+        "id": "am",
+        "start": "09:00",
+        "end": "12:00",
+        "requiresSelection": true
+      },
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 600000,
+          "subtotal": 1200000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1500000,
+      "demo": false
+    }
+  },
+  {
+    "name": "exact cutoff",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          },
+          "timeSlots": [
+            {
+              "id": "am",
+              "start": "09:00",
+              "end": "12:00"
+            },
+            {
+              "id": "pm",
+              "start": "15:00"
+            }
+          ]
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962400000,
+    "slotId": "am",
+    "error": "Đã quá giờ bắt đầu. Vui lòng chọn khung giờ hoặc ngày khác."
+  },
+  {
+    "name": "after cutoff",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          },
+          "timeSlots": [
+            {
+              "id": "am",
+              "start": "09:00",
+              "end": "12:00"
+            },
+            {
+              "id": "pm",
+              "start": "15:00"
+            }
+          ]
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962400001,
+    "slotId": "am",
+    "error": "Đã quá giờ bắt đầu. Vui lòng chọn khung giờ hoặc ngày khác."
+  },
+  {
+    "name": "later slot",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          },
+          "timeSlots": [
+            {
+              "id": "am",
+              "start": "09:00",
+              "end": "12:00"
+            },
+            {
+              "id": "pm",
+              "start": "15:00"
+            }
+          ]
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962400000,
+    "slotId": "pm",
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "timeSlot": {
+        "id": "pm",
+        "start": "15:00",
+        "requiresSelection": true
+      },
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 600000,
+          "subtotal": 1200000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1500000,
+      "demo": false
+    }
+  },
+  {
+    "name": "single slot",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          },
+          "timeSlots": [
+            {
+              "id": "am",
+              "start": "09:00",
+              "end": "12:00"
+            }
+          ]
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "slotId": "am",
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "timeSlot": {
+        "id": "am",
+        "start": "09:00",
+        "end": "12:00",
+        "requiresSelection": false
+      },
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 600000,
+          "subtotal": 1200000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1500000,
+      "demo": false
+    }
+  },
+  {
+    "name": "invalid price",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": -1
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Giá không hợp lệ."
+  },
+  {
+    "name": "overflow total",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 9007199254740991
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "error": "Tổng tiền vượt giới hạn."
+  },
+  {
+    "name": "demo default",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 600000,
+          "subtotal": 1200000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1500000,
+      "demo": true
+    }
+  },
+  {
+    "name": "online NONE0",
+    "mode": "online",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ],
+      "onlineDiscount": {
+        "type": "NONE",
+        "value": 0
+      }
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 600000,
+          "subtotal": 1200000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1500000,
+      "demo": false
+    }
+  },
+  {
+    "name": "online PERCENT15",
+    "mode": "online",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ],
+      "onlineDiscount": {
+        "type": "PERCENT",
+        "value": 15
+      }
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 510000,
+          "subtotal": 1020000,
+          "ruleId": "base",
+          "originalUnitPrice": 600000,
+          "unitDiscount": 90000
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 255000,
+          "subtotal": 255000,
+          "ruleId": "base",
+          "originalUnitPrice": 300000,
+          "unitDiscount": 45000
+        }
+      ],
+      "total": 1275000,
+      "demo": false,
+      "onlineDiscount": {
+        "type": "PERCENT",
+        "value": 15,
+        "amount": 225000,
+        "subtotal": 1500000
+      }
+    }
+  },
+  {
+    "name": "online PERCENT100",
+    "mode": "online",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ],
+      "onlineDiscount": {
+        "type": "PERCENT",
+        "value": 100
+      }
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 0,
+          "subtotal": 0,
+          "ruleId": "base",
+          "originalUnitPrice": 600000,
+          "unitDiscount": 600000
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 0,
+          "subtotal": 0,
+          "ruleId": "base",
+          "originalUnitPrice": 300000,
+          "unitDiscount": 300000
+        }
+      ],
+      "total": 0,
+      "demo": false,
+      "onlineDiscount": {
+        "type": "PERCENT",
+        "value": 100,
+        "amount": 1500000,
+        "subtotal": 1500000
+      }
+    }
+  },
+  {
+    "name": "online AMOUNT1000000",
+    "mode": "online",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ],
+      "onlineDiscount": {
+        "type": "AMOUNT",
+        "value": 1000000
+      }
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 0,
+          "subtotal": 0,
+          "ruleId": "base",
+          "originalUnitPrice": 600000,
+          "unitDiscount": 600000
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 0,
+          "subtotal": 0,
+          "ruleId": "base",
+          "originalUnitPrice": 300000,
+          "unitDiscount": 300000
+        }
+      ],
+      "total": 0,
+      "demo": false,
+      "onlineDiscount": {
+        "type": "AMOUNT",
+        "value": 1000000,
+        "amount": 1500000,
+        "subtotal": 1500000
+      }
+    }
+  },
+  {
+    "name": "package overrides discount",
+    "mode": "online",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          },
+          "onlineDiscount": {
+            "type": "NONE",
+            "value": 0
+          }
+        }
+      ],
+      "onlineDiscount": {
+        "type": "PERCENT",
+        "value": 50
+      }
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 600000,
+          "subtotal": 1200000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1500000,
+      "demo": false
+    }
+  },
+  {
+    "name": "online rounding",
+    "mode": "online",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 101
+          }
+        }
+      ],
+      "onlineDiscount": {
+        "type": "PERCENT",
+        "value": 33
+      }
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 3
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 3,
+          "unitPrice": 68,
+          "subtotal": 204,
+          "ruleId": "base",
+          "originalUnitPrice": 101,
+          "unitDiscount": 33
+        }
+      ],
+      "total": 204,
+      "demo": false,
+      "onlineDiscount": {
+        "type": "PERCENT",
+        "value": 33,
+        "amount": 99,
+        "subtotal": 303
+      }
+    }
+  },
+  {
+    "name": "string zero slot is not empty",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [],
+    "now": 4083962399999,
+    "slotId": "0",
+    "error": "Gói này không sử dụng khung giờ."
+  },
+  {
+    "name": "string zero closure is package-specific",
+    "mode": "base",
+    "product": {
+      "id": "p",
+      "name": "Vé thử",
+      "demo": false,
+      "variants": [
+        {
+          "id": "eco",
+          "name": "Eco",
+          "prices": {
+            "ADULT": 600000,
+            "CHILD": 300000,
+            "LOCAL_ADULT": 350000,
+            "LOCAL_CHILD": 0,
+            "LOCAL_SENIOR": 250000
+          }
+        },
+        {
+          "id": "high",
+          "name": "High",
+          "prices": {
+            "ADULT": 800000
+          }
+        }
+      ]
+    },
+    "variantId": "eco",
+    "date": "2099-06-01",
+    "quantities": {
+      "ADULT": 2,
+      "CHILD": 1
+    },
+    "rules": [],
+    "closures": [
+      {
+        "productId": "p",
+        "variantId": "0",
+        "startDate": "2099-06-01",
+        "endDate": "2099-06-01"
+      }
+    ],
+    "now": 4083962399999,
+    "expected": {
+      "productId": "p",
+      "productName": "Vé thử",
+      "variantId": "eco",
+      "variantName": "Eco",
+      "date": "2099-06-01",
+      "currency": "VND",
+      "lines": [
+        {
+          "customerType": "ADULT",
+          "quantity": 2,
+          "unitPrice": 600000,
+          "subtotal": 1200000,
+          "ruleId": "base"
+        },
+        {
+          "customerType": "CHILD",
+          "quantity": 1,
+          "unitPrice": 300000,
+          "subtotal": 300000,
+          "ruleId": "base"
+        }
+      ],
+      "total": 1500000,
+      "demo": false
+    }
+  }
+]

@@ -119,3 +119,14 @@ Giới hạn: chưa có OTP, tài khoản POS/CTV, sửa bản dịch loại s�
 - Tên và logo thương hiệu được áp dụng lên trang đăng nhập/quản trị, cả sau tải lại. Đổi tên không tự thay nội dung SEO, trang Liên hệ, SMTP, domain, callback thanh toán hay tên bảng/cookie. Logo lấy từ thư viện ảnh; favicon và tên gửi email chưa nối cấu hình.
 - Giao diện admin có hai mục **SEO website** và **Thương hiệu**, chỉnh bằng biểu mẫu, chọn ảnh từ thư viện. Website công khai, canonical/hreflang, robots và sitemap chưa chuyển; việc lưu SEO chưa có nghĩa website bán vé đã hoạt động.
 - Đã thử trình duyệt lưu SEO, đổi tên thương hiệu và kiểm tra tên trên màn hình đăng nhập sau tải lại. Bộ HTTP kiểm tra default, quyền, lưu/xung đột, kiểm dữ liệu/ảnh, public projection, escape tên trong HTML và logo.
+
+## Lõi tính giá — đợt 9
+
+- `src/Pricing.php` chuyển các hàm tính giá cơ sở, kiểm lịch giờ và ưu đãi online từ `pricing.ts`, `schedule.ts`, `online-discount.ts`. Đây là lõi nghiệp vụ cho module sản phẩm/đặt vé tiếp theo, chưa phải luồng mua vé hoàn chỉnh.
+- Giữ 6 nhóm khách du khách/địa phương, giá miễn phí 0đ, lịch giá theo ngày/thứ và ưu tiên, báo lỗi khi hai lịch có cùng ưu tiên cao nhất. Không tự lấy giá người lớn thay cho nhóm chưa được cấu hình.
+- Kiểm ngày lịch thực, khóa bán theo gói hoặc toàn sản phẩm, biên ngày bao gồm ngày đầu/cuối, 0–50 khách/nhóm, tối đa 150 khách/đơn và giới hạn số tiền tương thích số nguyên an toàn JavaScript.
+- Suất giờ dùng UTC+7 cố định. Khi đã tới đúng giờ bắt đầu hoặc quá giờ, từ chối báo giá; yêu cầu chọn suất khi có cấu hình. Kết quả giữ snapshot suất và requiresSelection.
+- Ưu đãi online theo phần trăm (làm tròn xuống mỗi vé) hoặc số tiền, ưu tiên cấu hình riêng của gói. Giữ giá gốc, số giảm/khách và tổng giảm; không cộng voucher khi thực sự có ưu đãi online. Hàm publicVariants giữ cả giá gốc và giá online.
+- API mới `POST /api/v1/admin/pricing-preview`, cần phiên admin và header/Origin. Payload `{productId,variantId,date,quantities:{ADULT:2},slotId?}`. Server lấy sản phẩm và lịch giá từ database, không nhận giá do client gửi. Cho phép xem trước cả sản phẩm nháp. Response có `preview:true`, `inventoryChecked:false`, `voucherChecked:false`.
+- Chưa có giao diện calculator hoặc API tạo/sửa sản phẩm. Chưa mở public `/api/v1/quotes`: còn chờ kiểm tồn, voucher, bản dịch sản phẩm và luồng đặt vé. Preview không giữ tồn, không phát hành vé, không kiểm/cộng giảm voucher và không có giá trị xác nhận đơn.
+- Chạy `php tests/pricing.php` không cần database. File `tests/fixtures/pricing-node.json` chứa 49 kết quả/lỗi chạy từ lõi Node hiện tại, cùng thời gian kiểm tra cố định: giá gốc/địa phương, lịch ưu tiên/xung đột, ngày/thứ, miễn phí, số khách, tràn tiền, suất giờ và ưu đãi online. Các test bổ sung kiểm giá public, chặn cộng voucher và tính độc lập múi giờ host. Bộ HTTP kiểm quyền preview, giá server, payload lỗi và không có public quote chưa kiểm tồn.
