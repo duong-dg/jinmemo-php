@@ -1,6 +1,6 @@
 # JinMemo — PHP + MySQL cho hosting
 
-Đây là bản chuyển đổi riêng. Hiện có trang chủ, sản phẩm, nội dung và Liên hệ công khai; giao diện quản trị cùng các API danh mục, tồn, voucher, tính giá và tạo/tra cứu đơn WEB. Giao diện đặt đơn, thanh toán, giao vé và công cụ chuyển dữ liệu chưa hoàn tất; chưa thay thế hệ thống hiện tại. Xem [kế hoạch chuyển dữ liệu cũ](docs/MIGRATION.md).
+Đây là bản chuyển đổi riêng. Hiện có trang chủ, sản phẩm, nội dung và Liên hệ công khai; giao diện quản trị cùng các API danh mục, tồn, voucher, tính giá và tạo/tra cứu đơn WEB. Đã nối giao diện đặt/tra cứu đơn; thanh toán, giao vé và công cụ chuyển dữ liệu chưa hoàn tất; chưa thay thế hệ thống hiện tại. Xem [kế hoạch chuyển dữ liệu cũ](docs/MIGRATION.md).
 
 ## Cài đặt bộ khung
 
@@ -187,3 +187,13 @@ Giới hạn: chưa có OTP, tài khoản POS/CTV, sửa bản dịch loại s�
 - `POST /api/v1/orders/lookup` nhận code và accessKey hoặc email. Nếu có accessKey sai, không dùng email để bỏ qua. Không trả contact, thông tin hóa đơn hay hash nội bộ. `GET /api/v1/admin/orders/:id` cần phiên admin và trả thêm contact.
 - Đợt này là API nền: **chưa có nút đặt đơn, trang tra cứu, danh sách/xử lý đơn trong admin, hủy/thu tiền, email xác nhận, giỏ hàng hoặc giao file vé**. Không có email nào được gửi khi tạo đơn. `checkoutEnabled:false` ở API voucher vẫn chỉ tình trạng giao diện checkout chưa bật. Các ghi chú “chưa có đơn” trong đợt trước được thay thế bởi phạm vi API nêu ở đây.
 - Kiểm thử: `php tests/orders.php` trên database thử kiểm giá, chống lặp, tra cứu riêng tư, quota voucher, rollback khi hết tồn, snapshot và hai tiến trình tranh suất cuối/gửi lại cùng yêu cầu. `php tests/http.php` kiểm Origin/header, phương thức, quyền admin, tra cứu và giới hạn tần suất. Đã chạy trên PHP 8.2/MariaDB 10.4 local; chưa thử trên hosting thật.
+
+## Giao diện đặt đơn và tra cứu — đợt 15
+
+- Trang sản phẩm có biểu mẫu liên hệ và xác nhận đặt đơn sau khi kiểm tra giá thành công. Chỉ sản phẩm không phải demo mới có nút đặt. Đổi ngày, gói/số khách hoặc mã giảm làm kết quả báo giá hết hiệu lực; cần kiểm tra lại trước khi đặt.
+- Khách nhập tên, email, điện thoại, ghi chú và xác nhận đã xem điều kiện/ngày/số khách/tổng tiền. Tạo đơn sẽ phân bổ tồn và lượt voucher qua API đợt 14. Thông báo ghi rõ đơn chưa thu tiền, chưa gửi email và việc giao vé được xử lý riêng.
+- Trình duyệt sinh requestId và accessKey bằng crypto; giữ nguyên payload khi lỗi mạng/5xx/429. Yêu cầu đang chờ được giữ trong sessionStorage của tab để tải lại và thử lại cùng đơn. Xóa bản chờ sau thành công hoặc lỗi từ chối xác định. Nếu trình duyệt chặn sessionStorage thì chỉ hỗ trợ thử lại khi trang còn mở. Không tự gửi lại khi tải trang.
+- Thành công hiện mã đơn và liên kết xem đơn dùng fragment; trang tra cứu xóa fragment khỏi history hiện tại trước khi gọi API. Không đưa accessKey vào query URL. Khách cũng có thể mở `/tra-cuu` hoặc `/en/orders`, nhập mã đơn và email. Footer có liên kết tra cứu; trang này luôn noindex. Chi tiết giữ tên/giá/điều kiện theo snapshot lúc đặt, dù đổi ngôn ngữ giao diện.
+- Admin voucher API hiện trả `checkoutEnabled:true`. Chưa có danh sách/xử lý đơn trong giao diện admin, thanh toán online, email, hóa đơn trong biểu mẫu, giỏ nhiều gói hay giao file PDF. API invoice đã có từ đợt 14 nhưng biểu mẫu đợt này chỉ nhận thông tin liên hệ cơ bản.
+- Cập nhật toàn bộ code/views/assets bằng Git; không có migration mới đợt này. Database cần có `011-orders.sql` từ đợt trước. Giữ `.env`/`storage`; dùng HTTPS và PUBLIC_BASE_URL đúng domain.
+- Kiểm thử HTTP: biểu mẫu sản phẩm, trang tra cứu VI/EN, canonical slash, noindex, asset, quyền API và tạo/tra cứu đơn. Kiểm thử trình duyệt trên database riêng: đặt thành công, liên kết riêng bỏ fragment, email sai/đúng, tiếng Anh, chiều rộng 390px không tràn; tắt máy chủ thử lỗi mạng, khởi động lại/tải trang/thử lại và tra cứu đơn phục hồi. Bộ orders kiểm tra chống lặp và hai tiến trình tranh suất cuối vẫn qua.

@@ -91,7 +91,11 @@ try {
     $publicProduct=request($base,'/api/v1/products/ve-trai-nghiem',200)['data'];
     if(array_intersect(['supplierId','rules','english','version'],array_keys($publicProduct)) || $publicProduct['variants'][0]['prices']['ADULT']!==510000 || str_contains($publicProduct['detailHtml'],'<script>'))throw new RuntimeException('Public product price/privacy');
     $productHtml=publicHtml($base,'/ve/ve-trai-nghiem');if(!str_contains($productHtml,'510.000') || !str_contains($productHtml,'Giá tham khảo') || str_contains($productHtml,'<script>bad()'))throw new RuntimeException('Product detail');
-    if(!str_contains($productHtml,'class="quote-form"'))throw new RuntimeException('Quote form');
+    if(!str_contains($productHtml,'class="quote-form"')||!str_contains($productHtml,'class="booking-form"')||!str_contains($productHtml,'booking.js?v='))throw new RuntimeException('Quote/booking form');
+    foreach(['/tra-cuu','/en/orders'] as $lookupPath){$lookupHtml=publicHtml($base,$lookupPath);if(!str_contains($lookupHtml,'id="order-lookup"')||!str_contains($lookupHtml,'noindex,follow')||!str_contains($lookupHtml,'booking.js?v='))throw new RuntimeException('Lookup HTML');}
+    publicHtml($base,'/tra-cuu/',308,'/tra-cuu');publicHtml($base,'/en/orders/',308,'/en/orders');
+    $lookupPost=stream_context_create(['http'=>['method'=>'POST','ignore_errors'=>true]]);file_get_contents($base.'/tra-cuu',false,$lookupPost);if(!str_contains($http_response_header[0] ?? '',' 405 '))throw new RuntimeException('Lookup method guard');
+    $bookingAsset=file_get_contents($base.'/assets/booking.js');if($bookingAsset===false||!str_contains($bookingAsset,'jinmemo-pending:'))throw new RuntimeException('Booking asset');
     request($base,'/api/v1/admin/inventory?productId=ticket-product&from=2099-06-01&to=2099-06-01',401);
     $stockBody=['productId'=>'ticket-product','version'=>0,'variantId'=>'eco','startDate'=>'2099-06-01','endDate'=>'2099-06-01','capacity'=>2];
     request($base,'/api/v1/admin/inventory/capacity',403,'POST',[$cookie],$stockBody);
@@ -111,7 +115,7 @@ try {
     request($base,'/api/v1/quotes',400,'POST',[],array_merge($quoteInput,['voucherCode'=>'WEB10'])); // active online discount cannot stack
     $savedProduct['variants'][0]['onlineDiscount']=['type'=>'NONE','value'=>0];$savedProduct=request($base,'/api/v1/admin/products',200,'POST',$headers,$savedProduct)['data'];
     $voucherQuote=request($base,'/api/v1/quotes',200,'POST',[],array_merge($quoteInput,['voucherCode'=>'web10']));if($voucherQuote['total']!==540000||$voucherQuote['discount']['code']!=='WEB10'||$voucherQuote['discount']['amount']!==60000)throw new RuntimeException('Voucher quote discount');
-    request($base,'/api/v1/quotes',200,'POST',[],array_merge($quoteInput,['voucherCode'=>'WEB10']));$voucherList=request($base,'/api/v1/admin/vouchers',200,'GET',[$cookie]);if(($voucherList['usage'][$savedVoucher['id']] ?? 0)!==0||$voucherList['checkoutEnabled']!==false)throw new RuntimeException('Voucher quote consumed a use or checkout claimed');
+    request($base,'/api/v1/quotes',200,'POST',[],array_merge($quoteInput,['voucherCode'=>'WEB10']));$voucherList=request($base,'/api/v1/admin/vouchers',200,'GET',[$cookie]);if(($voucherList['usage'][$savedVoucher['id']] ?? 0)!==0||$voucherList['checkoutEnabled']!==true)throw new RuntimeException('Voucher quote consumed a use or checkout claimed');
     $savedVoucher['enabled']=false;request($base,'/api/v1/admin/vouchers',200,'POST',$headers,$savedVoucher);request($base,'/api/v1/quotes',400,'POST',[],array_merge($quoteInput,['voucherCode'=>'WEB10']));request($base,'/api/v1/vouchers',404);
     if(!str_contains(publicHtml($base,'/'),'Vé trải nghiệm'))throw new RuntimeException('Homepage catalog');
     request($base,'/api/v1/products/ve-trai-nghiem?lang=en',404);publicHtml($base,'/en/ve/ve-trai-nghiem',404);

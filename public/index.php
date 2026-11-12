@@ -21,8 +21,8 @@ require dirname(__DIR__) . '/src/Orders.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js'],true)) return false;
-    if(in_array($path,['/','/en','/en/','/lien-he','/lien-he/','/en/contact','/en/contact/'],true) || preg_match('#^/(?:trang|en/pages|ve|en/ve)/[^/]+/?$#D',(string)$path)) {
+    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js','/assets/booking.js'],true)) return false;
+    if(in_array($path,['/tra-cuu','/tra-cuu/','/en/orders','/en/orders/','/','/en','/en/','/lien-he','/lien-he/','/en/contact','/en/contact/'],true) || preg_match('#^/(?:trang|en/pages|ve|en/ve)/[^/]+/?$#D',(string)$path)) {
         $publicRequest=true;
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
         $config=jingoConfig();(new PublicSite(jingoDatabase($config),$config))->render($path);
@@ -175,7 +175,7 @@ try {
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}foreach(['variantId','date'] as $key)if(!is_string($_GET[$key] ?? null))throw new HttpError(400,'Chọn gói và ngày.');if(isset($_GET['slotId'])&&!is_string($_GET['slotId']))throw new HttpError(400,'Suất giờ không hợp lệ.');jingoJson((new Quotes(jingoDatabase(jingoConfig())))->prices(rawurldecode($priceMatch[1]),$_GET['variantId'],$_GET['date'],$_GET['slotId'] ?? null,($_GET['lang'] ?? '')==='en'?'en':'vi'));
     }
     if($path==='/api/v1/admin/vouchers'){
-        $method=$_SERVER['REQUEST_METHOD'] ?? 'GET';if(!in_array($method,['GET','POST'],true)){header('Allow: GET, POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me();$vouchers=new Vouchers($db);jingoJson($method==='POST'?['data'=>$vouchers->save(jingoRequestBody(),$actor['id'])]:['data'=>$vouchers->list(),'checkoutEnabled'=>false,'usage'=>(object)$vouchers->usage()]);
+        $method=$_SERVER['REQUEST_METHOD'] ?? 'GET';if(!in_array($method,['GET','POST'],true)){header('Allow: GET, POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me();$vouchers=new Vouchers($db);jingoJson($method==='POST'?['data'=>$vouchers->save(jingoRequestBody(),$actor['id'])]:['data'=>$vouchers->list(),'checkoutEnabled'=>true,'usage'=>(object)$vouchers->usage()]);
     }
     $routes = ['login'=>'POST','me'=>'GET','logout'=>'POST','login-policy'=>'GET'];
     $action = str_starts_with((string)$path, '/api/v1/admin/') ? substr($path, strlen('/api/v1/admin/')) : '';

@@ -1,0 +1,46 @@
+'use strict';
+(()=>{
+ const money=(n,en)=>new Intl.NumberFormat(en?'en-US':'vi-VN').format(n)+' VND';
+ const node=(tag,text)=>{const n=document.createElement(tag);n.textContent=text;return n;};
+ async function api(path,payload){
+  const response=await fetch('/api/v1/orders'+path,{method:'POST',cache:'no-store',credentials:'same-origin',headers:{'Content-Type':'application/json','X-Jingo-Order':'1'},body:JSON.stringify(payload)});
+  const data=await response.json().catch(()=>({}));if(!response.ok){const e=new Error(data.message||'Không thể xử lý yêu cầu / Request failed.');e.status=response.status;throw e;}return data;
+ }
+ function detail(target,order,en){
+  target.replaceChildren(node('h2',(en?'Booking ':'Đơn ')+order.code));const s=order.snapshot;
+  for(const text of [s.productName,s.variantName,(en?'Visit date: ':'Ngày sử dụng: ')+s.date+(s.timeSlot?' · '+s.timeSlot.start:''),(en?'Total: ':'Tổng tiền: ')+money(s.total,en)])target.append(node('p',text));
+  const labels=en?{CONFIRMED:'Confirmed',REQUESTED:'Requested',CANCELLED:'Cancelled',UNPAID:'Unpaid',PAID:'Paid',CREDIT:'Credit'}:{CONFIRMED:'Đã đặt',REQUESTED:'Chờ xác nhận',CANCELLED:'Đã hủy',UNPAID:'Chưa thanh toán',PAID:'Đã thanh toán',CREDIT:'Công nợ'};
+  target.append(node('p',(en?'Booking: ':'Trạng thái đơn: ')+(labels[order.bookingStatus]||order.bookingStatus)),node('p',(en?'Payment: ':'Thanh toán: ')+(labels[order.paymentStatus]||order.paymentStatus)));
+  const groups=en?{ADULT:'Adult',CHILD:'Child',SENIOR:'Senior',LOCAL_ADULT:'Local adult',LOCAL_CHILD:'Local child',LOCAL_SENIOR:'Local senior'}:{ADULT:'Người lớn',CHILD:'Trẻ em',SENIOR:'Người cao tuổi',LOCAL_ADULT:'Người lớn địa phương',LOCAL_CHILD:'Trẻ em địa phương',LOCAL_SENIOR:'Người cao tuổi địa phương'};
+  for(const line of s.lines){target.append(node('p',(groups[line.customerType]||line.customerType)+' × '+line.quantity+' · '+money(line.subtotal,en)));const condition=s.conditions?.[line.customerType];if(condition)target.append(node('small',condition));}
+  if(s.discount)target.append(node('p',(en?'Voucher: ':'Mã giảm: ')+s.discount.code+' −'+money(s.discount.amount,en)));
+  if(order.instructions)target.append(node('h3',en?'Instructions':'Hướng dẫn'),node('p',order.instructions));target.hidden=false;
+ }
+ for(const panel of document.querySelectorAll('.booking-panel:not(.lookup-panel)')){
+  const quoteForm=panel.previousElementSibling,form=panel.querySelector('form'),fieldset=form.querySelector('fieldset'),message=panel.querySelector('.booking-message'),success=panel.querySelector('.booking-success'),summary=panel.querySelector('.booking-summary'),en=panel.dataset.locale==='en';
+  const storageKey='jinmemo-pending:'+quoteForm.dataset.product+':'+quoteForm.dataset.variant;let selection=null,pending=null,busy=false;
+  function persist(value){try{if(value)sessionStorage.setItem(storageKey,JSON.stringify(value));else sessionStorage.removeItem(storageKey);}catch{/* Booking still supports retries while this page stays open. */}}
+  function freeze(){fieldset.disabled=true;quoteForm.querySelector('fieldset').disabled=true;}
+  const retry=node('button',en?'Retry the same booking':'Thử lại cùng yêu cầu');retry.type='button';retry.className='button';retry.hidden=true;panel.append(retry);
+  function pendingView(){for(const key of ['name','email','phone','note'])form.elements[key].value=pending.contact?.[key]||'';form.elements.accepted.checked=pending.accepted===true;quoteForm.elements.date.value=pending.date;for(const input of quoteForm.querySelectorAll('[data-group]'))input.value=pending.quantities?.[input.dataset.group]||0;if(quoteForm.elements.slotId)quoteForm.elements.slotId.value=pending.slotId||'';quoteForm.elements.voucherCode.value=pending.voucherCode||'';panel.hidden=false;freeze();summary.textContent=pending.date+' · '+money(pending.expectedTotal,en);message.textContent=en?'An order request is pending. Retry to recover the same booking; do not place another order.':'Yêu cầu đặt đơn chưa có kết quả. Thử lại để lấy đúng đơn cũ, tránh đặt thêm đơn.';retry.hidden=false;}
+  try{const saved=JSON.parse(sessionStorage.getItem(storageKey)||'null');if(saved&&saved.productId===quoteForm.dataset.product&&saved.variantId===quoteForm.dataset.variant&&typeof saved.requestId==='string'&&typeof saved.accessKey==='string'){pending=saved;pendingView();}}catch{/* No saved request. */}
+  quoteForm.addEventListener('quote-ready',event=>{if(pending)return;selection=structuredClone(event.detail);panel.hidden=false;form.hidden=false;success.hidden=true;message.textContent='';summary.textContent=selection.payload.date+' · '+money(selection.quote.total,en);});
+  quoteForm.addEventListener('quote-invalidated',()=>{if(!pending){selection=null;panel.hidden=true;}});
+  async function send(){
+   if(busy||!pending)return;busy=true;freeze();retry.disabled=true;message.textContent=en?'Placing booking…':'Đang đặt đơn…';
+   try{const result=await api('',pending);persist(null);form.hidden=true;success.replaceChildren(node('h3',en?'Booking created':'Đã tạo đơn'),node('strong',result.code),node('p',en?'Save this code. You can look up the booking with your email. No payment has been collected.':'Lưu mã này để tra cứu bằng email đã đặt. Đơn chưa thu tiền.'));
+    const link=node('a',en?'View booking':'Xem đơn hàng');link.className='button';link.href=(en?'/en/orders':'/tra-cuu')+'#'+encodeURIComponent(result.code)+':'+encodeURIComponent(result.accessKey);success.append(link);success.hidden=false;message.textContent='';retry.hidden=true;pending=null;
+   }catch(error){message.textContent=error.status?error.message:(en?'Connection interrupted.':'Kết nối bị gián đoạn.');if(error.status&&error.status<500&&error.status!==429){persist(null);pending=null;selection=null;fieldset.disabled=false;quoteForm.querySelector('fieldset').disabled=false;retry.hidden=true;form.hidden=true;message.append(node('p',en?'Check the price again before retrying.':'Vui lòng kiểm tra giá lại trước khi đặt.'));}else{retry.hidden=false;message.append(node('p',en?'Retry the same request to avoid duplicate bookings.':'Bấm thử lại cùng yêu cầu để tránh tạo đơn trùng.'));}}
+   finally{busy=false;retry.disabled=false;}
+  }
+  form.addEventListener('submit',event=>{event.preventDefault();if(!selection||pending||busy)return;if(!crypto.randomUUID||!crypto.getRandomValues){message.textContent=en?'Use HTTPS to book securely.':'Vui lòng dùng HTTPS để đặt đơn.';return;}
+   const values=new FormData(form),key=Array.from(crypto.getRandomValues(new Uint8Array(32)),v=>v.toString(16).padStart(2,'0')).join('');pending={...selection.payload,requestId:crypto.randomUUID(),accessKey:key,expectedTotal:selection.quote.total,contact:{name:values.get('name'),email:values.get('email'),phone:values.get('phone'),note:values.get('note')},locale:panel.dataset.locale,accepted:values.get('accepted')==='on'};persist(pending);send();});retry.addEventListener('click',send);
+ }
+ const lookup=document.querySelector('#order-lookup');if(lookup){
+  const panel=lookup.closest('.booking-panel'),en=panel.dataset.locale==='en',message=document.querySelector('#lookup-message'),target=document.querySelector('#order-detail');let serial=0;
+  async function find(payload){const current=++serial;lookup.querySelector('button').disabled=true;message.textContent=en?'Finding booking…':'Đang tra cứu…';target.hidden=true;try{const order=await api('/lookup',payload);if(current!==serial)return;detail(target,order,en);message.textContent='';}catch(error){if(current===serial)message.textContent=error.message;}finally{if(current===serial)lookup.querySelector('button').disabled=false;}}
+  lookup.addEventListener('submit',event=>{event.preventDefault();const values=new FormData(lookup);find({code:String(values.get('code')).trim().toUpperCase(),email:String(values.get('email')).trim()});});
+  // Remove the secret fragment from the current history entry before making requests.
+  const match=location.hash.match(/^#(JG[A-F0-9]{10}):([a-f0-9]{64})$/i);if(match){history.replaceState(null,'',location.pathname+location.search);lookup.elements.code.value=match[1].toUpperCase();find({code:match[1].toUpperCase(),accessKey:match[2]});}
+ }
+})();
