@@ -243,6 +243,23 @@ try {
     request($base,'/api/v1/admin/logout',200,'POST',$headers);
     request($base,'/api/v1/admin/product-types',401,'GET',[$cookie]);
     echo "PASS: HTTP modules, SEO/brand defaults/save/version/validation/public projection/escaping/logo, contact quotas, media, session revocation.\n";
+    $orderProduct=['id'=>'order-http','slug'=>'order-http','name'=>'Order API test','status'=>'PUBLISHED','variants'=>[['id'=>'v','name'=>'Test','prices'=>['ADULT'=>100]]],'rules'=>[],'closures'=>[]];
+    $db->prepare('INSERT INTO jingo_products(id,slug,data) VALUES (?,?,?)')->execute(['order-http','order-http',json_encode($orderProduct)]);
+    $orderInput=['requestId'=>'00000000-0000-4000-8000-000000000098','accessKey'=>str_repeat('a',64),'productId'=>'order-http','variantId'=>'v','date'=>'2099-06-01','quantities'=>['ADULT'=>1],'expectedTotal'=>100,'contact'=>['name'=>'HTTP test','email'=>'order@example.test','phone'=>'0901234567'],'accepted'=>true];
+    $orderHeaders=['Origin: '.$base,'X-Jingo-Order: 1'];
+    request($base,'/api/v1/orders',403,'POST',[],$orderInput);request($base,'/api/v1/orders',405);
+    $created=request($base,'/api/v1/orders',200,'POST',$orderHeaders,$orderInput);
+    if(request($base,'/api/v1/orders',200,'POST',$orderHeaders,$orderInput)!==$created)throw new RuntimeException('HTTP order replay');
+    $order=request($base,'/api/v1/orders/lookup',200,'POST',$orderHeaders,$created);
+    if(isset($order['contact'])||$order['snapshot']['total']!==100)throw new RuntimeException('HTTP order privacy');
+    request($base,'/api/v1/orders/lookup',404,'POST',$orderHeaders,['code'=>$created['code'],'accessKey'=>str_repeat('b',64)]);
+    request($base,'/api/v1/admin/orders/'.$order['id'],401);
+    $db->prepare('INSERT INTO jingo_sessions VALUES (?,?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 1 HOUR))')->execute([hash('sha256',$token),'admin']);
+    $adminOrder=request($base,'/api/v1/admin/orders/'.$order['id'],200,'GET',[$cookie]);
+    if($adminOrder['data']['contact']['email']!=='order@example.test')throw new RuntimeException('Admin order detail');
+    for($attempt=0;$attempt<28;$attempt++)request($base,'/api/v1/orders',200,'POST',$orderHeaders,$orderInput);
+    request($base,'/api/v1/orders',429,'POST',$orderHeaders,$orderInput);
+    echo "PASS: order HTTP guard, replay, private lookup, admin permission and rate limit.\n";
 } finally {
     // PHP 8 curl_close does not release CurlHandle references; release uploads before unlink on Windows.
     unset($curl);

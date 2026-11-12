@@ -17,6 +17,7 @@ require dirname(__DIR__) . '/src/Products.php';
 require dirname(__DIR__) . '/src/Inventory.php';
 require dirname(__DIR__) . '/src/Quotes.php';
 require dirname(__DIR__) . '/src/Vouchers.php';
+require dirname(__DIR__) . '/src/Orders.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
@@ -39,6 +40,20 @@ try {
         header('Content-Type: text/html; charset=utf-8'); header('Cache-Control: private, no-store'); header('X-Content-Type-Options: nosniff'); header('X-Frame-Options: DENY'); header('Referrer-Policy: no-referrer');
         header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
         require dirname(__DIR__).'/views/admin.php'; exit;
+    }
+    if(in_array($path,['/api/v1/orders','/api/v1/orders/lookup'],true)||preg_match('#^/api/v1/admin/orders/([a-f0-9-]{36})$#D',(string)$path,$orderMatch)) {
+        $admin=isset($orderMatch[1]);$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';
+        if($method!==($admin?'GET':'POST')){header('Allow: '.($admin?'GET':'POST'));throw new HttpError(405,'Phương thức không được hỗ trợ.');}
+        $config=jingoConfig();$db=jingoDatabase($config);$orders=new Orders($db);
+        if($admin){(new AdminAuth($db,$config))->me();jingoJson(['data'=>$orders->get($orderMatch[1])]);}
+        $parts=parse_url($config['PUBLIC_BASE_URL'] ?? '');$origin=$parts&&isset($parts['scheme'],$parts['host'])?$parts['scheme'].'://'.$parts['host'].(isset($parts['port'])?':'.$parts['port']:''):'';
+        if($origin==='')throw new HttpError(503,'Chưa cấu hình URL website.');
+        if(($_SERVER['HTTP_ORIGIN'] ?? '')!==$origin||($_SERVER['HTTP_X_JINGO_ORDER'] ?? '')!=='1')throw new HttpError(403,'Nguồn yêu cầu không hợp lệ.');
+        $lookup=$path==='/api/v1/orders/lookup';$key=hash('sha256',($lookup?'lookup:':'create:').($_SERVER['REMOTE_ADDR'] ?? 'unknown'));$max=$lookup?240:30;
+        $s=$db->prepare('INSERT INTO jingo_order_limits(id,attempts,until_at) VALUES (?,1,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 60 SECOND)) ON DUPLICATE KEY UPDATE attempts=IF(until_at<=UTC_TIMESTAMP(),1,attempts+1),until_at=IF(until_at<=UTC_TIMESTAMP(),DATE_ADD(UTC_TIMESTAMP(),INTERVAL 60 SECOND),until_at)');$s->execute([$key]);
+        $s=$db->prepare('SELECT attempts FROM jingo_order_limits WHERE id=?');$s->execute([$key]);if((int)$s->fetchColumn()>$max){header('Retry-After: 60');throw new HttpError(429,'Quá nhiều yêu cầu. Thử lại sau một phút.');}
+        if(random_int(1,100)===1)$db->exec('DELETE FROM jingo_order_limits WHERE until_at<UTC_TIMESTAMP() LIMIT 1000');
+        jingoJson($lookup?$orders->lookup(jingoRequestBody()):$orders->create(jingoRequestBody()));
     }
     if ($path === '/api/v1/health') {
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') {

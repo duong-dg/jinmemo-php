@@ -1,6 +1,6 @@
 # JinMemo — PHP + MySQL cho hosting
 
-Đây là bản chuyển đổi riêng. Hiện có trang chủ thông tin, trang nội dung và Liên hệ công khai; giao diện quản trị PHP cùng các API danh mục, điểm đến, ảnh, nhà cung cấp, nội dung, liên hệ, SEO/thương hiệu và lõi tính giá. Chưa có luồng bán vé hoặc công cụ chuyển dữ liệu; chưa thay thế hệ thống hiện tại.
+Đây là bản chuyển đổi riêng. Hiện có trang chủ, sản phẩm, nội dung và Liên hệ công khai; giao diện quản trị cùng các API danh mục, tồn, voucher, tính giá và tạo/tra cứu đơn WEB. Giao diện đặt đơn, thanh toán, giao vé và công cụ chuyển dữ liệu chưa hoàn tất; chưa thay thế hệ thống hiện tại. Xem [kế hoạch chuyển dữ liệu cũ](docs/MIGRATION.md).
 
 ## Cài đặt bộ khung
 
@@ -177,3 +177,13 @@ Giới hạn: chưa có OTP, tài khoản POS/CTV, sửa bản dịch loại s�
 - Chưa có checkout/đơn hàng/thanh toán, vì vậy admin response đánh dấu `checkoutEnabled:false` dù báo giá có thể áp dụng mã. Chưa có import voucher/lượt dùng từ bản Node, mã chung giỏ nhiều gói hoặc gửi mã qua email. Không tự tạo chương trình mẫu khi cài hosting.
 - Test `php tests/vouchers.php` trên database thử: 52 fixture phạm vi/ngày từ helper Node, chuẩn hóa, schema, trần giảm, thời hạn, phiên bản, giới hạn lượt, allocate/release, chống cộng dồn và hai tiến trình tranh lượt cuối chỉ một thành công. Bộ HTTP kiểm quyền, lưu/xung đột, mã bất biến, áp dụng vào quote, tắt mã và báo giá không tiêu lượt.
 - Đã thử trình duyệt tạo voucher theo sản phẩm và áp dụng mã 10%: 450.000đ → 405.000đ; kiểm bố cục 390px không tràn ngang. Dữ liệu/ảnh thử chỉ ở database local riêng.
+
+## Tạo và tra cứu đơn WEB — đợt 14
+
+- Chạy lại `php bin/install.php` hoặc import thêm `database/011-orders.sql`. Giữ `.env`, database và `storage` khi cập nhật code. Migration chỉ tạo bảng mới, không tự chuyển đơn từ bản Node.
+- `POST /api/v1/orders`: nhận `requestId` UUID, `accessKey` 64 ký tự hex do trình duyệt sinh bằng bộ sinh ngẫu nhiên bảo mật, productId, variantId, date, quantities, expectedTotal, contact, accepted=true; tùy chọn slotId/voucherCode/locale. Contact có name/email/phone/note và invoice tùy chọn. Server tự tính giá, kiểm sản phẩm xuất bản, suất, tồn và voucher; không nhận giá do khách tự quyết định.
+- Public POST yêu cầu `Origin` đúng `PUBLIC_BASE_URL`, `X-Jingo-Order: 1` và JSON. Giới hạn theo IP kết nối trực tiếp: tạo 30/phút, tra cứu 240/phút; không tin header IP do khách gửi. Hosting sau proxy dùng chung IP sẽ dùng chung quota, cần cấu hình riêng khi triển khai thực tế.
+- Giá thay đổi trả 409. Tạo đơn, snapshot giá/điều kiện, phân bổ tồn và lượt voucher cùng transaction. Mặc định CONFIRMED/UNPAID như luồng WEB bản Node. Cùng requestId/nội dung trả lại cùng đơn; khác nội dung trả 409. Access key chỉ lưu hash; không đưa key lên URL query hoặc log.
+- `POST /api/v1/orders/lookup` nhận code và accessKey hoặc email. Nếu có accessKey sai, không dùng email để bỏ qua. Không trả contact, thông tin hóa đơn hay hash nội bộ. `GET /api/v1/admin/orders/:id` cần phiên admin và trả thêm contact.
+- Đợt này là API nền: **chưa có nút đặt đơn, trang tra cứu, danh sách/xử lý đơn trong admin, hủy/thu tiền, email xác nhận, giỏ hàng hoặc giao file vé**. Không có email nào được gửi khi tạo đơn. `checkoutEnabled:false` ở API voucher vẫn chỉ tình trạng giao diện checkout chưa bật. Các ghi chú “chưa có đơn” trong đợt trước được thay thế bởi phạm vi API nêu ở đây.
+- Kiểm thử: `php tests/orders.php` trên database thử kiểm giá, chống lặp, tra cứu riêng tư, quota voucher, rollback khi hết tồn, snapshot và hai tiến trình tranh suất cuối/gửi lại cùng yêu cầu. `php tests/http.php` kiểm Origin/header, phương thức, quyền admin, tra cứu và giới hạn tần suất. Đã chạy trên PHP 8.2/MariaDB 10.4 local; chưa thử trên hosting thật.
