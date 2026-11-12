@@ -19,7 +19,7 @@ function request(string $base,string $path,int $expected,string $method='GET',ar
 try {
     $db=new PDO($dsn.';dbname='.$name,getenv('JINGO_TEST_USER')?:'root',getenv('JINGO_TEST_PASSWORD')?:'',[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
     foreach(glob(dirname(__DIR__).'/database/*.sql') as $file) foreach(explode(';',file_get_contents($file)) as $sql) if(trim($sql)!=='') $db->exec($sql);
-    $db->exec("INSERT INTO jingo_admins VALUES ('admin','admin@example.com','unused')");
+    $db->prepare('INSERT INTO jingo_admins VALUES (?,?,?)')->execute(['admin','admin@example.com',password_hash('local-http-test-password',PASSWORD_BCRYPT)]);
     $token=bin2hex(random_bytes(32));
     $db->prepare('INSERT INTO jingo_sessions VALUES (?,?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 1 HOUR))')->execute([hash('sha256',$token),'admin']);
     $socket=stream_socket_server('tcp://127.0.0.1:0'); $address=stream_socket_get_name($socket,false); fclose($socket);
@@ -33,6 +33,19 @@ try {
     for($i=0;$i<40;$i++) { $s=@stream_socket_client('tcp://'.$address,$errno,$error,0.1); if($s) { fclose($s); $ready=true; break; } usleep(50000); }
     if(!$ready) throw new RuntimeException('PHP server not ready.');
     if(request($base,'/api/v1/health',200)['application']!=='JinMemo Test') throw new RuntimeException('Brand config');
+    $html=file_get_contents($base.'/admin');
+    if(!str_contains($html,'id="login-form"') || !str_contains($html,'JinMemo Test') || !str_contains($html,'/assets/admin.js')) throw new RuntimeException('Admin HTML shell');
+    foreach(['/assets/admin.js','/assets/admin.css'] as $asset) if(strlen(file_get_contents($base.$asset))<100) throw new RuntimeException('Missing admin asset');
+    request($base,'/admin',405,'POST',[],[]);
+    request($base,'/.env',404);
+    request($base,'/api/v1/admin/login',401,'POST',['X-Jingo-Admin: 1','Origin: '.$base],['email'=>'admin@example.com','password'=>'wrong-password']);
+    $login=curl_init($base.'/api/v1/admin/login');
+    curl_setopt_array($login,[CURLOPT_POST=>true,CURLOPT_RETURNTRANSFER=>true,CURLOPT_HEADER=>true,CURLOPT_TIMEOUT=>5,CURLOPT_HTTPHEADER=>['Content-Type: application/json','X-Jingo-Admin: 1','Origin: '.$base],CURLOPT_POSTFIELDS=>json_encode(['email'=>'admin@example.com','password'=>'local-http-test-password'])]);
+    $loginResponse=curl_exec($login);$loginStatus=curl_getinfo($login,CURLINFO_RESPONSE_CODE);unset($login);
+    if($loginStatus!==200 || !preg_match('/Set-Cookie: (jingo_admin=[a-f0-9]{64});[^\r\n]*HttpOnly[^\r\n]*SameSite=Strict/i',$loginResponse,$loginCookie)) throw new RuntimeException('Real login cookie');
+    request($base,'/api/v1/admin/me',200,'GET',['Cookie: '.$loginCookie[1]]);
+    request($base,'/api/v1/admin/logout',200,'POST',['Cookie: '.$loginCookie[1],'X-Jingo-Admin: 1','Origin: '.$base],[]);
+    request($base,'/api/v1/admin/me',401,'GET',['Cookie: '.$loginCookie[1]]);
     request($base,'/api/v1/admin/product-types',401);
     $cookie='Cookie: jingo_admin='.$token;
     request($base,'/api/v1/admin/product-types',403,'POST',[$cookie],[]);

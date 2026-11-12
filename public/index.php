@@ -12,6 +12,19 @@ require dirname(__DIR__) . '/src/ContactRequests.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js'],true)) return false;
+    if($path==='/') { header('Location: /admin',true,303); exit; }
+    if($path==='/admin' || $path==='/admin/' || preg_match('#^/(jingo-[a-f0-9]{24})/?$#D',(string)$path,$entryMatch)) {
+        if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET') { header('Allow: GET'); throw new HttpError(405,'Phương thức không được hỗ trợ.'); }
+        $config=jingoConfig(); $entry=$entryMatch[1] ?? '';
+        if($entry!=='') {
+            $policy=(new AdminAuth(jingoDatabase($config),$config))->policy();
+            if(empty($policy['entrySlug']) || !hash_equals($policy['entrySlug'],$entry)) throw new HttpError(404,'Không tìm thấy.');
+        }
+        header('Content-Type: text/html; charset=utf-8'); header('Cache-Control: private, no-store'); header('X-Content-Type-Options: nosniff'); header('X-Frame-Options: DENY'); header('Referrer-Policy: no-referrer');
+        header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
+        require dirname(__DIR__).'/views/admin.php'; exit;
+    }
     if ($path === '/api/v1/health') {
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') {
             header('Allow: GET');
