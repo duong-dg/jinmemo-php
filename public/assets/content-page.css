@@ -4,3 +4,4 @@
 
 .contact-sidebar{min-width:0;display:grid;gap:20px}.contact-sidebar .contact-cards{margin:0;grid-template-columns:1fr}.contact-sidebar .contact-support{max-width:none}
 @media(max-width:800px){.content-page-layout.has-contact>.content-page-body{grid-row:2}.contact-sidebar{display:contents}.contact-sidebar .contact-cards{grid-row:1}.contact-sidebar .contact-support{grid-row:3}}
+.ticket-code{white-space:pre-wrap;overflow-wrap:anywhere;user-select:all;padding:14px;border:1px solid #dedfd6;border-radius:8px;max-height:220px;overflow:auto}

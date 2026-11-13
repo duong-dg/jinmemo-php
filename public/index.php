@@ -31,10 +31,11 @@ require dirname(__DIR__) . '/src/SupplyProfit.php';
 require dirname(__DIR__) . '/src/SupplierStatements.php';
 require dirname(__DIR__) . '/src/SupplyAlerts.php';
 require dirname(__DIR__) . '/src/SourceHistory.php';
+require dirname(__DIR__) . '/src/TicketStock.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js','/assets/booking.js','/assets/orders-admin.js','/assets/posts-admin.js','/assets/post-categories-admin.js','/assets/translations-admin.js','/assets/post-reader.js','/assets/post-preview.css','/assets/overview-admin.js','/assets/supply-admin.js','/assets/supplier-payments-admin.js','/assets/supplier-statements-admin.js','/assets/source-history-admin.js'],true)) return false;
+    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js','/assets/booking.js','/assets/orders-admin.js','/assets/posts-admin.js','/assets/post-categories-admin.js','/assets/translations-admin.js','/assets/post-reader.js','/assets/post-preview.css','/assets/overview-admin.js','/assets/supply-admin.js','/assets/supplier-payments-admin.js','/assets/supplier-statements-admin.js','/assets/source-history-admin.js','/assets/ticket-stock-admin.js'],true)) return false;
     if(in_array($path,['/cam-nang','/cam-nang/','/en/blog','/en/blog/','/tra-cuu','/tra-cuu/','/en/orders','/en/orders/','/','/en','/en/','/lien-he','/lien-he/','/en/contact','/en/contact/'],true) || preg_match('#^/(?:cam-nang|en/blog|trang|en/pages|ve|en/ve)/[^/]+/?$#D',(string)$path)) {
         $publicRequest=true;
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
@@ -86,6 +87,9 @@ try {
     }
     if(preg_match('#^/api/v1/posts/([a-f0-9-]{36})/view$#D',(string)$path,$postView)){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='POST'){header('Allow: POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$insights=new PostInsights(jingoDatabase($config),$config);header('Cache-Control: private, no-store');jingoJson(['data'=>$insights->record($postView[1],$_GET,jingoRequestBody(),$_SERVER,$_COOKIE)]);
+    }
+    if($path==='/api/v1/admin/ticket-stock'||preg_match('#^/api/v1/admin/ticket-stock/([a-f0-9-]{36})/manage$#D',(string)$path,$stockManage)||preg_match('#^/api/v1/admin/ticket-stock/orders/([a-f0-9-]{36})(/deliver)?$#D',(string)$path,$stockOrder)){
+        $list=$path==='/api/v1/admin/ticket-stock';$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';$write=isset($stockManage[1])||isset($stockOrder[2]);if(!in_array($method,$list?['GET','POST']:[$write?'POST':'GET'],true)){header('Allow: '.($list?'GET, POST':($write?'POST':'GET')));throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me();$stock=new TicketStock($db);if($list)jingoJson($method==='GET'?$stock->list($_GET):$stock->receive(jingoRequestBody(4194304),$actor['id']));if(isset($stockManage[1]))jingoJson($stock->manage($stockManage[1],jingoRequestBody(),$actor['id']));jingoJson($write?$stock->deliver($stockOrder[1],jingoRequestBody(),$actor['id']):$stock->choices($stockOrder[1]));
     }
     if(preg_match('#^/api/v1/admin/supply/lots/([a-f0-9-]{36})/history(/export)?$#D',(string)$path,$sourceHistory)){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);(new AdminAuth($db,$config))->me();$export=isset($sourceHistory[2]);$report=(new SourceHistory($db))->get($sourceHistory[1],$_GET,$export);if(!$export)jingoJson($report);header('Cache-Control: private, no-store');header('Content-Type: text/csv; charset=utf-8');header('Content-Disposition: attachment; filename="jinmemo-nguon-'.$report['source']['id'].'.csv"');header('X-Content-Type-Options: nosniff');header('X-JinMemo-Export-Count: '.$report['total']);echo SourceHistory::csv($report);exit;

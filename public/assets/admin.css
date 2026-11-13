@@ -11,3 +11,8 @@
 .statement-summary{grid-template-columns:repeat(4,minmax(0,1fr))}@media(max-width:1100px){.statement-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:640px){.statement-summary{grid-template-columns:1fr}}
 .admin-menu-toggle{display:none}@media(max-width:640px){.admin-menu-toggle{display:block;margin-top:14px;width:100%;text-align:left}.sidebar nav{margin-top:10px}.sidebar .account{margin-top:10px}}
 .source-history-link{margin-left:12px}
+.ticket-code{white-space:pre-wrap;overflow-wrap:anywhere;user-select:all;padding:14px;background:#fff;border:1px solid #dedfd6;border-radius:6px;max-height:180px;overflow:auto}.stock-code{white-space:pre-wrap;overflow-wrap:anywhere;max-width:320px;max-height:160px;overflow:auto;margin:0}
+.stock-filters>label{flex:1;min-width:0;margin-bottom:0}
+.stock-filters>label select{width:100%;max-width:100%}
+.stock-filters>select{max-width:100%}
+@media(max-width:640px){.stock-filters>label{flex-basis:100%}}

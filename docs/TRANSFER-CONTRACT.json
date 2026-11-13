@@ -81,5 +81,26 @@
       "created_by",
       "created_at"
     ]
+  },
+  "stockTables": {
+    "ticket_stock": [
+      "id",
+      "lot_id",
+      "code",
+      "code_hash",
+      "status",
+      "version",
+      "reason",
+      "order_id",
+      "ticket_id",
+      "created_at"
+    ],
+    "stock_imports": [
+      "id",
+      "lot_id",
+      "request_hash",
+      "quantity",
+      "created_at"
+    ]
   }
 }
