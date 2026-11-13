@@ -34,6 +34,7 @@ async function openOrder(id,serial){
   if(order.history.length){detail.append(el('h3','Lịch sử xử lý'));for(const item of order.history){const entry=el('div',undefined,'order-history');entry.append(el('strong',orderLabels[item.action]||item.action),el('small',new Date(item.createdAt).toLocaleString('vi-VN')+' · Admin '+item.adminId),el('p',item.data.note));if(item.data.instructions)entry.append(el('p',item.data.instructions));detail.append(entry);}}
   if(order.payments.length){detail.append(el('h3','Khoản thu đã ghi nhận'));for(const payment of order.payments){const entry=el('div',undefined,'order-history');entry.append(el('strong',orderMoney(payment.amount)+' · '+(payment.method==='CASH'?'Tiền mặt':'Chuyển khoản')),el('p','Mã giao dịch / phiếu thu: '+payment.reference),el('small',new Date(payment.createdAt).toLocaleString('vi-VN')+' · Admin '+payment.adminId));detail.append(entry);}}
   const status=el('p');status.setAttribute('role','status');detail.append(status);
+  await addSupplyAllocation(detail,order,dialog,status);
   detail.append(el('h3','File vé · '+order.deliveredGuests+'/'+order.totalGuests+' khách đã giao'));
   for(const file of fileResult.data){const row=el('div',undefined,'order-history');row.append(el('p',file.name+' · '+new Intl.NumberFormat('vi-VN').format(file.bytes)+' bytes'));if(file.deleted_at||file.revoked_at)row.append(el('small',file.deleted_at?'File đã xóa':'File đã thu hồi · '+file.revoke_reason));else{const link=el('a','Tải file gốc ↗','quiet');link.href='/api/v1/admin/orders/'+id+'/files/'+file.id;row.append(link);ticketRevokeControls(row,id,file,order,dialog,status,detail);}detail.append(row);}
   if(!order.archived&&order.bookingStatus==='CONFIRMED'&&order.paymentStatus==='PAID'&&(order.deliveredGuests<order.totalGuests||order.tickets.length)){
@@ -60,6 +61,6 @@ async function openOrder(id,serial){
    const back=button('Quay lại',()=>{payload=null;note.disabled=false;if(instructions)instructions.disabled=false;if(payment){for(const input of Object.values(payment))input.disabled=false;payment.reference.disabled=payment.method.value==='CASH';}controls.replaceChildren(start);});
    const confirmButton=button('Xác nhận',async()=>{if(!payload||editing)return;editing=true;for(const control of detail.querySelectorAll('button'))control.disabled=true;status.textContent='Đang xử lý…';try{await api('orders/'+id+'/actions',payload);dirty=false;dialog.close();await render();notice('Đã cập nhật đơn.');}catch(error){status.textContent=error.message+' Nếu mất kết nối, bấm Xác nhận để gửi lại cùng thao tác; nếu đơn đã đổi, đóng và tải lại.';}finally{editing=false;for(const control of detail.querySelectorAll('button'))control.disabled=false;}} ,'primary');controls.append(start);
   }
-  dialog.showModal();
+  if(serial!==loading||!['orders','overview'].includes(current)||$('#workspace').hidden)return;dialog.showModal();
  }catch(error){notice(error.message,true);}
 }

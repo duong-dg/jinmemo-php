@@ -25,7 +25,7 @@ require dirname(__DIR__) . '/src/Translations.php';
 require dirname(__DIR__) . '/src/PostReview.php';
 require dirname(__DIR__) . '/src/PostInsights.php';
 require dirname(__DIR__) . '/src/Overview.php';
-require dirname(__DIR__) . '/src/SupplyLots.php';
+require_once dirname(__DIR__) . '/src/SupplyLots.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
@@ -81,6 +81,9 @@ try {
     }
     if(preg_match('#^/api/v1/posts/([a-f0-9-]{36})/view$#D',(string)$path,$postView)){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='POST'){header('Allow: POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$insights=new PostInsights(jingoDatabase($config),$config);header('Cache-Control: private, no-store');jingoJson(['data'=>$insights->record($postView[1],$_GET,jingoRequestBody(),$_SERVER,$_COOKIE)]);
+    }
+    if(preg_match('#^/api/v1/admin/supply/orders/([a-f0-9-]{36})(/allocate)?$#D',(string)$path,$supplyOrder)){
+        $write=isset($supplyOrder[2]);if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!==($write?'POST':'GET')){header('Allow: '.($write?'POST':'GET'));throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($write)$auth->mutation();$actor=$auth->me();header('Cache-Control: private, no-store');$supply=new SupplyAllocation($db);jingoJson($write?$supply->allocate($supplyOrder[1],jingoRequestBody(),$actor['id']):$supply->get($supplyOrder[1]));
     }
     if(in_array($path,['/api/v1/admin/supply/lots','/api/v1/admin/supply/lots/batch'],true)||preg_match('#^/api/v1/admin/supply/lots/([a-f0-9-]{36})/(manage|config)$#D',(string)$path,$supplyLot)){
         $list=$path==='/api/v1/admin/supply/lots';$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';if(!in_array($method,$list?['GET','POST']:['POST'],true)){header('Allow: '.($list?'GET, POST':'POST'));throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me();$supply=new SupplyLots($db);if($method==='GET')jingoJson(['data'=>$supply->list()]);$body=jingoRequestBody();jingoJson(isset($supplyLot[1])?$supply->manage($supplyLot[1],$body,$actor['id'],$supplyLot[2]==='config'):$supply->receive($body,$actor['id'],!$list));

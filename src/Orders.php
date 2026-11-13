@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/SupplyLots.php';
+require_once __DIR__.'/SupplyAllocation.php';
 
 /** Web order creation. Prices and allocations are committed together. */
 final class Orders
@@ -109,14 +111,14 @@ final class Orders
             if((int)$row['version']!==$input['version'])throw new HttpError(409,'Đơn đã thay đổi. Tải lại trước khi xử lý.');if($row['booking_status']==='CANCELLED'&&!in_array($action,['ARCHIVE','RESTORE'],true))throw new HttpError(409,'Đơn đã hủy.');
             $archived=$this->query('SELECT order_id FROM jingo_order_archives WHERE order_id=?',[$id])->fetchColumn();if($archived&&$action!=='RESTORE')throw new HttpError(409,'Đơn đang lưu trữ. Khôi phục trước khi xử lý.');if(!$archived&&$action==='RESTORE')throw new HttpError(409,'Đơn chưa được lưu trữ.');
             if($action==='ARCHIVE'){
-                $this->query('INSERT INTO jingo_order_archives(order_id,archived_by,reason) VALUES (?,?,?)',[$id,$actor,$input['note']]);if($row['payment_status']==='UNPAID'&&$row['booking_status']!=='CANCELLED'&&!$this->query('SELECT id FROM jingo_order_tickets WHERE order_id=? LIMIT 1',[$id])->fetchColumn()){(new Inventory($this->db))->release($id);(new Vouchers($this->db))->release($id);$this->query("UPDATE jingo_orders SET booking_status='CANCELLED' WHERE id=?",[$id]);}$this->query('UPDATE jingo_orders SET version=version+1 WHERE id=?',[$id]);
+                $this->query('INSERT INTO jingo_order_archives(order_id,archived_by,reason) VALUES (?,?,?)',[$id,$actor,$input['note']]);if($row['payment_status']==='UNPAID'&&$row['booking_status']!=='CANCELLED'&&!$this->query('SELECT id FROM jingo_order_tickets WHERE order_id=? LIMIT 1',[$id])->fetchColumn()){(new SupplyAllocation($this->db))->release($row);(new Inventory($this->db))->release($id);(new Vouchers($this->db))->release($id);$this->query("UPDATE jingo_orders SET booking_status='CANCELLED' WHERE id=?",[$id]);}$this->query('UPDATE jingo_orders SET version=version+1 WHERE id=?',[$id]);
             }elseif($action==='RESTORE'){
                 $this->query('DELETE FROM jingo_order_archives WHERE order_id=?',[$id]);$this->query('UPDATE jingo_orders SET version=version+1 WHERE id=?',[$id]);
             }elseif($action==='CONFIRM'){
                 if($row['booking_status']!=='REQUESTED')throw new HttpError(409,'Đơn đã được xác nhận.');$this->query("UPDATE jingo_orders SET booking_status='CONFIRMED',instructions=?,version=version+1 WHERE id=?",[$input['instructions'],$id]);
             }elseif($action==='CANCEL'){
                 if($row['payment_status']!=='UNPAID')throw new HttpError(409,'Đơn đã thu tiền hoặc ghi công nợ cần quy trình hoàn riêng; không thể hủy trực tiếp.');
-                (new Inventory($this->db))->release($id);(new Vouchers($this->db))->release($id);$this->query("UPDATE jingo_orders SET booking_status='CANCELLED',version=version+1 WHERE id=?",[$id]);
+                (new SupplyAllocation($this->db))->release($row);(new Inventory($this->db))->release($id);(new Vouchers($this->db))->release($id);$this->query("UPDATE jingo_orders SET booking_status='CANCELLED',version=version+1 WHERE id=?",[$id]);
             }elseif($action==='PAY'){
                 if($row['booking_status']!=='CONFIRMED'||$row['payment_status']!=='UNPAID')throw new HttpError(409,'Chỉ ghi nhận thu tiền cho đơn đã đặt và chưa thanh toán.');
                 $snapshot=json_decode($row['snapshot'],true,512,JSON_THROW_ON_ERROR);if($input['amount']!==$snapshot['total'])self::fail('Số tiền phải đúng tổng đơn. Thanh toán thiếu/thừa cần xử lý riêng.');
