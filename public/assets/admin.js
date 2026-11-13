@@ -1,6 +1,6 @@
 'use strict';
 const $=s=>document.querySelector(s);
-const names={'supply-profit':'Báo cáo giá vốn','supplier-balances':'Công nợ nhà cung cấp',supply:'Lô nguồn cung',translations:'Bản dịch English','post-categories':'Chuyên mục bài viết',posts:'Bài viết',orders:'Đơn hàng',products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
+const names={'supplier-statements':'Sao kê nhà cung cấp','supply-profit':'Báo cáo giá vốn','supplier-balances':'Công nợ nhà cung cấp',supply:'Lô nguồn cung',translations:'Bản dịch English','post-categories':'Chuyên mục bài viết',posts:'Bài viết',orders:'Đơn hàng',products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
 const labels={ACTIVE:'Hoạt động',ARCHIVED:'Lưu trữ',DRAFT:'Bản nháp',PUBLISHED:'Đã xuất bản',TRASH:'Thùng rác',NEW:'Mới',DONE:'Đã xử lý',TICKET:'Vé',TOUR:'Tour',PAGE:'Trang thường',CONTACT:'Liên hệ'};
 let current='overview',records=[],draft=null,dirty=false,loading=0,contactStatus='NEW',editing=false,editorSection='';
 function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;}
@@ -24,9 +24,19 @@ window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.return
 window.addEventListener('hashchange',()=>{if(!$('#workspace').hidden)render();});
 function toolbar(text){const bar=el('div',undefined,'toolbar');bar.append(el('p',text));return bar;}
 function empty(text){const box=el('div',undefined,'empty');box.append(el('h3',text),el('p','Dữ liệu mới sẽ xuất hiện tại đây.'));return box;}
+const adminMenuMedia=window.matchMedia('(max-width:640px)');let adminMenuOpen=false;
+function updateAdminMenu(open){adminMenuOpen=open;const expanded=!adminMenuMedia.matches||open;$('#nav').hidden=!expanded;$('#toggle-admin-menu').setAttribute('aria-expanded',String(expanded));$('#toggle-admin-menu').textContent=adminMenuMedia.matches&&open?'Đóng menu':'Menu quản trị';}
+$('#toggle-admin-menu').onclick=()=>updateAdminMenu(!adminMenuOpen);adminMenuMedia.addEventListener('change',()=>updateAdminMenu(false));updateAdminMenu(false);
+function syncAdminNavigation(section){
+ updateAdminMenu(false);
+ for(const link of document.querySelectorAll('#nav a')){const active=link.hash==='#'+section;link.classList.toggle('active',active);if(active)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');}
+ for(const group of document.querySelectorAll('#nav .nav-group')){const active=!!group.querySelector('a.active');group.classList.toggle('has-active',active);group.open=active;}
+}
+for(const group of document.querySelectorAll('#nav .nav-group'))group.addEventListener('toggle',()=>{if(group.open)for(const sibling of document.querySelectorAll('#nav .nav-group'))if(sibling!==group)sibling.open=false;});
 async function render(){
- const id=++loading;current=location.hash.slice(1)||'overview';if(!names[current])current='overview';notice('');$('#page-title').textContent=names[current]||'Tổng quan';document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('active',a.hash==='#'+current));const screen=$('#screen');screen.replaceChildren();
+ const id=++loading;current=location.hash.slice(1)||'overview';if(!names[current])current='overview';notice('');$('#page-title').textContent=names[current]||'Tổng quan';syncAdminNavigation(current);const screen=$('#screen');screen.replaceChildren();
  if(current==='overview'){await renderOverview(screen,id);return;}
+ if(current==='supplier-statements'){await renderSupplierStatement(screen,id);return;}
  if(current==='supply-profit'){await renderSupplyProfit(screen,id);return;}
  if(current==='supplier-balances'){await renderSupplierPayments(screen,id);return;}
  if(current==='supply'){await renderSupply(screen,id);return;}

@@ -28,10 +28,11 @@ require dirname(__DIR__) . '/src/Overview.php';
 require_once dirname(__DIR__) . '/src/SupplyLots.php';
 require dirname(__DIR__) . '/src/SupplierPayments.php';
 require dirname(__DIR__) . '/src/SupplyProfit.php';
+require dirname(__DIR__) . '/src/SupplierStatements.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js','/assets/booking.js','/assets/orders-admin.js','/assets/posts-admin.js','/assets/post-categories-admin.js','/assets/translations-admin.js','/assets/post-reader.js','/assets/post-preview.css','/assets/overview-admin.js','/assets/supply-admin.js','/assets/supplier-payments-admin.js'],true)) return false;
+    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js','/assets/booking.js','/assets/orders-admin.js','/assets/posts-admin.js','/assets/post-categories-admin.js','/assets/translations-admin.js','/assets/post-reader.js','/assets/post-preview.css','/assets/overview-admin.js','/assets/supply-admin.js','/assets/supplier-payments-admin.js','/assets/supplier-statements-admin.js'],true)) return false;
     if(in_array($path,['/cam-nang','/cam-nang/','/en/blog','/en/blog/','/tra-cuu','/tra-cuu/','/en/orders','/en/orders/','/','/en','/en/','/lien-he','/lien-he/','/en/contact','/en/contact/'],true) || preg_match('#^/(?:cam-nang|en/blog|trang|en/pages|ve|en/ve)/[^/]+/?$#D',(string)$path)) {
         $publicRequest=true;
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
@@ -83,6 +84,9 @@ try {
     }
     if(preg_match('#^/api/v1/posts/([a-f0-9-]{36})/view$#D',(string)$path,$postView)){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='POST'){header('Allow: POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$insights=new PostInsights(jingoDatabase($config),$config);header('Cache-Control: private, no-store');jingoJson(['data'=>$insights->record($postView[1],$_GET,jingoRequestBody(),$_SERVER,$_COOKIE)]);
+    }
+    if(preg_match('#^/api/v1/admin/supply/statements/([a-f0-9-]{36})(/export)?$#D',(string)$path,$supplierStatement)){
+        if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);(new AdminAuth($db,$config))->me();$export=isset($supplierStatement[2]);$report=(new SupplierStatements($db))->build($supplierStatement[1],$_GET,$export);header('Cache-Control: private, no-store');if(!$export)jingoJson($report);header('Content-Type: text/csv; charset=utf-8');header('Content-Disposition: attachment; filename="jinmemo-ncc-'.$report['supplier']['id'].'-'.$report['from'].'-'.$report['to'].'.csv"');header('X-Content-Type-Options: nosniff');header('X-JinMemo-Export-Count: '.$report['total']);echo SupplierStatements::csv($report);exit;
     }
     if($path==='/api/v1/admin/supply/profit'){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);(new AdminAuth($db,$config))->me();header('Cache-Control: private, no-store');jingoJson((new SupplyProfit($db))->get($_GET));
