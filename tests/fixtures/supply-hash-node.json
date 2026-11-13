@@ -1,0 +1,16 @@
+{
+  "input": {
+    "id": "00000000-0000-4000-8000-000000000010",
+    "supplierId": "00000000-0000-4000-8000-000000000001",
+    "productId": "p",
+    "variantId": "eco",
+    "customerType": "ADULT",
+    "unitCost": 50000,
+    "quantity": 10,
+    "validFrom": "2099-01-01",
+    "validTo": "2099-12-31",
+    "priority": 100,
+    "note": "Nguồn gốc 🐴"
+  },
+  "hash": "74046af630c52d34d332776a9e28bb069f28c43794a6d551a25bc6f7eb52fa7a"
+}

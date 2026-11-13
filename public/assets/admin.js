@@ -1,6 +1,6 @@
 'use strict';
 const $=s=>document.querySelector(s);
-const names={translations:'Bản dịch English','post-categories':'Chuyên mục bài viết',posts:'Bài viết',orders:'Đơn hàng',products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
+const names={supply:'Lô nguồn cung',translations:'Bản dịch English','post-categories':'Chuyên mục bài viết',posts:'Bài viết',orders:'Đơn hàng',products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
 const labels={ACTIVE:'Hoạt động',ARCHIVED:'Lưu trữ',DRAFT:'Bản nháp',PUBLISHED:'Đã xuất bản',TRASH:'Thùng rác',NEW:'Mới',DONE:'Đã xử lý',TICKET:'Vé',TOUR:'Tour',PAGE:'Trang thường',CONTACT:'Liên hệ'};
 let current='overview',records=[],draft=null,dirty=false,loading=0,contactStatus='NEW',editing=false,editorSection='';
 function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;}
@@ -27,6 +27,7 @@ function empty(text){const box=el('div',undefined,'empty');box.append(el('h3',te
 async function render(){
  const id=++loading;current=location.hash.slice(1)||'overview';if(!names[current])current='overview';notice('');$('#page-title').textContent=names[current]||'Tổng quan';document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('active',a.hash==='#'+current));const screen=$('#screen');screen.replaceChildren();
  if(current==='overview'){await renderOverview(screen,id);return;}
+ if(current==='supply'){await renderSupply(screen,id);return;}
  if(current==='translations'){await renderTranslations(screen,id);return;}
  if(current==='post-categories'){await renderPostCategories(screen,id);return;}
  if(current==='orders'){await renderOrders(screen,id);return;}
