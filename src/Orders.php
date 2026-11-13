@@ -79,19 +79,42 @@ final class Orders
         foreach($this->query('SELECT id,admin_id,action,data,created_at FROM jingo_order_actions WHERE order_id=? ORDER BY order_version',[$id])->fetchAll(PDO::FETCH_ASSOC) as $a)$result['history'][]=['id'=>$a['id'],'adminId'=>$a['admin_id'],'action'=>$a['action'],'data'=>json_decode($a['data'],true,512,JSON_THROW_ON_ERROR),'createdAt'=>str_replace(' ','T',$a['created_at']).'Z'];
         $result['payments']=[];foreach($this->query('SELECT p.id,p.amount,p.method,p.admin_id,p.created_at,r.reference FROM jingo_order_payments p JOIN jingo_payment_references r ON r.reference_hash=p.reference_hash WHERE p.order_id=? ORDER BY p.created_at,p.id',[$id])->fetchAll(PDO::FETCH_ASSOC) as $p)$result['payments'][]=['id'=>$p['id'],'amount'=>(int)$p['amount'],'method'=>$p['method'],'reference'=>$p['reference'],'adminId'=>$p['admin_id'],'createdAt'=>str_replace(' ','T',$p['created_at']).'Z'];return $result;
     }
-    public function list(array $input):array
+    private static function filters(array $input):array
     {
-        if(array_diff(array_keys($input),['q','booking','payment','page','pageSize','archived']))self::fail('Bộ lọc đơn không hợp lệ.');
+        if(array_diff(array_keys($input),['q','booking','payment','page','pageSize','archived','dateKind','from','to']))self::fail('Bộ lọc đơn không hợp lệ.');
         $q=self::text($input+['q'=>''],'q',0,120);$booking=$input['booking'] ?? 'ALL';$payment=$input['payment'] ?? 'ALL';
         if(!in_array($booking,['ALL','REQUESTED','CONFIRMED','CANCELLED'],true)||!in_array($payment,['ALL','UNPAID','PAID','CREDIT'],true))self::fail();
         $numbers=[];foreach(['page'=>1000000,'pageSize'=>100] as $key=>$max){$v=$input[$key] ?? ($key==='page'?1:25);if((!is_int($v)&&(!is_string($v)||!preg_match('/^[1-9][0-9]*$/D',$v)))||(int)$v<1||(int)$v>$max)self::fail();$numbers[$key]=(int)$v;}
         $archived=$input['archived'] ?? '0';if(!in_array($archived,['0','1','true','false'],true))self::fail('Bộ lọc lưu trữ không hợp lệ.');$where=[(in_array($archived,['1','true'],true)?'EXISTS':'NOT EXISTS').'(SELECT 1 FROM jingo_order_archives a WHERE a.order_id=jingo_orders.id)'];$args=[];if($booking!=='ALL'){$where[]='booking_status=?';$args[]=$booking;}if($payment!=='ALL'){$where[]='payment_status=?';$args[]=$payment;}
-        if($q!==''){$where[]="LOCATE(LOWER(?),LOWER(CONCAT_WS(' ',code,JSON_UNQUOTE(JSON_EXTRACT(contact,'$.name')),JSON_UNQUOTE(JSON_EXTRACT(contact,'$.email')),JSON_UNQUOTE(JSON_EXTRACT(contact,'$.phone')))))>0";$args[]=$q;}$where=implode(' AND ',$where);
-        $this->db->beginTransaction();try{
+        if($q!==''){$where[]="LOCATE(LOWER(?),LOWER(CONCAT_WS(' ',code,JSON_UNQUOTE(JSON_EXTRACT(contact,'$.name')),JSON_UNQUOTE(JSON_EXTRACT(contact,'$.email')),JSON_UNQUOTE(JSON_EXTRACT(contact,'$.phone')))))>0";$args[]=$q;}
+        $kind=$input['dateKind'] ?? 'CREATED';if(!in_array($kind,['CREATED','VISIT'],true))self::fail('Loại ngày không hợp lệ.');$from=$input['from'] ?? '';$to=$input['to'] ?? '';foreach([$from,$to] as $date){if(!is_string($date))self::fail();if($date!=='')Pricing::validateDate($date);}if($from!==''&&$to!==''&&$from>$to)self::fail('Ngày kết thúc phải từ ngày bắt đầu.');
+        foreach([[$from,'>='],[$to,$kind==='VISIT'?'<=':'<']] as [$date,$operator])if($date!==''){if($kind==='VISIT'){$where[]="JSON_UNQUOTE(JSON_EXTRACT(snapshot,'$.date')) $operator ?";$args[]=$date;}else{$time=new DateTimeImmutable($date.' 00:00:00',new DateTimeZone('Asia/Ho_Chi_Minh'));if($operator==='<')$time=$time->modify('+1 day');$where[]="created_at $operator ?";$args[]=$time->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');}}
+        return [implode(' AND ',$where),$args,$numbers,in_array($archived,['1','true'],true)];
+    }
+    public function list(array $input):array
+    {
+        [$where,$args,$numbers]=self::filters($input);
+        $this->db->exec('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');$this->db->beginTransaction();try{
             $s=$this->query("SELECT COUNT(*) AS total,COALESCE(SUM(booking_status='CANCELLED'),0) AS cancelled,COALESCE(SUM(payment_status='UNPAID' AND booking_status<>'CANCELLED'),0) AS unpaid,COALESCE(SUM(IF(payment_status='PAID',CAST(JSON_UNQUOTE(JSON_EXTRACT(snapshot,'$.total')) AS DECIMAL(20,0)),0)),0) AS paid_value FROM jingo_orders WHERE $where",$args)->fetch(PDO::FETCH_ASSOC);
             $total=(int)$s['total'];$page=min($numbers['page'],max(1,(int)ceil($total/$numbers['pageSize'])));$offset=($page-1)*$numbers['pageSize'];$limit=$numbers['pageSize'];
             $rows=$this->query("SELECT * FROM jingo_orders WHERE $where ORDER BY created_at DESC,id DESC LIMIT $limit OFFSET $offset",$args)->fetchAll(PDO::FETCH_ASSOC);$data=array_map(fn($row)=>$this->detail($row,true),$rows);$this->db->commit();return ['data'=>$data,'page'=>$page,'pageSize'=>$limit,'summary'=>['total'=>$total,'cancelled'=>(int)$s['cancelled'],'unpaid'=>(int)$s['unpaid'],'paidValue'=>(int)$s['paid_value']]];
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
+    }
+    public function export(array $input):array
+    {
+        [$where,$args,,$archived]=self::filters($input);
+        // One SELECT is one consistent snapshot; never silently truncate an export.
+        $rows=$this->query("SELECT code,created_at,snapshot,contact,booking_status,payment_status FROM jingo_orders WHERE $where ORDER BY created_at DESC,id DESC LIMIT 10001",$args)->fetchAll(PDO::FETCH_ASSOC);
+        if(count($rows)>10000)throw new HttpError(400,'Có hơn 10.000 đơn phù hợp. Thu hẹp khoảng ngày hoặc bộ lọc rồi xuất lại.');
+        return ['rows'=>$rows,'archived'=>$archived];
+    }
+    public static function csv(array $report):string
+    {
+        $rows=[['Mã đơn','Ngày tạo (GMT+7)','Khách hàng','Điện thoại','Email','Sản phẩm','Gói vé','Ngày sử dụng','Suất giờ','Người lớn','Trẻ em','Người cao tuổi','Tổng khách','Giá trị đơn (VND)','Trạng thái đơn','Thanh toán','Kênh bán','Lưu trữ','Mã giảm giá','Tiền giảm (VND)','Trước giảm (VND)']];
+        $booking=['REQUESTED'=>'Chờ xác nhận','CONFIRMED'=>'Đã đặt vé','CANCELLED'=>'Đã hủy'];$payment=['UNPAID'=>'Chưa thu tiền','PAID'=>'Đã thu tiền','CREDIT'=>'Công nợ CTV'];
+        foreach($report['rows'] as $row){$s=json_decode($row['snapshot'],true,512,JSON_THROW_ON_ERROR);$c=json_decode($row['contact'],true,512,JSON_THROW_ON_ERROR);$quantities=['ADULT'=>0,'CHILD'=>0,'SENIOR'=>0];$guests=0;foreach($s['lines'] as $line){$type=preg_replace('/^LOCAL_/','',$line['customerType']);if(isset($quantities[$type]))$quantities[$type]+=$line['quantity'];$guests+=$line['quantity'];}$slot=$s['timeSlot'] ?? null;$date=(new DateTimeImmutable($row['created_at'],new DateTimeZone('UTC')))->setTimezone(new DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');$rows[]=[$row['code'],$date,$c['name'],$c['phone']!==''?"'".$c['phone']:'',$c['email'] ?? '',$s['productName'],$s['variantName'],$s['date'],$slot?$slot['start'].(!empty($slot['end'])?' – '.$slot['end']:''):'',$quantities['ADULT'],$quantities['CHILD'],$quantities['SENIOR'],$guests,$s['total'],$booking[$row['booking_status']] ?? $row['booking_status'],$payment[$row['payment_status']] ?? $row['payment_status'],'Website',$report['archived']?'Có':'Không',$s['discount']['code'] ?? '',($s['discount']['amount'] ?? 0)+($s['onlineDiscount']['amount'] ?? 0),$s['onlineDiscount']['subtotal'] ?? $s['discount']['subtotal'] ?? $s['total']];}
+        $cell=static function(mixed $v):string{$v=str_replace("\0",'',(string)$v);if(preg_match('/^[\s\x{FEFF}]*[=+@-]|^[\t\r\n]/u',$v))$v="'".$v;return '"'.str_replace('"','""',$v).'"';};
+        return "\xEF\xBB\xBF".implode("\r\n",array_map(fn($row)=>implode(',',array_map($cell,$row)),$rows))."\r\n";
     }
     public function act(string $id,array $input,string $actor):array
     {

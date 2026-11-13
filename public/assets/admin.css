@@ -16,3 +16,5 @@
 .stock-filters>label select{width:100%;max-width:100%}
 .stock-filters>select{max-width:100%}
 @media(max-width:640px){.stock-filters>label{flex-basis:100%}}
+.order-filters>label{margin-bottom:0;min-width:0}
+.order-filters>label input{display:block;min-width:140px;width:100%}

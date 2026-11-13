@@ -55,6 +55,9 @@ try {
         header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
         require dirname(__DIR__).'/views/admin.php'; exit;
     }
+    if($path==='/api/v1/admin/orders/export'){
+        if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);(new AdminAuth($db,$config))->me();$report=(new Orders($db))->export($_GET);$csv=Orders::csv($report);header('Content-Type: text/csv; charset=utf-8');header('Content-Disposition: attachment; filename="jinmemo-orders.csv"');header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');header('X-JinMemo-Export-Count: '.count($report['rows']));echo $csv;exit;
+    }
     if(preg_match('#^/api/v1/admin/orders/([a-f0-9-]{36})/files/([a-f0-9-]{36})/revoke$#D',(string)$path,$revokeFile)){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='POST'){header('Allow: POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);$auth->mutation();$actor=$auth->me();$files=new TicketFiles($db,($config['MEDIA_DIR'] ?? dirname(__DIR__).'/storage/media').'/.tickets');jingoJson($files->revoke($revokeFile[1],$revokeFile[2],jingoRequestBody(),$actor['id']));
     }
