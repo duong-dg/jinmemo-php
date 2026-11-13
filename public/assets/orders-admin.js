@@ -21,7 +21,7 @@ async function renderOrders(screen,serial){
  }catch(error){if(serial===loading){screen.replaceChildren(empty('Chưa tải được đơn'));notice(error.message,true);}}
 }
 async function openOrder(id,serial){
- try{const result=await api('orders/'+id),fileResult=await api('orders/'+id+'/files');if(serial!==loading||!['orders','overview'].includes(current)||$('#workspace').hidden)return;
+ try{const result=await api('orders/'+id),fileResult=await api('orders/'+id+'/files');if(serial!==loading||!['orders','overview','supply-alerts'].includes(current)||$('#workspace').hidden)return;
   const order=result.data,dialog=$('#editor'),fields=$('#fields');draft=null;dirty=false;$('#edit-error').hidden=true;$('#editor-title').textContent='Đơn '+order.code;$('#edit-form button[type=submit]').hidden=true;fields.replaceChildren();
   const detail=el('div',undefined,'full order-detail');fields.append(detail);
   const groupLabels={ADULT:'Người lớn',CHILD:'Trẻ em',SENIOR:'Người cao tuổi',LOCAL_ADULT:'Người lớn địa phương',LOCAL_CHILD:'Trẻ em địa phương',LOCAL_SENIOR:'Người cao tuổi địa phương'};
@@ -61,6 +61,6 @@ async function openOrder(id,serial){
    const back=button('Quay lại',()=>{payload=null;note.disabled=false;if(instructions)instructions.disabled=false;if(payment){for(const input of Object.values(payment))input.disabled=false;payment.reference.disabled=payment.method.value==='CASH';}controls.replaceChildren(start);});
    const confirmButton=button('Xác nhận',async()=>{if(!payload||editing)return;editing=true;for(const control of detail.querySelectorAll('button'))control.disabled=true;status.textContent='Đang xử lý…';try{await api('orders/'+id+'/actions',payload);dirty=false;dialog.close();await render();notice('Đã cập nhật đơn.');}catch(error){status.textContent=error.message+' Nếu mất kết nối, bấm Xác nhận để gửi lại cùng thao tác; nếu đơn đã đổi, đóng và tải lại.';}finally{editing=false;for(const control of detail.querySelectorAll('button'))control.disabled=false;}} ,'primary');controls.append(start);
   }
-  if(serial!==loading||!['orders','overview'].includes(current)||$('#workspace').hidden)return;dialog.showModal();
+  if(serial!==loading||!['orders','overview','supply-alerts'].includes(current)||$('#workspace').hidden)return;dialog.showModal();
  }catch(error){notice(error.message,true);}
 }

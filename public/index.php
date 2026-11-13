@@ -29,6 +29,7 @@ require_once dirname(__DIR__) . '/src/SupplyLots.php';
 require dirname(__DIR__) . '/src/SupplierPayments.php';
 require dirname(__DIR__) . '/src/SupplyProfit.php';
 require dirname(__DIR__) . '/src/SupplierStatements.php';
+require dirname(__DIR__) . '/src/SupplyAlerts.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
@@ -84,6 +85,9 @@ try {
     }
     if(preg_match('#^/api/v1/posts/([a-f0-9-]{36})/view$#D',(string)$path,$postView)){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='POST'){header('Allow: POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$insights=new PostInsights(jingoDatabase($config),$config);header('Cache-Control: private, no-store');jingoJson(['data'=>$insights->record($postView[1],$_GET,jingoRequestBody(),$_SERVER,$_COOKIE)]);
+    }
+    if($path==='/api/v1/admin/supply/alerts'){
+        if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);(new AdminAuth($db,$config))->me();jingoJson((new SupplyAlerts($db))->get($_GET));
     }
     if(preg_match('#^/api/v1/admin/supply/statements/([a-f0-9-]{36})(/export)?$#D',(string)$path,$supplierStatement)){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);(new AdminAuth($db,$config))->me();$export=isset($supplierStatement[2]);$report=(new SupplierStatements($db))->build($supplierStatement[1],$_GET,$export);header('Cache-Control: private, no-store');if(!$export)jingoJson($report);header('Content-Type: text/csv; charset=utf-8');header('Content-Disposition: attachment; filename="jinmemo-ncc-'.$report['supplier']['id'].'-'.$report['from'].'-'.$report['to'].'.csv"');header('X-Content-Type-Options: nosniff');header('X-JinMemo-Export-Count: '.$report['total']);echo SupplierStatements::csv($report);exit;
