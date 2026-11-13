@@ -27,7 +27,7 @@ final class Pricing
     public static function calculate(array $product,string $variantId,string $date,array $quantities,array $rules=[],array $closures=[],?string $slotId=null,?int $now=null): array
     {
         self::validateDate($date);$variant=null;foreach($product['variants'] as $item)if($item['id']===$variantId){$variant=$item;break;}
-        if(!$variant)self::fail('Gói vé không tồn tại.');$slot=self::schedule($variant,$date,$slotId,$now);
+        if(!$variant)self::fail('Gói vé không tồn tại.');if(isset($variant['saleWindow']['startDate'])&&$date<$variant['saleWindow']['startDate']||isset($variant['saleWindow']['endDate'])&&$date>$variant['saleWindow']['endDate'])self::fail('Gói vé chưa mở bán cho ngày sử dụng này.');$slot=self::schedule($variant,$date,$slotId,$now);
         $weekday=(int)(new DateTimeImmutable($date.'T00:00:00Z'))->format('N');
         foreach($closures as $closure)if($closure['productId']===$product['id'] && (!isset($closure['variantId']) || $closure['variantId']==='' || $closure['variantId']===$variantId) && Schedule::closureApplies($variant,$date,$closure))self::fail('Ngày này đã khóa bán.');
         if(!$quantities || count(array_filter($quantities,fn($q)=>$q!==0 && $q!==0.0))===0)self::fail('Chọn ít nhất một khách.');
@@ -67,6 +67,6 @@ final class Pricing
     }
     public static function publicVariants(array $product): array
     {
-        $variants=$product['variants'];foreach($variants as &$v){$v['originalPrices']=$v['prices'];foreach($v['prices'] as &$price)$price=self::unitPrice($price,$v['onlineDiscount'] ?? $product['onlineDiscount'] ?? null);unset($price);}unset($v);return $variants;
+        $variants=$product['variants'];foreach($variants as &$v){$v['originalPrices']=$v['prices'];foreach($v['prices'] as &$price)$price=self::unitPrice($price,$v['onlineDiscount'] ?? $product['onlineDiscount'] ?? null);unset($price);}unset($v);usort($variants,fn($a,$b)=>($a['displayOrder'] ?? 10001)<=>($b['displayOrder'] ?? 10001));return $variants;
     }
 }

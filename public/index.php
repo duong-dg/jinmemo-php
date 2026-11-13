@@ -228,7 +228,7 @@ try {
     if($path==='/api/v1/products'||preg_match('#^/api/v1/products/([^/]+)(/sale-calendar)?$#D',(string)$path,$productMatch)){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
         $db=jingoDatabase(jingoConfig());$products=new Products($db);$lang=($_GET['lang'] ?? '')==='en'?'en':'vi';
-        if(!empty($productMatch[2])){$p=$products->find(rawurldecode($productMatch[1]));$view=$products->publicView($p,$lang);jingoJson(['data'=>['variants'=>array_map(fn($v)=>['id'=>$v['id'],'timeSlots'=>$v['timeSlots'] ?? [],'schedulePeriods'=>$v['schedulePeriods'] ?? []],$p['variants']),'saleClosures'=>$view['saleClosures']]]);}
+        if(!empty($productMatch[2])){$p=$products->find(rawurldecode($productMatch[1]));$view=$products->publicView($p,$lang);jingoJson(['data'=>['variants'=>array_map(fn($v)=>['id'=>$v['id'],'timeSlots'=>$v['timeSlots'] ?? [],'schedulePeriods'=>$v['schedulePeriods'] ?? [],...(isset($v['saleWindow'])?['saleWindow'=>$v['saleWindow']]:[])],$p['variants']),'saleClosures'=>$view['saleClosures']]]);}
         if(isset($productMatch[1]))jingoJson(['data'=>$products->publicView($products->find(rawurldecode($productMatch[1]),true,false,$lang),$lang)]);
         $items=$products->list(false,$lang);foreach(['type','destination','q'] as $filter)if(isset($_GET[$filter])&&!is_string($_GET[$filter]))throw new HttpError(400,'Bộ lọc không hợp lệ.');
         if(!empty($_GET['type']))$items=array_values(array_filter($items,fn($p)=>$p['type']===$_GET['type']));

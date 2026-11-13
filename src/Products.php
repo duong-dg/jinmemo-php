@@ -13,7 +13,7 @@ final class Products
     public static function translated(array $p):bool{return ($p['english']['status'] ?? '')==='PUBLISHED'&&($p['english']['sourceHash'] ?? '')===self::sourceHash($p);}
     public function list(bool $admin=false,string $lang='vi'):array
     {
-        $items=[];foreach($this->query('SELECT data,version FROM jingo_products ORDER BY updated_at DESC,id')->fetchAll(PDO::FETCH_ASSOC) as $row){$p=json_decode($row['data'],true,512,JSON_THROW_ON_ERROR);$p['version']=(int)$row['version'];if($admin)$items[]=$p;elseif(($p['status'] ?? '')==='PUBLISHED'&&($lang!=='en'||self::translated($p))){$v=$this->publicView($p,$lang);unset($v['detailHtml'],$v['gallery'],$v['saleClosures']);$items[]=$v;}}return $items;
+        $items=[];foreach($this->query('SELECT data,version FROM jingo_products ORDER BY updated_at DESC,id')->fetchAll(PDO::FETCH_ASSOC) as $row){$p=json_decode($row['data'],true,512,JSON_THROW_ON_ERROR);$p['version']=(int)$row['version'];if($admin)$items[]=$p;elseif(($p['status'] ?? '')==='PUBLISHED'&&($lang!=='en'||self::translated($p))){$v=$this->publicView($p,$lang);unset($v['detailHtml'],$v['gallery'],$v['saleClosures']);$items[]=$v;}}if(!$admin)usort($items,fn($a,$b)=>($a['displayOrder'] ?? 10001)<=>($b['displayOrder'] ?? 10001));return $items;
     }
     public function find(string $value,bool $slug=false,bool $admin=false,string $lang='vi'):array
     {
