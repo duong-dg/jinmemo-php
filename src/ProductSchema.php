@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/ProductLocation.php';
 
 final class ProductSchema
 {
@@ -23,6 +24,10 @@ final class ProductSchema
         $amount=self::integer($value['value'] ?? ($type==='NONE'?0:null),$type==='PERCENT'?100:100000000);if(($type==='NONE' && $amount!==0)||($type!=='NONE' && $amount===0))self::fail('Giá trị ưu đãi không hợp lệ.');return ['type'=>$type,'value'=>$amount];
     }
     private static function weekdays(mixed $days,bool $unique=false): array {$days=self::list($days,7,1);foreach($days as $day)if(!is_int($day)||$day<1||$day>7)self::fail('Thứ trong tuần không hợp lệ.');if($unique&&count(array_unique($days))!==count($days))self::fail('Các thứ khóa bán không được trùng.');return $days;}
+    private static function location(mixed $value):array
+    {
+        $value=self::object($value);self::keys($value,['address','addressEn','mapUrl']);$out=[];foreach(['address'=>500,'addressEn'=>500,'mapUrl'=>2000] as $key=>$limit){if(array_key_exists($key,$value)&&!is_string($value[$key]))self::fail('Địa chỉ hoặc liên kết bản đồ không hợp lệ.');$out[$key]=self::text($value,$key,$limit);}if(!ProductLocation::validMapUrl($out['mapUrl']))self::fail('Nhập link Google Maps HTTPS hợp lệ.');return $out;
+    }
     private static function serviceDetails(mixed $value):array
     {
         $value=self::object($value);self::keys($value,['custom','included','excluded','includedEn','excludedEn']);$out=[];if(array_key_exists('custom',$value)){if(!is_bool($value['custom']))self::fail('Cấu hình dịch vụ riêng không hợp lệ.');$out['custom']=$value['custom'];}foreach(['included','excluded','includedEn','excludedEn'] as $key){if(array_key_exists($key,$value)&&!is_string($value[$key]))self::fail('Nội dung dịch vụ không hợp lệ.');$out[$key]=self::text($value,$key,6000);}return $out;
@@ -37,14 +42,14 @@ final class ProductSchema
     }
     public static function validate(array $input): array
     {
-        self::keys($input,['id','supplierId','slug','name','destination','destinationId','type','description','cover','gallery','detailHtml','status','demo','version','variants','rules','closures','english','seoTitle','seoDescription','onlineDiscount','displayOrder','tourInfo','serviceDetails']);
+        self::keys($input,['id','supplierId','slug','name','destination','destinationId','type','description','cover','gallery','detailHtml','status','demo','version','variants','rules','closures','english','seoTitle','seoDescription','onlineDiscount','displayOrder','tourInfo','serviceDetails','location']);
         if(!array_key_exists('description',$input))self::fail('Thiếu mô tả sản phẩm.');foreach(['onlineDiscount','demo','gallery','detailHtml','rules','closures','english','seoTitle','seoDescription'] as $key)if(array_key_exists($key,$input)&&$input[$key]===null)self::fail('Trường '.$key.' không được null.');
         $p=['id'=>self::id($input['id'] ?? null),'name'=>self::text($input,'name',200,true),'destination'=>self::text($input,'destination',150,true),'type'=>self::id($input['type'] ?? null),'description'=>self::text($input,'description',10000),'slug'=>$input['slug'] ?? null,'status'=>$input['status'] ?? null,'version'=>self::integer($input['version'] ?? null,2147483646),'demo'=>$input['demo'] ?? false,'cover'=>self::image($input['cover'] ?? null),'gallery'=>[],'detailHtml'=>self::html($input,'detailHtml'),'seoTitle'=>self::text($input,'seoTitle',200),'seoDescription'=>self::text($input,'seoDescription',500)];
         if(!is_string($p['slug'])||strlen($p['slug'])>160||!preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/D',$p['slug'])||!in_array($p['status'],['DRAFT','PUBLISHED','ARCHIVED'],true)||!is_bool($p['demo']))self::fail('Đường dẫn hoặc trạng thái sản phẩm không hợp lệ.');
         foreach(['supplierId','destinationId'] as $key)if(array_key_exists($key,$input))$p[$key]=self::id($input[$key],true);
         if(isset($input['onlineDiscount']))$p['onlineDiscount']=self::discount($input['onlineDiscount']);
         if(array_key_exists('displayOrder',$input))$p['displayOrder']=self::integer($input['displayOrder'],10000);
-        if(array_key_exists('tourInfo',$input))$p['tourInfo']=self::tourInfo($input['tourInfo']);if(array_key_exists('serviceDetails',$input))$p['serviceDetails']=self::serviceDetails($input['serviceDetails']);
+        if(array_key_exists('location',$input))$p['location']=self::location($input['location']);if(array_key_exists('tourInfo',$input))$p['tourInfo']=self::tourInfo($input['tourInfo']);if(array_key_exists('serviceDetails',$input))$p['serviceDetails']=self::serviceDetails($input['serviceDetails']);
         foreach(self::list($input['gallery'] ?? [],20) as $image){$ref=self::image($image);if(!$ref)self::fail('Ảnh bộ sưu tập không hợp lệ.');$p['gallery'][]=$ref;}
         $variants=[];$p['variants']=[];
         foreach(self::list($input['variants'] ?? null,30,1) as $v){

@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__.'/ServiceDetails.php';
+require_once __DIR__.'/ProductLocation.php';
 
 final class Products
 {

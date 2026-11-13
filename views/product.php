@@ -3,7 +3,7 @@ $groups=$en?['ADULT'=>'Adult','CHILD'=>'Child','SENIOR'=>'Senior','LOCAL_ADULT'=
 $contactHref=null;foreach($published as $item)if($item['kind']==='CONTACT')$contactHref=$item['localePaths'][$lang];
 ?>
 <nav class="breadcrumbs" aria-label="<?=$en?'Breadcrumbs':'Đường dẫn'?>"><a href="<?=$homePath?>"><?=$en?'Home':'Trang chủ'?></a><span>/</span><span><?=$e($product['name'])?></span></nav>
-<header class="content-page-heading"><p class="eyebrow"><?=$e($product['destination'])?> · <?=$e($product['typeName'])?></p><h1><?=$e($product['name'])?></h1><p><?=$e($product['description'])?></p></header>
+<header class="content-page-heading"><p class="eyebrow"><?=$e($product['destination'])?> · <?=$e($product['typeName'])?></p><h1><?=$e($product['name'])?></h1><?php require __DIR__.'/product-location.php';?><p><?=$e($product['description'])?></p></header>
 <?php if($cover):?><img class="content-page-cover" src="<?=$e($cover)?>" alt="<?=$e($image['alt'] ?: $product['name'])?>"><?php endif;?>
 <?php if($product['demo'] ?? true):?><p class="price-note"><?=$en?'Illustrative experience and prices.':'Sản phẩm và giá minh họa.'?></p><?php endif;?>
 <div class="product-layout"><article class="prose"><?=ContentHtml::clean($product['detailHtml'] ?? '')?><?php if($product['gallery']):?><div class="product-gallery"><?php foreach($product['gallery'] as $ref)if($media($ref)):?><img src="<?=$e($media($ref))?>" alt="<?=$e($ref['alt'])?>" loading="lazy"><?php endif;?></div><?php endif;?><?php $serviceDetails=$product['serviceDetails'] ?? null;require __DIR__.'/service-details.php';?></article>
