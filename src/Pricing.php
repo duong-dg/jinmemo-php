@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/Schedule.php';
 
 final class Pricing
 {
@@ -15,7 +16,7 @@ final class Pricing
     private static function safe(mixed $value): bool { return (is_int($value) || (is_float($value) && is_finite($value) && floor($value)===$value)) && $value>=0 && $value<=self::MAX_SAFE; }
     public static function schedule(array $variant,string $date,?string $slotId,?int $now=null): ?array
     {
-        $slots=$variant['timeSlots'] ?? [];
+        $slots=Schedule::slots($variant,$date);
         if(!$slots){if($slotId!==null && $slotId!=='')self::fail('Gói này không sử dụng khung giờ.');return null;}
         $slot=null;foreach($slots as $candidate)if($candidate['id']===$slotId){$slot=$candidate;break;}
         if(!$slot)self::fail('Chọn khung giờ sử dụng.');
@@ -28,7 +29,7 @@ final class Pricing
         self::validateDate($date);$variant=null;foreach($product['variants'] as $item)if($item['id']===$variantId){$variant=$item;break;}
         if(!$variant)self::fail('Gói vé không tồn tại.');$slot=self::schedule($variant,$date,$slotId,$now);
         $weekday=(int)(new DateTimeImmutable($date.'T00:00:00Z'))->format('N');
-        foreach($closures as $closure)if($closure['productId']===$product['id'] && (!isset($closure['variantId']) || $closure['variantId']==='' || $closure['variantId']===$variantId) && $closure['startDate']<=$date && $date<=$closure['endDate'] && (!isset($closure['weekdays']) || in_array($weekday,$closure['weekdays'],true)))self::fail('Ngày này đã khóa bán.');
+        foreach($closures as $closure)if($closure['productId']===$product['id'] && (!isset($closure['variantId']) || $closure['variantId']==='' || $closure['variantId']===$variantId) && Schedule::closureApplies($variant,$date,$closure))self::fail('Ngày này đã khóa bán.');
         if(!$quantities || count(array_filter($quantities,fn($q)=>$q!==0 && $q!==0.0))===0)self::fail('Chọn ít nhất một khách.');
         $lines=[];$guests=0;$total=0;
         foreach($quantities as $type=>$quantity){

@@ -23,6 +23,10 @@ final class ProductSchema
         $amount=self::integer($value['value'] ?? ($type==='NONE'?0:null),$type==='PERCENT'?100:100000000);if(($type==='NONE' && $amount!==0)||($type!=='NONE' && $amount===0))self::fail('Giá trị ưu đãi không hợp lệ.');return ['type'=>$type,'value'=>$amount];
     }
     private static function weekdays(mixed $days,bool $unique=false): array {$days=self::list($days,7,1);foreach($days as $day)if(!is_int($day)||$day<1||$day>7)self::fail('Thứ trong tuần không hợp lệ.');if($unique&&count(array_unique($days))!==count($days))self::fail('Các thứ khóa bán không được trùng.');return $days;}
+    private static function slots(mixed $value,int $min=0):array
+    {
+        $out=[];$ids=[];$starts=[];foreach(self::list($value,30,$min) as $slot){$slot=self::object($slot);self::keys($slot,['id','start','end']);$id=self::id($slot['id'] ?? null);$start=$slot['start'] ?? null;$end=$slot['end'] ?? null;if(!is_string($start)||!preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/D',$start)||(array_key_exists('end',$slot)&&(!is_string($end)||!preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/D',$end)||$end<=$start)))self::fail('Khung giờ không hợp lệ.');if(isset($ids[$id])||isset($starts[$start]))self::fail('Khung giờ bị trùng mã hoặc giờ bắt đầu.');$ids[$id]=true;$starts[$start]=true;$s=['id'=>$id,'start'=>$start];if(isset($slot['end']))$s['end']=$end;$out[]=$s;}return $out;
+    }
     public static function validate(array $input): array
     {
         self::keys($input,['id','supplierId','slug','name','destination','destinationId','type','description','cover','gallery','detailHtml','status','demo','version','variants','rules','closures','english','seoTitle','seoDescription','onlineDiscount']);
@@ -34,15 +38,12 @@ final class ProductSchema
         foreach(self::list($input['gallery'] ?? [],20) as $image){$ref=self::image($image);if(!$ref)self::fail('Ảnh bộ sưu tập không hợp lệ.');$p['gallery'][]=$ref;}
         $variants=[];$p['variants']=[];
         foreach(self::list($input['variants'] ?? null,30,1) as $v){
-            $v=self::object($v);self::keys($v,['id','name','prices','timeSlots','conditions','onlineDiscount']);$id=self::id($v['id'] ?? null);if(isset($variants[$id]))self::fail('Mã gói vé bị trùng.');
-            foreach(['timeSlots','conditions','onlineDiscount'] as $key)if(array_key_exists($key,$v)&&$v[$key]===null)self::fail('Trường gói không được null.');
+            $v=self::object($v);self::keys($v,['id','name','prices','timeSlots','schedulePeriods','conditions','onlineDiscount']);$id=self::id($v['id'] ?? null);if(isset($variants[$id]))self::fail('Mã gói vé bị trùng.');
+            foreach(['timeSlots','schedulePeriods','conditions','onlineDiscount'] as $key)if(array_key_exists($key,$v)&&$v[$key]===null)self::fail('Trường gói không được null.');
             $prices=self::object($v['prices'] ?? null);self::keys($prices,Pricing::GROUPS);if(!$prices)self::fail('Gói cần ít nhất một giá.');foreach($prices as &$price)$price=self::integer($price,100000000);unset($price);
-            $variant=['id'=>$id,'name'=>self::text($v,'name',100,true),'prices'=>$prices,'timeSlots'=>[]];$ids=[];$starts=[];
-            foreach(self::list($v['timeSlots'] ?? [],30) as $slot){
-                $slot=self::object($slot);self::keys($slot,['id','start','end']);$sid=self::id($slot['id'] ?? null);$start=$slot['start'] ?? null;$end=$slot['end'] ?? null;
-                if(!is_string($start)||!preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/D',$start) || (array_key_exists('end',$slot)&&(!is_string($end)||!preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/D',$end)||$end<=$start)))self::fail('Khung giờ không hợp lệ.');
-                if(isset($ids[$sid])||isset($starts[$start]))self::fail('Khung giờ bị trùng mã hoặc giờ bắt đầu.');$ids[$sid]=true;$starts[$start]=true;$s=['id'=>$sid,'start'=>$start];if(isset($slot['end']))$s['end']=$end;$variant['timeSlots'][]=$s;
-            }
+            $variant=['id'=>$id,'name'=>self::text($v,'name',100,true),'prices'=>$prices,'timeSlots'=>self::slots($v['timeSlots'] ?? [])];
+            // Omitted periods stay omitted for compatibility with existing PHP exports.
+            if(array_key_exists('schedulePeriods',$v)){$variant['schedulePeriods']=[];$periodIds=[];foreach(self::list($v['schedulePeriods'],100) as $period){$period=self::object($period);self::keys($period,['id','startDate','endDate','weekdays','priority','reopenWeeklyClosures','timeSlots']);$pid=self::id($period['id'] ?? null);if(isset($periodIds[$pid]))self::fail('Mã giai đoạn bị trùng.');$periodIds[$pid]=true;foreach(['startDate','endDate'] as $key){if(!is_string($period[$key] ?? null))self::fail('Ngày giai đoạn không hợp lệ.');Pricing::validateDate($period[$key]);}if($period['startDate']>$period['endDate'])self::fail('Ngày kết thúc phải sau ngày bắt đầu.');$reopen=$period['reopenWeeklyClosures'] ?? false;if(!is_bool($reopen)||array_key_exists('reopenWeeklyClosures',$period)&&$period['reopenWeeklyClosures']===null)self::fail('Cấu hình mở lại ngày nghỉ không hợp lệ.');$item=['id'=>$pid,'startDate'=>$period['startDate'],'endDate'=>$period['endDate'],'priority'=>self::integer(array_key_exists('priority',$period)?$period['priority']:10,10000),'reopenWeeklyClosures'=>$reopen,'timeSlots'=>self::slots($period['timeSlots'] ?? null,1)];if(array_key_exists('weekdays',$period))$item['weekdays']=self::weekdays($period['weekdays'],true);$variant['schedulePeriods'][]=$item;}}
             if(isset($v['conditions']))$variant['conditions']=self::conditions($v['conditions']);if(isset($v['onlineDiscount']))$variant['onlineDiscount']=self::discount($v['onlineDiscount']);$variants[$id]=$variant;$p['variants'][]=$variant;
         }
         $p['rules']=[];$p['closures']=[];$ruleIds=[];

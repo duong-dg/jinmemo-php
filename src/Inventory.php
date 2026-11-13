@@ -20,10 +20,10 @@ final class Inventory
     {
         $raw=$this->query('SELECT data FROM jingo_products WHERE id=?'.($lock?' FOR UPDATE':''),[$id])->fetchColumn();if($raw===false)throw new HttpError(404,'Sản phẩm không tồn tại.');return json_decode($raw,true,512,JSON_THROW_ON_ERROR);
     }
-    private function scope(array $product,string $variantId,string $slotId):void
+    private function scope(array $product,string $variantId,string $slotId):array
     {
         $variant=null;foreach($product['variants'] as $v)if($v['id']===$variantId)$variant=$v;if(!$variant)throw new HttpError(400,'Gói vé không tồn tại.');
-        if($slotId!==''){foreach($variant['timeSlots'] ?? [] as $slot)if($slot['id']===$slotId)return;throw new HttpError(400,'Suất giờ không tồn tại.');}
+        if($slotId!==''&&!in_array($slotId,array_column(Schedule::allSlots($variant),'id'),true))throw new HttpError(400,'Suất giờ không tồn tại.');return $variant;
     }
     private function config(string $productId,?int $expected=null):array
     {
@@ -60,9 +60,9 @@ final class Inventory
         $id=self::id($input['productId'] ?? null);$variant=self::id($input['variantId'] ?? null);$slot=self::id($input['slotId'] ?? '',true);$version=self::number($input['version'] ?? null,2147483646);$capacity=self::number($input['capacity'] ?? null,1000000);$threshold=self::number($input['lowStockThreshold'] ?? 5,1000000);$weekdays=$input['weekdays'] ?? [1,2,3,4,5,6,7];
         if(!is_array($weekdays)||!array_is_list($weekdays)||!count($weekdays)||count($weekdays)>7)throw new HttpError(400,'Chọn thứ áp dụng.');foreach($weekdays as $day)if(!is_int($day)||$day<1||$day>7)throw new HttpError(400,'Thứ không hợp lệ.');
         if(!is_string($input['startDate'] ?? null)||!is_string($input['endDate'] ?? null))throw new HttpError(400,'Chọn khoảng ngày hợp lệ.');$days=array_values(array_filter(self::dates($input['startDate'],$input['endDate']),fn($date)=>in_array((int)(new DateTimeImmutable($date.'T00:00:00Z'))->format('N'),$weekdays,true)));if(!$days)throw new HttpError(400,'Không có ngày nào khớp các thứ được chọn.');
-        $this->db->beginTransaction();try{$product=$this->product($id,true);$this->scope($product,$variant,$slot);$config=$this->config($id,$version);$rows=$this->query('SELECT * FROM jingo_inventory_allocations WHERE product_id=? AND released=0',[$id])->fetchAll(PDO::FETCH_ASSOC);
+        $this->db->beginTransaction();try{$product=$this->product($id,true);$v=$this->scope($product,$variant,$slot);$days=array_values(array_filter($days,fn($date)=>$slot===''||in_array($slot,array_column(Schedule::slots($v,$date),'id'),true)));if(!$days)throw new HttpError(400,'Suất không hoạt động trong khoảng ngày đã chọn.');$config=$this->config($id,$version);$rows=$this->query('SELECT * FROM jingo_inventory_allocations WHERE product_id=? AND released=0',[$id])->fetchAll(PDO::FETCH_ASSOC);
             foreach($days as $date){$used=self::usage(array_filter($rows,fn($r)=>$r['visit_date']===$date),$variant,$slot);if($used>$capacity)throw new HttpError(409,'Ngày '.$date.' đã có '.$used.' khách. Tổng tồn không được nhỏ hơn số đã đặt.');}
-            foreach($days as $date)$this->query('INSERT INTO jingo_inventory_buckets(product_id,variant_id,visit_date,slot_id,capacity,low_stock_threshold) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE capacity=VALUES(capacity),low_stock_threshold=VALUES(low_stock_threshold)',[$id,$variant,$date,$slot,$capacity,$threshold]);$result=$this->bump($id,$config,$actor,'inventory.capacity');$this->db->commit();return $result;
+            foreach($days as $date)$this->query('INSERT INTO jingo_inventory_buckets(product_id,variant_id,visit_date,slot_id,capacity,low_stock_threshold) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE capacity=VALUES(capacity),low_stock_threshold=VALUES(low_stock_threshold)',[$id,$variant,$date,$slot,$capacity,$threshold]);$result=$this->bump($id,$config,$actor,'inventory.capacity');$this->db->commit();return $result+['days'=>count($days)];
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
     public function read(string $id,string $from,string $to):array
