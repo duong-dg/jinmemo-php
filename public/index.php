@@ -14,6 +14,7 @@ require dirname(__DIR__) . '/src/Pricing.php';
 require dirname(__DIR__) . '/src/PublicSite.php';
 require dirname(__DIR__) . '/src/ProductSchema.php';
 require dirname(__DIR__) . '/src/Products.php';
+require dirname(__DIR__) . '/src/CatalogBrowse.php';
 require dirname(__DIR__) . '/src/Inventory.php';
 require dirname(__DIR__) . '/src/Quotes.php';
 require dirname(__DIR__) . '/src/Vouchers.php';
@@ -36,7 +37,7 @@ require dirname(__DIR__) . '/src/TicketStock.php';
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js','/assets/schedule.js','/assets/booking.js','/assets/orders-admin.js','/assets/posts-admin.js','/assets/post-categories-admin.js','/assets/translations-admin.js','/assets/post-reader.js','/assets/post-preview.css','/assets/overview-admin.js','/assets/supply-admin.js','/assets/supplier-payments-admin.js','/assets/supplier-statements-admin.js','/assets/source-history-admin.js','/assets/ticket-stock-admin.js'],true)) return false;
-    if(in_array($path,['/cam-nang','/cam-nang/','/en/blog','/en/blog/','/tra-cuu','/tra-cuu/','/en/orders','/en/orders/','/','/en','/en/','/lien-he','/lien-he/','/en/contact','/en/contact/'],true) || preg_match('#^/(?:cam-nang|en/blog|trang|en/pages|ve|en/ve)/[^/]+/?$#D',(string)$path)) {
+    if(in_array($path,['/cam-nang','/cam-nang/','/en/blog','/en/blog/','/tra-cuu','/tra-cuu/','/en/orders','/en/orders/','/','/en','/en/','/lien-he','/lien-he/','/en/contact','/en/contact/','/diem-den','/diem-den/','/en/destinations','/en/destinations/'],true) || preg_match('#^/(?:cam-nang|en/blog|trang|en/pages|ve|en/ve|diem-den|en/destinations|loai|en/loai)/[^/]+/?$#D',(string)$path)) {
         $publicRequest=true;
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
         $config=jingoConfig();(new PublicSite(jingoDatabase($config),$config))->render($path);
@@ -230,10 +231,7 @@ try {
         $db=jingoDatabase(jingoConfig());$products=new Products($db);$lang=($_GET['lang'] ?? '')==='en'?'en':'vi';
         if(!empty($productMatch[2])){$p=$products->find(rawurldecode($productMatch[1]));$view=$products->publicView($p,$lang);jingoJson(['data'=>['variants'=>array_map(fn($v)=>['id'=>$v['id'],'timeSlots'=>$v['timeSlots'] ?? [],'schedulePeriods'=>$v['schedulePeriods'] ?? [],...(isset($v['saleWindow'])?['saleWindow'=>$v['saleWindow']]:[])],$p['variants']),'saleClosures'=>$view['saleClosures']]]);}
         if(isset($productMatch[1]))jingoJson(['data'=>$products->publicView($products->find(rawurldecode($productMatch[1]),true,false,$lang),$lang)]);
-        $items=$products->list(false,$lang);foreach(['type','destination','q'] as $filter)if(isset($_GET[$filter])&&!is_string($_GET[$filter]))throw new HttpError(400,'Bộ lọc không hợp lệ.');
-        if(!empty($_GET['type']))$items=array_values(array_filter($items,fn($p)=>$p['type']===$_GET['type']));
-        if(!empty($_GET['destination'])){$ids=[$_GET['destination']=>true];$nodes=(new Destinations($db))->list();do{$changed=false;foreach($nodes as $node)if($node['parentId']&&isset($ids[$node['parentId']])&&!isset($ids[$node['id']])){$ids[$node['id']]=true;$changed=true;}}while($changed);$items=array_values(array_filter($items,fn($p)=>isset($ids[$p['destinationId'] ?? ''])));}
-        if(!empty($_GET['q'])){$fold=static fn($s)=>strtolower(iconv('UTF-8','ASCII//TRANSLIT//IGNORE',str_replace(['đ','Đ'],['d','D'],$s)) ?: '');$needle=$fold(mb_substr($_GET['q'],0,200));$items=array_values(array_filter($items,fn($p)=>str_contains($fold($p['name'].' '.$p['destination']),$needle)));}jingoJson(['data'=>$items]);
+        jingoJson(['data'=>(new CatalogBrowse($db))->products($_GET,$lang)]);
     }
     if($path==='/api/v1/admin/inventory'||in_array($path,['/api/v1/admin/inventory/config','/api/v1/admin/inventory/capacity'],true)){
         $read=$path==='/api/v1/admin/inventory';$expected=$read?'GET':'POST';if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!==$expected){header('Allow: '.$expected);throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if(!$read)$auth->mutation();$actor=$auth->me();$inventory=new Inventory($db);

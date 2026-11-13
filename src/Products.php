@@ -35,8 +35,9 @@ final class Products
         unset($out['supplierId'],$out['rules'],$out['closures'],$out['english'],$out['version']);$out['variants']=Pricing::publicVariants($out);$out['languages']=$translated?['vi','en']:['vi'];
         $out['saleClosures']=[];foreach($p['closures'] ?? [] as $c){unset($c['productId'],$c['reason']);$out['saleClosures'][]=$c;}
         $row=$this->query('SELECT data FROM jingo_product_types WHERE id=?',[$p['type']])->fetchColumn();$type=$row?json_decode($row,true,512,JSON_THROW_ON_ERROR):null;
+        if($type&&$type['status']!=='ACTIVE')$type=null;
         $out['typeName']=$lang==='en'?($type&&ProductTypes::translated($type)?$type['english']['name']:'Experience'):($type['name'] ?? 'Trải nghiệm');$out['bookingKind']=$type['bookingKind'] ?? 'TICKET';if($type&&($lang!=='en'||ProductTypes::translated($type)))$out['typeSlug']=$type['slug'];
-        if(isset($p['destinationId'])){$raw=$this->query('SELECT data FROM jingo_destinations WHERE id=?',[$p['destinationId']])->fetchColumn();if($raw){$d=json_decode($raw,true,512,JSON_THROW_ON_ERROR);$out['destination']=$lang==='en'?($d['englishName']?:$d['name']):$d['name'];$out['destinationSlug']=$lang==='en'?($d['englishSlug']?:$d['slug']):$d['slug'];}}
+        if(isset($p['destinationId']))foreach((new Destinations($this->db))->list() as $d)if($d['id']===$p['destinationId']){$out['destination']=$lang==='en'?($d['englishName']?:$d['name']):$d['name'];$out['destinationSlug']=$lang==='en'?($d['englishSlug']?:$d['slug']):$d['slug'];break;}
         return $out;
     }
     public function archive(string $id,array $input,string $actor):array
