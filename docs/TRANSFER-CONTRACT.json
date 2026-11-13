@@ -82,6 +82,11 @@
       "created_at"
     ]
   },
+  "posTables": {
+    "counters": ["id", "data", "version"],
+    "pos_shifts": ["id", "counter_id", "opened_by", "opened_name", "counter_name", "opening_cash", "opening_note", "open_hash", "opened_at", "closed_at", "closed_by", "close_request", "close_hash", "close_note", "summary", "version"],
+    "pos_open_shifts": ["counter_id", "shift_id"]
+  },
   "stockTables": {
     "ticket_stock": [
       "id",

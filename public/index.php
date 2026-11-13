@@ -20,6 +20,7 @@ require dirname(__DIR__) . '/src/Quotes.php';
 require dirname(__DIR__) . '/src/Vouchers.php';
 require dirname(__DIR__) . '/src/Orders.php';
 require dirname(__DIR__) . '/src/SalesReport.php';
+require dirname(__DIR__) . '/src/Counters.php';
 require dirname(__DIR__) . '/src/TicketFiles.php';
 require dirname(__DIR__) . '/src/Posts.php';
 require dirname(__DIR__) . '/src/PostCategories.php';
@@ -56,6 +57,9 @@ try {
         header('Content-Type: text/html; charset=utf-8'); header('Cache-Control: private, no-store'); header('X-Content-Type-Options: nosniff'); header('X-Frame-Options: DENY'); header('Referrer-Policy: no-referrer');
         header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
         require dirname(__DIR__).'/views/admin.php'; exit;
+    }
+    if($path==='/api/v1/admin/counters'){
+        $method=$_SERVER['REQUEST_METHOD'] ?? 'GET';if(!in_array($method,['GET','POST'],true)){header('Allow: GET, POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me();if($_GET)throw new HttpError(400,'Bộ lọc quầy không hợp lệ.');$counters=new Counters($db);$data=$method==='GET'?$counters->list():$counters->save(jingoRequestBody(),$actor['id']);header('Content-Type: application/json; charset=utf-8');header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');echo json_encode(['data'=>$data],JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);exit;
     }
     if(in_array($path,['/api/v1/admin/reports','/api/v1/admin/reports/export'],true)){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);(new AdminAuth($db,$config))->me();$report=(new SalesReport($db))->build($_GET);header('Cache-Control: private, no-store');if($path==='/api/v1/admin/reports'){header('Content-Type: application/json; charset=utf-8');header('X-Content-Type-Options: nosniff');echo json_encode($report,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);exit;}$csv=SalesReport::csv($report);header('Content-Type: text/csv; charset=utf-8');header('Content-Disposition: attachment; filename="jinmemo-ban-hang-'.$report['from'].'-'.$report['to'].'.csv"');header('X-Content-Type-Options: nosniff');header('X-JinMemo-Export-Count: '.count($report['daily']));echo $csv;exit;
