@@ -1,0 +1,19 @@
+<?php
+declare(strict_types=1);
+
+final class SupplyProfit
+{
+    public function __construct(private PDO $db){}
+    private function query(string $sql,array $args=[]):PDOStatement{$s=$this->db->prepare($sql);$s->execute($args);return $s;}
+    private static function money(mixed $value):int{if((!is_int($value)&&!is_string($value))||!preg_match('/^[0-9]+$/D',(string)$value))throw new HttpError(409,'Số tiền trong dữ liệu đơn không hợp lệ.');$value=ltrim((string)$value,'0') ?: '0';if(strlen($value)>16||strlen($value)===16&&strcmp($value,'9007199254740991')>0)throw new HttpError(409,'Tổng tiền vượt phạm vi xử lý.');return (int)$value;}
+    private static function add(int $a,int $b):int{if($b>Pricing::MAX_SAFE-$a)throw new HttpError(409,'Tổng tiền vượt phạm vi xử lý.');return $a+$b;}
+    public function get(array $input):array
+    {
+        if(array_diff(array_keys($input),['from','to'])||!is_string($input['from'] ?? null)||!is_string($input['to'] ?? null))throw new HttpError(400,'Chọn khoảng ngày báo cáo.');$from=$input['from'];$to=$input['to'];Pricing::validateDate($from);Pricing::validateDate($to);$start=new DateTimeImmutable($from.'T00:00:00+07:00');$last=new DateTimeImmutable($to.'T00:00:00+07:00');if($from>$to||$last->getTimestamp()-$start->getTimestamp()>366*86400)throw new HttpError(400,'Khoảng báo cáo tối đa 367 ngày.');$end=$last->modify('+1 day');$utc=new DateTimeZone('UTC');
+        $this->db->exec('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');$this->db->beginTransaction();try{
+            $orders=$this->query("SELECT id,code,snapshot FROM jingo_orders WHERE created_at>=? AND created_at<? AND booking_status<>'CANCELLED' AND payment_status IN ('PAID','CREDIT') ORDER BY created_at,id",[$start->setTimezone($utc)->format('Y-m-d H:i:s'),$end->setTimezone($utc)->format('Y-m-d H:i:s')])->fetchAll(PDO::FETCH_ASSOC);$allocations=$this->query('SELECT a.order_id,a.quantity,a.unit_cost FROM jingo_supply_allocations a JOIN jingo_orders o ON o.id=a.order_id WHERE a.released=0 AND o.created_at>=? AND o.created_at<?',[$start->setTimezone($utc)->format('Y-m-d H:i:s'),$end->setTimezone($utc)->format('Y-m-d H:i:s')])->fetchAll(PDO::FETCH_ASSOC);$byOrder=[];foreach($allocations as $allocation){$quantity=self::money($allocation['quantity']);$cost=self::money($allocation['unit_cost']);if($quantity>0&&$cost>intdiv(Pricing::MAX_SAFE,$quantity))throw new HttpError(409,'Giá vốn vượt phạm vi xử lý.');$id=$allocation['order_id'];$byOrder[$id]['quantity']=self::add($byOrder[$id]['quantity'] ?? 0,$quantity);$byOrder[$id]['cost']=self::add($byOrder[$id]['cost'] ?? 0,$quantity*$cost);}
+            $rows=[];$revenue=0;$cost=0;$uncosted=0;$uncostedRevenue=0;foreach($orders as $order){$snapshot=json_decode($order['snapshot'],true,512,JSON_THROW_ON_ERROR);$guests=0;foreach($snapshot['lines'] as $line)$guests=self::add($guests,self::money($line['quantity']));$rowRevenue=self::money($snapshot['total']);$allocated=$byOrder[$order['id']]['quantity'] ?? 0;$rowCost=$byOrder[$order['id']]['cost'] ?? 0;if($allocated>$guests)throw new HttpError(409,'Đơn có phân bổ vượt số khách. Kiểm tra nguồn trước khi báo cáo.');$complete=$guests>0&&$allocated===$guests;$rows[]=['id'=>$order['id'],'code'=>$order['code'],'revenue'=>$rowRevenue,'cost'=>$rowCost,'complete'=>$complete,'profit'=>$complete?$rowRevenue-$rowCost:null];if($complete){$revenue=self::add($revenue,$rowRevenue);$cost=self::add($cost,$rowCost);}else{$uncosted++;$uncostedRevenue=self::add($uncostedRevenue,$rowRevenue);}}
+            $this->db->commit();return ['from'=>$from,'to'=>$to,'rows'=>$rows,'revenue'=>$revenue,'cost'=>$cost,'grossProfit'=>$revenue-$cost,'uncosted'=>$uncosted,'uncostedRevenue'=>$uncostedRevenue];
+        }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
+    }
+}

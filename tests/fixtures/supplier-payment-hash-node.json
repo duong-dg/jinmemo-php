@@ -1,0 +1,11 @@
+{
+  "input": {
+    "requestId": "00000000-0000-4000-8000-000000000005",
+    "supplierId": "00000000-0000-4000-8000-000000000001",
+    "amount": 250,
+    "method": "BANK",
+    "reference": "BANK-SUPPLIER",
+    "note": "Trả một phần 🐴"
+  },
+  "hash": "c6136f2a263387fc744f13f6ca26bbfbe3e087260c03ebc7bd466f029adf02d6"
+}

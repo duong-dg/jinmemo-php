@@ -26,10 +26,12 @@ require dirname(__DIR__) . '/src/PostReview.php';
 require dirname(__DIR__) . '/src/PostInsights.php';
 require dirname(__DIR__) . '/src/Overview.php';
 require_once dirname(__DIR__) . '/src/SupplyLots.php';
+require dirname(__DIR__) . '/src/SupplierPayments.php';
+require dirname(__DIR__) . '/src/SupplyProfit.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js','/assets/booking.js','/assets/orders-admin.js','/assets/posts-admin.js','/assets/post-categories-admin.js','/assets/translations-admin.js','/assets/post-reader.js','/assets/post-preview.css','/assets/overview-admin.js','/assets/supply-admin.js'],true)) return false;
+    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js','/assets/booking.js','/assets/orders-admin.js','/assets/posts-admin.js','/assets/post-categories-admin.js','/assets/translations-admin.js','/assets/post-reader.js','/assets/post-preview.css','/assets/overview-admin.js','/assets/supply-admin.js','/assets/supplier-payments-admin.js'],true)) return false;
     if(in_array($path,['/cam-nang','/cam-nang/','/en/blog','/en/blog/','/tra-cuu','/tra-cuu/','/en/orders','/en/orders/','/','/en','/en/','/lien-he','/lien-he/','/en/contact','/en/contact/'],true) || preg_match('#^/(?:cam-nang|en/blog|trang|en/pages|ve|en/ve)/[^/]+/?$#D',(string)$path)) {
         $publicRequest=true;
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
@@ -81,6 +83,12 @@ try {
     }
     if(preg_match('#^/api/v1/posts/([a-f0-9-]{36})/view$#D',(string)$path,$postView)){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='POST'){header('Allow: POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$insights=new PostInsights(jingoDatabase($config),$config);header('Cache-Control: private, no-store');jingoJson(['data'=>$insights->record($postView[1],$_GET,jingoRequestBody(),$_SERVER,$_COOKIE)]);
+    }
+    if($path==='/api/v1/admin/supply/profit'){
+        if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);(new AdminAuth($db,$config))->me();header('Cache-Control: private, no-store');jingoJson((new SupplyProfit($db))->get($_GET));
+    }
+    if(in_array($path,['/api/v1/admin/supply/balances','/api/v1/admin/supply/payments'],true)){
+        $write=$path==='/api/v1/admin/supply/payments';if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!==($write?'POST':'GET')){header('Allow: '.($write?'POST':'GET'));throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($write)$auth->mutation();$actor=$auth->me();header('Cache-Control: private, no-store');$payments=new SupplierPayments($db);jingoJson($write?$payments->pay(jingoRequestBody(),$actor['id']):['data'=>$payments->balances()]);
     }
     if(preg_match('#^/api/v1/admin/supply/orders/([a-f0-9-]{36})(/allocate)?$#D',(string)$path,$supplyOrder)){
         $write=isset($supplyOrder[2]);if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!==($write?'POST':'GET')){header('Allow: '.($write?'POST':'GET'));throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($write)$auth->mutation();$actor=$auth->me();header('Cache-Control: private, no-store');$supply=new SupplyAllocation($db);jingoJson($write?$supply->allocate($supplyOrder[1],jingoRequestBody(),$actor['id']):$supply->get($supplyOrder[1]));
