@@ -1,0 +1,22 @@
+<?php
+declare(strict_types=1);
+
+final class PostReview
+{
+    public function __construct(private PDO $db){}
+    private function snapshot(string $id,?string $revision=null):array
+    {
+        $s=$this->db->prepare('SELECT data,version,updated_at FROM jingo_posts WHERE id=?');$s->execute([$id]);$row=$s->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy bài viết.');
+        if($revision!==null){if(!preg_match('/^[1-9][0-9]{0,8}$/D',$revision))throw new HttpError(400,'Phiên bản không hợp lệ.');if((int)$revision!==(int)$row['version']){$s=$this->db->prepare('SELECT data,version,created_at AS updated_at FROM jingo_post_revisions WHERE post_id=? AND version=?');$s->execute([$id,(int)$revision]);$row=$s->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy phiên bản của bài viết này.');}}
+        $item=json_decode($row['data'],true,512,JSON_THROW_ON_ERROR);$item['version']=(int)$row['version'];$item['updatedAt']=str_replace(' ','T',$row['updated_at']).'Z';return $item;
+    }
+    private static function language(mixed $lang):string{if(!in_array($lang,['vi','en'],true))throw new HttpError(400,'Ngôn ngữ không hợp lệ.');return $lang;}
+    public function preview(string $id,array $query):array
+    {
+        if(array_diff(array_keys($query),['lang','revision']))throw new HttpError(400,'Tham số xem trước không hợp lệ.');$lang=self::language($query['lang'] ?? 'vi');if(isset($query['revision'])&&!is_string($query['revision']))throw new HttpError(400,'Phiên bản không hợp lệ.');$post=$this->snapshot($id,$query['revision'] ?? null);$source=$lang==='en'?($post['english'] ?? []):$post;if($lang==='en'&&trim($source['title'] ?? '')==='')throw new HttpError(400,'Chưa có tiêu đề bản dịch để xem trước.');$out=[];foreach(['id','slug','author','cover','publishedAt','relatedProductIds','relatedRideIds','updatedAt','version','status'] as $key)$out[$key]=$post[$key] ?? match($key){'relatedProductIds','relatedRideIds'=>[],default=>null};foreach(['title','excerpt','contentHtml','category','seoTitle','seoDescription'] as $key)$out[$key]=$source[$key] ?? '';$out['contentHtml']=ContentHtml::clean($out['contentHtml']);if($lang==='en')foreach((new PostCategories($this->db))->list() as $category)if($category['name']===($post['category'] ?? 'Cẩm nang'))$out['category']=$category['englishName'] ?: $category['name'];return $out+['preview'=>true,'locale'=>$lang,'translationStatus'=>$post['english']['status'] ?? 'MISSING'];
+    }
+    public function compare(string $id,array $query):array
+    {
+        if(array_diff(array_keys($query),['from','to','lang']))throw new HttpError(400,'Tham số so sánh không hợp lệ.');$lang=self::language($query['lang'] ?? 'vi');foreach(['from','to'] as $key)if(!is_string($query[$key] ?? null)||!preg_match('/^[1-9][0-9]{0,8}$/D',$query[$key]))throw new HttpError(400,'Chọn hai phiên bản hợp lệ.');$a=$this->snapshot($id,$query['from']);$b=$this->snapshot($id,$query['to']);$left=$lang==='en'?($a['english'] ?? []):$a;$right=$lang==='en'?($b['english'] ?? []):$b;$fields=[];$add=function(string $key,string $label,mixed $before,mixed $after,string $kind='text')use(&$fields):void{$before=(string)($before ?? '');$after=(string)($after ?? '');$fields[]=['key'=>$key,'label'=>$label,'kind'=>$kind,'before'=>$before,'after'=>$after,'changed'=>$before!==$after];};foreach(['title'=>'Tiêu đề','excerpt'=>'Tóm tắt','contentHtml'=>'Nội dung','seoTitle'=>'Tiêu đề SEO','seoDescription'=>'Mô tả SEO','category'=>'Chuyên mục'] as $key=>$label)$add($key,$label,$key==='contentHtml'?ContentHtml::clean($left[$key] ?? ''):($left[$key] ?? ''),$key==='contentHtml'?ContentHtml::clean($right[$key] ?? ''):($right[$key] ?? ''),$key==='contentHtml'?'html':'text');foreach(['slug'=>'Đường dẫn','author'=>'Tác giả','status'=>'Trạng thái bài','publishedAt'=>'Lịch xuất bản'] as $key=>$label)$add($key,$label,$a[$key] ?? '',$b[$key] ?? '');$cover=fn($p)=>isset($p['cover'])?$p['cover']['id'].' · '.($p['cover']['alt'] ?? ''):'';$add('cover','Ảnh bìa',$cover($a),$cover($b));$add('related','Mã sản phẩm liên quan',implode("\n",$a['relatedProductIds'] ?? []),implode("\n",$b['relatedProductIds'] ?? []));if($lang==='en')$add('translationStatus','Trạng thái bản dịch',$a['english']['status'] ?? 'MISSING',$b['english']['status'] ?? 'MISSING');return ['id'=>$id,'from'=>(int)$query['from'],'to'=>(int)$query['to'],'lang'=>$lang,'fields'=>$fields,'changedCount'=>count(array_filter($fields,fn($f)=>$f['changed']))];
+    }
+}

@@ -6,6 +6,7 @@
 <nav class="breadcrumbs" aria-label="<?=$en?'Breadcrumbs':'Đường dẫn'?>"><a href="<?=$en?'/en/blog':'/cam-nang'?>"><?=$en?'Travel journal':'Cẩm nang'?></a><span>/</span><span><?=$e($post['category'])?></span></nav>
 <header class="content-page-heading"><p class="eyebrow"><?=$e($post['category'])?></p><h1><?=$e($post['title'])?></h1><p><?=$e($post['excerpt'])?></p><small><?=$e($post['author'])?><?php if($post['publishedAt']):?> · <time datetime="<?=$e($post['publishedAt'])?>"><?= $e((new DateTimeImmutable($post['publishedAt']))->setTimezone(new DateTimeZone('Asia/Ho_Chi_Minh'))->format('d/m/Y'))?></time><?php endif;?></small></header>
 <?php if($cover):?><img class="content-page-cover" src="<?=$e($cover)?>" alt="<?=$e($post['cover']['alt'])?>"><?php endif;?>
-<article class="prose blog-article"><?=ContentHtml::clean($post['contentHtml'])?></article>
+<p class="muted"><span data-post-views><?=$e($post['views'] ?? 0)?></span> <?=$en?'views':'lượt xem'?></p>
+<article class="prose blog-article" data-reader-post="<?=$e($post['id'])?>"><?=ContentHtml::clean($post['contentHtml'])?></article>
 <?php $related=[];foreach($post['relatedProductIds'] as $productId){try{$related[]=$catalog->publicView($catalog->find($productId,false,false,$lang),$lang);}catch(HttpError){}}if($related):?><section class="page-index"><h2><?=$en?'Explore these experiences':'Trải nghiệm gợi ý'?></h2><div class="page-grid"><?php foreach($related as $item):?><a class="page-card" href="<?=$e(($en?'/en':'').'/ve/'.$item['slug'])?>"><h3><?=$e($item['name'])?></h3><p><?=$e($item['description'])?></p></a><?php endforeach;?></div></section><?php endif;?>
 <?php endif;?>

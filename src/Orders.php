@@ -73,17 +73,17 @@ final class Orders
     }
     public function get(string $id):array
     {
-        $row=$this->query('SELECT * FROM jingo_orders WHERE id=?',[$id])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy đơn.');$result=$this->detail($row,true);$result['history']=[];
+        $row=$this->query('SELECT * FROM jingo_orders WHERE id=?',[$id])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy đơn.');$result=$this->detail($row,true);$archive=$this->query('SELECT reason,created_at FROM jingo_order_archives WHERE order_id=?',[$id])->fetch(PDO::FETCH_ASSOC);$result['archived']=$archive!==false;$result['archiveReason']=$archive['reason'] ?? '';$result['history']=[];
         foreach($this->query('SELECT id,admin_id,action,data,created_at FROM jingo_order_actions WHERE order_id=? ORDER BY order_version',[$id])->fetchAll(PDO::FETCH_ASSOC) as $a)$result['history'][]=['id'=>$a['id'],'adminId'=>$a['admin_id'],'action'=>$a['action'],'data'=>json_decode($a['data'],true,512,JSON_THROW_ON_ERROR),'createdAt'=>str_replace(' ','T',$a['created_at']).'Z'];
         $result['payments']=[];foreach($this->query('SELECT p.id,p.amount,p.method,p.admin_id,p.created_at,r.reference FROM jingo_order_payments p JOIN jingo_payment_references r ON r.reference_hash=p.reference_hash WHERE p.order_id=? ORDER BY p.created_at,p.id',[$id])->fetchAll(PDO::FETCH_ASSOC) as $p)$result['payments'][]=['id'=>$p['id'],'amount'=>(int)$p['amount'],'method'=>$p['method'],'reference'=>$p['reference'],'adminId'=>$p['admin_id'],'createdAt'=>str_replace(' ','T',$p['created_at']).'Z'];return $result;
     }
     public function list(array $input):array
     {
-        if(array_diff(array_keys($input),['q','booking','payment','page','pageSize']))self::fail('Bộ lọc đơn không hợp lệ.');
+        if(array_diff(array_keys($input),['q','booking','payment','page','pageSize','archived']))self::fail('Bộ lọc đơn không hợp lệ.');
         $q=self::text($input+['q'=>''],'q',0,120);$booking=$input['booking'] ?? 'ALL';$payment=$input['payment'] ?? 'ALL';
         if(!in_array($booking,['ALL','REQUESTED','CONFIRMED','CANCELLED'],true)||!in_array($payment,['ALL','UNPAID','PAID','CREDIT'],true))self::fail();
         $numbers=[];foreach(['page'=>1000000,'pageSize'=>100] as $key=>$max){$v=$input[$key] ?? ($key==='page'?1:25);if((!is_int($v)&&(!is_string($v)||!preg_match('/^[1-9][0-9]*$/D',$v)))||(int)$v<1||(int)$v>$max)self::fail();$numbers[$key]=(int)$v;}
-        $where=['1=1'];$args=[];if($booking!=='ALL'){$where[]='booking_status=?';$args[]=$booking;}if($payment!=='ALL'){$where[]='payment_status=?';$args[]=$payment;}
+        $archived=$input['archived'] ?? '0';if(!in_array($archived,['0','1','true','false'],true))self::fail('Bộ lọc lưu trữ không hợp lệ.');$where=[(in_array($archived,['1','true'],true)?'EXISTS':'NOT EXISTS').'(SELECT 1 FROM jingo_order_archives a WHERE a.order_id=jingo_orders.id)'];$args=[];if($booking!=='ALL'){$where[]='booking_status=?';$args[]=$booking;}if($payment!=='ALL'){$where[]='payment_status=?';$args[]=$payment;}
         if($q!==''){$where[]="LOCATE(LOWER(?),LOWER(CONCAT_WS(' ',code,JSON_UNQUOTE(JSON_EXTRACT(contact,'$.name')),JSON_UNQUOTE(JSON_EXTRACT(contact,'$.email')),JSON_UNQUOTE(JSON_EXTRACT(contact,'$.phone')))))>0";$args[]=$q;}$where=implode(' AND ',$where);
         $this->db->beginTransaction();try{
             $s=$this->query("SELECT COUNT(*) AS total,COALESCE(SUM(booking_status='CANCELLED'),0) AS cancelled,COALESCE(SUM(payment_status='UNPAID' AND booking_status<>'CANCELLED'),0) AS unpaid,COALESCE(SUM(IF(payment_status='PAID',CAST(JSON_UNQUOTE(JSON_EXTRACT(snapshot,'$.total')) AS DECIMAL(20,0)),0)),0) AS paid_value FROM jingo_orders WHERE $where",$args)->fetch(PDO::FETCH_ASSOC);
@@ -93,9 +93,9 @@ final class Orders
     }
     public function act(string $id,array $input,string $actor):array
     {
-        $action=$input['action'] ?? null;$keys=['requestId','version','action','note'];if($action==='INSTRUCTIONS')$keys[]='instructions';if($action==='PAY')$keys=array_merge($keys,['method','amount','reference']);
-        if(array_diff(array_keys($input),$keys)||!in_array($action,['INSTRUCTIONS','CANCEL','PAY'],true)||!self::uuid($input['requestId'] ?? null)||!is_int($input['version'] ?? null)||$input['version']<1||$input['version']>=2147483647)self::fail();
-        $input['note']=self::text($input,'note',1,1000);if($action==='INSTRUCTIONS')$input['instructions']=self::text($input,'instructions',1,4000);
+        $action=$input['action'] ?? null;$keys=['requestId','version','action','note'];if(in_array($action,['INSTRUCTIONS','CONFIRM'],true))$keys[]='instructions';if($action==='PAY')$keys=array_merge($keys,['method','amount','reference']);
+        if(array_diff(array_keys($input),$keys)||!in_array($action,['INSTRUCTIONS','CANCEL','PAY','ARCHIVE','RESTORE','CONFIRM'],true)||!self::uuid($input['requestId'] ?? null)||!is_int($input['version'] ?? null)||$input['version']<1||$input['version']>=2147483647)self::fail();
+        $input['note']=self::text($input,'note',1,1000);if(in_array($action,['INSTRUCTIONS','CONFIRM'],true))$input['instructions']=self::text($input,'instructions',1,4000);
         if($action==='PAY'){
             if(array_key_exists('method',$input)&&$input['method']===null)self::fail();$input['method']=$input['method'] ?? 'BANK';if(!in_array($input['method'],['BANK','CASH'],true)||!is_int($input['amount'] ?? null)||$input['amount']<0||$input['amount']>15000000000)self::fail();
             $reference=mb_strtoupper(preg_replace('/^[\s\x{FEFF}]+|[\s\x{FEFF}]+$/u','',self::text($input,'reference',1,200)) ?? '','UTF-8');if($reference===''||mb_strlen($reference,'UTF-8')>200||preg_match('/[\x00-\x1f\x7f]/u',$reference))self::fail('Mã giao dịch không hợp lệ.');
@@ -106,8 +106,15 @@ final class Orders
         $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();try{
             $row=$this->query('SELECT * FROM jingo_orders WHERE id=? FOR UPDATE',[$id])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy đơn.');
             $prior=$this->query('SELECT request_hash FROM jingo_order_actions WHERE id=?',[$input['requestId']])->fetchColumn();if($prior!==false){if(!hash_equals($prior,$hash))throw new HttpError(409,'Mã thao tác đã dùng.');$result=$this->get($id);$this->db->commit();return $result;}
-            if((int)$row['version']!==$input['version'])throw new HttpError(409,'Đơn đã thay đổi. Tải lại trước khi xử lý.');if($row['booking_status']==='CANCELLED')throw new HttpError(409,'Đơn đã hủy.');
-            if($action==='CANCEL'){
+            if((int)$row['version']!==$input['version'])throw new HttpError(409,'Đơn đã thay đổi. Tải lại trước khi xử lý.');if($row['booking_status']==='CANCELLED'&&!in_array($action,['ARCHIVE','RESTORE'],true))throw new HttpError(409,'Đơn đã hủy.');
+            $archived=$this->query('SELECT order_id FROM jingo_order_archives WHERE order_id=?',[$id])->fetchColumn();if($archived&&$action!=='RESTORE')throw new HttpError(409,'Đơn đang lưu trữ. Khôi phục trước khi xử lý.');if(!$archived&&$action==='RESTORE')throw new HttpError(409,'Đơn chưa được lưu trữ.');
+            if($action==='ARCHIVE'){
+                $this->query('INSERT INTO jingo_order_archives(order_id,archived_by,reason) VALUES (?,?,?)',[$id,$actor,$input['note']]);if($row['payment_status']==='UNPAID'&&$row['booking_status']!=='CANCELLED'&&!$this->query('SELECT id FROM jingo_order_tickets WHERE order_id=? LIMIT 1',[$id])->fetchColumn()){(new Inventory($this->db))->release($id);(new Vouchers($this->db))->release($id);$this->query("UPDATE jingo_orders SET booking_status='CANCELLED' WHERE id=?",[$id]);}$this->query('UPDATE jingo_orders SET version=version+1 WHERE id=?',[$id]);
+            }elseif($action==='RESTORE'){
+                $this->query('DELETE FROM jingo_order_archives WHERE order_id=?',[$id]);$this->query('UPDATE jingo_orders SET version=version+1 WHERE id=?',[$id]);
+            }elseif($action==='CONFIRM'){
+                if($row['booking_status']!=='REQUESTED')throw new HttpError(409,'Đơn đã được xác nhận.');$this->query("UPDATE jingo_orders SET booking_status='CONFIRMED',instructions=?,version=version+1 WHERE id=?",[$input['instructions'],$id]);
+            }elseif($action==='CANCEL'){
                 if($row['payment_status']!=='UNPAID')throw new HttpError(409,'Đơn đã thu tiền hoặc ghi công nợ cần quy trình hoàn riêng; không thể hủy trực tiếp.');
                 (new Inventory($this->db))->release($id);(new Vouchers($this->db))->release($id);$this->query("UPDATE jingo_orders SET booking_status='CANCELLED',version=version+1 WHERE id=?",[$id]);
             }elseif($action==='PAY'){

@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS jingo_order_archives (
+ order_id CHAR(36) CHARACTER SET ascii PRIMARY KEY,
+ archived_by VARCHAR(80) NOT NULL,
+ reason TEXT NOT NULL,
+ created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+ FOREIGN KEY(order_id) REFERENCES jingo_orders(id)
+) ENGINE=InnoDB;

@@ -1,6 +1,6 @@
 'use strict';
 const $=s=>document.querySelector(s);
-const names={'post-categories':'Chuyên mục bài viết',posts:'Bài viết',orders:'Đơn hàng',products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
+const names={translations:'Bản dịch English','post-categories':'Chuyên mục bài viết',posts:'Bài viết',orders:'Đơn hàng',products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
 const labels={ACTIVE:'Hoạt động',ARCHIVED:'Lưu trữ',DRAFT:'Bản nháp',PUBLISHED:'Đã xuất bản',TRASH:'Thùng rác',NEW:'Mới',DONE:'Đã xử lý',TICKET:'Vé',TOUR:'Tour',PAGE:'Trang thường',CONTACT:'Liên hệ'};
 let current='overview',records=[],draft=null,dirty=false,loading=0,contactStatus='NEW',editing=false,editorSection='';
 function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;}
@@ -26,12 +26,8 @@ function toolbar(text){const bar=el('div',undefined,'toolbar');bar.append(el('p'
 function empty(text){const box=el('div',undefined,'empty');box.append(el('h3',text),el('p','Dữ liệu mới sẽ xuất hiện tại đây.'));return box;}
 async function render(){
  const id=++loading;current=location.hash.slice(1)||'overview';if(!names[current])current='overview';notice('');$('#page-title').textContent=names[current]||'Tổng quan';document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('active',a.hash==='#'+current));const screen=$('#screen');screen.replaceChildren();
- if(current==='overview'){
-  const intro=el('div',undefined,'overview-intro');intro.append(el('h2','Một nơi để chăm chút nội dung.'),el('p','Các danh mục, trang nội dung và hình ảnh đã sẵn sàng để quản lý. Đơn WEB đã có thể đặt và quản lý. Có ghi nhận thu tiền thủ công. Thanh toán trực tuyến, giao vé, quầy và cộng tác viên sẽ được bổ sung trong các đợt chuyển tiếp.'));screen.append(intro);
-  const cards=el('div',undefined,'cards');const descriptions={'product-types':'Phân nhóm vé và tour của bạn.',destinations:'Sắp xếp địa điểm theo khu vực.',media:'Lưu và chọn hình ảnh cho nội dung.',suppliers:'Quản lý thông tin các đối tác.',pages:'Biên tập giới thiệu, chính sách, liên hệ.','contact-requests':'Theo dõi và xử lý lời nhắn của khách.'};
-  descriptions['post-categories']='Sắp xếp chuyên mục và tên Việt/Anh.';descriptions.posts='Cẩm nang, câu chuyện và lịch xuất bản.';descriptions.orders='Theo dõi đơn, liên hệ và xử lý yêu cầu.';descriptions.products='Vé, gói giá và lịch sử dụng.';descriptions.inventory='Sức chứa theo ngày và suất giờ.';descriptions.vouchers='Chương trình giảm giá và phạm vi áp dụng.';descriptions['site-seo']='Tiêu đề, mô tả và ảnh chia sẻ Việt/Anh.';descriptions.brand='Tên, logo và thông tin công ty.';
-  for(const [key,title]of Object.entries(names)){const card=el('a',undefined,'card');card.href='#'+key;card.append(el('h3',title),el('p',descriptions[key]),el('span','Mở quản lý ↗'));cards.append(card);}screen.append(cards);return;
- }
+ if(current==='overview'){await renderOverview(screen,id);return;}
+ if(current==='translations'){await renderTranslations(screen,id);return;}
  if(current==='post-categories'){await renderPostCategories(screen,id);return;}
  if(current==='orders'){await renderOrders(screen,id);return;}
  if(current==='inventory'){await renderInventory(screen,id);return;}
@@ -49,7 +45,7 @@ async function render(){
    if(current==='contact-requests')title.append(el('small',record.data.email));
    if(current==='vouchers')title.append(el('small',record.code));
    const info=current==='vouchers'?`${record.value}${record.discountType==='PERCENT'?'%':' VND'} · ${result.usage?.[record.id]||0} lượt đã dùng`:current==='suppliers'?`${record.productCount} sản phẩm · ${record.phone||record.email||'Chưa có liên hệ'}`:current==='contact-requests'?record.data.subject:record.slug;
-   row.append(title,el('td',info||''));const state=el('td');state.append(el('span',current==='vouchers'?(record.enabled?'Đang bật':'Đang tắt'):labels[record.status]||record.status,'tag'));row.append(state);const action=el('td');action.append(button(current==='contact-requests'?'Xem yêu cầu ↗':'Chỉnh sửa ↗',()=>current==='contact-requests'?openContact(record):openEditor(record)));if(['posts','pages'].includes(current)&&record.status==='PUBLISHED'){const view=el('a',current==='posts'?'Xem bài ↗':'Xem trang ↗','quiet');view.href=current==='posts'?'/cam-nang/'+encodeURIComponent(record.slug):record.kind==='CONTACT'?'/lien-he':'/trang/'+encodeURIComponent(record.slug);view.target='_blank';view.rel='noopener';action.append(document.createTextNode(' · '),view);}row.append(action);body.append(row);
+   row.append(title,el('td',info||''));const state=el('td');state.append(el('span',current==='vouchers'?(record.enabled?'Đang bật':'Đang tắt'):labels[record.status]||record.status,'tag'));row.append(state);const action=el('td');action.append(button(current==='contact-requests'?'Xem yêu cầu ↗':'Chỉnh sửa ↗',()=>current==='contact-requests'?openContact(record):openEditor(record)));if(current==='products')action.append(button('Tạo bản sao',()=>openProductCopy(record)));if(['posts','pages'].includes(current)&&record.status==='PUBLISHED'){const view=el('a',current==='posts'?'Xem bài ↗':'Xem trang ↗','quiet');view.href=current==='posts'?'/cam-nang/'+encodeURIComponent(record.slug):record.kind==='CONTACT'?'/lien-he':'/trang/'+encodeURIComponent(record.slug);view.target='_blank';view.rel='noopener';action.append(document.createTextNode(' · '),view);}row.append(action);body.append(row);
   });table.append(body);wrap.append(table);screen.append(wrap);
  }catch(error){if(id!==loading)return;screen.replaceChildren(empty('Chưa tải được dữ liệu'));notice(error.message,true);}
 }

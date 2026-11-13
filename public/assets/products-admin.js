@@ -1,5 +1,9 @@
 'use strict';
 const guestLabels={ADULT:'Người lớn',CHILD:'Trẻ em',SENIOR:'Người cao tuổi',LOCAL_ADULT:'Người lớn · Địa phương',LOCAL_CHILD:'Trẻ em · Địa phương',LOCAL_SENIOR:'Người cao tuổi · Địa phương'};
+function duplicateProduct(source,makeId=()=>crypto.randomUUID()){
+ const copy=structuredClone(source),id=makeId(),variantIds=new Map(copy.variants.map(v=>[v.id,makeId()]));const variantId=old=>{const value=variantIds.get(old);if(!value)throw new Error('Lịch bán tham chiếu gói không tồn tại. Kiểm tra sản phẩm gốc trước khi nhân bản.');return value;};delete copy.english;delete copy.updatedAt;Object.assign(copy,{id,name:source.name.slice(0,190)+' (bản sao)',slug:source.slug.slice(0,125).replace(/-+$/,'')+'-ban-sao-'+id.replace(/-/g,'').slice(0,8),status:'DRAFT',version:0,seoTitle:''});copy.variants=copy.variants.map(v=>({...v,id:variantId(v.id),timeSlots:(v.timeSlots||[]).map(slot=>({...slot,id:makeId()}))}));copy.rules=copy.rules.map(r=>({...r,id:makeId(),productId:id,variantId:variantId(r.variantId)}));copy.closures=copy.closures.map(c=>({...c,productId:id,...(c.variantId?{variantId:variantId(c.variantId)}:{})}));return copy;
+}
+async function openProductCopy(record){try{await openEditor(duplicateProduct(record));if(!$('#editor').open||draft?.version!==0)return;$('#editor-title').textContent='Tạo bản sao · Sản phẩm';dirty=true;}catch(error){notice(error.message,true);}}
 async function buildProductFields(existing){
  if(!existing)Object.assign(draft,{status:'DRAFT',demo:false,destination:'',description:'',detailHtml:'',cover:null,gallery:[],variants:[{id:'standard',name:'Vé tiêu chuẩn',prices:{ADULT:0},timeSlots:[]}],rules:[],closures:[]});
  const [types,nodes,suppliers]=await Promise.all([api('product-types'),api('destinations'),api('suppliers')]);
