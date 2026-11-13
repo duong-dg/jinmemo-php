@@ -25,7 +25,7 @@ final class Quotes
     {
         $products=new Products($this->db);$raw=$products->find($slug,true,false,$lang);$this->db->beginTransaction();try{
             $s=$this->db->prepare('SELECT id FROM jingo_products WHERE id=? LOCK IN SHARE MODE');$s->execute([$raw['id']]);$p=$this->translated($products->find($raw['id'],false,false,$lang),$lang);$quantities=null;foreach($p['variants'] as $v)if($v['id']===$variantId)$quantities=array_fill_keys(array_keys($v['prices']),1);if($quantities===null)throw new HttpError(400,'Gói vé không tồn tại.');
-            $quote=Pricing::online($p,$variantId,$date,$quantities,$p['rules'],$p['closures'],$slotId);$quote['inventory']=(new Inventory($this->db))->availability($p['id'],$variantId,$date,$quote['timeSlot']['id'] ?? '');$this->db->commit();return $quote;
+            $quote=Pricing::online($p,$variantId,$date,$quantities,$p['rules'],$p['closures'],$slotId,null,false);$quote['inventory']=(new Inventory($this->db))->availability($p['id'],$variantId,$date,$quote['timeSlot']['id'] ?? '');$this->db->commit();return $quote;
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
 }

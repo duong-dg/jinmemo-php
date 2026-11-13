@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__.'/Schedule.php';
+require_once __DIR__.'/TourInfo.php';
 
 final class Pricing
 {
@@ -24,7 +25,7 @@ final class Pricing
         if(($now ?? (int)floor(microtime(true)*1000))>=$start->getTimestamp()*1000)self::fail('Đã quá giờ bắt đầu. Vui lòng chọn khung giờ hoặc ngày khác.');
         return array_merge($slot,['requiresSelection'=>count($slots)>1]);
     }
-    public static function calculate(array $product,string $variantId,string $date,array $quantities,array $rules=[],array $closures=[],?string $slotId=null,?int $now=null): array
+    public static function calculate(array $product,string $variantId,string $date,array $quantities,array $rules=[],array $closures=[],?string $slotId=null,?int $now=null,bool $validateGuests=true): array
     {
         self::validateDate($date);$variant=null;foreach($product['variants'] as $item)if($item['id']===$variantId){$variant=$item;break;}
         if(!$variant)self::fail('Gói vé không tồn tại.');if(isset($variant['saleWindow']['startDate'])&&$date<$variant['saleWindow']['startDate']||isset($variant['saleWindow']['endDate'])&&$date>$variant['saleWindow']['endDate'])self::fail('Gói vé chưa mở bán cho ngày sử dụng này.');$slot=self::schedule($variant,$date,$slotId,$now);
@@ -44,6 +45,7 @@ final class Pricing
             $lines[]=['customerType'=>$type,'quantity'=>$quantity,'unitPrice'=>$price,'subtotal'=>$subtotal,'ruleId'=>$candidates[0]['id'] ?? 'base'];
         }
         if($guests>150)self::fail('Mỗi đơn tối đa 150 khách.');if(!self::safe($total))self::fail('Tổng tiền vượt giới hạn.');
+        if($validateGuests){if((($product['type'] ?? '')==='TOUR'||isset($product['tourInfo'])||isset($variant['tourInfo']))&&(($quantities['CHILD'] ?? 0)>0||($quantities['LOCAL_CHILD'] ?? 0)>0)&&(($quantities['ADULT'] ?? 0)+($quantities['LOCAL_ADULT'] ?? 0))<=0)self::fail('Đặt tour cho trẻ em cần ít nhất một người lớn đi cùng.');TourInfo::check(TourInfo::effective($product,$variant),$guests);}
         $quote=['productId'=>$product['id'],'productName'=>$product['name'],'variantId'=>$variantId,'variantName'=>$variant['name'],'date'=>$date];if($slot)$quote['timeSlot']=$slot;
         return array_merge($quote,['currency'=>'VND','lines'=>$lines,'total'=>$total,'demo'=>$product['demo'] ?? true]);
     }
@@ -54,9 +56,9 @@ final class Pricing
         $amount=$discount['type']==='PERCENT'?intdiv($price,100)*$discount['value']+intdiv(($price%100)*$discount['value'],100):$discount['value'];
         return max(0,$price-$amount);
     }
-    public static function online(array $product,string $variantId,string $date,array $quantities,array $rules=[],array $closures=[],?string $slotId=null,?int $now=null): array
+    public static function online(array $product,string $variantId,string $date,array $quantities,array $rules=[],array $closures=[],?string $slotId=null,?int $now=null,bool $validateGuests=true): array
     {
-        $quote=self::calculate($product,$variantId,$date,$quantities,$rules,$closures,$slotId,$now);$variant=null;foreach($product['variants'] as $v)if($v['id']===$variantId)$variant=$v;
+        $quote=self::calculate($product,$variantId,$date,$quantities,$rules,$closures,$slotId,$now,$validateGuests);$variant=null;foreach($product['variants'] as $v)if($v['id']===$variantId)$variant=$v;
         $discount=$variant['onlineDiscount'] ?? $product['onlineDiscount'] ?? null;$original=$quote['total'];$total=0;
         foreach($quote['lines'] as &$line){$price=self::unitPrice($line['unitPrice'],$discount);if($price<$line['unitPrice']){$line['originalUnitPrice']=$line['unitPrice'];$line['unitDiscount']=$line['unitPrice']-$price;}$line['unitPrice']=$price;$line['subtotal']=$price*$line['quantity'];$total+=$line['subtotal'];}unset($line);
         $quote['total']=$total;if($original>$total && $discount)$quote['onlineDiscount']=array_merge($discount,['amount'=>$original-$total,'subtotal'=>$original]);return $quote;
