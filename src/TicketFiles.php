@@ -18,7 +18,7 @@ final class TicketFiles
     }
     public function customer(array $lookup):array
     {
-        $order=(new Orders($this->db))->lookup($lookup);if($this->query('SELECT order_id FROM jingo_order_archives WHERE order_id=?',[$order['id']])->fetchColumn())throw new HttpError(404,'File vé không khả dụng.');if($order['bookingStatus']!=='CONFIRMED'||$order['paymentStatus']!=='PAID')throw new HttpError(404,'File vé không khả dụng.');return $order;
+        $order=(new Orders($this->db))->lookup($lookup);if(isset($order['ticketAccess'])||$this->query('SELECT order_id FROM jingo_order_archives WHERE order_id=?',[$order['id']])->fetchColumn())throw new HttpError(404,'File vé không khả dụng.');if($order['bookingStatus']!=='CONFIRMED'||$order['paymentStatus']!=='PAID')throw new HttpError(404,'File vé không khả dụng.');return $order;
     }
     public function customerList(array $lookup):array{return $this->list($this->customer($lookup)['id'],false);}
     public function revoke(string $orderId,string $id,array $input,string $actor):array

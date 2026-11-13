@@ -87,6 +87,7 @@
     "pos_shifts": ["id", "counter_id", "opened_by", "opened_name", "counter_name", "opening_cash", "opening_note", "open_hash", "opened_at", "closed_at", "closed_by", "close_request", "close_hash", "close_note", "summary", "version"],
     "pos_open_shifts": ["counter_id", "shift_id"],
     "pos_shift_receipts": ["payment_id", "shift_id"],
+    "pos_orders": ["order_id", "counter_id", "admin_id"],
     "pos_cash_movements": ["id", "shift_id", "kind", "amount", "reference", "note", "actor_id", "actor_name", "request_hash", "created_at"]
   },
   "stockTables": {
