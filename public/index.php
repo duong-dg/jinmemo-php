@@ -20,10 +20,11 @@ require dirname(__DIR__) . '/src/Vouchers.php';
 require dirname(__DIR__) . '/src/Orders.php';
 require dirname(__DIR__) . '/src/TicketFiles.php';
 require dirname(__DIR__) . '/src/Posts.php';
+require dirname(__DIR__) . '/src/PostCategories.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js','/assets/booking.js','/assets/orders-admin.js','/assets/posts-admin.js'],true)) return false;
+    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js','/assets/booking.js','/assets/orders-admin.js','/assets/posts-admin.js','/assets/post-categories-admin.js'],true)) return false;
     if(in_array($path,['/cam-nang','/cam-nang/','/en/blog','/en/blog/','/tra-cuu','/tra-cuu/','/en/orders','/en/orders/','/','/en','/en/','/lien-he','/lien-he/','/en/contact','/en/contact/'],true) || preg_match('#^/(?:cam-nang|en/blog|trang|en/pages|ve|en/ve)/[^/]+/?$#D',(string)$path)) {
         $publicRequest=true;
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
@@ -69,6 +70,9 @@ try {
         if(random_int(1,100)===1)$db->exec('DELETE FROM jingo_order_limits WHERE until_at<UTC_TIMESTAMP() LIMIT 1000');
         if(str_starts_with($path,'/api/v1/orders/lookup/files')){$files=new TicketFiles($db,($config['MEDIA_DIR'] ?? dirname(__DIR__).'/storage/media').'/.tickets');$body=jingoRequestBody();if(isset($customerFileMatch[1]))jingoTicketDownload($files->download($files->customer($body)['id'],$customerFileMatch[1],true));jingoJson(['data'=>$files->customerList($body)]);}
         jingoJson($lookup?$orders->lookup(jingoRequestBody()):$orders->create(jingoRequestBody()));
+    }
+    if(in_array($path,['/api/v1/admin/posts/categories','/api/v1/admin/posts/categories/actions','/api/v1/admin/posts/categories/translation'],true)||preg_match('#^/api/v1/admin/posts/([a-f0-9-]{36})/restore$#D',(string)$path,$postRestore)){
+        $listing=$path==='/api/v1/admin/posts/categories';$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';if(!in_array($method,$listing?['GET','POST']:['POST'],true)){header('Allow: '.($listing?'GET, POST':'POST'));throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me();if(isset($postRestore[1]))jingoJson(['data'=>(new Posts($db))->restore($postRestore[1],jingoRequestBody(),$actor['id'])]);$categories=new PostCategories($db);if($method==='GET')jingoJson(['data'=>$categories->list()]);$body=jingoRequestBody();$operation=$listing?'CREATE':($path==='/api/v1/admin/posts/categories/translation'?'TRANSLATE':($body['action'] ?? ''));if(!$listing&&$path!=='/api/v1/admin/posts/categories/translation'){if(!in_array($operation,['RENAME','DELETE'],true))throw new HttpError(400,'Thao tác chuyên mục không hợp lệ.');unset($body['action']);}jingoJson(['data'=>$categories->act($operation,$body,$actor['id'])]);
     }
     if($path==='/api/v1/posts'||preg_match('#^/api/v1/posts/([^/]+)$#D',(string)$path,$postSlug)||$path==='/api/v1/admin/posts'||preg_match('#^/api/v1/admin/posts/([a-f0-9-]{36})/revisions$#D',(string)$path,$postRevisions)){
         $admin=str_starts_with($path,'/api/v1/admin/');$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';$write=$path==='/api/v1/admin/posts';if(!in_array($method,$write?['GET','POST']:['GET'],true)){header('Allow: '.($write?'GET, POST':'GET'));throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);$posts=new Posts($db);if($admin){$auth=new AdminAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me();if(isset($postRevisions[1]))jingoJson(['data'=>$posts->revisions($postRevisions[1])]);jingoJson(['data'=>$method==='POST'?$posts->save(jingoRequestBody(1048576),$actor['id']):$posts->list(true)]);}jingoJson(['data'=>isset($postSlug[1])?$posts->find(rawurldecode($postSlug[1]),($_GET['lang'] ?? '')==='en'?'en':'vi'):$posts->list(false,($_GET['lang'] ?? '')==='en'?'en':'vi')]);
