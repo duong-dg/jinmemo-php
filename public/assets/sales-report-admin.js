@@ -13,18 +13,18 @@ async function renderSalesReport(screen,serial){
    const box=el('label',label),input=el('input');input.type='date';input.required=true;input.value=filters[key];box.append(input);form.append(box);inputs[key]=input;
   }
   const channelLabel=el('label','Kênh bán báo cáo'),channel=el('select');
-  for(const [value,title]of [['ALL','Website và POS'],['WEB','Website'],['POS','Tại quầy POS']]){const o=el('option',title);o.value=value;channel.append(o);}
+  for(const [value,title]of [['ALL','Website, POS và CTV'],['WEB','Website'],['POS','Tại quầy POS'],['CTV','CTV']]){const o=el('option',title);o.value=value;channel.append(o);}
   channel.value=filters.channel;channelLabel.append(channel);
   const counterLabel=el('label','Quầy báo cáo'),counter=el('select'),all=el('option','Tất cả quầy');all.value='';counter.append(all);
   for(const c of counters){const o=el('option',c.name+' · '+c.id+(c.status==='ARCHIVED'?' · lưu trữ':''));o.value=c.id;counter.append(o);}
-  counter.value=filters.counterId;counter.disabled=channel.value==='WEB';counterLabel.append(counter);
-  channel.onchange=()=>{counter.disabled=channel.value==='WEB';if(counter.disabled)counter.value='';};
+  counter.value=filters.counterId;counter.disabled=['WEB','CTV'].includes(channel.value);counterLabel.append(counter);
+  channel.onchange=()=>{counter.disabled=['WEB','CTV'].includes(channel.value);if(counter.disabled)counter.value='';};
   counter.onchange=()=>{if(counter.value)channel.value='POS';};
   const submit=el('button','Xem báo cáo','primary');submit.type='submit';form.append(channelLabel,counterLabel,submit);
   form.onsubmit=e=>{e.preventDefault();salesReportRange={from:inputs.from.value,to:inputs.to.value,channel:channel.value,counterId:counter.value};salesReportPage=1;render();};
   screen.append(form,el('p','Giờ Việt Nam · tối đa 367 ngày. Giá trị đơn theo ngày tạo và trạng thái hiện tại; tiền đã thu theo ngày ghi nhận, kể cả đơn tạo trước kỳ. Giữ lịch sử đơn và quầy lưu trữ.','muted'));
   const report=await api('reports?'+new URLSearchParams(filters));if(serial!==loading||$('#workspace').hidden)return;
-  const applied=report.channel==='ALL'?'Website và POS':report.channel==='WEB'?'Website':'Tại quầy POS';
+  const applied=report.channel==='ALL'?'Website, POS và CTV':report.channel==='WEB'?'Website':report.channel==='CTV'?'CTV':'Tại quầy POS';
   screen.append(el('p','Đang xem: '+applied+(report.counterId?' · Quầy '+report.counterId:'')+' · '+report.from+' → '+report.to));
   const cards=el('div',undefined,'cards');
   for(const [key,label,money]of [['orders','Đơn chưa hủy',false],['cancelled','Đơn đã hủy',false],['bookingValue','Giá trị đơn tạo trong kỳ',true],['unpaidBookingValue','Giá trị đơn hiện chưa thu',true],['collected','Tiền đã thu trong kỳ',true],['cash','Thu tiền mặt',true],['bank','Thu chuyển khoản',true]]){

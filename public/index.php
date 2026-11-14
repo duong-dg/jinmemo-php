@@ -26,6 +26,7 @@ require dirname(__DIR__) . '/src/PriceGroups.php';
 require dirname(__DIR__) . '/src/Partners.php';
 require dirname(__DIR__) . '/src/PartnerAuth.php';
 require_once dirname(__DIR__) . '/src/PartnerCatalog.php';
+require_once dirname(__DIR__) . '/src/PartnerOrders.php';
 require dirname(__DIR__) . '/src/PosAuth.php';
 require dirname(__DIR__) . '/src/PosPortal.php';
 require dirname(__DIR__) . '/src/Shifts.php';
@@ -64,6 +65,9 @@ try {
     }
     if($path==='/ctv'||$path==='/ctv/'){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$branding=(new SiteSettings(jingoDatabase($config),$config))->get('brand',true);header('Content-Type: text/html; charset=utf-8');header('Cache-Control: private, no-store');header('X-Frame-Options: DENY');header('Referrer-Policy: no-referrer');header('X-Content-Type-Options: nosniff');header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");require dirname(__DIR__).'/views/partner.php';exit;
+    }
+    if(preg_match('~^/api/v1/partner/orders(?:/([a-f0-9-]{36}))?$~D',(string)$path,$partnerOrder)){
+        $id=$partnerOrder[1] ?? '';$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';$allowed=$id===''?['GET','POST']:['GET'];if(!in_array($method,$allowed,true)){header('Allow: '.implode(', ',$allowed));throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($_GET)throw new HttpError(400,'Bộ lọc đơn CTV không hợp lệ.');$config=jingoConfig();$db=jingoDatabase($config);$auth=new PartnerAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me()['account'];$service=new PartnerOrders($db);$data=$id!==''?$service->detail($actor,$id):($method==='POST'?$service->create($actor,jingoRequestBody()):$service->list($actor));header('Content-Type: application/json; charset=utf-8');header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');echo json_encode($data,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);exit;
     }
     if(preg_match('~^/api/v1/partner/(login|me|logout|products|quotes)$~D',(string)$path,$partnerRoute)){
         $method=$_SERVER['REQUEST_METHOD'] ?? 'GET';$resource=$partnerRoute[1];$expected=in_array($resource,['me','products'],true)?'GET':'POST';if($method!==$expected){header('Allow: '.$expected);throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($_GET)throw new HttpError(400,'Yêu cầu CTV không hợp lệ.');$config=jingoConfig();$db=jingoDatabase($config);$auth=new PartnerAuth($db,$config);if($method==='POST')$auth->mutation();$data=match($resource){'login'=>$auth->login(jingoRequestBody()),'logout'=>$auth->logout(),'me'=>$auth->me(),'products'=>(new PartnerCatalog($db))->products($auth->me()['account']),'quotes'=>(new PartnerCatalog($db))->quote($auth->me()['account'],jingoRequestBody())};header('Content-Type: application/json; charset=utf-8');header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');echo json_encode($data,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);exit;

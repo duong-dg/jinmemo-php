@@ -29,22 +29,22 @@ final class SalesReport
             Pricing::validateDate($input[$key]);
         }
         $from=$input['from'];$to=$input['to'];$channel=$input['channel'] ?? 'ALL';$counter=$input['counterId'] ?? '';
-        if(!in_array($channel,['ALL','WEB','POS'],true))throw new HttpError(400,'Kênh bán không hợp lệ.');
+        if(!in_array($channel,['ALL','WEB','POS','CTV'],true))throw new HttpError(400,'Kênh bán không hợp lệ.');
         if(!is_string($counter)||$counter!==''&&!preg_match('/^[a-zA-Z0-9_-]{1,80}$/D',$counter))throw new HttpError(400,'Mã quầy không hợp lệ.');
         $zone=new DateTimeZone('Asia/Ho_Chi_Minh');$begin=new DateTimeImmutable($from.' 00:00:00',$zone);$last=new DateTimeImmutable($to.' 00:00:00',$zone);
         if($from>$to||$last->getTimestamp()-$begin->getTimestamp()>366*86400)throw new HttpError(400,'Khoảng báo cáo tối đa 367 ngày.');
         $end=$last->modify('+1 day');$args=[$begin->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s'),$end->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s')];
         // Apply the same channel/counter predicates to creation dates and collection dates.
-        $where=$channel==='ALL'?'':($channel==='POS'?' AND po.order_id IS NOT NULL':' AND po.order_id IS NULL');
+        $where=match($channel){'POS'=>' AND po.order_id IS NOT NULL','CTV'=>' AND pt.order_id IS NOT NULL','WEB'=>' AND po.order_id IS NULL AND pt.order_id IS NULL',default=>''};
         if($counter!==''){$where.=' AND po.counter_id=?';$args[]=$counter;}
-        $joins=' LEFT JOIN jingo_pos_orders po ON po.order_id=o.id LEFT JOIN jingo_counters c ON c.id=po.counter_id';
+        $joins=' LEFT JOIN jingo_pos_orders po ON po.order_id=o.id LEFT JOIN jingo_counters c ON c.id=po.counter_id LEFT JOIN jingo_partner_orders pt ON pt.order_id=o.id';
         $zero=['orders'=>0,'cancelled'=>0,'bookingValue'=>0,'collected'=>0,'cash'=>0,'bank'=>0,'unpaidBookingValue'=>0];
         $daily=[];for($day=$begin;$day<=$last;$day=$day->modify('+1 day')){$date=$day->format('Y-m-d');$daily[$date]=['date'=>$date]+$zero;}
         $totals=$zero;$groups=[];
         $dateOf=static fn(string $date):string=>(new DateTimeImmutable($date,new DateTimeZone('UTC')))->setTimezone($zone)->format('Y-m-d');
         $groupKey=static function(array $row)use(&$groups,$zero):string{
-            $id=$row['counter_id'];$key=$id===null?'WEB':'POS:'.$id;
-            if(!isset($groups[$key]))$groups[$key]=['channel'=>$id===null?'WEB':'POS','counterId'=>$id,'name'=>$id===null?'Website':$row['counter_name']]+$zero;
+            $id=$row['counter_id'];$isPartner=$row['partner_order']!==null;$key=$id===null?($isPartner?'CTV':'WEB'):'POS:'.$id;
+            if(!isset($groups[$key]))$groups[$key]=['channel'=>$id===null?($isPartner?'CTV':'WEB'):'POS','counterId'=>$id,'name'=>$id===null?($isPartner?'CTV':'Website'):$row['counter_name']]+$zero;
             return $key;
         };
         $record=static function(string $date,string $group,array $values)use(&$totals,&$daily,&$groups):void{
@@ -56,20 +56,20 @@ final class SalesReport
         };
         $this->db->exec('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');$this->db->beginTransaction();
         try{
-            $orders=$this->query("SELECT o.booking_status,o.payment_status,o.created_at,JSON_EXTRACT(o.snapshot,'$.total') AS total,po.counter_id,JSON_UNQUOTE(JSON_EXTRACT(c.data,'$.name')) AS counter_name FROM jingo_orders o".$joins.' WHERE o.created_at>=? AND o.created_at<?'.$where.' ORDER BY o.created_at,o.id',$args);
+            $orders=$this->query("SELECT o.booking_status,o.payment_status,o.created_at,JSON_EXTRACT(o.snapshot,'$.total') AS total,pt.order_id AS partner_order,po.counter_id,JSON_UNQUOTE(JSON_EXTRACT(c.data,'$.name')) AS counter_name FROM jingo_orders o".$joins.' WHERE o.created_at>=? AND o.created_at<?'.$where.' ORDER BY o.created_at,o.id',$args);
             while($order=$orders->fetch(PDO::FETCH_ASSOC)){
                 $date=$dateOf($order['created_at']);$group=$groupKey($order);
                 if($order['booking_status']==='CANCELLED'){$record($date,$group,['cancelled'=>1]);continue;}
                 $amount=self::amount(json_decode((string)$order['total'],true,512,JSON_THROW_ON_ERROR));
                 $record($date,$group,['orders'=>1,'bookingValue'=>$amount,'unpaidBookingValue'=>$order['payment_status']==='UNPAID'?$amount:0]);
             }
-            $payments=$this->query("SELECT p.amount,p.method,p.created_at,po.counter_id,JSON_UNQUOTE(JSON_EXTRACT(c.data,'$.name')) AS counter_name FROM jingo_order_payments p JOIN jingo_orders o ON o.id=p.order_id".$joins.' WHERE p.created_at>=? AND p.created_at<?'.$where.' ORDER BY p.created_at,p.id',$args);
+            $payments=$this->query("SELECT p.amount,p.method,p.created_at,pt.order_id AS partner_order,po.counter_id,JSON_UNQUOTE(JSON_EXTRACT(c.data,'$.name')) AS counter_name FROM jingo_order_payments p JOIN jingo_orders o ON o.id=p.order_id".$joins.' WHERE p.created_at>=? AND p.created_at<?'.$where.' ORDER BY p.created_at,p.id',$args);
             while($payment=$payments->fetch(PDO::FETCH_ASSOC)){
                 if(!in_array($payment['method'],['CASH','BANK'],true))throw new HttpError(409,'Có phương thức thu chưa được hỗ trợ trong báo cáo.');
                 $amount=self::amount($payment['amount']);$record($dateOf($payment['created_at']),$groupKey($payment),['collected'=>$amount,($payment['method']==='CASH'?'cash':'bank')=>$amount]);
             }
             ksort($groups,SORT_STRING);$this->db->commit();
-            return ['from'=>$from,'to'=>$to,'channel'=>$channel,'counterId'=>$counter!==''?$counter:null,'supportedChannels'=>['WEB','POS'],'generatedAt'=>gmdate('Y-m-d\TH:i:s\Z'),'totals'=>$totals,'daily'=>array_values($daily),'channels'=>array_values($groups)];
+            return ['from'=>$from,'to'=>$to,'channel'=>$channel,'counterId'=>$counter!==''?$counter:null,'supportedChannels'=>['WEB','POS','CTV'],'generatedAt'=>gmdate('Y-m-d\TH:i:s\Z'),'totals'=>$totals,'daily'=>array_values($daily),'channels'=>array_values($groups)];
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
     public static function csv(array $report):string

@@ -115,6 +115,7 @@
     ]
   },
   "partnerTables": {
+    "partner_orders": ["order_id", "partner_id"],
     "partner_login_limits": ["id", "attempts", "until_at"],
     "partner_sessions": ["token_hash", "partner_id", "expires_at"],
     "price_groups": [
