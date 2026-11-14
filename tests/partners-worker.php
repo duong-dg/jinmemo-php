@@ -1,0 +1,4 @@
+<?php
+declare(strict_types=1);
+if(PHP_SAPI!=='cli'||!preg_match('/^jingo_partners_test_[a-f0-9]{12}$/D',$argv[1] ?? '')||!in_array($argv[2] ?? '',['account','group'],true))exit(1);
+foreach(['AdminAuth','PriceGroups','Partners'] as $c)require_once dirname(__DIR__).'/src/'.$c.'.php';$db=new PDO(getenv('JINGO_TEST_DSN').';dbname='.$argv[1],getenv('JINGO_TEST_USER')?:'root',getenv('JINGO_TEST_PASSWORD')?:'',[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_EMULATE_PREPARES=>false]);$body=json_decode(base64_decode($argv[3],true),true,512,JSON_THROW_ON_ERROR);try{if($argv[2]==='group')(new PriceGroups($db))->save($body,'admin');else (new Partners($db))->save($body,'admin');echo 'saved';}catch(HttpError $e){if(!in_array($e->status,[400,409],true))throw $e;echo $e->status===409?'conflict':'invalid';}

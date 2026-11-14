@@ -115,6 +115,7 @@
     ]
   },
   "partnerTables": {
+    "partner_sessions": ["token_hash", "partner_id", "expires_at"],
     "price_groups": [
       "id",
       "data",
