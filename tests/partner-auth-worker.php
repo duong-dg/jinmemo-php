@@ -1,0 +1,4 @@
+<?php
+declare(strict_types=1);
+if(PHP_SAPI!=='cli'||!preg_match('/^jingo_partner_auth_test_[a-f0-9]{12}$/D',$argv[1] ?? '')||!in_array($argv[2] ?? '',['login','disable'],true))exit(1);
+foreach(['AdminAuth','Partners','PartnerAuth'] as $c)require_once dirname(__DIR__).'/src/'.$c.'.php';$db=new PDO(getenv('JINGO_TEST_DSN').';dbname='.$argv[1],getenv('JINGO_TEST_USER')?:'root',getenv('JINGO_TEST_PASSWORD')?:'',[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_EMULATE_PREPARES=>false]);$body=json_decode(base64_decode($argv[3],true),true,512,JSON_THROW_ON_ERROR);$_SERVER['HTTP_X_JINMEMO_PARTNER']='1';$_SERVER['REMOTE_ADDR']='127.0.0.1';try{if($argv[2]==='login'){(new PartnerAuth($db,['APP_ENV'=>'development','PUBLIC_BASE_URL'=>'http://127.0.0.1']))->login($body);echo 'logged';}else{(new Partners($db))->save($body,'admin');echo 'saved';}}catch(HttpError $e){if($e->status!==401)throw $e;echo '401';}

@@ -24,6 +24,7 @@ require dirname(__DIR__) . '/src/Counters.php';
 require dirname(__DIR__) . '/src/PosUsers.php';
 require dirname(__DIR__) . '/src/PriceGroups.php';
 require dirname(__DIR__) . '/src/Partners.php';
+require dirname(__DIR__) . '/src/PartnerAuth.php';
 require dirname(__DIR__) . '/src/PosAuth.php';
 require dirname(__DIR__) . '/src/PosPortal.php';
 require dirname(__DIR__) . '/src/Shifts.php';
@@ -46,7 +47,7 @@ require dirname(__DIR__) . '/src/TicketStock.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js','/assets/schedule.js','/assets/booking.js','/assets/orders-admin.js','/assets/sales-report-admin.js','/assets/posts-admin.js','/assets/post-categories-admin.js','/assets/translations-admin.js','/assets/post-reader.js','/assets/post-preview.css','/assets/overview-admin.js','/assets/supply-admin.js','/assets/supplier-payments-admin.js','/assets/supplier-statements-admin.js','/assets/source-history-admin.js','/assets/ticket-stock-admin.js','/assets/shifts-admin.js','/assets/pos-admin.js','/assets/partners-admin.js','/assets/price-groups-admin.js','/assets/pos-users-admin.js','/assets/print.css','/assets/print.js','/assets/pos.css','/assets/pos-portal.js'],true)) return false;
+    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js','/assets/schedule.js','/assets/booking.js','/assets/orders-admin.js','/assets/sales-report-admin.js','/assets/posts-admin.js','/assets/post-categories-admin.js','/assets/translations-admin.js','/assets/post-reader.js','/assets/post-preview.css','/assets/overview-admin.js','/assets/supply-admin.js','/assets/supplier-payments-admin.js','/assets/supplier-statements-admin.js','/assets/source-history-admin.js','/assets/ticket-stock-admin.js','/assets/shifts-admin.js','/assets/pos-admin.js','/assets/partner-portal.js','/assets/partners-admin.js','/assets/price-groups-admin.js','/assets/pos-users-admin.js','/assets/print.css','/assets/print.js','/assets/pos.css','/assets/pos-portal.js'],true)) return false;
     if(in_array($path,['/cam-nang','/cam-nang/','/en/blog','/en/blog/','/tra-cuu','/tra-cuu/','/en/orders','/en/orders/','/','/en','/en/','/lien-he','/lien-he/','/en/contact','/en/contact/','/diem-den','/diem-den/','/en/destinations','/en/destinations/'],true) || preg_match('#^/(?:cam-nang|en/blog|trang|en/pages|ve|en/ve|diem-den|en/destinations|loai|en/loai)/[^/]+/?$#D',(string)$path)) {
         $publicRequest=true;
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
@@ -59,6 +60,12 @@ try {
         header('Content-Type: text/html; charset=utf-8');header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');header('X-Frame-Options: DENY');header('Referrer-Policy: no-referrer');header('X-Robots-Tag: noindex, nofollow');
         header("Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'");
         echo PrintDocuments::html($kind,$document,(new SiteSettings($db,$config))->get('brand',true));exit;
+    }
+    if($path==='/ctv'||$path==='/ctv/'){
+        if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$branding=(new SiteSettings(jingoDatabase($config),$config))->get('brand',true);header('Content-Type: text/html; charset=utf-8');header('Cache-Control: private, no-store');header('X-Frame-Options: DENY');header('Referrer-Policy: no-referrer');header('X-Content-Type-Options: nosniff');header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");require dirname(__DIR__).'/views/partner.php';exit;
+    }
+    if(preg_match('~^/api/v1/partner/(login|me|logout)$~D',(string)$path,$partnerRoute)){
+        $method=$_SERVER['REQUEST_METHOD'] ?? 'GET';$resource=$partnerRoute[1];$expected=$resource==='me'?'GET':'POST';if($method!==$expected){header('Allow: '.$expected);throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($_GET)throw new HttpError(400,'Yêu cầu CTV không hợp lệ.');$config=jingoConfig();$db=jingoDatabase($config);$auth=new PartnerAuth($db,$config);if($method==='POST')$auth->mutation();$data=match($resource){'login'=>$auth->login(jingoRequestBody()),'logout'=>$auth->logout(),'me'=>$auth->me()};header('Content-Type: application/json; charset=utf-8');header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');echo json_encode($data,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);exit;
     }
     if($path==='/quay'||$path==='/quay/'){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
