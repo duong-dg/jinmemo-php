@@ -113,5 +113,19 @@
       "quantity",
       "created_at"
     ]
+  },
+  "partnerTables": {
+    "price_groups": [
+      "id",
+      "data",
+      "version"
+    ],
+    "partners": [
+      "id",
+      "email",
+      "password_hash",
+      "data",
+      "version"
+    ]
   }
 }

@@ -22,6 +22,7 @@ require dirname(__DIR__) . '/src/Orders.php';
 require dirname(__DIR__) . '/src/SalesReport.php';
 require dirname(__DIR__) . '/src/Counters.php';
 require dirname(__DIR__) . '/src/PosUsers.php';
+require dirname(__DIR__) . '/src/PriceGroups.php';
 require dirname(__DIR__) . '/src/PosAuth.php';
 require dirname(__DIR__) . '/src/PosPortal.php';
 require dirname(__DIR__) . '/src/Shifts.php';
@@ -44,7 +45,7 @@ require dirname(__DIR__) . '/src/TicketStock.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js','/assets/schedule.js','/assets/booking.js','/assets/orders-admin.js','/assets/sales-report-admin.js','/assets/posts-admin.js','/assets/post-categories-admin.js','/assets/translations-admin.js','/assets/post-reader.js','/assets/post-preview.css','/assets/overview-admin.js','/assets/supply-admin.js','/assets/supplier-payments-admin.js','/assets/supplier-statements-admin.js','/assets/source-history-admin.js','/assets/ticket-stock-admin.js','/assets/shifts-admin.js','/assets/pos-admin.js','/assets/pos-users-admin.js','/assets/print.css','/assets/print.js','/assets/pos.css','/assets/pos-portal.js'],true)) return false;
+    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js','/assets/schedule.js','/assets/booking.js','/assets/orders-admin.js','/assets/sales-report-admin.js','/assets/posts-admin.js','/assets/post-categories-admin.js','/assets/translations-admin.js','/assets/post-reader.js','/assets/post-preview.css','/assets/overview-admin.js','/assets/supply-admin.js','/assets/supplier-payments-admin.js','/assets/supplier-statements-admin.js','/assets/source-history-admin.js','/assets/ticket-stock-admin.js','/assets/shifts-admin.js','/assets/pos-admin.js','/assets/price-groups-admin.js','/assets/pos-users-admin.js','/assets/print.css','/assets/print.js','/assets/pos.css','/assets/pos-portal.js'],true)) return false;
     if(in_array($path,['/cam-nang','/cam-nang/','/en/blog','/en/blog/','/tra-cuu','/tra-cuu/','/en/orders','/en/orders/','/','/en','/en/','/lien-he','/lien-he/','/en/contact','/en/contact/','/diem-den','/diem-den/','/en/destinations','/en/destinations/'],true) || preg_match('#^/(?:cam-nang|en/blog|trang|en/pages|ve|en/ve|diem-den|en/destinations|loai|en/loai)/[^/]+/?$#D',(string)$path)) {
         $publicRequest=true;
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
@@ -171,6 +172,9 @@ try {
     }
     if(preg_match('#^/api/v1/posts/([a-f0-9-]{36})/view$#D',(string)$path,$postView)){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='POST'){header('Allow: POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$insights=new PostInsights(jingoDatabase($config),$config);header('Cache-Control: private, no-store');jingoJson(['data'=>$insights->record($postView[1],$_GET,jingoRequestBody(),$_SERVER,$_COOKIE)]);
+    }
+    if($path==='/api/v1/admin/price-groups'){
+        $method=$_SERVER['REQUEST_METHOD'] ?? 'GET';if(!in_array($method,['GET','POST'],true)){header('Allow: GET, POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($_GET)throw new HttpError(400,'Bộ lọc không hợp lệ.');$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me();$service=new PriceGroups($db);jingoJson(['data'=>$method==='GET'?$service->list():$service->save(jingoRequestBody(1048576),$actor['id'])]);
     }
     if($path==='/api/v1/admin/ticket-stock'||preg_match('#^/api/v1/admin/ticket-stock/([a-f0-9-]{36})/manage$#D',(string)$path,$stockManage)||preg_match('#^/api/v1/admin/ticket-stock/orders/([a-f0-9-]{36})(/deliver)?$#D',(string)$path,$stockOrder)){
         $list=$path==='/api/v1/admin/ticket-stock';$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';$write=isset($stockManage[1])||isset($stockOrder[2]);if(!in_array($method,$list?['GET','POST']:[$write?'POST':'GET'],true)){header('Allow: '.($list?'GET, POST':($write?'POST':'GET')));throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me();$stock=new TicketStock($db);if($list)jingoJson($method==='GET'?$stock->list($_GET):$stock->receive(jingoRequestBody(4194304),$actor['id']));if(isset($stockManage[1]))jingoJson($stock->manage($stockManage[1],jingoRequestBody(),$actor['id']));jingoJson($write?$stock->deliver($stockOrder[1],jingoRequestBody(),$actor['id']):$stock->choices($stockOrder[1]));
