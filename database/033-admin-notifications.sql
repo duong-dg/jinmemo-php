@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS jingo_admin_notifications (
+ id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ kind VARCHAR(16) CHARACTER SET ascii NOT NULL,
+ code VARCHAR(80) CHARACTER SET ascii NOT NULL,
+ href VARCHAR(500) NOT NULL,
+ created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS jingo_admin_notification_reads (
+ admin_id VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+ last_id BIGINT NOT NULL DEFAULT 0,
+ last_ticket_id BIGINT NULL,
+ last_car_id BIGINT NULL,
+ last_stay_id BIGINT NULL,
+ last_gift_id BIGINT NULL
+) ENGINE=InnoDB;
+INSERT INTO jingo_catalog_locks(id) VALUES ('notifications') ON DUPLICATE KEY UPDATE id=id;

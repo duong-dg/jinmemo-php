@@ -114,6 +114,10 @@
       "created_at"
     ]
   },
+  "notificationTables": {
+    "admin_notifications": ["id", "kind", "code", "href", "created_at"],
+    "admin_notification_reads": ["admin_id", "last_id", "last_ticket_id", "last_car_id", "last_stay_id", "last_gift_id"]
+  },
   "giftTables": {
     "gift_orders": ["id", "code", "status", "data", "created_at"]
   },

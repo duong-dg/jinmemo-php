@@ -1,6 +1,6 @@
 'use strict';
 const $=s=>document.querySelector(s);
-const names={features:'Bật/tắt phân hệ',gifts:'Danh mục & tồn quà',partners:'Tài khoản CTV','price-groups':'Nhóm giá CTV','pos-users':'Nhân viên quầy',pos:'Bán tại quầy',shifts:'Ca thu ngân',counters:'Quầy bán vé',reports:'Báo cáo bán hàng','ticket-stock':'Kho mã vé','supply-alerts':'Cảnh báo nguồn cung','supplier-statements':'Sao kê nhà cung cấp','supply-profit':'Báo cáo giá vốn','supplier-balances':'Công nợ nhà cung cấp',supply:'Lô nguồn cung',translations:'Bản dịch English','post-categories':'Chuyên mục bài viết',posts:'Bài viết',orders:'Đơn hàng',products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
+const names={notifications:'Thông báo',features:'Bật/tắt phân hệ',gifts:'Danh mục & tồn quà',partners:'Tài khoản CTV','price-groups':'Nhóm giá CTV','pos-users':'Nhân viên quầy',pos:'Bán tại quầy',shifts:'Ca thu ngân',counters:'Quầy bán vé',reports:'Báo cáo bán hàng','ticket-stock':'Kho mã vé','supply-alerts':'Cảnh báo nguồn cung','supplier-statements':'Sao kê nhà cung cấp','supply-profit':'Báo cáo giá vốn','supplier-balances':'Công nợ nhà cung cấp',supply:'Lô nguồn cung',translations:'Bản dịch English','post-categories':'Chuyên mục bài viết',posts:'Bài viết',orders:'Đơn hàng',products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
 const labels={ACTIVE:'Hoạt động',ARCHIVED:'Lưu trữ',DRAFT:'Bản nháp',PUBLISHED:'Đã xuất bản',TRASH:'Thùng rác',NEW:'Mới',DONE:'Đã xử lý',TICKET:'Vé',TOUR:'Tour',PAGE:'Trang thường',CONTACT:'Liên hệ'};
 let current='overview',records=[],draft=null,dirty=false,loading=0,contactStatus='NEW',editing=false,editorSection='';
 function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;}
@@ -13,7 +13,7 @@ async function api(path,body,extra={}){
  const response=await fetch('/api/v1/admin/'+path,options);if(response.status===401&&path!=='login')showLogin();let data;try{data=await response.json();}catch{throw new Error('Máy chủ chưa trả dữ liệu hợp lệ. Hãy thử lại cùng yêu cầu.');}if(!data||typeof data!=='object'||Array.isArray(data))throw new Error('Máy chủ chưa trả dữ liệu hợp lệ. Hãy thử lại cùng yêu cầu.');
  if(!response.ok)throw new Error(data.message||'Không thực hiện được thao tác.');return data;
 }
-function showLogin(){loading++;if($('#editor').open)$('#editor').close();$('#screen').replaceChildren();records=[];draft=null;dirty=false;$('#workspace').hidden=true;$('#starting').hidden=true;$('#login').hidden=false;$('#login-form input').focus();}
+function showLogin(){loading++;notificationGeneration++;$('#notification-count').textContent='';if($('#editor').open)$('#editor').close();$('#screen').replaceChildren();records=[];draft=null;dirty=false;$('#workspace').hidden=true;$('#starting').hidden=true;$('#login').hidden=false;$('#login-form input').focus();}
 function showWorkspace(email){$('#login').hidden=true;$('#starting').hidden=true;$('#workspace').hidden=false;$('#account-email').textContent=email;render();}
 $('#toggle-password').onclick=()=>{const input=$('#login-form [name=password]');input.type=input.type==='password'?'text':'password';$('#toggle-password').textContent=input.type==='password'?'Hiện':'Ẩn';$('#toggle-password').setAttribute('aria-label',input.type==='password'?'Hiện mật khẩu':'Ẩn mật khẩu');};
 $('#login-form').onsubmit=async e=>{e.preventDefault();const submit=e.submitter;submit.disabled=true;$('#login-error').hidden=true;try{const data=new FormData(e.target);const result=await api('login',{email:data.get('email'),password:data.get('password')});e.target.reset();showWorkspace(result.email);}catch(error){$('#login-error').textContent=error.message;$('#login-error').hidden=false;}finally{submit.disabled=false;}};
@@ -35,6 +35,8 @@ function syncAdminNavigation(section){
 for(const group of document.querySelectorAll('#nav .nav-group'))group.addEventListener('toggle',()=>{if(group.open)for(const sibling of document.querySelectorAll('#nav .nav-group'))if(sibling!==group)sibling.open=false;});
 async function render(){
  const id=++loading;current=location.hash.slice(1)||'overview';if(!names[current])current='overview';notice('');$('#page-title').textContent=names[current]||'Tổng quan';syncAdminNavigation(current);const screen=$('#screen');screen.replaceChildren();
+ refreshNotifications();
+ if(current==='notifications'){await renderNotifications(screen,id);return;}
  if(current==='features'){await renderFeatures(screen,id);return;}
  if(current==='gifts'){await renderGifts(screen,id);return;}
  if(current==='partners'){await renderPartners(screen,id);return;}

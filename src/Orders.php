@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/Notifications.php';
 require_once __DIR__.'/SupplyLots.php';
 require_once __DIR__.'/SupplyAllocation.php';
 require_once __DIR__.'/PosAccess.php';
@@ -76,7 +77,7 @@ final class Orders
             (new Inventory($this->db))->allocate($id,$p['id'],$input['variantId'],$input['date'],$quote['timeSlot']['id'] ?? '',$quantity);if($discount)(new Vouchers($this->db))->allocate($id,$discount['id']);
             if($pos){$this->query('INSERT INTO jingo_pos_orders(order_id,counter_id,admin_id) VALUES (?,?,?)',[$id,$pos['counterId'],$pos['adminId']]);$this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),$pos['adminId'],'pos.order-create',$id]);}
             if($partnerId!==null){$this->query('INSERT INTO jingo_partner_orders(order_id,partner_id) VALUES (?,?)',[$id,$partnerId]);$this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),'partner:'.$partnerId,'partner.order-create',$id]);}
-            $this->db->commit();return ['code'=>$code,'accessKey'=>$input['accessKey']];
+            (new Notifications($this->db))->enqueue('TICKET',$code);$this->db->commit();return ['code'=>$code,'accessKey'=>$input['accessKey']];
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();if($e instanceof PDOException&&($e->errorInfo[1] ?? null)===1062){if($prior=$this->prior($input,$hash))return $prior;throw new HttpError(409,'Trùng mã đơn. Vui lòng thử lại.');}throw $e;}
     }
     private function detail(array $row,bool $admin):array
