@@ -40,7 +40,7 @@ final class PosPortal
     }
     public function act(array $actor,string $id,array $input):array
     {
-        $permission=match($input['action'] ?? null){'PAY'=>'COLLECT','CANCEL'=>'CANCEL',default=>null};if(!$permission)throw new HttpError(403,'Thao tác chưa được hỗ trợ tại cổng nhân viên.');PosAuth::permit($actor,$permission);$this->detail($actor,$id);
+        $permission=match($input['action'] ?? null){'PAY'=>'COLLECT','CANCEL'=>'CANCEL','DELIVER'=>'DELIVER',default=>null};if(!$permission)throw new HttpError(403,'Thao tác chưa được hỗ trợ tại cổng nhân viên.');PosAuth::permit($actor,$permission);$this->detail($actor,$id);
         return $this->project((new Orders($this->db))->act($id,$input,'pos-user:'.$actor['id'],$actor['id']),$actor);
     }
 }

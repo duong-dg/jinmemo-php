@@ -133,10 +133,14 @@ final class Orders
         $cell=static function(mixed $v):string{$v=str_replace("\0",'',(string)$v);if(preg_match('/^[\s\x{FEFF}]*[=+@-]|^[\t\r\n]/u',$v))$v="'".$v;return '"'.str_replace('"','""',$v).'"';};
         return "\xEF\xBB\xBF".implode("\r\n",array_map(fn($row)=>implode(',',array_map($cell,$row)),$rows))."\r\n";
     }
+    private static function ticketText(mixed $value,int $min,int $max):string
+    {
+        if(!is_string($value))self::fail();$value=preg_replace('/^[\s\x{FEFF}]+|[\s\x{FEFF}]+$/u','',$value);$length=$value===null?0:strlen(mb_convert_encoding($value,'UTF-16LE','UTF-8'))/2;if($value===null||$length<$min||$length>$max||str_contains($value,"\0"))self::fail('Mã vé hoặc ghi chú không hợp lệ.');return $value;
+    }
     public function act(string $id,array $input,string $actor,?string $staffId=null):array
     {
-        $action=$input['action'] ?? null;$keys=['requestId','version','action','note'];if(in_array($action,['INSTRUCTIONS','CONFIRM'],true))$keys[]='instructions';if($action==='PAY')$keys=array_merge($keys,['method','amount','reference']);
-        if(array_diff(array_keys($input),$keys)||!in_array($action,['INSTRUCTIONS','CANCEL','PAY','ARCHIVE','RESTORE','CONFIRM'],true)||!self::uuid($input['requestId'] ?? null)||!is_int($input['version'] ?? null)||$input['version']<1||$input['version']>=2147483647)self::fail();
+        $action=$input['action'] ?? null;$keys=['requestId','version','action','note'];if($action==='DELIVER')$keys[]='tickets';if(in_array($action,['INSTRUCTIONS','CONFIRM'],true))$keys[]='instructions';if($action==='PAY')$keys=array_merge($keys,['method','amount','reference']);
+        if(array_diff(array_keys($input),$keys)||!in_array($action,['INSTRUCTIONS','CANCEL','PAY','ARCHIVE','RESTORE','CONFIRM','DELIVER'],true)||!self::uuid($input['requestId'] ?? null)||!is_int($input['version'] ?? null)||$input['version']<1||$input['version']>=2147483647)self::fail();
         $input['note']=self::text($input,'note',1,1000);if(in_array($action,['INSTRUCTIONS','CONFIRM'],true))$input['instructions']=self::text($input,'instructions',1,4000);
         if($action==='PAY'){
             if(array_key_exists('method',$input)&&$input['method']===null)self::fail();$input['method']=$input['method'] ?? 'BANK';if(!in_array($input['method'],['BANK','CASH'],true)||!is_int($input['amount'] ?? null)||$input['amount']<0||$input['amount']>15000000000)self::fail();
@@ -144,10 +148,14 @@ final class Orders
             if($input['method']==='BANK'&&str_starts_with($reference,'CASH:'))self::fail('Tiền tố CASH: dành cho phiếu thu tiền mặt.');
             $input['reference']=$input['method']==='CASH'?'CASH:'.$input['requestId']:$reference;
         }
+        if($action==='DELIVER'){
+            if(!is_array($input['tickets'] ?? null)||!array_is_list($input['tickets'])||!$input['tickets']||count($input['tickets'])>150)self::fail('Nhập từ 1 đến 150 mã vé.');$tickets=[];$codes=[];
+            foreach($input['tickets'] as $t){if(!is_array($t)||array_diff(array_keys($t),['code','kind','covers','note'])||!in_array($t['kind'] ?? null,['SUPPLIER_CODE','TOUR_VOUCHER'],true)||!is_int($t['covers'] ?? null)||$t['covers']<1||$t['covers']>150)self::fail();$code=self::ticketText($t['code'] ?? null,1,2000);$note=self::ticketText($t['note'] ?? '',0,1000);$digest=hash('sha256',$code);if(isset($codes[$digest]))self::fail('Danh sách có mã vé trùng.');$codes[$digest]=true;$tickets[]=['code'=>$code,'kind'=>$t['kind'],'covers'=>$t['covers'],'note'=>$note];}$input['tickets']=$tickets;
+        }
         $hash=hash('sha256',json_encode(self::canonical(['id'=>$id,'action'=>$input]),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR));
         $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();try{
             if($action==='PAY'||$staffId!==null){$counter=$this->query('SELECT counter_id FROM jingo_pos_orders WHERE order_id=?',[$id])->fetchColumn();if($counter!==false)$this->query('SELECT id FROM jingo_counters WHERE id=? FOR UPDATE',[$counter]);}
-            if($staffId!==null){if($counter===false)throw new HttpError(404,'Không tìm thấy đơn quầy.');$permission=match($action){'PAY'=>'COLLECT','CANCEL'=>'CANCEL',default=>null};if($permission===null)throw new HttpError(403,'Thao tác này chỉ dành cho admin.');PosAccess::live($this->db,$staffId,$counter,$permission);}
+            if($staffId!==null){if($counter===false)throw new HttpError(404,'Không tìm thấy đơn quầy.');$permission=match($action){'PAY'=>'COLLECT','CANCEL'=>'CANCEL','DELIVER'=>'DELIVER',default=>null};if($permission===null)throw new HttpError(403,'Thao tác này chỉ dành cho admin.');PosAccess::live($this->db,$staffId,$counter,$permission);$actor='pos-user:'.$staffId;}
             $row=$this->query('SELECT * FROM jingo_orders WHERE id=? FOR UPDATE',[$id])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy đơn.');
             $prior=$this->query('SELECT request_hash FROM jingo_order_actions WHERE id=?',[$input['requestId']])->fetchColumn();if($prior!==false){if(!hash_equals($prior,$hash))throw new HttpError(409,'Mã thao tác đã dùng.');$result=$this->get($id);$this->db->commit();return $result;}
             if((int)$row['version']!==$input['version'])throw new HttpError(409,'Đơn đã thay đổi. Tải lại trước khi xử lý.');if($row['booking_status']==='CANCELLED'&&!in_array($action,['ARCHIVE','RESTORE'],true))throw new HttpError(409,'Đơn đã hủy.');
@@ -161,6 +169,11 @@ final class Orders
             }elseif($action==='CANCEL'){
                 if($row['payment_status']!=='UNPAID')throw new HttpError(409,'Đơn đã thu tiền hoặc ghi công nợ cần quy trình hoàn riêng; không thể hủy trực tiếp.');
                 (new SupplyAllocation($this->db))->release($row);(new Inventory($this->db))->release($id);(new Vouchers($this->db))->release($id);$this->query("UPDATE jingo_orders SET booking_status='CANCELLED',version=version+1 WHERE id=?",[$id]);
+            }elseif($action==='DELIVER'){
+                if($row['booking_status']!=='CONFIRMED'||$row['payment_status']!=='PAID')throw new HttpError(409,'Chỉ giao vé cho đơn đã đặt và đã thu đủ tiền.');$snapshot=json_decode($row['snapshot'],true,512,JSON_THROW_ON_ERROR);$issued=(int)$this->query('SELECT COALESCE(SUM(covers),0) FROM jingo_order_tickets WHERE order_id=?',[$id])->fetchColumn();if($issued+array_sum(array_column($input['tickets'],'covers'))>array_sum(array_column($snapshot['lines'],'quantity')))self::fail('Số khách được cấp vé vượt số khách trong đơn.');
+                require_once __DIR__.'/TicketStock.php';$stock=new TicketStock($this->db);$stock->prepareManual($row,$input['tickets']);(new SupplyAllocation($this->db))->forDelivery($row,$actor);
+                foreach($input['tickets'] as $ticket){$hex=bin2hex(random_bytes(16));$ticketId=substr($hex,0,8).'-'.substr($hex,8,4).'-4'.substr($hex,13,3).'-8'.substr($hex,17,3).'-'.substr($hex,20,12);$this->query('INSERT INTO jingo_order_tickets(id,order_id,code,code_hash,kind,covers,note) VALUES (?,?,?,?,?,?,?)',[$ticketId,$id,$ticket['code'],hash('sha256',$ticket['code']),$ticket['kind'],$ticket['covers'],$ticket['note']]);$stock->useManual($id,$ticket['code'],$ticketId);}
+                $this->query('UPDATE jingo_orders SET version=version+1 WHERE id=?',[$id]);$this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),$actor,'order.deliver',$id]);
             }elseif($action==='PAY'){
                 if($row['booking_status']!=='CONFIRMED'||$row['payment_status']!=='UNPAID')throw new HttpError(409,'Chỉ ghi nhận thu tiền cho đơn đã đặt và chưa thanh toán.');
                 $snapshot=json_decode($row['snapshot'],true,512,JSON_THROW_ON_ERROR);if($input['amount']!==$snapshot['total'])self::fail('Số tiền phải đúng tổng đơn. Thanh toán thiếu/thừa cần xử lý riêng.');

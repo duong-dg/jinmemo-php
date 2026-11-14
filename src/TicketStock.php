@@ -29,6 +29,18 @@ final class TicketStock
     {
         if($order['booking_status']!=='CONFIRMED'||$order['payment_status']!=='PAID'||$this->query('SELECT order_id FROM jingo_order_archives WHERE order_id=?',[$order['id']])->fetchColumn())return [];$snapshot=json_decode($order['snapshot'],true,512,JSON_THROW_ON_ERROR);$groups=[];foreach($this->query('SELECT l.*,a.quantity FROM jingo_supply_allocations a JOIN jingo_supply_lots l ON l.id=a.lot_id WHERE a.order_id=? AND a.released=0 ORDER BY l.id',[$order['id']])->fetchAll(PDO::FETCH_ASSOC) as $lot){if($lot['product_id']!==$snapshot['productId']||$lot['variant_id']!==($snapshot['variantId'] ?? '')||$lot['valid_from']>$snapshot['date']||$lot['valid_to']<$snapshot['date'])continue;$used=(int)$this->query("SELECT COUNT(*) FROM jingo_ticket_stock WHERE lot_id=? AND order_id=? AND status='ISSUED'",[$lot['id'],$order['id']])->fetchColumn();$capacity=max(0,(int)$lot['quantity']-$used);if(!$capacity)continue;$codes=$this->query("SELECT id,code FROM jingo_ticket_stock WHERE lot_id=? AND status='AVAILABLE' ORDER BY created_at,id LIMIT 150",[$lot['id']])->fetchAll(PDO::FETCH_ASSOC);$data=json_decode($lot['data'],true,512,JSON_THROW_ON_ERROR);$groups[]=['lotId'=>$lot['id'],'supplierName'=>$data['supplierName'] ?? '','customerType'=>$lot['customer_type'],'capacity'=>$capacity,'codes'=>$codes];}return $groups;
     }
+    /** Called inside the order transaction; the catalog lock protects the shared code namespace. */
+    public function prepareManual(array $order,array $tickets):void
+    {
+        if(!$this->db->inTransaction())throw new LogicException('Ticket delivery requires a transaction.');$this->lock();$groups=$this->groups($order);$scopes=[];foreach($groups as $g)$scopes[$g['lotId']]=$g['capacity'];$planned=[];
+        foreach($tickets as $ticket){$hash=hash('sha256',$ticket['code']);if($this->query('SELECT id FROM jingo_order_tickets WHERE code_hash=?',[$hash])->fetchColumn())throw new HttpError(409,'Có mã vé đã được giao.');$stock=$this->query('SELECT lot_id,status FROM jingo_ticket_stock WHERE code_hash=? FOR UPDATE',[$hash])->fetch(PDO::FETCH_ASSOC);if(!$stock)continue;
+            if($stock['status']!=='AVAILABLE'||$ticket['kind']!=='SUPPLIER_CODE'||$ticket['covers']!==1)throw new HttpError(409,'Mã trong kho phải còn sẵn, là mã nhà cung cấp và áp dụng cho một khách.');$lot=$stock['lot_id'];$planned[$lot]=($planned[$lot] ?? 0)+1;if(!isset($scopes[$lot])||$planned[$lot]>$scopes[$lot])throw new HttpError(409,'Mã không thuộc phần nguồn đã phân bổ đúng gói/ngày hoặc vượt số lượng.');
+        }
+    }
+    public function useManual(string $order,string $code,string $ticket):void
+    {
+        if(!$this->db->inTransaction())throw new LogicException('Ticket delivery requires a transaction.');$this->query("UPDATE jingo_ticket_stock SET status='ISSUED',order_id=?,ticket_id=?,version=version+1 WHERE code_hash=? AND status='AVAILABLE'",[$order,$ticket,hash('sha256',$code)]);
+    }
     private function staffGuard(string $id,?string $staffId,bool $write):void
     {
         if($staffId===null)return;$counter=$this->query('SELECT counter_id FROM jingo_pos_orders WHERE order_id=?',[$id])->fetchColumn();if($counter===false)throw new HttpError(404,'Không tìm thấy đơn quầy.');
