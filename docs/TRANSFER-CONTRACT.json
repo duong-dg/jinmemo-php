@@ -83,6 +83,8 @@
     ]
   },
   "posTables": {
+    "pos_users": ["id", "email", "password_hash", "data", "version"],
+    "pos_sessions": ["token_hash", "user_id", "role", "expires_at"],
     "counters": ["id", "data", "version"],
     "pos_shifts": ["id", "counter_id", "opened_by", "opened_name", "counter_name", "opening_cash", "opening_note", "open_hash", "opened_at", "closed_at", "closed_by", "close_request", "close_hash", "close_note", "summary", "version"],
     "pos_open_shifts": ["counter_id", "shift_id"],

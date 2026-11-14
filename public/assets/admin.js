@@ -1,6 +1,6 @@
 'use strict';
 const $=s=>document.querySelector(s);
-const names={pos:'Bán tại quầy',shifts:'Ca thu ngân',counters:'Quầy bán vé',reports:'Báo cáo bán hàng','ticket-stock':'Kho mã vé','supply-alerts':'Cảnh báo nguồn cung','supplier-statements':'Sao kê nhà cung cấp','supply-profit':'Báo cáo giá vốn','supplier-balances':'Công nợ nhà cung cấp',supply:'Lô nguồn cung',translations:'Bản dịch English','post-categories':'Chuyên mục bài viết',posts:'Bài viết',orders:'Đơn hàng',products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
+const names={'pos-users':'Nhân viên quầy',pos:'Bán tại quầy',shifts:'Ca thu ngân',counters:'Quầy bán vé',reports:'Báo cáo bán hàng','ticket-stock':'Kho mã vé','supply-alerts':'Cảnh báo nguồn cung','supplier-statements':'Sao kê nhà cung cấp','supply-profit':'Báo cáo giá vốn','supplier-balances':'Công nợ nhà cung cấp',supply:'Lô nguồn cung',translations:'Bản dịch English','post-categories':'Chuyên mục bài viết',posts:'Bài viết',orders:'Đơn hàng',products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
 const labels={ACTIVE:'Hoạt động',ARCHIVED:'Lưu trữ',DRAFT:'Bản nháp',PUBLISHED:'Đã xuất bản',TRASH:'Thùng rác',NEW:'Mới',DONE:'Đã xử lý',TICKET:'Vé',TOUR:'Tour',PAGE:'Trang thường',CONTACT:'Liên hệ'};
 let current='overview',records=[],draft=null,dirty=false,loading=0,contactStatus='NEW',editing=false,editorSection='';
 function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;}
@@ -35,6 +35,7 @@ function syncAdminNavigation(section){
 for(const group of document.querySelectorAll('#nav .nav-group'))group.addEventListener('toggle',()=>{if(group.open)for(const sibling of document.querySelectorAll('#nav .nav-group'))if(sibling!==group)sibling.open=false;});
 async function render(){
  const id=++loading;current=location.hash.slice(1)||'overview';if(!names[current])current='overview';notice('');$('#page-title').textContent=names[current]||'Tổng quan';syncAdminNavigation(current);const screen=$('#screen');screen.replaceChildren();
+ if(current==='pos-users'){await renderPosUsers(screen,id);return;}
  if(current==='pos'){await renderPos(screen,id);return;}
  if(current==='shifts'){await renderShifts(screen,id);return;}
  if(current==='reports'){await renderSalesReport(screen,id);return;}

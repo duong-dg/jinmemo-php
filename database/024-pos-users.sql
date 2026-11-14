@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS jingo_pos_users (
+ id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+ email VARCHAR(200) CHARACTER SET ascii COLLATE ascii_bin NOT NULL UNIQUE,
+ password_hash TEXT NOT NULL,
+ data JSON NOT NULL,
+ version INT NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS jingo_pos_sessions (
+ token_hash CHAR(64) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+ user_id VARCHAR(80) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+ role VARCHAR(8) NOT NULL,
+ expires_at DATETIME(6) NOT NULL,
+ INDEX(expires_at),
+ INDEX(user_id,role),
+ CHECK(role IN ('ADMIN','STAFF'))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
