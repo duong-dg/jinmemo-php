@@ -1,0 +1,240 @@
+[
+  {
+    "name": "base percentage",
+    "room": {
+      "id": "00000000-0000-4000-8000-000000000002",
+      "name": "Double",
+      "price": 1200000,
+      "stock": 5,
+      "discount": {
+        "type": "PERCENT",
+        "value": 5
+      },
+      "rates": []
+    },
+    "date": "2099-06-01",
+    "expected": {
+      "date": "2099-06-01",
+      "closed": false,
+      "price": 1200000,
+      "stock": 5,
+      "discount": 60000,
+      "unitPrice": 1140000
+    }
+  },
+  {
+    "name": "independent fields",
+    "room": {
+      "id": "00000000-0000-4000-8000-000000000002",
+      "name": "Double",
+      "price": 1200000,
+      "stock": 5,
+      "discount": {
+        "type": "PERCENT",
+        "value": 5
+      },
+      "rates": [
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "from": "2099-06-01",
+          "to": "2099-06-30",
+          "weekdays": [],
+          "priority": 10,
+          "note": "",
+          "price": 1500000,
+          "discount": {
+            "type": "NONE",
+            "value": 0
+          }
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "from": "2099-06-01",
+          "to": "2099-06-30",
+          "weekdays": [],
+          "priority": 20,
+          "note": "",
+          "stock": 2
+        }
+      ]
+    },
+    "date": "2099-06-01",
+    "expected": {
+      "date": "2099-06-01",
+      "closed": false,
+      "price": 1500000,
+      "stock": 2,
+      "discount": 0,
+      "unitPrice": 1500000
+    }
+  },
+  {
+    "name": "short interval and later row",
+    "room": {
+      "id": "00000000-0000-4000-8000-000000000002",
+      "name": "Double",
+      "price": 1200000,
+      "stock": 5,
+      "discount": {
+        "type": "PERCENT",
+        "value": 5
+      },
+      "rates": [
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "from": "2099-06-01",
+          "to": "2099-06-30",
+          "weekdays": [],
+          "priority": 10,
+          "note": "",
+          "price": 1600000
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "from": "2099-06-01",
+          "to": "2099-06-02",
+          "weekdays": [],
+          "priority": 10,
+          "note": "",
+          "price": 1700000
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000005",
+          "from": "2099-06-01",
+          "to": "2099-06-02",
+          "weekdays": [],
+          "priority": 10,
+          "note": "",
+          "price": 1800000
+        }
+      ]
+    },
+    "date": "2099-06-01",
+    "expected": {
+      "date": "2099-06-01",
+      "closed": false,
+      "price": 1800000,
+      "stock": 5,
+      "discount": 90000,
+      "unitPrice": 1710000
+    }
+  },
+  {
+    "name": "explicit reopen and free night",
+    "room": {
+      "id": "00000000-0000-4000-8000-000000000002",
+      "name": "Double",
+      "price": 1200000,
+      "stock": 5,
+      "discount": {
+        "type": "PERCENT",
+        "value": 5
+      },
+      "rates": [
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "from": "2099-06-01",
+          "to": "2099-06-30",
+          "weekdays": [],
+          "priority": 10,
+          "note": "",
+          "closed": true
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "from": "2099-06-01",
+          "to": "2099-06-30",
+          "weekdays": [],
+          "priority": 20,
+          "note": "",
+          "closed": false,
+          "price": 0
+        }
+      ]
+    },
+    "date": "2099-06-01",
+    "expected": {
+      "date": "2099-06-01",
+      "closed": false,
+      "price": 0,
+      "stock": 5,
+      "discount": 0,
+      "unitPrice": 0
+    }
+  },
+  {
+    "name": "fixed cap",
+    "room": {
+      "id": "00000000-0000-4000-8000-000000000002",
+      "name": "Double",
+      "price": 1200000,
+      "stock": 5,
+      "discount": {
+        "type": "FIXED",
+        "value": 100000000
+      },
+      "rates": []
+    },
+    "date": "2099-06-01",
+    "expected": {
+      "date": "2099-06-01",
+      "closed": false,
+      "price": 1200000,
+      "stock": 5,
+      "discount": 1200000,
+      "unitPrice": 0
+    }
+  },
+  {
+    "name": "weekday filter",
+    "room": {
+      "id": "00000000-0000-4000-8000-000000000002",
+      "name": "Double",
+      "price": 1200000,
+      "stock": 5,
+      "discount": {
+        "type": "PERCENT",
+        "value": 5
+      },
+      "rates": [
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "from": "2099-06-01",
+          "to": "2099-06-30",
+          "weekdays": [
+            1
+          ],
+          "priority": 10,
+          "note": "",
+          "price": 2222222
+        }
+      ]
+    },
+    "date": "2099-06-01",
+    "expected": {
+      "date": "2099-06-01",
+      "closed": false,
+      "price": 2222222,
+      "stock": 5,
+      "discount": 111111,
+      "unitPrice": 2111111
+    }
+  },
+  {
+    "name": "outside sale range",
+    "room": {
+      "id": "00000000-0000-4000-8000-000000000002",
+      "name": "Double",
+      "price": 1200000,
+      "stock": 5,
+      "discount": {
+        "type": "PERCENT",
+        "value": 5
+      },
+      "rates": [],
+      "saleFrom": "2099-06-02"
+    },
+    "date": "2099-06-01",
+    "error": true
+  }
+]

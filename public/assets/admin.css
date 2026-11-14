@@ -18,3 +18,5 @@
 @media(max-width:640px){.stock-filters>label{flex-basis:100%}}
 .order-filters>label{margin-bottom:0;min-width:0}
 .order-filters>label input{display:block;min-width:140px;width:100%}
+
+.stay-rates-editor,.stay-rates-editor fieldset{min-width:0;max-width:100%;box-sizing:border-box}.stay-rates-editor fieldset{margin:0 0 1rem;padding:1rem}.stay-rates-editor .table-wrap{width:100%;max-width:100%;overflow-x:auto}.stay-rates-editor table{min-width:650px}
