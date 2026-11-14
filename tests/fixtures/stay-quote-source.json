@@ -1,0 +1,697 @@
+[
+  {
+    "name": "three nights two rooms",
+    "property": {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "rooms": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "name": "Double",
+          "active": true,
+          "maxGuests": 3,
+          "maxAdults": 2,
+          "maxChildren": 1,
+          "price": 1200000,
+          "stock": 5,
+          "discount": {
+            "type": "PERCENT",
+            "value": 10
+          },
+          "rates": []
+        }
+      ],
+      "minNights": 1,
+      "maxNights": 30
+    },
+    "input": {
+      "hotelId": "00000000-0000-4000-8000-000000000001",
+      "roomId": "00000000-0000-4000-8000-000000000002",
+      "checkIn": "2099-06-01",
+      "checkOut": "2099-06-04",
+      "rooms": 2,
+      "adults": 3,
+      "children": 1
+    },
+    "expected": {
+      "room": {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "name": "Double",
+        "active": true,
+        "maxGuests": 3,
+        "maxAdults": 2,
+        "maxChildren": 1,
+        "price": 1200000,
+        "stock": 5,
+        "discount": {
+          "type": "PERCENT",
+          "value": 10
+        },
+        "rates": []
+      },
+      "nights": [
+        {
+          "date": "2099-06-01",
+          "closed": false,
+          "price": 1200000,
+          "stock": 5,
+          "discount": 120000,
+          "unitPrice": 1080000,
+          "quantity": 2,
+          "total": 2160000
+        },
+        {
+          "date": "2099-06-02",
+          "closed": false,
+          "price": 1200000,
+          "stock": 5,
+          "discount": 120000,
+          "unitPrice": 1080000,
+          "quantity": 2,
+          "total": 2160000
+        },
+        {
+          "date": "2099-06-03",
+          "closed": false,
+          "price": 1200000,
+          "stock": 5,
+          "discount": 120000,
+          "unitPrice": 1080000,
+          "quantity": 2,
+          "total": 2160000
+        }
+      ],
+      "subtotal": 6480000,
+      "originalTotal": 7200000,
+      "total": 6480000
+    }
+  },
+  {
+    "name": "capacity total",
+    "property": {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "rooms": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "name": "Double",
+          "active": true,
+          "maxGuests": 3,
+          "maxAdults": 2,
+          "maxChildren": 1,
+          "price": 1200000,
+          "stock": 5,
+          "discount": {
+            "type": "PERCENT",
+            "value": 10
+          },
+          "rates": []
+        }
+      ],
+      "minNights": 1,
+      "maxNights": 30
+    },
+    "input": {
+      "hotelId": "00000000-0000-4000-8000-000000000001",
+      "roomId": "00000000-0000-4000-8000-000000000002",
+      "checkIn": "2099-06-01",
+      "checkOut": "2099-06-04",
+      "rooms": 2,
+      "adults": 6,
+      "children": 1
+    },
+    "error": true
+  },
+  {
+    "name": "adult capacity",
+    "property": {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "rooms": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "name": "Double",
+          "active": true,
+          "maxGuests": 3,
+          "maxAdults": 2,
+          "maxChildren": 1,
+          "price": 1200000,
+          "stock": 5,
+          "discount": {
+            "type": "PERCENT",
+            "value": 10
+          },
+          "rates": []
+        }
+      ],
+      "minNights": 1,
+      "maxNights": 30
+    },
+    "input": {
+      "hotelId": "00000000-0000-4000-8000-000000000001",
+      "roomId": "00000000-0000-4000-8000-000000000002",
+      "checkIn": "2099-06-01",
+      "checkOut": "2099-06-04",
+      "rooms": 2,
+      "adults": 5,
+      "children": 0
+    },
+    "error": true
+  },
+  {
+    "name": "child capacity",
+    "property": {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "rooms": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "name": "Double",
+          "active": true,
+          "maxGuests": 3,
+          "maxAdults": 2,
+          "maxChildren": 1,
+          "price": 1200000,
+          "stock": 5,
+          "discount": {
+            "type": "PERCENT",
+            "value": 10
+          },
+          "rates": []
+        }
+      ],
+      "minNights": 1,
+      "maxNights": 30
+    },
+    "input": {
+      "hotelId": "00000000-0000-4000-8000-000000000001",
+      "roomId": "00000000-0000-4000-8000-000000000002",
+      "checkIn": "2099-06-01",
+      "checkOut": "2099-06-04",
+      "rooms": 2,
+      "adults": 1,
+      "children": 3
+    },
+    "error": true
+  },
+  {
+    "name": "same day",
+    "property": {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "rooms": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "name": "Double",
+          "active": true,
+          "maxGuests": 3,
+          "maxAdults": 2,
+          "maxChildren": 1,
+          "price": 1200000,
+          "stock": 5,
+          "discount": {
+            "type": "PERCENT",
+            "value": 10
+          },
+          "rates": []
+        }
+      ],
+      "minNights": 1,
+      "maxNights": 30
+    },
+    "input": {
+      "hotelId": "00000000-0000-4000-8000-000000000001",
+      "roomId": "00000000-0000-4000-8000-000000000002",
+      "checkIn": "2099-06-01",
+      "checkOut": "2099-06-01",
+      "rooms": 2,
+      "adults": 3,
+      "children": 1
+    },
+    "error": true
+  },
+  {
+    "name": "too many nights",
+    "property": {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "rooms": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "name": "Double",
+          "active": true,
+          "maxGuests": 3,
+          "maxAdults": 2,
+          "maxChildren": 1,
+          "price": 1200000,
+          "stock": 5,
+          "discount": {
+            "type": "PERCENT",
+            "value": 10
+          },
+          "rates": []
+        }
+      ],
+      "minNights": 1,
+      "maxNights": 30
+    },
+    "input": {
+      "hotelId": "00000000-0000-4000-8000-000000000001",
+      "roomId": "00000000-0000-4000-8000-000000000002",
+      "checkIn": "2099-06-01",
+      "checkOut": "2099-08-01",
+      "rooms": 2,
+      "adults": 3,
+      "children": 1
+    },
+    "error": true
+  },
+  {
+    "name": "closed night",
+    "property": {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "rooms": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "name": "Double",
+          "active": true,
+          "maxGuests": 3,
+          "maxAdults": 2,
+          "maxChildren": 1,
+          "price": 1200000,
+          "stock": 5,
+          "discount": {
+            "type": "PERCENT",
+            "value": 10
+          },
+          "rates": [
+            {
+              "from": "2099-06-02",
+              "to": "2099-06-02",
+              "weekdays": [],
+              "priority": 10,
+              "closed": true
+            }
+          ]
+        }
+      ],
+      "minNights": 1,
+      "maxNights": 30
+    },
+    "input": {
+      "hotelId": "00000000-0000-4000-8000-000000000001",
+      "roomId": "00000000-0000-4000-8000-000000000002",
+      "checkIn": "2099-06-01",
+      "checkOut": "2099-06-04",
+      "rooms": 2,
+      "adults": 3,
+      "children": 1
+    },
+    "error": true
+  },
+  {
+    "name": "subtotal limit",
+    "property": {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "rooms": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "name": "Double",
+          "active": true,
+          "maxGuests": 3,
+          "maxAdults": 2,
+          "maxChildren": 1,
+          "price": 100000000,
+          "stock": 20,
+          "discount": {
+            "type": "NONE",
+            "value": 0
+          },
+          "rates": []
+        }
+      ],
+      "minNights": 1,
+      "maxNights": 30
+    },
+    "input": {
+      "hotelId": "00000000-0000-4000-8000-000000000001",
+      "roomId": "00000000-0000-4000-8000-000000000002",
+      "checkIn": "2099-06-01",
+      "checkOut": "2099-07-01",
+      "rooms": 20,
+      "adults": 3,
+      "children": 1
+    },
+    "error": true
+  },
+  {
+    "name": "free stay keeps original total",
+    "property": {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "rooms": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "name": "Double",
+          "active": true,
+          "maxGuests": 3,
+          "maxAdults": 2,
+          "maxChildren": 1,
+          "price": 100000000,
+          "stock": 20,
+          "discount": {
+            "type": "PERCENT",
+            "value": 100
+          },
+          "rates": []
+        }
+      ],
+      "minNights": 1,
+      "maxNights": 30
+    },
+    "input": {
+      "hotelId": "00000000-0000-4000-8000-000000000001",
+      "roomId": "00000000-0000-4000-8000-000000000002",
+      "checkIn": "2099-06-01",
+      "checkOut": "2099-07-01",
+      "rooms": 20,
+      "adults": 3,
+      "children": 1
+    },
+    "expected": {
+      "room": {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "name": "Double",
+        "active": true,
+        "maxGuests": 3,
+        "maxAdults": 2,
+        "maxChildren": 1,
+        "price": 100000000,
+        "stock": 20,
+        "discount": {
+          "type": "PERCENT",
+          "value": 100
+        },
+        "rates": []
+      },
+      "nights": [
+        {
+          "date": "2099-06-01",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-02",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-03",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-04",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-05",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-06",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-07",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-08",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-09",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-10",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-11",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-12",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-13",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-14",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-15",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-16",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-17",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-18",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-19",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-20",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-21",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-22",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-23",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-24",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-25",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-26",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-27",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-28",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-29",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        },
+        {
+          "date": "2099-06-30",
+          "closed": false,
+          "price": 100000000,
+          "stock": 20,
+          "discount": 100000000,
+          "unitPrice": 0,
+          "quantity": 20,
+          "total": 0
+        }
+      ],
+      "subtotal": 0,
+      "originalTotal": 60000000000,
+      "total": 0
+    }
+  }
+]
