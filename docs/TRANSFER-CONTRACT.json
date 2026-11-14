@@ -114,6 +114,9 @@
       "created_at"
     ]
   },
+  "giftTables": {
+    "gift_orders": ["id", "code", "status", "data", "created_at"]
+  },
   "partnerTables": {
       "partner_shares": ["id", "order_id", "access_hash", "created_at", "revoked_at"],
       "partner_share_actions": ["id", "order_id"],
