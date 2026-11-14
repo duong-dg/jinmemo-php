@@ -1,0 +1,374 @@
+{
+  "source": "apps/api/src/partners/net-pricing.ts",
+  "cases": [
+    {
+      "name": "percent-floor",
+      "group": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "name": "Fixture",
+        "status": "ACTIVE",
+        "discountType": "PERCENT",
+        "discountValue": 1250,
+        "version": 1,
+        "rules": []
+      },
+      "retail": {
+        "productId": "p",
+        "productName": "Test",
+        "variantId": "v",
+        "variantName": "Standard",
+        "date": "2099-06-01",
+        "currency": "VND",
+        "demo": false,
+        "lines": [
+          {
+            "customerType": "ADULT",
+            "quantity": 2,
+            "unitPrice": 101,
+            "subtotal": 202
+          },
+          {
+            "customerType": "CHILD",
+            "quantity": 1,
+            "unitPrice": 51,
+            "subtotal": 51
+          }
+        ],
+        "total": 253
+      },
+      "expected": {
+        "productId": "p",
+        "productName": "Test",
+        "variantId": "v",
+        "variantName": "Standard",
+        "date": "2099-06-01",
+        "currency": "VND",
+        "demo": false,
+        "lines": [
+          {
+            "customerType": "ADULT",
+            "quantity": 2,
+            "unitPrice": 88,
+            "subtotal": 176
+          },
+          {
+            "customerType": "CHILD",
+            "quantity": 1,
+            "unitPrice": 44,
+            "subtotal": 44
+          }
+        ],
+        "total": 220
+      }
+    },
+    {
+      "name": "amount-floor-zero",
+      "group": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "name": "Fixture",
+        "status": "ACTIVE",
+        "discountType": "AMOUNT",
+        "discountValue": 200,
+        "version": 1,
+        "rules": []
+      },
+      "retail": {
+        "productId": "p",
+        "productName": "Test",
+        "variantId": "v",
+        "variantName": "Standard",
+        "date": "2099-06-01",
+        "currency": "VND",
+        "demo": false,
+        "lines": [
+          {
+            "customerType": "ADULT",
+            "quantity": 2,
+            "unitPrice": 101,
+            "subtotal": 202
+          },
+          {
+            "customerType": "CHILD",
+            "quantity": 1,
+            "unitPrice": 51,
+            "subtotal": 51
+          }
+        ],
+        "total": 253
+      },
+      "expected": {
+        "productId": "p",
+        "productName": "Test",
+        "variantId": "v",
+        "variantName": "Standard",
+        "date": "2099-06-01",
+        "currency": "VND",
+        "demo": false,
+        "lines": [
+          {
+            "customerType": "ADULT",
+            "quantity": 2,
+            "unitPrice": 0,
+            "subtotal": 0
+          },
+          {
+            "customerType": "CHILD",
+            "quantity": 1,
+            "unitPrice": 0,
+            "subtotal": 0
+          }
+        ],
+        "total": 0
+      }
+    },
+    {
+      "name": "override-priority",
+      "group": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "name": "Fixture",
+        "status": "ACTIVE",
+        "discountType": "PERCENT",
+        "discountValue": 1250,
+        "version": 1,
+        "rules": [
+          {
+            "id": "00000000-0000-4000-8000-000000000002",
+            "productId": "p",
+            "variantId": "v",
+            "customerType": "ADULT",
+            "startDate": "2099-01-01",
+            "endDate": "2099-12-31",
+            "priority": 1,
+            "amount": 80
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000003",
+            "productId": "p",
+            "variantId": "v",
+            "customerType": "ADULT",
+            "startDate": "2099-01-01",
+            "endDate": "2099-12-31",
+            "priority": 2,
+            "amount": 70
+          }
+        ]
+      },
+      "retail": {
+        "productId": "p",
+        "productName": "Test",
+        "variantId": "v",
+        "variantName": "Standard",
+        "date": "2099-06-01",
+        "currency": "VND",
+        "demo": false,
+        "lines": [
+          {
+            "customerType": "ADULT",
+            "quantity": 2,
+            "unitPrice": 101,
+            "subtotal": 202
+          },
+          {
+            "customerType": "CHILD",
+            "quantity": 1,
+            "unitPrice": 51,
+            "subtotal": 51
+          }
+        ],
+        "total": 253
+      },
+      "expected": {
+        "productId": "p",
+        "productName": "Test",
+        "variantId": "v",
+        "variantName": "Standard",
+        "date": "2099-06-01",
+        "currency": "VND",
+        "demo": false,
+        "lines": [
+          {
+            "customerType": "ADULT",
+            "quantity": 2,
+            "unitPrice": 70,
+            "subtotal": 140
+          },
+          {
+            "customerType": "CHILD",
+            "quantity": 1,
+            "unitPrice": 44,
+            "subtotal": 44
+          }
+        ],
+        "total": 184
+      }
+    },
+    {
+      "name": "direct-missing",
+      "group": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "name": "Fixture",
+        "status": "ACTIVE",
+        "discountType": "PERCENT",
+        "discountValue": 1250,
+        "version": 1,
+        "rules": [
+          {
+            "id": "00000000-0000-4000-8000-000000000002",
+            "productId": "p",
+            "variantId": "v",
+            "customerType": "ADULT",
+            "startDate": "2099-01-01",
+            "endDate": "2099-12-31",
+            "priority": 1,
+            "amount": 80
+          }
+        ],
+        "pricingMode": "DIRECT"
+      },
+      "retail": {
+        "productId": "p",
+        "productName": "Test",
+        "variantId": "v",
+        "variantName": "Standard",
+        "date": "2099-06-01",
+        "currency": "VND",
+        "demo": false,
+        "lines": [
+          {
+            "customerType": "ADULT",
+            "quantity": 2,
+            "unitPrice": 101,
+            "subtotal": 202
+          },
+          {
+            "customerType": "CHILD",
+            "quantity": 1,
+            "unitPrice": 51,
+            "subtotal": 51
+          }
+        ],
+        "total": 253
+      },
+      "error": true
+    },
+    {
+      "name": "direct-all",
+      "group": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "name": "Fixture",
+        "status": "ACTIVE",
+        "discountType": "PERCENT",
+        "discountValue": 1250,
+        "version": 1,
+        "rules": [
+          {
+            "id": "00000000-0000-4000-8000-000000000002",
+            "productId": "p",
+            "variantId": "v",
+            "customerType": "ADULT",
+            "startDate": "2099-01-01",
+            "endDate": "2099-12-31",
+            "priority": 1,
+            "amount": 80
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000004",
+            "productId": "p",
+            "variantId": "v",
+            "customerType": "CHILD",
+            "startDate": "2099-01-01",
+            "endDate": "2099-12-31",
+            "priority": 1,
+            "amount": 0
+          }
+        ],
+        "pricingMode": "DIRECT"
+      },
+      "retail": {
+        "productId": "p",
+        "productName": "Test",
+        "variantId": "v",
+        "variantName": "Standard",
+        "date": "2099-06-01",
+        "currency": "VND",
+        "demo": false,
+        "lines": [
+          {
+            "customerType": "ADULT",
+            "quantity": 2,
+            "unitPrice": 101,
+            "subtotal": 202
+          },
+          {
+            "customerType": "CHILD",
+            "quantity": 1,
+            "unitPrice": 51,
+            "subtotal": 51
+          }
+        ],
+        "total": 253
+      },
+      "expected": {
+        "productId": "p",
+        "productName": "Test",
+        "variantId": "v",
+        "variantName": "Standard",
+        "date": "2099-06-01",
+        "currency": "VND",
+        "demo": false,
+        "lines": [
+          {
+            "customerType": "ADULT",
+            "quantity": 2,
+            "unitPrice": 80,
+            "subtotal": 160
+          },
+          {
+            "customerType": "CHILD",
+            "quantity": 1,
+            "unitPrice": 0,
+            "subtotal": 0
+          }
+        ],
+        "total": 160
+      }
+    },
+    {
+      "name": "archived",
+      "group": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "name": "Fixture",
+        "status": "ARCHIVED",
+        "discountType": "PERCENT",
+        "discountValue": 1250,
+        "version": 1,
+        "rules": []
+      },
+      "retail": {
+        "productId": "p",
+        "productName": "Test",
+        "variantId": "v",
+        "variantName": "Standard",
+        "date": "2099-06-01",
+        "currency": "VND",
+        "demo": false,
+        "lines": [
+          {
+            "customerType": "ADULT",
+            "quantity": 2,
+            "unitPrice": 101,
+            "subtotal": 202
+          },
+          {
+            "customerType": "CHILD",
+            "quantity": 1,
+            "unitPrice": 51,
+            "subtotal": 51
+          }
+        ],
+        "total": 253
+      },
+      "error": true
+    }
+  ]
+}
