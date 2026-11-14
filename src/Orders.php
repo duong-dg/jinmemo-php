@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require_once __DIR__.'/SupplyLots.php';
 require_once __DIR__.'/SupplyAllocation.php';
+require_once __DIR__.'/PosAccess.php';
 
 /** Web order creation. Prices and allocations are committed together. */
 final class Orders
@@ -40,11 +41,11 @@ final class Orders
     {
         $r=$this->query('SELECT code,request_hash FROM jingo_orders WHERE request_id=?',[$input['requestId']])->fetch(PDO::FETCH_ASSOC);if(!$r)return null;if(!hash_equals($r['request_hash'],$hash))throw new HttpError(409,'Mã yêu cầu đã dùng cho đơn khác.');return ['code'=>$r['code'],'accessKey'=>$input['accessKey']];
     }
-    public function createPos(array $input,string $actor):array
+    public function createPos(array $input,string $actor,?string $staffId=null):array
     {
         $counter=$input['counterId'] ?? null;unset($input['counterId']);
         if(!is_string($counter)||!preg_match('/^[a-zA-Z0-9_-]{1,80}$/D',$counter)||array_key_exists('voucherCode',$input))self::fail('Chọn quầy hợp lệ; voucher chỉ dùng cho đơn Website.');
-        $created=$this->create($input,['counterId'=>$counter,'adminId'=>$actor]);
+        $created=$this->create($input,['counterId'=>$counter,'adminId'=>$actor]+($staffId!==null?['staffId'=>$staffId]:[]));
         return $this->get((string)$this->query('SELECT id FROM jingo_orders WHERE code=?',[$created['code']])->fetchColumn());
     }
     public function create(array $input,?array $pos=null):array
@@ -52,6 +53,7 @@ final class Orders
         $input=self::validate($input);if($pos&&isset($input['voucherCode']))self::fail('Voucher chỉ dùng cho đơn Website.');$hash=hash('sha256',json_encode(self::canonical($pos?['pos'=>$pos,'input'=>$input]:$input),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR));
         // READ COMMITTED lets a second worker observe the first worker's replay after the product lock.
         $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();try{
+            if(isset($pos['staffId'])){$this->query('SELECT id FROM jingo_counters WHERE id=? FOR UPDATE',[$pos['counterId']]);PosAccess::live($this->db,$pos['staffId'],$pos['counterId'],'SELL');}
             if($prior=$this->prior($input,$hash)){$this->db->commit();return $prior;}
             if($pos){$counter=$this->query('SELECT data FROM jingo_counters WHERE id=? FOR UPDATE',[$pos['counterId']])->fetchColumn();if($counter===false||json_decode($counter,true,512,JSON_THROW_ON_ERROR)['status']!=='ACTIVE')self::fail('Chọn quầy đang hoạt động.');}
             if(!$this->query('SELECT id FROM jingo_products WHERE id=? FOR UPDATE',[$input['productId']])->fetchColumn())throw new HttpError(404,'Không tìm thấy sản phẩm.');
@@ -131,7 +133,7 @@ final class Orders
         $cell=static function(mixed $v):string{$v=str_replace("\0",'',(string)$v);if(preg_match('/^[\s\x{FEFF}]*[=+@-]|^[\t\r\n]/u',$v))$v="'".$v;return '"'.str_replace('"','""',$v).'"';};
         return "\xEF\xBB\xBF".implode("\r\n",array_map(fn($row)=>implode(',',array_map($cell,$row)),$rows))."\r\n";
     }
-    public function act(string $id,array $input,string $actor):array
+    public function act(string $id,array $input,string $actor,?string $staffId=null):array
     {
         $action=$input['action'] ?? null;$keys=['requestId','version','action','note'];if(in_array($action,['INSTRUCTIONS','CONFIRM'],true))$keys[]='instructions';if($action==='PAY')$keys=array_merge($keys,['method','amount','reference']);
         if(array_diff(array_keys($input),$keys)||!in_array($action,['INSTRUCTIONS','CANCEL','PAY','ARCHIVE','RESTORE','CONFIRM'],true)||!self::uuid($input['requestId'] ?? null)||!is_int($input['version'] ?? null)||$input['version']<1||$input['version']>=2147483647)self::fail();
@@ -144,7 +146,8 @@ final class Orders
         }
         $hash=hash('sha256',json_encode(self::canonical(['id'=>$id,'action'=>$input]),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR));
         $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();try{
-            if($action==='PAY'){$counter=$this->query('SELECT counter_id FROM jingo_pos_orders WHERE order_id=?',[$id])->fetchColumn();if($counter!==false)$this->query('SELECT id FROM jingo_counters WHERE id=? FOR UPDATE',[$counter]);}
+            if($action==='PAY'||$staffId!==null){$counter=$this->query('SELECT counter_id FROM jingo_pos_orders WHERE order_id=?',[$id])->fetchColumn();if($counter!==false)$this->query('SELECT id FROM jingo_counters WHERE id=? FOR UPDATE',[$counter]);}
+            if($staffId!==null){if($counter===false)throw new HttpError(404,'Không tìm thấy đơn quầy.');$permission=match($action){'PAY'=>'COLLECT','CANCEL'=>'CANCEL',default=>null};if($permission===null)throw new HttpError(403,'Thao tác này chỉ dành cho admin.');PosAccess::live($this->db,$staffId,$counter,$permission);}
             $row=$this->query('SELECT * FROM jingo_orders WHERE id=? FOR UPDATE',[$id])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy đơn.');
             $prior=$this->query('SELECT request_hash FROM jingo_order_actions WHERE id=?',[$input['requestId']])->fetchColumn();if($prior!==false){if(!hash_equals($prior,$hash))throw new HttpError(409,'Mã thao tác đã dùng.');$result=$this->get($id);$this->db->commit();return $result;}
             if((int)$row['version']!==$input['version'])throw new HttpError(409,'Đơn đã thay đổi. Tải lại trước khi xử lý.');if($row['booking_status']==='CANCELLED'&&!in_array($action,['ARCHIVE','RESTORE'],true))throw new HttpError(409,'Đơn đã hủy.');

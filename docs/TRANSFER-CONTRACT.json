@@ -83,6 +83,7 @@
     ]
   },
   "posTables": {
+    "pos_login_limits": ["id", "attempts", "until_at"],
     "pos_users": ["id", "email", "password_hash", "data", "version"],
     "pos_sessions": ["token_hash", "user_id", "role", "expires_at"],
     "counters": ["id", "data", "version"],
