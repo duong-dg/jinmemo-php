@@ -81,6 +81,11 @@ try {
         elseif(in_array($action,['export','cash/export'],true)){$csv=Shifts::csv($data,$action==='cash/export');header('Content-Type: text/csv; charset=utf-8');header('Content-Disposition: attachment; filename="shift-'.($action==='cash/export'?'cash-':'').$id.'.csv"');echo $csv;}
         else{header('Content-Type: application/json; charset=utf-8');echo json_encode($data,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);}exit;
     }
+    if(preg_match('~^/api/v1/pos/orders/([a-f0-9-]{36})/stock(/deliver)?$~D',(string)$path,$staffStock)){
+        $write=!empty($staffStock[2]);$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';if($method!==($write?'POST':'GET')){header('Allow: '.($write?'POST':'GET'));throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($_GET)throw new HttpError(400,'Bộ lọc không hợp lệ.');
+        $config=jingoConfig();$db=jingoDatabase($config);$auth=new PosAuth($db,$config);if($write)$auth->mutation();$actor=$auth->me();PosAuth::permit($actor,'DELIVER');(new PosPortal($db))->detail($actor,$staffStock[1]);$stock=new TicketStock($db);$data=$write?$stock->deliver($staffStock[1],jingoRequestBody(),'pos-user:'.$actor['id'],$actor['id']):$stock->choices($staffStock[1],$actor['id']);
+        header('Content-Type: application/json; charset=utf-8');header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');echo json_encode($data,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);exit;
+    }
     if(preg_match('~^/api/v1/pos/(login|me|logout|counters|products|quotes|orders)(?:/([a-f0-9-]{36})(/actions)?)?$~D',(string)$path,$staffRoute)){
         $resource=$staffRoute[1];$id=$staffRoute[2] ?? '';if($id!==''&&$resource!=='orders')throw new HttpError(404,'Không tìm thấy.');$action=!empty($staffRoute[3]);$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';$allowed=in_array($resource,['login','logout','quotes'],true)||$action?['POST']:($resource==='orders'&&$id===''?['GET','POST']:['GET']);
         if(!in_array($method,$allowed,true)){header('Allow: '.implode(', ',$allowed));throw new HttpError(405,'Phương thức không được hỗ trợ.');}
