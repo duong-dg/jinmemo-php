@@ -10,8 +10,8 @@ async function api(path,body,extra={}){
  const headers={'X-Jingo-Admin':'1',...extra};if(document.body.dataset.entry)headers['X-Jingo-Admin-Entry']=document.body.dataset.entry;
  const options={method:body===undefined?'GET':'POST',credentials:'same-origin',cache:'no-store',headers};
  if(body!==undefined){if(body instanceof FormData)options.body=body;else{headers['Content-Type']='application/json';options.body=JSON.stringify(body);}}
- const response=await fetch('/api/v1/admin/'+path,options);const data=await response.json().catch(()=>({message:'Máy chủ chưa trả dữ liệu hợp lệ.'}));
- if(!response.ok){if(response.status===401&&path!=='login'){showLogin();}throw new Error(data.message||'Không thực hiện được thao tác.');}return data;
+ const response=await fetch('/api/v1/admin/'+path,options);if(response.status===401&&path!=='login')showLogin();let data;try{data=await response.json();}catch{throw new Error('Máy chủ chưa trả dữ liệu hợp lệ. Hãy thử lại cùng yêu cầu.');}if(!data||typeof data!=='object'||Array.isArray(data))throw new Error('Máy chủ chưa trả dữ liệu hợp lệ. Hãy thử lại cùng yêu cầu.');
+ if(!response.ok)throw new Error(data.message||'Không thực hiện được thao tác.');return data;
 }
 function showLogin(){loading++;if($('#editor').open)$('#editor').close();$('#screen').replaceChildren();records=[];draft=null;dirty=false;$('#workspace').hidden=true;$('#starting').hidden=true;$('#login').hidden=false;$('#login-form input').focus();}
 function showWorkspace(email){$('#login').hidden=true;$('#starting').hidden=true;$('#workspace').hidden=false;$('#account-email').textContent=email;render();}
