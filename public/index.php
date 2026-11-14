@@ -22,6 +22,7 @@ require dirname(__DIR__) . '/src/Orders.php';
 require dirname(__DIR__) . '/src/SalesReport.php';
 require dirname(__DIR__) . '/src/Counters.php';
 require dirname(__DIR__) . '/src/Shifts.php';
+require dirname(__DIR__) . '/src/PrintDocuments.php';
 require dirname(__DIR__) . '/src/TicketFiles.php';
 require dirname(__DIR__) . '/src/Posts.php';
 require dirname(__DIR__) . '/src/PostCategories.php';
@@ -39,11 +40,19 @@ require dirname(__DIR__) . '/src/TicketStock.php';
 
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js','/assets/schedule.js','/assets/booking.js','/assets/orders-admin.js','/assets/sales-report-admin.js','/assets/posts-admin.js','/assets/post-categories-admin.js','/assets/translations-admin.js','/assets/post-reader.js','/assets/post-preview.css','/assets/overview-admin.js','/assets/supply-admin.js','/assets/supplier-payments-admin.js','/assets/supplier-statements-admin.js','/assets/source-history-admin.js','/assets/ticket-stock-admin.js','/assets/shifts-admin.js','/assets/pos-admin.js'],true)) return false;
+    if(PHP_SAPI==='cli-server' && in_array($path,['/assets/admin.css','/assets/admin.js','/assets/products-admin.js','/assets/inventory-admin.js','/assets/vouchers-admin.js','/assets/site.css','/assets/content-page.css','/assets/contact.js','/assets/quote.js','/assets/schedule.js','/assets/booking.js','/assets/orders-admin.js','/assets/sales-report-admin.js','/assets/posts-admin.js','/assets/post-categories-admin.js','/assets/translations-admin.js','/assets/post-reader.js','/assets/post-preview.css','/assets/overview-admin.js','/assets/supply-admin.js','/assets/supplier-payments-admin.js','/assets/supplier-statements-admin.js','/assets/source-history-admin.js','/assets/ticket-stock-admin.js','/assets/shifts-admin.js','/assets/pos-admin.js','/assets/print.css','/assets/print.js'],true)) return false;
     if(in_array($path,['/cam-nang','/cam-nang/','/en/blog','/en/blog/','/tra-cuu','/tra-cuu/','/en/orders','/en/orders/','/','/en','/en/','/lien-he','/lien-he/','/en/contact','/en/contact/','/diem-den','/diem-den/','/en/destinations','/en/destinations/'],true) || preg_match('#^/(?:cam-nang|en/blog|trang|en/pages|ve|en/ve|diem-den|en/destinations|loai|en/loai)/[^/]+/?$#D',(string)$path)) {
         $publicRequest=true;
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
         $config=jingoConfig();(new PublicSite(jingoDatabase($config),$config))->render($path);
+    }
+    if(preg_match('~^/admin/print/(orders|shifts)/([a-f0-9-]{36})$~D',(string)$path,$printMatch)){
+        if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
+        $config=jingoConfig();$db=jingoDatabase($config);(new AdminAuth($db,$config))->me();if($_GET)throw new HttpError(400,'Bộ lọc phiếu in không hợp lệ.');
+        $printer=new PrintDocuments($db);$kind=$printMatch[1]==='orders'?'order':'shift';$document=$kind==='order'?$printer->order($printMatch[2]):$printer->shift($printMatch[2]);
+        header('Content-Type: text/html; charset=utf-8');header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');header('X-Frame-Options: DENY');header('Referrer-Policy: no-referrer');header('X-Robots-Tag: noindex, nofollow');
+        header("Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'");
+        echo PrintDocuments::html($kind,$document,(new SiteSettings($db,$config))->get('brand',true));exit;
     }
     if($path==='/admin' || $path==='/admin/' || preg_match('#^/(jingo-[a-f0-9]{24})/?$#D',(string)$path,$entryMatch)) {
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET') { header('Allow: GET'); throw new HttpError(405,'Phương thức không được hỗ trợ.'); }
