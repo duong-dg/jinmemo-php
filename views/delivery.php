@@ -1,0 +1,2 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="referrer" content="no-referrer"><title>Nhận file vé</title><link rel="stylesheet" href="/assets/pos.css"><script src="/assets/delivery.js" defer></script></head><body><main><h1>Nhận file vé</h1><p id="delivery-status" role="status">Đang kiểm tra liên kết…</p><section id="delivery-info"></section><section id="delivery-files"></section><p>File PDF/ảnh được tải nguyên bản. Giữ kín liên kết nhận vé.</p></main></body></html>

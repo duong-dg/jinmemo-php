@@ -115,6 +115,8 @@
     ]
   },
   "partnerTables": {
+      "partner_shares": ["id", "order_id", "access_hash", "created_at", "revoked_at"],
+      "partner_share_actions": ["id", "order_id"],
     "partner_ledger": ["id", "partner_id", "order_id", "kind", "amount", "reference", "note", "actor_id", "request_hash", "due_at", "created_at"],
     "partner_orders": ["order_id", "partner_id"],
     "partner_login_limits": ["id", "attempts", "until_at"],

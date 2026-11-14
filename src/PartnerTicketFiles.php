@@ -13,6 +13,6 @@ final class PartnerTicketFiles
             $result=$load(new TicketFiles($this->db,$this->directory));$this->db->commit();return $result;
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
-    public function list(array $actor,string $id):array{return $this->read($actor,$id,fn($files)=>$files->list($id,false));}
+    public function list(array $actor,string $id):array{return $this->read($actor,$id,function($files)use($id){$rows=$files->list($id,false);foreach($rows as &$r){$state=$this->query('SELECT partner_shared,sharing_version FROM jingo_ticket_files WHERE id=?',[$r['id']])->fetch(PDO::FETCH_ASSOC);$r['partner_shared']=(bool)$state['partner_shared'];$r['sharing_version']=(int)$state['sharing_version'];}unset($r);return $rows;});}
     public function download(array $actor,string $order,string $file):array{return $this->read($actor,$order,fn($files)=>$files->download($order,$file,true));}
 }
