@@ -1,0 +1,17 @@
+{
+  "input": {
+    "requestId": "00000000-0000-4000-8000-000000000010",
+    "fulfillment": "DELIVERY",
+    "expectedTotal": 150,
+    "name": "Guest",
+    "phone": "0901234567",
+    "address": "123 test street",
+    "lines": [
+      {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "quantity": 1
+      }
+    ]
+  },
+  "fingerprint": "fd1ac647199cb43e670f02015003ed78450d6be50bdf2c3cad6128de68c1529c"
+}

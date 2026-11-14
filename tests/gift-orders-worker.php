@@ -1,0 +1,3 @@
+<?php
+declare(strict_types=1);
+require_once dirname(__DIR__).'/src/AdminAuth.php';require_once dirname(__DIR__).'/src/GiftOrders.php';if(PHP_SAPI!=='cli'||!preg_match('/^jingo_gift_orders_test_[a-f0-9]{12}$/D',$argv[1] ?? ''))exit(1);$db=new PDO(getenv('JINGO_TEST_DSN').';dbname='.$argv[1],getenv('JINGO_TEST_USER')?:'root',getenv('JINGO_TEST_PASSWORD')?:'',[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_EMULATE_PREPARES=>false]);try{$input=json_decode(base64_decode($argv[2]),true,512,JSON_THROW_ON_ERROR);$gifts=new GiftOrders($db);if(($input['operation'] ?? '')==='cancel')$gifts->update($input['id'],['status'=>'CANCELLED'],'admin');else $gifts->create($input);echo 'saved';}catch(HttpError $e){if($e->status!==409)throw $e;echo 'conflict';}
