@@ -16,6 +16,6 @@ final class PartnerOrders
     }
     public function detail(array $actor,string $id):array
     {
-        return $this->read($actor,function()use($actor,$id){if(!$this->query('SELECT order_id FROM jingo_partner_orders WHERE order_id=? AND partner_id=?',[$id,$actor['id']])->fetchColumn())throw new HttpError(404,'Không tìm thấy đơn CTV.');$o=(new Orders($this->db))->get($id);$out=array_intersect_key($o,array_flip(['id','code','version','createdAt','snapshot','contact','bookingStatus','paymentStatus','fulfillmentStatus','tickets','deliveredGuests','totalGuests','instructions','archived']));if($o['archived']||$o['bookingStatus']!=='CONFIRMED'||$o['paymentStatus']!=='PAID')$out['tickets']=[];return $out;});
+        return $this->read($actor,function()use($actor,$id){if(!$this->query('SELECT order_id FROM jingo_partner_orders WHERE order_id=? AND partner_id=?',[$id,$actor['id']])->fetchColumn())throw new HttpError(404,'Không tìm thấy đơn CTV.');$o=(new Orders($this->db))->get($id);$out=array_intersect_key($o,array_flip(['id','code','version','createdAt','snapshot','contact','bookingStatus','paymentStatus','fulfillmentStatus','tickets','deliveredGuests','totalGuests','instructions','archived']));if($o['archived']||$o['bookingStatus']!=='CONFIRMED'||!in_array($o['paymentStatus'],['PAID','CREDIT'],true))$out['tickets']=[];return $out;});
     }
 }

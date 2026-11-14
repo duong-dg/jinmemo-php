@@ -30,7 +30,7 @@ async function renderSalesReport(screen,serial){
   for(const [key,label,money]of [['orders','Đơn chưa hủy',false],['cancelled','Đơn đã hủy',false],['bookingValue','Giá trị đơn tạo trong kỳ',true],['unpaidBookingValue','Giá trị đơn hiện chưa thu',true],['collected','Tiền đã thu trong kỳ',true],['cash','Thu tiền mặt',true],['bank','Thu chuyển khoản',true]]){
    const card=el('section',undefined,'card');card.append(el('p',label),el('h3',money?orderMoney(report.totals[key]):String(report.totals[key])));cards.append(card);
   }
-  screen.append(cards,el('p','Tiền đã thu không phải lợi nhuận. Không cộng tiền bổ sung/rút chi ca vào doanh thu. Chưa gồm hoàn tiền hoặc công nợ CTV.','muted'));
+  screen.append(cards,el('p','Tiền đã thu không phải lợi nhuận. Không cộng tiền bổ sung/rút chi ca vào doanh thu. Chưa gồm hoàn tiền hoặc khoản trả nợ CTV. Khoản trả nợ và dư nợ xem tại Sổ công nợ CTV.','muted'));
   const bar=toolbar('CSV gồm tổng kỳ, từng ngày và từng kênh/quầy theo bộ lọc đang xem.'),csv=button('Tải CSV toàn kỳ',()=>downloadSalesReport(csv,filters));bar.append(csv);screen.append(bar);
   screen.append(el('h2','Theo kênh và quầy'));
   if(!report.channels.length)screen.append(el('p','Không có phát sinh trong bộ lọc này.','muted'));

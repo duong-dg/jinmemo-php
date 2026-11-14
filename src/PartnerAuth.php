@@ -51,7 +51,7 @@ final class PartnerAuth
     public function me():array
     {
         $token=$this->token();if(!$token)throw new HttpError(401,'Vui lòng đăng nhập CTV.');$row=$this->query('SELECT p.id,p.email,p.data,p.version FROM jingo_partner_sessions s JOIN jingo_partners p ON p.id=s.partner_id WHERE s.token_hash=? AND s.expires_at>UTC_TIMESTAMP()',[hash('sha256',$token)])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(401,'Phiên CTV đã hết hạn hoặc tài khoản đã khóa.');$account=$this->account($row);
-        $raw=$this->query('SELECT data FROM jingo_price_groups WHERE id=?',[$account['groupId']])->fetchColumn();$g=$raw===false?null:json_decode($raw,true,512,JSON_THROW_ON_ERROR);$group=$g?['id'=>$account['groupId'],'name'=>$g['name'] ?? '', 'status'=>$g['status'] ?? 'ARCHIVED']:null;return ['account'=>$account,'group'=>$group];
+        $raw=$this->query('SELECT data FROM jingo_price_groups WHERE id=?',[$account['groupId']])->fetchColumn();$g=$raw===false?null:json_decode($raw,true,512,JSON_THROW_ON_ERROR);$group=$g?['id'=>$account['groupId'],'name'=>$g['name'] ?? '', 'status'=>$g['status'] ?? 'ARCHIVED']:null;require_once __DIR__.'/PartnerCredit.php';return ['account'=>$account,'group'=>$group,'credit'=>(new PartnerCredit($this->db))->ledger($account['id'],$account['id'])];
     }
     public function logout():array
     {

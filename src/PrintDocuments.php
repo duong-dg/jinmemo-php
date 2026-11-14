@@ -10,7 +10,7 @@ final class PrintDocuments
         try{
             $order=(new Orders($this->db))->get($id);
             if($actor!==null){PosAuth::permit($actor,'PRINT');PosPortal::counter($actor,$order['counter']['id'] ?? null);PosAccess::live($this->db,$actor['id'],$order['counter']['id'],'PRINT');}
-            $usable=!$order['archived']&&$order['bookingStatus']==='CONFIRMED'&&$order['paymentStatus']==='PAID';
+            $usable=!$order['archived']&&$order['bookingStatus']==='CONFIRMED'&&in_array($order['paymentStatus'],['PAID','CREDIT'],true);
             $files=$usable?(new TicketFiles($this->db,''))->list($id):[];
             $data=array_intersect_key($order,array_flip(['id','code','snapshot','contact','channel','counter','createdAt','bookingStatus','paymentStatus','archived','totalGuests','deliveredGuests','instructions']));
             $data['contact']=array_intersect_key($order['contact'],array_flip(['name','phone','email']));

@@ -1,0 +1,263 @@
+{
+  "source": "apps/api/src/partners/credit.ts",
+  "now": "2026-11-14T00:00:00.000Z",
+  "cases": [
+    {
+      "name": "empty",
+      "entries": [],
+      "limit": 200,
+      "expected": {
+        "balance": 0,
+        "available": 200,
+        "limit": 200,
+        "overdue": 0,
+        "charges": []
+      }
+    },
+    {
+      "name": "overdue",
+      "entries": [
+        {
+          "id": "a",
+          "order_id": "old",
+          "kind": "CHARGE",
+          "amount": "100",
+          "reference": "OLD",
+          "note": "",
+          "created_at": "2026-11-01T00:00:00Z",
+          "due_at": "2026-11-10T00:00:00Z"
+        },
+        {
+          "id": "b",
+          "order_id": "new",
+          "kind": "CHARGE",
+          "amount": "80",
+          "reference": "NEW",
+          "note": "",
+          "created_at": "2026-11-02T00:00:00Z",
+          "due_at": "2026-11-20T00:00:00Z"
+        }
+      ],
+      "limit": 200,
+      "expected": {
+        "balance": 180,
+        "available": 20,
+        "limit": 200,
+        "overdue": 100,
+        "charges": [
+          {
+            "orderId": "old",
+            "amount": 100,
+            "outstanding": 100,
+            "dueAt": "2026-11-10T00:00:00Z"
+          },
+          {
+            "orderId": "new",
+            "amount": 80,
+            "outstanding": 80,
+            "dueAt": "2026-11-20T00:00:00Z"
+          }
+        ]
+      }
+    },
+    {
+      "name": "partial-old",
+      "entries": [
+        {
+          "id": "a",
+          "order_id": "old",
+          "kind": "CHARGE",
+          "amount": "100",
+          "reference": "OLD",
+          "note": "",
+          "created_at": "2026-11-01T00:00:00Z",
+          "due_at": "2026-11-10T00:00:00Z"
+        },
+        {
+          "id": "b",
+          "order_id": "new",
+          "kind": "CHARGE",
+          "amount": "80",
+          "reference": "NEW",
+          "note": "",
+          "created_at": "2026-11-02T00:00:00Z",
+          "due_at": "2026-11-20T00:00:00Z"
+        },
+        {
+          "amount": -40,
+          "order_id": null,
+          "due_at": null
+        }
+      ],
+      "limit": 200,
+      "expected": {
+        "balance": 140,
+        "available": 60,
+        "limit": 200,
+        "overdue": 60,
+        "charges": [
+          {
+            "orderId": "old",
+            "amount": 100,
+            "outstanding": 60,
+            "dueAt": "2026-11-10T00:00:00Z"
+          },
+          {
+            "orderId": "new",
+            "amount": 80,
+            "outstanding": 80,
+            "dueAt": "2026-11-20T00:00:00Z"
+          }
+        ]
+      }
+    },
+    {
+      "name": "fifo-old-cleared",
+      "entries": [
+        {
+          "id": "a",
+          "order_id": "old",
+          "kind": "CHARGE",
+          "amount": "100",
+          "reference": "OLD",
+          "note": "",
+          "created_at": "2026-11-01T00:00:00Z",
+          "due_at": "2026-11-10T00:00:00Z"
+        },
+        {
+          "id": "b",
+          "order_id": "new",
+          "kind": "CHARGE",
+          "amount": "80",
+          "reference": "NEW",
+          "note": "",
+          "created_at": "2026-11-02T00:00:00Z",
+          "due_at": "2026-11-20T00:00:00Z"
+        },
+        {
+          "amount": -120,
+          "order_id": null,
+          "due_at": null
+        }
+      ],
+      "limit": 200,
+      "expected": {
+        "balance": 60,
+        "available": 140,
+        "limit": 200,
+        "overdue": 0,
+        "charges": [
+          {
+            "orderId": "old",
+            "amount": 100,
+            "outstanding": 0,
+            "dueAt": "2026-11-10T00:00:00Z"
+          },
+          {
+            "orderId": "new",
+            "amount": 80,
+            "outstanding": 60,
+            "dueAt": "2026-11-20T00:00:00Z"
+          }
+        ]
+      }
+    },
+    {
+      "name": "full-paid",
+      "entries": [
+        {
+          "id": "a",
+          "order_id": "old",
+          "kind": "CHARGE",
+          "amount": "100",
+          "reference": "OLD",
+          "note": "",
+          "created_at": "2026-11-01T00:00:00Z",
+          "due_at": "2026-11-10T00:00:00Z"
+        },
+        {
+          "id": "b",
+          "order_id": "new",
+          "kind": "CHARGE",
+          "amount": "80",
+          "reference": "NEW",
+          "note": "",
+          "created_at": "2026-11-02T00:00:00Z",
+          "due_at": "2026-11-20T00:00:00Z"
+        },
+        {
+          "amount": -180,
+          "order_id": null,
+          "due_at": null
+        }
+      ],
+      "limit": 100,
+      "expected": {
+        "balance": 0,
+        "available": 100,
+        "limit": 100,
+        "overdue": 0,
+        "charges": [
+          {
+            "orderId": "old",
+            "amount": 100,
+            "outstanding": 0,
+            "dueAt": "2026-11-10T00:00:00Z"
+          },
+          {
+            "orderId": "new",
+            "amount": 80,
+            "outstanding": 0,
+            "dueAt": "2026-11-20T00:00:00Z"
+          }
+        ]
+      }
+    },
+    {
+      "name": "below-balance-limit",
+      "entries": [
+        {
+          "id": "a",
+          "order_id": "old",
+          "kind": "CHARGE",
+          "amount": "100",
+          "reference": "OLD",
+          "note": "",
+          "created_at": "2026-11-01T00:00:00Z",
+          "due_at": "2026-11-10T00:00:00Z"
+        },
+        {
+          "id": "b",
+          "order_id": "new",
+          "kind": "CHARGE",
+          "amount": "80",
+          "reference": "NEW",
+          "note": "",
+          "created_at": "2026-11-02T00:00:00Z",
+          "due_at": "2026-11-20T00:00:00Z"
+        }
+      ],
+      "limit": 100,
+      "expected": {
+        "balance": 180,
+        "available": 0,
+        "limit": 100,
+        "overdue": 100,
+        "charges": [
+          {
+            "orderId": "old",
+            "amount": 100,
+            "outstanding": 100,
+            "dueAt": "2026-11-10T00:00:00Z"
+          },
+          {
+            "orderId": "new",
+            "amount": 80,
+            "outstanding": 80,
+            "dueAt": "2026-11-20T00:00:00Z"
+          }
+        ]
+      }
+    }
+  ]
+}
