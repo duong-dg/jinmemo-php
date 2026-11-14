@@ -4,11 +4,12 @@ declare(strict_types=1);
 final class PrintDocuments
 {
     public function __construct(private PDO $db){}
-    public function order(string $id):array
+    public function order(string $id,?array $actor=null):array
     {
         $this->db->exec('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');$this->db->beginTransaction();
         try{
             $order=(new Orders($this->db))->get($id);
+            if($actor!==null){PosAuth::permit($actor,'PRINT');PosPortal::counter($actor,$order['counter']['id'] ?? null);PosAccess::live($this->db,$actor['id'],$order['counter']['id'],'PRINT');}
             $usable=!$order['archived']&&$order['bookingStatus']==='CONFIRMED'&&$order['paymentStatus']==='PAID';
             $files=$usable?(new TicketFiles($this->db,''))->list($id):[];
             $data=array_intersect_key($order,array_flip(['id','code','snapshot','contact','channel','counter','createdAt','bookingStatus','paymentStatus','archived','totalGuests','deliveredGuests','instructions']));

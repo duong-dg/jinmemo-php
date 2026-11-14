@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/PosAccess.php';
 
 /** Original supplier files; never extracts QR codes or rewrites PDFs. */
 final class TicketFiles
@@ -9,6 +10,15 @@ final class TicketFiles
     private static function uuid(mixed $id):bool{return is_string($id)&&(bool)preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/iD',$id);}
     private static function newId():string{$s=bin2hex(random_bytes(16));return substr($s,0,8).'-'.substr($s,8,4).'-4'.substr($s,13,3).'-8'.substr($s,17,3).'-'.substr($s,20,12);}
     private function file(string $id):string{if(!self::uuid($id))throw new HttpError(404,'Không tìm thấy file vé.');return rtrim($this->directory,'/\\').'/'.$id.'.bin';}
+    private function staffWrite(string $orderId,?string $staffId):void
+    {
+        if($staffId===null)return;$counter=$this->query('SELECT counter_id FROM jingo_pos_orders WHERE order_id=?',[$orderId])->fetchColumn();if($counter===false)throw new HttpError(404,'Không tìm thấy đơn quầy.');
+        $this->query('SELECT id FROM jingo_counters WHERE id=? FOR UPDATE',[$counter]);PosAccess::live($this->db,$staffId,$counter,'DELIVER');
+    }
+    private function staffOrder(array $order,?string $staffId):void
+    {
+        if($staffId!==null&&($order['booking_status']!=='CONFIRMED'||$order['payment_status']!=='PAID'||$this->query('SELECT order_id FROM jingo_order_archives WHERE order_id=?',[$order['id']])->fetchColumn()))throw new HttpError(404,'Vé không còn khả dụng.');
+    }
     public function list(string $orderId,bool $admin=true):array
     {
         if(!$this->query('SELECT id FROM jingo_orders WHERE id=?',[$orderId])->fetchColumn())throw new HttpError(404,'Không tìm thấy đơn.');
@@ -21,14 +31,14 @@ final class TicketFiles
         $order=(new Orders($this->db))->lookup($lookup);if(isset($order['ticketAccess'])||$this->query('SELECT order_id FROM jingo_order_archives WHERE order_id=?',[$order['id']])->fetchColumn())throw new HttpError(404,'File vé không khả dụng.');if($order['bookingStatus']!=='CONFIRMED'||$order['paymentStatus']!=='PAID')throw new HttpError(404,'File vé không khả dụng.');return $order;
     }
     public function customerList(array $lookup):array{return $this->list($this->customer($lookup)['id'],false);}
-    public function revoke(string $orderId,string $id,array $input,string $actor):array
+    public function revoke(string $orderId,string $id,array $input,string $actor,?string $staffId=null):array
     {
         $reason=$input['reason'] ?? null;if(array_diff(array_keys($input),['version','reason'])||!is_int($input['version'] ?? null)||$input['version']<1||$input['version']>2147483646||!is_string($reason))throw new HttpError(400,'Nhập lý do thu hồi file.');$reason=preg_replace('/^[\s\x{FEFF}]+|[\s\x{FEFF}]+$/u','',$reason);$length=$reason===null?0:strlen(mb_convert_encoding($reason,'UTF-16LE','UTF-8'))/2;if($length<3||$length>500)throw new HttpError(400,'Lý do thu hồi từ 3 đến 500 ký tự.');
-        $this->db->beginTransaction();try{$order=$this->query('SELECT version FROM jingo_orders WHERE id=? FOR UPDATE',[$orderId])->fetch(PDO::FETCH_ASSOC);$file=$this->query('SELECT revoked_at,deleted_at FROM jingo_ticket_files WHERE id=? AND order_id=? FOR UPDATE',[$id,$orderId])->fetch(PDO::FETCH_ASSOC);if(!$order||!$file)throw new HttpError(404,'Không tìm thấy file vé.');if($file['revoked_at']!==null){$this->db->commit();return ['ok'=>true];}if((int)$order['version']!==$input['version'])throw new HttpError(409,'Đơn đã thay đổi. Tải lại trước khi thu hồi.');
+        $this->db->beginTransaction();try{$this->staffWrite($orderId,$staffId);if($staffId!==null)$actor='pos-user:'.$staffId;$order=$this->query('SELECT * FROM jingo_orders WHERE id=? FOR UPDATE',[$orderId])->fetch(PDO::FETCH_ASSOC);$file=$this->query('SELECT revoked_at,deleted_at FROM jingo_ticket_files WHERE id=? AND order_id=? FOR UPDATE',[$id,$orderId])->fetch(PDO::FETCH_ASSOC);if(!$order||!$file)throw new HttpError(404,'Không tìm thấy file vé.');$this->staffOrder($order,$staffId);if($staffId!==null&&$file['deleted_at']!==null)throw new HttpError(404,'Không tìm thấy file vé.');if($file['revoked_at']!==null){$this->db->commit();return ['ok'=>true];}if((int)$order['version']!==$input['version'])throw new HttpError(409,'Đơn đã thay đổi. Tải lại trước khi thu hồi.');
             $this->query('UPDATE jingo_ticket_files SET revoked_at=UTC_TIMESTAMP(6),revoke_reason=?,partner_shared=0,sharing_version=sharing_version+1 WHERE id=?',[$reason,$id]);$this->query('UPDATE jingo_orders SET version=version+1 WHERE id=?',[$orderId]);$this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),$actor,'ticket-file.revoke',$id]);$this->query("INSERT INTO jingo_order_actions(id,order_id,request_hash,admin_id,action,order_version,data) VALUES (?,?,?,?,'REVOKE_FILE',?,?)",[self::newId(),$orderId,hash('sha256',$id),$actor,$input['version']+1,json_encode(['note'=>$reason,'fileId'=>$id],JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR)]);$this->db->commit();return ['ok'=>true];
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
-    public function upload(string $orderId,array $input,string $source,string $name,string $actor):array
+    public function upload(string $orderId,array $input,string $source,string $name,string $actor,?string $staffId=null):array
     {
         if(array_diff(array_keys($input),['requestId','version','covers','ticketId'])||!self::uuid($input['requestId'] ?? null))throw new HttpError(400,'Thông tin đính kèm không hợp lệ.');
         foreach(['version'=>2147483646,'covers'=>150] as $key=>$max){$value=$input[$key] ?? null;if((!is_int($value)&&(!is_string($value)||!preg_match('/^[1-9][0-9]*$/D',$value)))||(int)$value<1||(int)$value>$max)throw new HttpError(400,'Phiên bản hoặc số khách không hợp lệ.');$input[$key]=(int)$value;}
@@ -40,7 +50,7 @@ final class TicketFiles
         $name=mb_substr(preg_replace('/[\\\\\/\x00-\x1f\x7f]/u','_',mb_convert_encoding($name,'UTF-8','UTF-8')) ?? '',0,150);if(trim($name)==='')$name='Vé đính kèm';$hash=hash('sha256',$bytes);
         $requestData=[$orderId,$input['version'],$input['covers'],$hash,$name];if(isset($input['ticketId']))$requestData[]=$input['ticketId'];$requestHash=hash('sha256',json_encode($requestData,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR));$saved=null;$committing=false;
         $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();try{
-            $order=$this->query('SELECT * FROM jingo_orders WHERE id=? FOR UPDATE',[$orderId])->fetch(PDO::FETCH_ASSOC);if(!$order)throw new HttpError(404,'Không tìm thấy đơn.');if($order['booking_status']!=='CONFIRMED'||$order['payment_status']!=='PAID'||$this->query('SELECT order_id FROM jingo_order_archives WHERE order_id=?',[$orderId])->fetchColumn())throw new HttpError(409,'Chỉ giao file cho đơn đã thu đủ tiền và đang hoạt động.');
+            $this->staffWrite($orderId,$staffId);if($staffId!==null)$actor='pos-user:'.$staffId;$order=$this->query('SELECT * FROM jingo_orders WHERE id=? FOR UPDATE',[$orderId])->fetch(PDO::FETCH_ASSOC);if(!$order)throw new HttpError(404,'Không tìm thấy đơn.');if($order['booking_status']!=='CONFIRMED'||$order['payment_status']!=='PAID'||$this->query('SELECT order_id FROM jingo_order_archives WHERE order_id=?',[$orderId])->fetchColumn())throw new HttpError(409,'Chỉ giao file cho đơn đã thu đủ tiền và đang hoạt động.');
             $prior=$this->query('SELECT request_hash,data FROM jingo_order_actions WHERE id=?',[$input['requestId']])->fetch(PDO::FETCH_ASSOC);if($prior){if(!hash_equals($prior['request_hash'],$requestHash))throw new HttpError(409,'Mã thao tác đã dùng.');$data=json_decode($prior['data'],true,512,JSON_THROW_ON_ERROR);$id=$data['fileId'] ?? '';if(!$this->query('SELECT id FROM jingo_ticket_files WHERE id=? AND order_id=? AND revoked_at IS NULL AND deleted_at IS NULL',[$id,$orderId])->fetchColumn())throw new HttpError(409,'File đã bị thu hồi hoặc xóa.');$this->db->commit();return ['id'=>$id,'ticketId'=>$data['ticketId'],'duplicate'=>true];}
             $ticket=null;if(isset($input['ticketId'])){$ticket=$this->query('SELECT id,covers FROM jingo_order_tickets WHERE id=? AND order_id=?',[$input['ticketId'],$orderId])->fetch(PDO::FETCH_ASSOC);if(!$ticket)throw new HttpError(404,'Mã vé không thuộc đơn.');if((int)$ticket['covers']!==$input['covers'])throw new HttpError(400,'Số khách phải khớp vé đã giao.');}
             $duplicate=$this->query('SELECT f.id,f.ticket_id,t.covers FROM jingo_ticket_files f JOIN jingo_order_tickets t ON t.id=f.ticket_id WHERE f.order_id=? AND f.hash=? AND f.revoked_at IS NULL AND f.deleted_at IS NULL'.($ticket?' AND f.ticket_id=?':''),$ticket?[$orderId,$hash,$ticket['id']]:[$orderId,$hash])->fetch(PDO::FETCH_ASSOC);if($duplicate){if((int)$duplicate['covers']!==$input['covers'])throw new HttpError(409,'File này đã giao với số khách khác.');$this->db->commit();return ['id'=>$duplicate['id'],'ticketId'=>$duplicate['ticket_id'],'duplicate'=>true];}

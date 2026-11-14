@@ -27,6 +27,7 @@ require dirname(__DIR__) . '/src/PosPortal.php';
 require dirname(__DIR__) . '/src/Shifts.php';
 require dirname(__DIR__) . '/src/PrintDocuments.php';
 require dirname(__DIR__) . '/src/TicketFiles.php';
+require dirname(__DIR__) . '/src/StaffTicketFiles.php';
 require dirname(__DIR__) . '/src/Posts.php';
 require dirname(__DIR__) . '/src/PostCategories.php';
 require dirname(__DIR__) . '/src/Translations.php';
@@ -60,6 +61,15 @@ try {
     if($path==='/quay'||$path==='/quay/'){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
         $config=jingoConfig();$branding=(new SiteSettings(jingoDatabase($config),$config))->get('brand',true);header('Content-Type: text/html; charset=utf-8');header('Cache-Control: private, no-store');header('X-Frame-Options: DENY');header('Referrer-Policy: no-referrer');header('X-Content-Type-Options: nosniff');header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");require dirname(__DIR__).'/views/pos.php';exit;
+    }
+    if(preg_match('~^/api/v1/pos/orders/([a-f0-9-]{36})/(print|files)(?:/([a-f0-9-]{36})(/revoke)?)?$~D',(string)$path,$staffFile)){
+        $id=$staffFile[1];$print=$staffFile[2]==='print';$file=$staffFile[3] ?? ''; $revoke=!empty($staffFile[4]);if($print&&$file!=='')throw new HttpError(404,'Không tìm thấy.');$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';$allowed=$print||$file!==''&&!$revoke?['GET']:($revoke?['POST']:['GET','POST']);if(!in_array($method,$allowed,true)){header('Allow: '.implode(', ',$allowed));throw new HttpError(405,'Phương thức không được hỗ trợ.');}
+        $config=jingoConfig();$db=jingoDatabase($config);$auth=new PosAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me();if($_GET)throw new HttpError(400,'Bộ lọc file/phiếu không hợp lệ.');$files=new StaffTicketFiles($db,($config['MEDIA_DIR'] ?? dirname(__DIR__).'/storage/media').'/.tickets');
+        if($print){$doc=(new PrintDocuments($db))->order($id,$actor);header('Content-Type: text/html; charset=utf-8');header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');header('X-Frame-Options: DENY');header('Referrer-Policy: no-referrer');header('X-Robots-Tag: noindex, nofollow');header("Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'");echo PrintDocuments::html('order',$doc,(new SiteSettings($db,$config))->get('brand',true),'/quay');exit;}
+        if($file!==''&&!$revoke)jingoTicketDownload($files->download($actor,$id,$file));
+        if($revoke)$data=$files->revoke($actor,$id,$file,jingoRequestBody());elseif($method==='GET')$data=['data'=>$files->list($actor,$id)];else{
+            $files->assertOrder($actor,$id,true);if(!str_starts_with(strtolower($_SERVER['CONTENT_TYPE'] ?? ''),'multipart/form-data;'))throw new HttpError(415,'Yêu cầu multipart/form-data.');if(array_diff(array_keys($_FILES),['file']))throw new HttpError(400,'Chỉ nhận một file vé.');$upload=$_FILES['file'] ?? null;if(!is_array($upload)||($upload['error'] ?? null)!==UPLOAD_ERR_OK||!is_string($upload['tmp_name'] ?? null)||!is_uploaded_file($upload['tmp_name']))throw new HttpError(400,'Chọn file tối đa 10 MB và kiểm tra giới hạn upload hosting.');$data=$files->upload($actor,$id,$_POST,$upload['tmp_name'],(string)$upload['name']);
+        }header('Content-Type: application/json; charset=utf-8');header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');echo json_encode($data,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);exit;
     }
     if(preg_match('~^/api/v1/pos/shifts(?:/([^/]+)(?:/(cash/export|export|cash|close|print))?)?$~D',(string)$path,$staffShift)){
         $id=$staffShift[1] ?? '';$action=$staffShift[2] ?? '';$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';$allowed=$id===''?['GET','POST']:(in_array($action,['cash','close'],true)?['POST']:['GET']);
