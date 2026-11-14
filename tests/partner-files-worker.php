@@ -1,0 +1,4 @@
+<?php
+declare(strict_types=1);
+if(PHP_SAPI!=='cli'||!preg_match('/^jingo_partner_files_test_[a-f0-9]{12}$/D',$argv[1] ?? '')||basename(str_replace('\\','/',$argv[2] ?? ''))!==$argv[1])exit(1);
+require_once dirname(__DIR__).'/src/AdminAuth.php';require_once dirname(__DIR__).'/src/PartnerTicketFiles.php';$db=new PDO(getenv('JINGO_TEST_DSN').';dbname='.$argv[1],getenv('JINGO_TEST_USER')?:'root',getenv('JINGO_TEST_PASSWORD')?:'',[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_EMULATE_PREPARES=>false]);[$actor,$order,$file]=json_decode(base64_decode($argv[3],true),true,512,JSON_THROW_ON_ERROR);echo "READY\n";fflush(STDOUT);try{(new PartnerTicketFiles($db,$argv[2].'/.tickets'))->download(['id'=>$actor],$order,$file);echo 'downloaded';}catch(HttpError $e){if(!in_array($e->status,[403,404],true))throw $e;echo (string)$e->status;}

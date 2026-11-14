@@ -28,11 +28,12 @@ require dirname(__DIR__) . '/src/PartnerAuth.php';
 require_once dirname(__DIR__) . '/src/PartnerCatalog.php';
 require_once dirname(__DIR__) . '/src/PartnerOrders.php';
 require_once dirname(__DIR__) . '/src/PartnerCredit.php';
+require_once dirname(__DIR__) . '/src/PartnerTicketFiles.php';
 require dirname(__DIR__) . '/src/PosAuth.php';
 require dirname(__DIR__) . '/src/PosPortal.php';
 require dirname(__DIR__) . '/src/Shifts.php';
 require dirname(__DIR__) . '/src/PrintDocuments.php';
-require dirname(__DIR__) . '/src/TicketFiles.php';
+require_once dirname(__DIR__) . '/src/TicketFiles.php';
 require dirname(__DIR__) . '/src/StaffTicketFiles.php';
 require dirname(__DIR__) . '/src/Posts.php';
 require dirname(__DIR__) . '/src/PostCategories.php';
@@ -69,6 +70,9 @@ try {
     }
     if(preg_match('~^/api/v1/admin/partners/([a-f0-9-]{36})/(ledger|repayments)$~D',(string)$path,$partnerLedger)){
         $write=$partnerLedger[2]==='repayments';$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';if($method!==($write?'POST':'GET')){header('Allow: '.($write?'POST':'GET'));throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($_GET)throw new HttpError(400,'Bộ lọc không hợp lệ.');$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($write)$auth->mutation();$actor=$auth->me();$service=new PartnerCredit($db);jingoJson($write?$service->repay($partnerLedger[1],jingoRequestBody(),$actor['id']):$service->ledger($partnerLedger[1]));
+    }
+    if(preg_match('~^/api/v1/partner/orders/([a-f0-9-]{36})/files(?:/([a-f0-9-]{36})/download)?$~D',(string)$path,$partnerFiles)){
+        if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($_GET)throw new HttpError(400,'Bộ lọc file CTV không hợp lệ.');$config=jingoConfig();$db=jingoDatabase($config);$actor=(new PartnerAuth($db,$config))->me()['account'];$service=new PartnerTicketFiles($db,($config['MEDIA_DIR'] ?? dirname(__DIR__).'/storage/media').'/.tickets');if(isset($partnerFiles[2]))jingoTicketDownload($service->download($actor,$partnerFiles[1],$partnerFiles[2]));header('Content-Type: application/json; charset=utf-8');header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');echo json_encode(['data'=>$service->list($actor,$partnerFiles[1])],JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);exit;
     }
     if(preg_match('~^/api/v1/partner/orders/([a-f0-9-]{36})/credit$~D',(string)$path,$partnerCharge)){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='POST'){header('Allow: POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($_GET)throw new HttpError(400,'Yêu cầu không hợp lệ.');$config=jingoConfig();$db=jingoDatabase($config);$auth=new PartnerAuth($db,$config);$auth->mutation();$actor=$auth->me()['account'];(new PartnerCredit($db))->charge($partnerCharge[1],jingoRequestBody(),'partner:'.$actor['id'],$actor['id']);$data=(new PartnerOrders($db))->detail($actor,$partnerCharge[1]);header('Content-Type: application/json; charset=utf-8');header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');echo json_encode($data,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);exit;
