@@ -61,6 +61,16 @@ try {
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}
         $config=jingoConfig();$branding=(new SiteSettings(jingoDatabase($config),$config))->get('brand',true);header('Content-Type: text/html; charset=utf-8');header('Cache-Control: private, no-store');header('X-Frame-Options: DENY');header('Referrer-Policy: no-referrer');header('X-Content-Type-Options: nosniff');header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");require dirname(__DIR__).'/views/pos.php';exit;
     }
+    if(preg_match('~^/api/v1/pos/shifts(?:/([^/]+)(?:/(cash/export|export|cash|close|print))?)?$~D',(string)$path,$staffShift)){
+        $id=$staffShift[1] ?? '';$action=$staffShift[2] ?? '';$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';$allowed=$id===''?['GET','POST']:(in_array($action,['cash','close'],true)?['POST']:['GET']);
+        if(!in_array($method,$allowed,true)){header('Allow: '.implode(', ',$allowed));throw new HttpError(405,'Phương thức không được hỗ trợ.');}
+        $config=jingoConfig();$db=jingoDatabase($config);$auth=new PosAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me();PosAuth::permit($actor,'SHIFT');if(($id!==''||$method==='POST')&&$_GET)throw new HttpError(400,'Bộ lọc ca không hợp lệ.');
+        $shifts=new Shifts($db);$data=$id===''?($method==='GET'?$shifts->list($_GET,$actor):$shifts->open(jingoRequestBody(),$actor)):($method==='POST'?$shifts->act($id,$action,jingoRequestBody(),$actor):($action==='print'?(new PrintDocuments($db))->shift($id,$actor):$shifts->detail($id,$actor)));
+        header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');
+        if($action==='print'){header('Content-Type: text/html; charset=utf-8');header('X-Frame-Options: DENY');header('Referrer-Policy: no-referrer');header('X-Robots-Tag: noindex, nofollow');header("Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'");echo PrintDocuments::html('shift',$data,(new SiteSettings($db,$config))->get('brand',true),'/quay');}
+        elseif(in_array($action,['export','cash/export'],true)){$csv=Shifts::csv($data,$action==='cash/export');header('Content-Type: text/csv; charset=utf-8');header('Content-Disposition: attachment; filename="shift-'.($action==='cash/export'?'cash-':'').$id.'.csv"');echo $csv;}
+        else{header('Content-Type: application/json; charset=utf-8');echo json_encode($data,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);}exit;
+    }
     if(preg_match('~^/api/v1/pos/(login|me|logout|counters|products|quotes|orders)(?:/([a-f0-9-]{36})(/actions)?)?$~D',(string)$path,$staffRoute)){
         $resource=$staffRoute[1];$id=$staffRoute[2] ?? '';if($id!==''&&$resource!=='orders')throw new HttpError(404,'Không tìm thấy.');$action=!empty($staffRoute[3]);$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';$allowed=in_array($resource,['login','logout','quotes'],true)||$action?['POST']:($resource==='orders'&&$id===''?['GET','POST']:['GET']);
         if(!in_array($method,$allowed,true)){header('Allow: '.implode(', ',$allowed));throw new HttpError(405,'Phương thức không được hỗ trợ.');}

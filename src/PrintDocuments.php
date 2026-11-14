@@ -18,9 +18,9 @@ final class PrintDocuments
             $this->db->commit();return $data;
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
-    public function shift(string $id):array
+    public function shift(string $id,?array $actor=null):array
     {
-        $data=(new Shifts($this->db))->detail($id);
+        $data=(new Shifts($this->db))->detail($id,$actor);
         if(!$data['closedAt'])throw new HttpError(409,'Chốt ca trước khi in biên bản bàn giao.');
         foreach(['cash','bank','cashIn','cashOut','expectedCash','countedCash','receiptCount','movementCount'] as $key){
             $n=$data['summary'][$key] ?? null;
@@ -31,7 +31,7 @@ final class PrintDocuments
         $s=$data['summary'];if($s['expectedCash']!==$data['openingCash']+$s['cash']+$s['cashIn']-$s['cashOut'])throw new HttpError(409,'Tiền mặt theo sổ không khớp số liệu chốt ca.');
         return $data;
     }
-    public static function html(string $kind,array $document,array $brand):string
+    public static function html(string $kind,array $document,array $brand,?string $backHref=null):string
     {
         if(!in_array($kind,['order','shift'],true))throw new InvalidArgumentException('Unknown print document');
         ob_start();try{require dirname(__DIR__).'/views/print.php';return ob_get_contents();}finally{ob_end_clean();}
