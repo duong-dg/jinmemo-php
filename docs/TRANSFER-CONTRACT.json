@@ -115,6 +115,7 @@
     ]
   },
   "stayTables": {
+    "stay_vouchers": ["id", "code", "data", "version"],
     "stays": ["id", "slug", "data", "version", "updated_at"],
     "stay_aliases": ["lang", "slug", "hotel_id"],
     "stay_bookings": ["id", "code", "hotel_id", "room_id", "check_in", "check_out", "rooms", "status", "access_hash", "secret", "request_hash", "data", "expires_at", "version", "created_at"]

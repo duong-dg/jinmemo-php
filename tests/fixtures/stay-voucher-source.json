@@ -1,0 +1,47 @@
+[
+  {
+    "subtotal": 2160000,
+    "c": {
+      "type": "PERCENT",
+      "value": 10,
+      "maxDiscount": 200000
+    },
+    "expected": 200000
+  },
+  {
+    "subtotal": 199,
+    "c": {
+      "type": "PERCENT",
+      "value": 15,
+      "maxDiscount": null
+    },
+    "expected": 29
+  },
+  {
+    "subtotal": 100,
+    "c": {
+      "type": "PERCENT",
+      "value": 100,
+      "maxDiscount": 1000
+    },
+    "expected": 100
+  },
+  {
+    "subtotal": 90,
+    "c": {
+      "type": "FIXED",
+      "value": 1000,
+      "maxDiscount": 1
+    },
+    "expected": 90
+  },
+  {
+    "subtotal": 0,
+    "c": {
+      "type": "FIXED",
+      "value": 10,
+      "maxDiscount": null
+    },
+    "expected": 0
+  }
+]
