@@ -120,6 +120,7 @@
     "stay_aliases": ["lang", "slug", "hotel_id"],
     "stay_bookings": ["id", "code", "hotel_id", "room_id", "check_in", "check_out", "rooms", "status", "access_hash", "secret", "request_hash", "data", "expires_at", "version", "created_at"]
   },
+  "cartTables": {"carts":["id","code","request_id","request_hash","channel","partner_id","counter_id","access_hash","secret","total","version","created_at"],"cart_orders":["cart_id","order_id","position"],"cart_actions":["id","cart_id","request_hash"]},
   "rideTables": {"ride_pools":["id","visit_date","from_id","to_id","vehicle_id","departure","target","total","status","data","version","created_at"],"ride_bookings": ["id","code","request_key","visit_date","status","trip_id","data","version","created_at"]},
   "transportTables": {
     "transport_jobs": ["order_id", "visit_date", "status", "data", "version"]

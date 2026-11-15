@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS jingo_carts (
+ id CHAR(36) CHARACTER SET ascii PRIMARY KEY,
+ code VARCHAR(12) CHARACTER SET ascii COLLATE ascii_bin NOT NULL UNIQUE,
+ request_id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL UNIQUE,
+ request_hash CHAR(64) CHARACTER SET ascii NOT NULL,
+ channel VARCHAR(8) CHARACTER SET ascii NOT NULL,
+ partner_id VARCHAR(80) NULL,
+ counter_id VARCHAR(80) NULL,
+ access_hash CHAR(64) CHARACTER SET ascii NOT NULL,
+ secret TEXT NOT NULL,
+ total BIGINT NOT NULL,
+ version INT NOT NULL DEFAULT 1,
+ created_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS jingo_cart_orders (
+ cart_id CHAR(36) CHARACTER SET ascii NOT NULL,
+ order_id CHAR(36) CHARACTER SET ascii PRIMARY KEY,
+ position INT NOT NULL,
+ INDEX cart_members(cart_id),
+ FOREIGN KEY(cart_id) REFERENCES jingo_carts(id),
+ FOREIGN KEY(order_id) REFERENCES jingo_orders(id)
+) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS jingo_cart_actions (
+ id CHAR(36) CHARACTER SET ascii PRIMARY KEY,
+ cart_id CHAR(36) CHARACTER SET ascii NOT NULL,
+ request_hash CHAR(64) CHARACTER SET ascii NOT NULL,
+ FOREIGN KEY(cart_id) REFERENCES jingo_carts(id)
+) ENGINE=InnoDB;

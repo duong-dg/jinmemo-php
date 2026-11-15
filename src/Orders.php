@@ -52,19 +52,19 @@ final class Orders
         $created=$this->create($input,['counterId'=>$counter,'adminId'=>$actor]+($staffId!==null?['staffId'=>$staffId]:[]));
         return $this->get((string)$this->query('SELECT id FROM jingo_orders WHERE code=?',[$created['code']])->fetchColumn());
     }
-    public function create(array $input,?array $pos=null,?string $partnerId=null):array
+    public function create(array $input,?array $pos=null,?string $partnerId=null,bool $nested=false):array
     {
         $input=self::validate($input);if($pos&&$partnerId!==null)self::fail();if(($pos||$partnerId!==null)&&isset($input['voucherCode']))self::fail('Voucher chỉ dùng cho đơn Website.');$hash=hash('sha256',json_encode(self::canonical($pos?['pos'=>$pos,'input'=>$input]:($partnerId!==null?['partnerId'=>$partnerId,'input'=>$input]:$input)),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR));
         // READ COMMITTED lets a second worker observe the first worker's replay after the product lock.
-        $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();try{
+        if($nested){if(!$this->db->inTransaction())throw new LogicException('Cart order requires parent transaction.');}else{$this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();}try{
             $group=null;if($partnerId!==null){
                 if(!$this->query("SELECT id FROM jingo_catalog_locks WHERE id='catalog' FOR UPDATE")->fetchColumn())throw new HttpError(503,'Chưa cài khóa danh mục.');$raw=$this->query('SELECT data FROM jingo_partners WHERE id=? FOR UPDATE',[$partnerId])->fetchColumn();$account=$raw===false?null:json_decode($raw,true,512,JSON_THROW_ON_ERROR);if(!$account||($account['status'] ?? '')!=='ACTIVE')throw new HttpError(403,'CTV không được tạo đơn mới.');$row=$this->query('SELECT data,version FROM jingo_price_groups WHERE id=? LOCK IN SHARE MODE',[$account['groupId'] ?? ''])->fetch(PDO::FETCH_ASSOC);if(!$row)self::fail('Không tìm thấy bảng giá CTV.');$group=json_decode($row['data'],true,512,JSON_THROW_ON_ERROR);$group['version']=(int)$row['version'];if(($group['status'] ?? '')!=='ACTIVE')self::fail('Bảng giá CTV tạm ngừng.');
             }
             if(isset($pos['staffId'])){$this->query('SELECT id FROM jingo_counters WHERE id=? FOR UPDATE',[$pos['counterId']]);PosAccess::live($this->db,$pos['staffId'],$pos['counterId'],'SELL');}
-            if($prior=$this->prior($input,$hash)){$this->db->commit();return $prior;}
+            if($prior=$this->prior($input,$hash)){if(!$nested)$this->db->commit();return $prior;}
             if($pos){$counter=$this->query('SELECT data FROM jingo_counters WHERE id=? FOR UPDATE',[$pos['counterId']])->fetchColumn();if($counter===false||json_decode($counter,true,512,JSON_THROW_ON_ERROR)['status']!=='ACTIVE')self::fail('Chọn quầy đang hoạt động.');}
             if(!$this->query('SELECT id FROM jingo_products WHERE id=? FOR UPDATE',[$input['productId']])->fetchColumn())throw new HttpError(404,'Không tìm thấy sản phẩm.');
-            if($prior=$this->prior($input,$hash)){$this->db->commit();return $prior;}
+            if($prior=$this->prior($input,$hash)){if(!$nested)$this->db->commit();return $prior;}
             $p=(new Products($this->db))->find($input['productId'],false,false,$input['locale']);if($p['demo'] ?? false)self::fail('Sản phẩm thử nghiệm không nhận đơn.');
             if($input['locale']==='en'){$p['name']=$p['english']['name'];foreach($p['variants'] as &$v)foreach($p['english']['variants'] as $t)if($v['id']===$t['id']){$v['name']=$t['name'];break;}unset($v);}
             if($input['date']<(new DateTimeImmutable('now',new DateTimeZone('Asia/Ho_Chi_Minh')))->format('Y-m-d'))self::fail('Ngày sử dụng đã qua.');
@@ -83,8 +83,8 @@ final class Orders
             (new Inventory($this->db))->allocate($id,$p['id'],$input['variantId'],$input['date'],$quote['timeSlot']['id'] ?? '',$quantity);if($discount)(new Vouchers($this->db))->allocate($id,$discount['id']);
             if($pos){$this->query('INSERT INTO jingo_pos_orders(order_id,counter_id,admin_id) VALUES (?,?,?)',[$id,$pos['counterId'],$pos['adminId']]);$this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),$pos['adminId'],'pos.order-create',$id]);}
             if($partnerId!==null){$this->query('INSERT INTO jingo_partner_orders(order_id,partner_id) VALUES (?,?)',[$id,$partnerId]);$this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),'partner:'.$partnerId,'partner.order-create',$id]);}
-            if($trip)$this->query("INSERT INTO jingo_transport_jobs(order_id,visit_date,data) VALUES (?,?,'{}')",[$id,$input['date']]);if($partnerId===null){OrderMail::register($this->db,$id,$customerKey);OrderMail::enqueue($this->db,$id,'CREATED',1);}(new Notifications($this->db))->enqueue('TICKET',$code);$this->db->commit();return ['code'=>$code,'accessKey'=>$input['accessKey']];
-        }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();if($e instanceof PDOException&&($e->errorInfo[1] ?? null)===1062){if($prior=$this->prior($input,$hash))return $prior;throw new HttpError(409,'Trùng mã đơn. Vui lòng thử lại.');}throw $e;}
+            if($trip)$this->query("INSERT INTO jingo_transport_jobs(order_id,visit_date,data) VALUES (?,?,'{}')",[$id,$input['date']]);if($partnerId===null){OrderMail::register($this->db,$id,$customerKey);if(!$nested)OrderMail::enqueue($this->db,$id,'CREATED',1);}if(!$nested)(new Notifications($this->db))->enqueue('TICKET',$code);if(!$nested)$this->db->commit();return ['code'=>$code,'accessKey'=>$input['accessKey']];
+        }catch(Throwable $e){if(!$nested&&$this->db->inTransaction())$this->db->rollBack();if($e instanceof PDOException&&($e->errorInfo[1] ?? null)===1062){if(!$nested&&($prior=$this->prior($input,$hash)))return $prior;throw new HttpError(409,'Trùng mã đơn. Vui lòng thử lại.');}throw $e;}
     }
     private function detail(array $row,bool $admin):array
     {
@@ -150,9 +150,9 @@ final class Orders
     {
         if(!is_string($value))self::fail();$value=preg_replace('/^[\s\x{FEFF}]+|[\s\x{FEFF}]+$/u','',$value);$length=$value===null?0:strlen(mb_convert_encoding($value,'UTF-16LE','UTF-8'))/2;if($value===null||$length<$min||$length>$max||str_contains($value,"\0"))self::fail('Mã vé hoặc ghi chú không hợp lệ.');return $value;
     }
-    public function act(string $id,array $input,string $actor,?string $staffId=null):array
+    public function act(string $id,array $input,string $actor,?string $staffId=null,bool $nested=false):array
     {
-        if(($input['action'] ?? null)==='CREDIT'){if($staffId!==null)throw new HttpError(403,'Nhân viên quầy không được ghi nợ CTV.');require_once __DIR__.'/PartnerCredit.php';unset($input['action']);return (new PartnerCredit($this->db))->charge($id,$input,$actor);}
+        if(($input['action'] ?? null)==='CREDIT'){if($nested)throw new HttpError(409,'Chưa chuyển công nợ giỏ CTV.');if($staffId!==null)throw new HttpError(403,'Nhân viên quầy không được ghi nợ CTV.');require_once __DIR__.'/PartnerCredit.php';unset($input['action']);return (new PartnerCredit($this->db))->charge($id,$input,$actor);}
         $action=$input['action'] ?? null;$keys=['requestId','version','action','note'];if($action==='DELIVER')$keys[]='tickets';if(in_array($action,['INSTRUCTIONS','CONFIRM'],true))$keys[]='instructions';if($action==='PAY')$keys=array_merge($keys,['method','amount','reference']);
         if(array_diff(array_keys($input),$keys)||!in_array($action,['INSTRUCTIONS','CANCEL','PAY','ARCHIVE','RESTORE','CONFIRM','DELIVER'],true)||!self::uuid($input['requestId'] ?? null)||!is_int($input['version'] ?? null)||$input['version']<1||$input['version']>=2147483647)self::fail();
         $input['note']=self::text($input,'note',1,1000);if(in_array($action,['INSTRUCTIONS','CONFIRM'],true))$input['instructions']=self::text($input,'instructions',1,4000);
@@ -167,11 +167,11 @@ final class Orders
             foreach($input['tickets'] as $t){if(!is_array($t)||array_diff(array_keys($t),['code','kind','covers','note'])||!in_array($t['kind'] ?? null,['SUPPLIER_CODE','TOUR_VOUCHER'],true)||!is_int($t['covers'] ?? null)||$t['covers']<1||$t['covers']>150)self::fail();$code=self::ticketText($t['code'] ?? null,1,2000);$note=self::ticketText($t['note'] ?? '',0,1000);$digest=hash('sha256',$code);if(isset($codes[$digest]))self::fail('Danh sách có mã vé trùng.');$codes[$digest]=true;$tickets[]=['code'=>$code,'kind'=>$t['kind'],'covers'=>$t['covers'],'note'=>$note];}$input['tickets']=$tickets;
         }
         $hash=hash('sha256',json_encode(self::canonical(['id'=>$id,'action'=>$input]),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR));
-        $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();try{
+        if($nested){if(!$this->db->inTransaction())throw new LogicException('Cart action requires parent transaction.');}else{$this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();}try{
             if($action==='PAY'||$staffId!==null){$counter=$this->query('SELECT counter_id FROM jingo_pos_orders WHERE order_id=?',[$id])->fetchColumn();if($counter!==false)$this->query('SELECT id FROM jingo_counters WHERE id=? FOR UPDATE',[$counter]);}
             if($staffId!==null){if($counter===false)throw new HttpError(404,'Không tìm thấy đơn quầy.');$permission=match($action){'PAY'=>'COLLECT','CANCEL'=>'CANCEL','DELIVER'=>'DELIVER',default=>null};if($permission===null)throw new HttpError(403,'Thao tác này chỉ dành cho admin.');PosAccess::live($this->db,$staffId,$counter,$permission);$actor='pos-user:'.$staffId;}
             $row=$this->query('SELECT * FROM jingo_orders WHERE id=? FOR UPDATE',[$id])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy đơn.');
-            $prior=$this->query('SELECT request_hash FROM jingo_order_actions WHERE id=?',[$input['requestId']])->fetchColumn();if($prior!==false){if(!hash_equals($prior,$hash))throw new HttpError(409,'Mã thao tác đã dùng.');$result=$this->get($id);$this->db->commit();return $result;}
+            $prior=$this->query('SELECT request_hash FROM jingo_order_actions WHERE id=?',[$input['requestId']])->fetchColumn();if($prior!==false){if(!hash_equals($prior,$hash))throw new HttpError(409,'Mã thao tác đã dùng.');$result=$this->get($id);if(!$nested)$this->db->commit();return $result;}
             if((int)$row['version']!==$input['version'])throw new HttpError(409,'Đơn đã thay đổi. Tải lại trước khi xử lý.');if($row['booking_status']==='CANCELLED'&&!in_array($action,['ARCHIVE','RESTORE'],true))throw new HttpError(409,'Đơn đã hủy.');
             $archived=$this->query('SELECT order_id FROM jingo_order_archives WHERE order_id=?',[$id])->fetchColumn();if($archived&&$action!=='RESTORE')throw new HttpError(409,'Đơn đang lưu trữ. Khôi phục trước khi xử lý.');if(!$archived&&$action==='RESTORE')throw new HttpError(409,'Đơn chưa được lưu trữ.');
             if($action==='ARCHIVE'){
@@ -200,7 +200,7 @@ final class Orders
                 if($row['booking_status']!=='CONFIRMED')throw new HttpError(409,'Chỉ cập nhật hướng dẫn cho đơn đã đặt.');$this->query('UPDATE jingo_orders SET instructions=?,version=version+1 WHERE id=?',[$input['instructions'],$id]);
             }
             $this->query('INSERT INTO jingo_order_actions(id,order_id,request_hash,admin_id,action,order_version,data) VALUES (?,?,?,?,?,?,?)',[$input['requestId'],$id,$hash,$actor,$action,$input['version']+1,json_encode($input,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR)]);
-            if(in_array($action,['PAY','DELIVER','CONFIRM','CANCEL','INSTRUCTIONS'],true))OrderMail::enqueue($this->db,$id,$action,$input['version']+1);$result=$this->get($id);$this->db->commit();return $result;
-        }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();if($e instanceof PDOException&&($e->errorInfo[1] ?? null)===1062)throw new HttpError(409,$action==='PAY'?'Mã giao dịch hoặc thao tác đã được ghi nhận. Kiểm tra lại trước khi thu.':'Mã thao tác đã dùng.');throw $e;}
+            if(!$nested&&in_array($action,['PAY','DELIVER','CONFIRM','CANCEL','INSTRUCTIONS'],true))OrderMail::enqueue($this->db,$id,$action,$input['version']+1);$result=$this->get($id);if(!$nested)$this->db->commit();return $result;
+        }catch(Throwable $e){if(!$nested&&$this->db->inTransaction())$this->db->rollBack();if($e instanceof PDOException&&($e->errorInfo[1] ?? null)===1062)throw new HttpError(409,$action==='PAY'?'Mã giao dịch hoặc thao tác đã được ghi nhận. Kiểm tra lại trước khi thu.':'Mã thao tác đã dùng.');throw $e;}
     }
 }
