@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require_once __DIR__.'/Notifications.php';
 require_once __DIR__.'/OrderMail.php';
+require_once __DIR__.'/Transport.php';
 require_once __DIR__.'/SupplyLots.php';
 require_once __DIR__.'/SupplyAllocation.php';
 require_once __DIR__.'/PosAccess.php';
@@ -23,7 +24,7 @@ final class Orders
     }
     public static function validate(array $input):array
     {
-        if(array_diff(array_keys($input),['requestId','accessKey','productId','variantId','date','voucherCode','slotId','quantities','expectedTotal','contact','locale','accepted']))self::fail();
+        if(array_diff(array_keys($input),['requestId','accessKey','productId','variantId','date','voucherCode','slotId','quantities','expectedTotal','contact','locale','accepted','trip']))self::fail();
         if(!self::uuid($input['requestId'] ?? null)||!is_string($input['accessKey'] ?? null)||!preg_match('/^[a-f0-9]{64}$/iD',$input['accessKey'])||($input['accepted'] ?? null)!==true)self::fail();
         foreach(['productId','variantId'] as $key)if(!is_string($input[$key] ?? null)||!preg_match('/^[a-zA-Z0-9_-]{1,80}$/D',$input[$key]))self::fail();
         if(!is_string($input['date'] ?? null))self::fail();Pricing::validateDate($input['date']);
@@ -32,6 +33,7 @@ final class Orders
         if(isset($input['slotId'])&&(!is_string($input['slotId'])||!preg_match('/^[a-zA-Z0-9_-]{1,80}$/D',$input['slotId'])))self::fail();
         if(array_key_exists('slotId',$input)&&$input['slotId']===null)self::fail();
         if(array_key_exists('voucherCode',$input)){if(!is_string($input['voucherCode']))self::fail();$input['voucherCode']=strtoupper(trim($input['voucherCode']));if(!preg_match('/^[A-Z0-9][A-Z0-9_-]{2,39}$/D',$input['voucherCode']))self::fail();}
+        if(array_key_exists('trip',$input))$input['trip']=Transport::trip($input['trip']);
         $input['locale']=$input['locale'] ?? 'vi';if(!in_array($input['locale'],['vi','en'],true))self::fail();
         $c=$input['contact'] ?? null;if(!is_array($c)||array_diff(array_keys($c),['name','email','phone','note','invoice']))self::fail();
         $c['name']=self::text($c,'name',2,100);$c['email']=self::text($c,'email',1,200);$c['phone']=self::text($c,'phone',8,25);$c['note']=self::text($c+['note'=>''],'note',0,1000);
@@ -67,6 +69,7 @@ final class Orders
             if($input['locale']==='en'){$p['name']=$p['english']['name'];foreach($p['variants'] as &$v)foreach($p['english']['variants'] as $t)if($v['id']===$t['id']){$v['name']=$t['name'];break;}unset($v);}
             if($input['date']<(new DateTimeImmutable('now',new DateTimeZone('Asia/Ho_Chi_Minh')))->format('Y-m-d'))self::fail('Ngày sử dụng đã qua.');
             $quote=($pos||$partnerId!==null)?Pricing::calculate($p,$input['variantId'],$input['date'],$input['quantities'],$p['rules'],$p['closures'],$input['slotId'] ?? null):Pricing::online($p,$input['variantId'],$input['date'],$input['quantities'],$p['rules'],$p['closures'],$input['slotId'] ?? null);
+            $trip=Transport::validateTrip($p,$input['variantId'],$input['date'],$input['slotId']??null,$input['quantities'],$input['trip']??null);if(($p['transport']['mode']??null)==='SHARED'&&!(new Inventory($this->db))->availability($p['id'],$input['variantId'],$input['date'],$quote['timeSlot']['id']??'')['limited'])throw new HttpError(400,'Xe ghép chưa mở số chỗ.');
             if($group!==null){require_once __DIR__.'/PartnerCatalog.php';$quote=PartnerCatalog::net($quote,$group);}
             $voucher=$input['voucherCode'] ?? '';Pricing::checkVoucher($quote,$voucher);$discount=null;
             if($voucher!==''){$discount=(new Vouchers($this->db))->discount($voucher,$quote['total'],['productId'=>$p['id'],'variantId'=>$input['variantId'],'date'=>$input['date']],true);$quote['discount']=['code'=>$discount['code'],'amount'=>$discount['amount'],'subtotal'=>$discount['subtotal']];$quote['total']-=$discount['amount'];}
@@ -74,12 +77,13 @@ final class Orders
             $quantity=array_sum(array_column($quote['lines'],'quantity'));if($quantity<1||$quantity>150)self::fail('Chọn từ 1 đến 150 khách.');
             $hex=bin2hex(random_bytes(16));$id=substr($hex,0,8).'-'.substr($hex,8,4).'-4'.substr($hex,13,3).'-8'.substr($hex,17,3).'-'.substr($hex,20,12);$code='JG'.strtoupper(bin2hex(random_bytes(5)));
             $snapshot=$quote+['productId'=>$p['id'],'productName'=>$p['name'],'variantId'=>$input['variantId'],'date'=>$input['date'],'locale'=>$input['locale'],'demo'=>false];foreach($p['variants'] as $v)if($v['id']===$input['variantId']){$snapshot['variantName']=$v['name'];$snapshot['conditions']=$v['conditions'] ?? '';}
+            if($trip)$snapshot['transport']=$trip;
             $customerKey=$pos?bin2hex(random_bytes(32)):$input['accessKey'];
             $this->query('INSERT INTO jingo_orders(id,code,request_id,request_hash,access_hash,snapshot,contact,instructions) VALUES (?,?,?,?,?,?,?,?)',[$id,$code,$input['requestId'],$hash,hash('sha256',$customerKey),json_encode($snapshot,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR),json_encode($input['contact'],JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR),'']);
             (new Inventory($this->db))->allocate($id,$p['id'],$input['variantId'],$input['date'],$quote['timeSlot']['id'] ?? '',$quantity);if($discount)(new Vouchers($this->db))->allocate($id,$discount['id']);
             if($pos){$this->query('INSERT INTO jingo_pos_orders(order_id,counter_id,admin_id) VALUES (?,?,?)',[$id,$pos['counterId'],$pos['adminId']]);$this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),$pos['adminId'],'pos.order-create',$id]);}
             if($partnerId!==null){$this->query('INSERT INTO jingo_partner_orders(order_id,partner_id) VALUES (?,?)',[$id,$partnerId]);$this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),'partner:'.$partnerId,'partner.order-create',$id]);}
-            if($partnerId===null){OrderMail::register($this->db,$id,$customerKey);OrderMail::enqueue($this->db,$id,'CREATED',1);}(new Notifications($this->db))->enqueue('TICKET',$code);$this->db->commit();return ['code'=>$code,'accessKey'=>$input['accessKey']];
+            if($trip)$this->query("INSERT INTO jingo_transport_jobs(order_id,visit_date,data) VALUES (?,?,'{}')",[$id,$input['date']]);if($partnerId===null){OrderMail::register($this->db,$id,$customerKey);OrderMail::enqueue($this->db,$id,'CREATED',1);}(new Notifications($this->db))->enqueue('TICKET',$code);$this->db->commit();return ['code'=>$code,'accessKey'=>$input['accessKey']];
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();if($e instanceof PDOException&&($e->errorInfo[1] ?? null)===1062){if($prior=$this->prior($input,$hash))return $prior;throw new HttpError(409,'Trùng mã đơn. Vui lòng thử lại.');}throw $e;}
     }
     private function detail(array $row,bool $admin):array
@@ -88,7 +92,7 @@ final class Orders
         $data=['id'=>$row['id'],'code'=>$row['code'],'snapshot'=>json_decode($row['snapshot'],true,512,JSON_THROW_ON_ERROR),'bookingStatus'=>$row['booking_status'],'paymentStatus'=>$row['payment_status'],'instructions'=>$row['instructions'],'version'=>(int)$row['version'],'createdAt'=>str_replace(' ','T',$row['created_at']).'Z','fulfillmentStatus'=>'PENDING','tickets'=>[]];if($admin){$data['contact']=json_decode($row['contact'],true,512,JSON_THROW_ON_ERROR);$data['channel']='WEB';}
         $owner=$admin?$this->query('SELECT p.id,p.data FROM jingo_partner_orders po JOIN jingo_partners p ON p.id=po.partner_id WHERE po.order_id=?',[$row['id']])->fetch(PDO::FETCH_ASSOC):false;if($owner){$a=json_decode($owner['data'],true,512,JSON_THROW_ON_ERROR);$data['partner']=['id'=>$owner['id'],'name'=>$a['name'],'creditEnabled'=>$a['creditEnabled']];}
         if($admin){$data['channel']=$pos?'POS':($owner?'CTV':'WEB');$data['counter']=$pos?['id'=>$pos['counter_id'],'name'=>json_decode($pos['data'],true,512,JSON_THROW_ON_ERROR)['name']]:null;}
-        foreach($this->query('SELECT id,code,kind,covers,note,created_at FROM jingo_order_tickets WHERE order_id=? ORDER BY created_at,id',[$row['id']])->fetchAll(PDO::FETCH_ASSOC) as $ticket)$data['tickets'][]=['id'=>$ticket['id'],'code'=>$ticket['code'],'kind'=>$ticket['kind'],'covers'=>(int)$ticket['covers'],'note'=>$ticket['note'],'createdAt'=>str_replace(' ','T',$ticket['created_at']).'Z'];$data['deliveredGuests']=array_sum(array_column($data['tickets'],'covers'));$data['totalGuests']=array_sum(array_column($data['snapshot']['lines'],'quantity'));$data['fulfillmentStatus']=$data['deliveredGuests']>=$data['totalGuests']?'DELIVERED':($data['deliveredGuests']>0?'PARTIAL':'PENDING');return $data;
+        foreach($this->query('SELECT id,code,kind,covers,note,created_at FROM jingo_order_tickets WHERE order_id=? ORDER BY created_at,id',[$row['id']])->fetchAll(PDO::FETCH_ASSOC) as $ticket)$data['tickets'][]=['id'=>$ticket['id'],'code'=>$ticket['code'],'kind'=>$ticket['kind'],'covers'=>(int)$ticket['covers'],'note'=>$ticket['note'],'createdAt'=>str_replace(' ','T',$ticket['created_at']).'Z'];$data['deliveredGuests']=array_sum(array_column($data['tickets'],'covers'));$data['totalGuests']=array_sum(array_column($data['snapshot']['lines'],'quantity'));if(isset($data['snapshot']['transport'])){$status=$this->query('SELECT status FROM jingo_transport_jobs WHERE order_id=?',[$row['id']])->fetchColumn();if($status!==false)$data['transportJob']=['status'=>$status];}$data['fulfillmentStatus']=$data['deliveredGuests']>=$data['totalGuests']?'DELIVERED':($data['deliveredGuests']>0?'PARTIAL':'PENDING');return $data;
     }
     public function lookup(array $input):array
     {

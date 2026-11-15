@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__.'/ProductLocation.php';
+require_once __DIR__.'/Transport.php';
 
 final class ProductSchema
 {
@@ -42,21 +43,23 @@ final class ProductSchema
     }
     public static function validate(array $input): array
     {
-        self::keys($input,['id','supplierId','slug','name','destination','destinationId','type','description','cover','gallery','detailHtml','status','demo','version','variants','rules','closures','english','seoTitle','seoDescription','onlineDiscount','displayOrder','tourInfo','serviceDetails','location']);
+        self::keys($input,['id','supplierId','slug','name','destination','destinationId','type','description','cover','gallery','detailHtml','status','demo','version','variants','rules','closures','english','seoTitle','seoDescription','onlineDiscount','displayOrder','tourInfo','serviceDetails','location','transport']);
         if(!array_key_exists('description',$input))self::fail('Thiếu mô tả sản phẩm.');foreach(['onlineDiscount','demo','gallery','detailHtml','rules','closures','english','seoTitle','seoDescription'] as $key)if(array_key_exists($key,$input)&&$input[$key]===null)self::fail('Trường '.$key.' không được null.');
         $p=['id'=>self::id($input['id'] ?? null),'name'=>self::text($input,'name',200,true),'destination'=>self::text($input,'destination',150,true),'type'=>self::id($input['type'] ?? null),'description'=>self::text($input,'description',10000),'slug'=>$input['slug'] ?? null,'status'=>$input['status'] ?? null,'version'=>self::integer($input['version'] ?? null,2147483646),'demo'=>$input['demo'] ?? false,'cover'=>self::image($input['cover'] ?? null),'gallery'=>[],'detailHtml'=>self::html($input,'detailHtml'),'seoTitle'=>self::text($input,'seoTitle',200),'seoDescription'=>self::text($input,'seoDescription',500)];
         if(!is_string($p['slug'])||strlen($p['slug'])>160||!preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/D',$p['slug'])||!in_array($p['status'],['DRAFT','PUBLISHED','ARCHIVED'],true)||!is_bool($p['demo']))self::fail('Đường dẫn hoặc trạng thái sản phẩm không hợp lệ.');
         foreach(['supplierId','destinationId'] as $key)if(array_key_exists($key,$input))$p[$key]=self::id($input[$key],true);
         if(isset($input['onlineDiscount']))$p['onlineDiscount']=self::discount($input['onlineDiscount']);
         if(array_key_exists('displayOrder',$input))$p['displayOrder']=self::integer($input['displayOrder'],10000);
+        if(array_key_exists('transport',$input))$p['transport']=Transport::config($input['transport']);
         if(array_key_exists('location',$input))$p['location']=self::location($input['location']);if(array_key_exists('tourInfo',$input))$p['tourInfo']=self::tourInfo($input['tourInfo']);if(array_key_exists('serviceDetails',$input))$p['serviceDetails']=self::serviceDetails($input['serviceDetails']);
         foreach(self::list($input['gallery'] ?? [],20) as $image){$ref=self::image($image);if(!$ref)self::fail('Ảnh bộ sưu tập không hợp lệ.');$p['gallery'][]=$ref;}
         $variants=[];$p['variants']=[];
         foreach(self::list($input['variants'] ?? null,30,1) as $v){
-            $v=self::object($v);self::keys($v,['id','name','prices','timeSlots','schedulePeriods','conditions','onlineDiscount','saleWindow','displayOrder','tourInfo','serviceDetails']);$id=self::id($v['id'] ?? null);if(isset($variants[$id]))self::fail('Mã gói vé bị trùng.');
+            $v=self::object($v);self::keys($v,['id','name','prices','timeSlots','schedulePeriods','conditions','onlineDiscount','saleWindow','displayOrder','tourInfo','serviceDetails','maxPassengers','roundTrip']);$id=self::id($v['id'] ?? null);if(isset($variants[$id]))self::fail('Mã gói vé bị trùng.');
             foreach(['timeSlots','schedulePeriods','conditions','onlineDiscount'] as $key)if(array_key_exists($key,$v)&&$v[$key]===null)self::fail('Trường gói không được null.');
             $prices=self::object($v['prices'] ?? null);self::keys($prices,Pricing::GROUPS);if(!$prices)self::fail('Gói cần ít nhất một giá.');foreach($prices as &$price)$price=self::integer($price,100000000);unset($price);
             $variant=['id'=>$id,'name'=>self::text($v,'name',100,true),'prices'=>$prices,'timeSlots'=>self::slots($v['timeSlots'] ?? [])];
+            if(array_key_exists('maxPassengers',$v)){$variant['maxPassengers']=self::integer($v['maxPassengers'],150);if($variant['maxPassengers']<1)self::fail('Sức chứa xe phải từ 1 đến 150.');}if(array_key_exists('roundTrip',$v)){if(!is_bool($v['roundTrip']))self::fail('Khứ hồi không hợp lệ.');$variant['roundTrip']=$v['roundTrip'];}
             if(array_key_exists('displayOrder',$v))$variant['displayOrder']=self::integer($v['displayOrder'],10000);
             if(array_key_exists('serviceDetails',$v))$variant['serviceDetails']=self::serviceDetails($v['serviceDetails']);if(array_key_exists('tourInfo',$v))$variant['tourInfo']=self::tourInfo($v['tourInfo']);$info=TourInfo::effective($p,$variant);if(isset($info['minGuests'],$info['maxGuests'])&&$info['minGuests']>$info['maxGuests'])self::fail('Số khách tối thiểu không được lớn hơn tối đa: '.$variant['name']);
             if(array_key_exists('saleWindow',$v)){$window=self::object($v['saleWindow']);self::keys($window,['startDate','endDate']);$variant['saleWindow']=[];foreach(['startDate','endDate'] as $key)if(array_key_exists($key,$window)){if(!is_string($window[$key]))self::fail('Ngày mở bán không hợp lệ.');Pricing::validateDate($window[$key]);$variant['saleWindow'][$key]=$window[$key];}if(isset($window['startDate'],$window['endDate'])&&$window['startDate']>$window['endDate'])self::fail('Ngày kết thúc mở bán phải sau ngày bắt đầu.');}

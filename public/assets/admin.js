@@ -1,6 +1,6 @@
 'use strict';
 const $=s=>document.querySelector(s);
-const names={'cash-report':'Báo cáo thu & hoàn',refunds:'Sổ hoàn tiền',smtp:'SMTP & email','manual-payments':'Thanh toán thủ công','stay-bookings':'Đơn phòng','stay-vouchers':'Voucher phòng',stays:'Cơ sở & loại phòng',notifications:'Thông báo',features:'Bật/tắt phân hệ',gifts:'Danh mục & tồn quà',partners:'Tài khoản CTV','price-groups':'Nhóm giá CTV','pos-users':'Nhân viên quầy',pos:'Bán tại quầy',shifts:'Ca thu ngân',counters:'Quầy bán vé',reports:'Báo cáo bán hàng','ticket-stock':'Kho mã vé','supply-alerts':'Cảnh báo nguồn cung','supplier-statements':'Sao kê nhà cung cấp','supply-profit':'Báo cáo giá vốn','supplier-balances':'Công nợ nhà cung cấp',supply:'Lô nguồn cung',translations:'Bản dịch English','post-categories':'Chuyên mục bài viết',posts:'Bài viết',orders:'Đơn hàng',products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
+const names={transport:'Điều xe','cash-report':'Báo cáo thu & hoàn',refunds:'Sổ hoàn tiền',smtp:'SMTP & email','manual-payments':'Thanh toán thủ công','stay-bookings':'Đơn phòng','stay-vouchers':'Voucher phòng',stays:'Cơ sở & loại phòng',notifications:'Thông báo',features:'Bật/tắt phân hệ',gifts:'Danh mục & tồn quà',partners:'Tài khoản CTV','price-groups':'Nhóm giá CTV','pos-users':'Nhân viên quầy',pos:'Bán tại quầy',shifts:'Ca thu ngân',counters:'Quầy bán vé',reports:'Báo cáo bán hàng','ticket-stock':'Kho mã vé','supply-alerts':'Cảnh báo nguồn cung','supplier-statements':'Sao kê nhà cung cấp','supply-profit':'Báo cáo giá vốn','supplier-balances':'Công nợ nhà cung cấp',supply:'Lô nguồn cung',translations:'Bản dịch English','post-categories':'Chuyên mục bài viết',posts:'Bài viết',orders:'Đơn hàng',products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
 const labels={ACTIVE:'Hoạt động',ARCHIVED:'Lưu trữ',DRAFT:'Bản nháp',PUBLISHED:'Đã xuất bản',TRASH:'Thùng rác',NEW:'Mới',DONE:'Đã xử lý',TICKET:'Vé',TOUR:'Tour',PAGE:'Trang thường',CONTACT:'Liên hệ'};
 let current='overview',records=[],draft=null,dirty=false,loading=0,contactStatus='NEW',editing=false,editorSection='';
 function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;}
@@ -40,6 +40,7 @@ async function render(){
  if(current==='stay-vouchers'){await renderStayVouchers(screen,id);return;}
  if(current==='stay-bookings'){await renderStayBookings(screen,id);return;}
  if(current==='stays'){await renderStays(screen,id);return;}
+ if(current==='transport'){await renderTransport(screen,id);return;}
  if(current==='cash-report'){await renderCashReport(screen,id);return;}
  if(current==='refunds'){await renderRefunds(screen,id);return;}
  if(current==='smtp'){await renderMail(screen,id);return;}

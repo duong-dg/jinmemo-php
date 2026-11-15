@@ -1,0 +1,452 @@
+[
+  {
+    "name": "source-0",
+    "input": {
+      "property": {
+        "transport": {
+          "mode": "PRIVATE",
+          "origin": "Airport",
+          "destination": "City",
+          "leadMinutes": 60
+        },
+        "variants": [
+          {
+            "id": "v",
+            "maxPassengers": 4,
+            "roundTrip": false,
+            "timeSlots": [
+              {
+                "id": "s",
+                "start": "10:00"
+              }
+            ]
+          }
+        ]
+      },
+      "variantId": "v",
+      "date": "2099-06-01",
+      "slotId": "s",
+      "quantities": {
+        "ADULT": 1
+      },
+      "trip": {
+        "pickup": "Airport gate",
+        "dropoff": "Hotel lobby",
+        "pickupTime": "10:00",
+        "passengers": 3,
+        "flightNumber": ""
+      },
+      "now": 4083958800
+    },
+    "expected": {
+      "pickup": "Airport gate",
+      "dropoff": "Hotel lobby",
+      "pickupTime": "10:00",
+      "passengers": 3,
+      "flightNumber": "",
+      "mode": "PRIVATE",
+      "origin": "Airport",
+      "destination": "City",
+      "maxPassengers": 4,
+      "roundTrip": false
+    }
+  },
+  {
+    "name": "source-1",
+    "input": {
+      "property": {
+        "transport": {
+          "mode": "PRIVATE",
+          "origin": "Airport",
+          "destination": "City",
+          "leadMinutes": 60
+        },
+        "variants": [
+          {
+            "id": "v",
+            "maxPassengers": 4,
+            "roundTrip": false,
+            "timeSlots": [
+              {
+                "id": "s",
+                "start": "10:00"
+              }
+            ]
+          }
+        ]
+      },
+      "variantId": "v",
+      "date": "2099-06-01",
+      "slotId": "s",
+      "quantities": {
+        "ADULT": 2
+      },
+      "trip": {
+        "pickup": "Airport gate",
+        "dropoff": "Hotel lobby",
+        "pickupTime": "10:00",
+        "passengers": 3,
+        "flightNumber": ""
+      },
+      "now": 4083958800
+    },
+    "error": true
+  },
+  {
+    "name": "source-2",
+    "input": {
+      "property": {
+        "transport": {
+          "mode": "PRIVATE",
+          "origin": "Airport",
+          "destination": "City",
+          "leadMinutes": 60
+        },
+        "variants": [
+          {
+            "id": "v",
+            "maxPassengers": 4,
+            "roundTrip": false,
+            "timeSlots": [
+              {
+                "id": "s",
+                "start": "10:00"
+              }
+            ]
+          }
+        ]
+      },
+      "variantId": "v",
+      "date": "2099-06-01",
+      "slotId": "s",
+      "quantities": {
+        "ADULT": 1
+      },
+      "trip": {
+        "pickup": "Airport gate",
+        "dropoff": "Hotel lobby",
+        "pickupTime": "10:00",
+        "passengers": 5,
+        "flightNumber": ""
+      },
+      "now": 4083958800
+    },
+    "error": true
+  },
+  {
+    "name": "source-3",
+    "input": {
+      "property": {
+        "transport": {
+          "mode": "PRIVATE",
+          "origin": "Airport",
+          "destination": "City",
+          "leadMinutes": 120
+        },
+        "variants": [
+          {
+            "id": "v",
+            "maxPassengers": 4,
+            "roundTrip": false,
+            "timeSlots": [
+              {
+                "id": "s",
+                "start": "10:00"
+              }
+            ]
+          }
+        ]
+      },
+      "variantId": "v",
+      "date": "2099-06-01",
+      "slotId": "s",
+      "quantities": {
+        "ADULT": 1
+      },
+      "trip": {
+        "pickup": "Airport gate",
+        "dropoff": "Hotel lobby",
+        "pickupTime": "10:00",
+        "passengers": 3,
+        "flightNumber": ""
+      },
+      "now": 4083958800
+    },
+    "error": true
+  },
+  {
+    "name": "source-4",
+    "input": {
+      "property": {
+        "transport": {
+          "mode": "SHARED",
+          "origin": "Airport",
+          "destination": "City",
+          "leadMinutes": 60
+        },
+        "variants": [
+          {
+            "id": "v",
+            "maxPassengers": 4,
+            "roundTrip": false,
+            "timeSlots": [
+              {
+                "id": "s",
+                "start": "10:00"
+              }
+            ]
+          }
+        ]
+      },
+      "variantId": "v",
+      "date": "2099-06-01",
+      "slotId": "s",
+      "quantities": {
+        "ADULT": 3
+      },
+      "trip": {
+        "pickup": "Airport gate",
+        "dropoff": "Hotel lobby",
+        "pickupTime": "10:00",
+        "passengers": 3,
+        "flightNumber": ""
+      },
+      "now": 4083958800
+    },
+    "expected": {
+      "pickup": "Airport gate",
+      "dropoff": "Hotel lobby",
+      "pickupTime": "10:00",
+      "passengers": 3,
+      "flightNumber": "",
+      "mode": "SHARED",
+      "origin": "Airport",
+      "destination": "City",
+      "maxPassengers": 4,
+      "roundTrip": false
+    }
+  },
+  {
+    "name": "source-5",
+    "input": {
+      "property": {
+        "transport": {
+          "mode": "SHARED",
+          "origin": "Airport",
+          "destination": "City",
+          "leadMinutes": 60
+        },
+        "variants": [
+          {
+            "id": "v",
+            "maxPassengers": 4,
+            "roundTrip": false,
+            "timeSlots": [
+              {
+                "id": "s",
+                "start": "10:00"
+              }
+            ]
+          }
+        ]
+      },
+      "variantId": "v",
+      "date": "2099-06-01",
+      "slotId": "s",
+      "quantities": {
+        "ADULT": 2
+      },
+      "trip": {
+        "pickup": "Airport gate",
+        "dropoff": "Hotel lobby",
+        "pickupTime": "10:00",
+        "passengers": 3,
+        "flightNumber": ""
+      },
+      "now": 4083958800
+    },
+    "error": true
+  },
+  {
+    "name": "source-6",
+    "input": {
+      "property": {
+        "transport": {
+          "mode": "SHARED",
+          "origin": "Airport",
+          "destination": "City",
+          "leadMinutes": 60
+        },
+        "variants": [
+          {
+            "id": "v",
+            "maxPassengers": 4,
+            "roundTrip": false,
+            "timeSlots": [
+              {
+                "id": "s",
+                "start": "10:00"
+              }
+            ]
+          }
+        ]
+      },
+      "variantId": "v",
+      "date": "2099-06-01",
+      "slotId": "s",
+      "quantities": {
+        "ADULT": 3
+      },
+      "trip": {
+        "pickup": "Airport gate",
+        "dropoff": "Hotel lobby",
+        "pickupTime": "11:00",
+        "passengers": 3,
+        "flightNumber": ""
+      },
+      "now": 4083958800
+    },
+    "error": true
+  },
+  {
+    "name": "source-7",
+    "input": {
+      "property": {
+        "transport": {
+          "mode": "PRIVATE",
+          "origin": "Airport",
+          "destination": "City",
+          "leadMinutes": 60
+        },
+        "variants": [
+          {
+            "id": "v",
+            "maxPassengers": 4,
+            "roundTrip": true,
+            "timeSlots": [
+              {
+                "id": "s",
+                "start": "10:00"
+              }
+            ]
+          }
+        ]
+      },
+      "variantId": "v",
+      "date": "2099-06-01",
+      "slotId": "s",
+      "quantities": {
+        "ADULT": 1
+      },
+      "trip": {
+        "pickup": "Airport gate",
+        "dropoff": "Hotel lobby",
+        "pickupTime": "10:00",
+        "passengers": 3,
+        "flightNumber": "",
+        "returnDate": "2099-06-01",
+        "returnTime": "13:00"
+      },
+      "now": 4083958800
+    },
+    "expected": {
+      "pickup": "Airport gate",
+      "dropoff": "Hotel lobby",
+      "pickupTime": "10:00",
+      "passengers": 3,
+      "flightNumber": "",
+      "returnDate": "2099-06-01",
+      "returnTime": "13:00",
+      "mode": "PRIVATE",
+      "origin": "Airport",
+      "destination": "City",
+      "maxPassengers": 4,
+      "roundTrip": true
+    }
+  },
+  {
+    "name": "source-8",
+    "input": {
+      "property": {
+        "transport": {
+          "mode": "PRIVATE",
+          "origin": "Airport",
+          "destination": "City",
+          "leadMinutes": 60
+        },
+        "variants": [
+          {
+            "id": "v",
+            "maxPassengers": 4,
+            "roundTrip": true,
+            "timeSlots": [
+              {
+                "id": "s",
+                "start": "10:00"
+              }
+            ]
+          }
+        ]
+      },
+      "variantId": "v",
+      "date": "2099-06-01",
+      "slotId": "s",
+      "quantities": {
+        "ADULT": 1
+      },
+      "trip": {
+        "pickup": "Airport gate",
+        "dropoff": "Hotel lobby",
+        "pickupTime": "10:00",
+        "passengers": 3,
+        "flightNumber": "",
+        "returnDate": "2099-06-01",
+        "returnTime": "10:00"
+      },
+      "now": 4083958800
+    },
+    "error": true
+  },
+  {
+    "name": "source-9",
+    "input": {
+      "property": {
+        "transport": {
+          "mode": "PRIVATE",
+          "origin": "Airport",
+          "destination": "City",
+          "leadMinutes": 60
+        },
+        "variants": [
+          {
+            "id": "v",
+            "maxPassengers": 4,
+            "roundTrip": false,
+            "timeSlots": [
+              {
+                "id": "s",
+                "start": "10:00"
+              }
+            ]
+          }
+        ]
+      },
+      "variantId": "v",
+      "date": "2099-06-01",
+      "slotId": "s",
+      "quantities": {
+        "ADULT": 1,
+        "CHILD": 1
+      },
+      "trip": {
+        "pickup": "Airport gate",
+        "dropoff": "Hotel lobby",
+        "pickupTime": "10:00",
+        "passengers": 3,
+        "flightNumber": ""
+      },
+      "now": 4083958800
+    },
+    "error": true
+  }
+]

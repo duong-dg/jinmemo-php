@@ -10,8 +10,8 @@ final class PosPortal
     {
         if(!in_array('SELL',$actor['permissions'],true))return [];$items=[];
         foreach((new Products($this->db))->list(true) as $p)if($p['status']==='PUBLISHED'&&!($p['demo'] ?? false)){
-            $variants=[];foreach($p['variants'] as $v)$variants[]=array_intersect_key($v,array_flip(['id','name','prices','timeSlots','schedulePeriods','saleWindow','displayOrder']));
-            $items[]=['id'=>$p['id'],'name'=>$p['name'],'variants'=>$variants];
+            $variants=[];foreach($p['variants'] as $v)$variants[]=array_intersect_key($v,array_flip(['id','name','prices','timeSlots','schedulePeriods','saleWindow','displayOrder','maxPassengers','roundTrip']));
+            $items[]=['id'=>$p['id'],'name'=>$p['name'],'variants'=>$variants]+(isset($p['transport'])?['transport'=>$p['transport']]:[]);
         }return $items;
     }
     public static function counter(array $actor,mixed $id):string
@@ -20,7 +20,7 @@ final class PosPortal
     }
     private function project(array $order,array $actor):array
     {
-        $out=array_intersect_key($order,array_flip(['id','code','version','createdAt','channel','counter','bookingStatus','paymentStatus','fulfillmentStatus','snapshot','contact','instructions','deliveredGuests','totalGuests','archived','openShiftId']));
+        $out=array_intersect_key($order,array_flip(['id','code','version','createdAt','channel','counter','bookingStatus','paymentStatus','fulfillmentStatus','snapshot','contact','instructions','deliveredGuests','totalGuests','archived','openShiftId','transportJob']));
         $show=array_intersect(['PRINT','DELIVER'],$actor['permissions'])&&!$order['archived']&&$order['bookingStatus']==='CONFIRMED'&&$order['paymentStatus']==='PAID';$out['tickets']=$show?$order['tickets']:[];return $out;
     }
     public function detail(array $actor,string $id):array
