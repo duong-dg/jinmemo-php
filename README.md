@@ -707,3 +707,12 @@ Giới hạn: chưa có OTP, tài khoản POS/CTV, sửa bản dịch loại s�
 - Cập nhật snapshot và audit stay.pay cùng giao dịch với mã giao dịch; lỗi rollback toàn bộ. Đơn hủy/hết hạn/hoàn tất hoặc đã thu bằng mã khác bị chặn. Không hỗ trợ thu một phần, hoàn tiền hoặc email lưu trú trong đợt này. Hủy đơn đã thu vẫn không tự hoàn tiền.
 - Kiểm thử service/HTTP đã qua: CASH/BANK, xác nhận bắt buộc, số tiền sai, replay, mã trùng giữa đơn, rollback audit, đơn hủy, thu → xác nhận → nhận phòng → hoàn tất và admin auth. Chưa kiểm trình duyệt/hosting thật. Không thêm SQL; dùng schema tới 035, chưa import dữ liệu cũ.
 - Cập nhật: git pull --ff-only origin main.
+
+## Cấu hình thanh toán thủ công — đợt 71
+
+- Admin → Cấu hình website → Thanh toán thủ công: thêm/sửa/bỏ mục, bật/tắt, tên và hướng dẫn Việt/Anh. Có lựa chọn tiền mặt, thanh toán sau và phương thức tùy chỉnh (ví dụ chuyển khoản). Bước xác nhận hiển thị số mục đang bật; cho phép tắt tất cả và cảnh báo khách không còn lựa chọn để đặt phòng mới.
+- GET/POST /api/v1/admin/manual-payments: admin-only, Origin/header mutation, no-store, strict schema, version và audit payment.manual-methods.save. Dùng khóa catalog chung với tạo đơn để việc đổi phương thức và chụp hướng dẫn vào đơn không xen kẽ. Stale version nhận 409; lỗi audit rollback cấu hình.
+- Giữ settings id manual-payments và data.methods theo nguồn; tối đa 20 mục, id CASH/PAY_LATER/MANUAL_..., không trùng, name 1–100, hướng dẫn tối đa 600 ký tự UTF-16, enabled boolean. English trống kế thừa Việt khi chụp vào đơn; không nhập HTML thực thi. Danh sách công khai chỉ trả các mục bật, không lộ version hoặc audit.
+- Đơn cũ giữ nguyên manualPreference; tắt hoặc sửa phương thức không thay hướng dẫn đã lưu hoặc cản tra cứu/thu tiền đơn cũ. Chưa mở cấu hình này cho luồng vé cũ; hiện dùng trong đặt phòng. Không bật cổng thanh toán online, không tự xác nhận chuyển khoản.
+- Kiểm thử cấu hình/defaults/strict validation/UTF-16/trùng mã/quá giới hạn/rollback/stale/auth/Origin và bộ đặt phòng, phân hệ, HTTP đã qua. Chưa kiểm trình duyệt hoặc hosting thật. Sửa mô tả cấu hình phân hệ để phản ánh đã có tạo đơn phòng.
+- Không thêm SQL; git pull --ff-only origin main. Chưa import dữ liệu cũ, PDF giữ nguyên bản gốc.
