@@ -120,6 +120,10 @@
     "stay_aliases": ["lang", "slug", "hotel_id"],
     "stay_bookings": ["id", "code", "hotel_id", "room_id", "check_in", "check_out", "rooms", "status", "access_hash", "secret", "request_hash", "data", "expires_at", "version", "created_at"]
   },
+  "orderMailTables": {
+    "order_mail_keys": ["order_id", "secret"],
+    "mail_outbox": ["id", "order_id", "event", "status", "attempts", "next_at", "last_error", "created_at", "sent_at"]
+  },
   "refundTables": {
     "refunds": ["id", "root_kind", "root_id", "root_code", "amount", "refunded_on", "reference_key", "data", "created_at"]
   },

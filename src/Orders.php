@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__.'/Notifications.php';
+require_once __DIR__.'/OrderMail.php';
 require_once __DIR__.'/SupplyLots.php';
 require_once __DIR__.'/SupplyAllocation.php';
 require_once __DIR__.'/PosAccess.php';
@@ -73,11 +74,12 @@ final class Orders
             $quantity=array_sum(array_column($quote['lines'],'quantity'));if($quantity<1||$quantity>150)self::fail('Chọn từ 1 đến 150 khách.');
             $hex=bin2hex(random_bytes(16));$id=substr($hex,0,8).'-'.substr($hex,8,4).'-4'.substr($hex,13,3).'-8'.substr($hex,17,3).'-'.substr($hex,20,12);$code='JG'.strtoupper(bin2hex(random_bytes(5)));
             $snapshot=$quote+['productId'=>$p['id'],'productName'=>$p['name'],'variantId'=>$input['variantId'],'date'=>$input['date'],'locale'=>$input['locale'],'demo'=>false];foreach($p['variants'] as $v)if($v['id']===$input['variantId']){$snapshot['variantName']=$v['name'];$snapshot['conditions']=$v['conditions'] ?? '';}
-            $this->query('INSERT INTO jingo_orders(id,code,request_id,request_hash,access_hash,snapshot,contact,instructions) VALUES (?,?,?,?,?,?,?,?)',[$id,$code,$input['requestId'],$hash,hash('sha256',$pos?bin2hex(random_bytes(32)):$input['accessKey']),json_encode($snapshot,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR),json_encode($input['contact'],JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR),'']);
+            $customerKey=$pos?bin2hex(random_bytes(32)):$input['accessKey'];
+            $this->query('INSERT INTO jingo_orders(id,code,request_id,request_hash,access_hash,snapshot,contact,instructions) VALUES (?,?,?,?,?,?,?,?)',[$id,$code,$input['requestId'],$hash,hash('sha256',$customerKey),json_encode($snapshot,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR),json_encode($input['contact'],JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR),'']);
             (new Inventory($this->db))->allocate($id,$p['id'],$input['variantId'],$input['date'],$quote['timeSlot']['id'] ?? '',$quantity);if($discount)(new Vouchers($this->db))->allocate($id,$discount['id']);
             if($pos){$this->query('INSERT INTO jingo_pos_orders(order_id,counter_id,admin_id) VALUES (?,?,?)',[$id,$pos['counterId'],$pos['adminId']]);$this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),$pos['adminId'],'pos.order-create',$id]);}
             if($partnerId!==null){$this->query('INSERT INTO jingo_partner_orders(order_id,partner_id) VALUES (?,?)',[$id,$partnerId]);$this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),'partner:'.$partnerId,'partner.order-create',$id]);}
-            (new Notifications($this->db))->enqueue('TICKET',$code);$this->db->commit();return ['code'=>$code,'accessKey'=>$input['accessKey']];
+            if($partnerId===null){OrderMail::register($this->db,$id,$customerKey);OrderMail::enqueue($this->db,$id,'CREATED',1);}(new Notifications($this->db))->enqueue('TICKET',$code);$this->db->commit();return ['code'=>$code,'accessKey'=>$input['accessKey']];
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();if($e instanceof PDOException&&($e->errorInfo[1] ?? null)===1062){if($prior=$this->prior($input,$hash))return $prior;throw new HttpError(409,'Trùng mã đơn. Vui lòng thử lại.');}throw $e;}
     }
     private function detail(array $row,bool $admin):array
@@ -194,7 +196,7 @@ final class Orders
                 if($row['booking_status']!=='CONFIRMED')throw new HttpError(409,'Chỉ cập nhật hướng dẫn cho đơn đã đặt.');$this->query('UPDATE jingo_orders SET instructions=?,version=version+1 WHERE id=?',[$input['instructions'],$id]);
             }
             $this->query('INSERT INTO jingo_order_actions(id,order_id,request_hash,admin_id,action,order_version,data) VALUES (?,?,?,?,?,?,?)',[$input['requestId'],$id,$hash,$actor,$action,$input['version']+1,json_encode($input,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR)]);
-            $result=$this->get($id);$this->db->commit();return $result;
+            if(in_array($action,['PAY','DELIVER','CONFIRM','CANCEL','INSTRUCTIONS'],true))OrderMail::enqueue($this->db,$id,$action,$input['version']+1);$result=$this->get($id);$this->db->commit();return $result;
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();if($e instanceof PDOException&&($e->errorInfo[1] ?? null)===1062)throw new HttpError(409,$action==='PAY'?'Mã giao dịch hoặc thao tác đã được ghi nhận. Kiểm tra lại trước khi thu.':'Mã thao tác đã dùng.');throw $e;}
     }
 }

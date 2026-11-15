@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__.'/PosAccess.php';
+require_once __DIR__.'/OrderMail.php';
 
 /** Original supplier files; never extracts QR codes or rewrites PDFs. */
 final class TicketFiles
@@ -59,7 +60,7 @@ final class TicketFiles
             if(!is_dir($this->directory)&&!mkdir($this->directory,0700,true)&&!is_dir($this->directory))throw new RuntimeException('Cannot create ticket storage.');$id=self::newId();$ticketId=$ticket['id'] ?? self::newId();$path=$this->file($id);$stream=fopen($path,'xb');if(!$stream)throw new RuntimeException('Cannot save ticket file.');$saved=$path;try{if(fwrite($stream,$bytes)!==strlen($bytes)||!fflush($stream))throw new RuntimeException('Incomplete ticket file.');}finally{fclose($stream);}@chmod($path,0600);
             $code='FILE-'.$ticketId;if(!$ticket&&$this->query('SELECT id FROM jingo_ticket_stock WHERE code_hash=?',[hash('sha256',$code)])->fetchColumn())throw new HttpError(409,'Mã quản lý file đã nằm trong kho vé. Thử lại.');$note='File gốc từ đối tác; dùng nội dung/QR trong file để vào cổng.';if(!$ticket)$this->query("INSERT INTO jingo_order_tickets(id,order_id,code,code_hash,kind,covers,note) VALUES (?,?,?,?,'TOUR_VOUCHER',?,?)",[$ticketId,$orderId,$code,hash('sha256',$code),$input['covers'],$note]);
             $this->query('INSERT INTO jingo_ticket_files(id,order_id,ticket_id,name,mime,bytes,hash) VALUES (?,?,?,?,?,?,?)',[$id,$orderId,$ticketId,$name,$mime,$size,$hash]);$this->query('UPDATE jingo_orders SET version=version+1 WHERE id=?',[$orderId]);
-            $data=['note'=>'Đính kèm file: '.$name,'fileId'=>$id,'ticketId'=>$ticketId,'covers'=>$input['covers']];$this->query("INSERT INTO jingo_order_actions(id,order_id,request_hash,admin_id,action,order_version,data) VALUES (?,?,?,?,'ATTACH_FILE',?,?)",[$input['requestId'],$orderId,$requestHash,$actor,$input['version']+1,json_encode($data,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR)]);$committing=true;$this->db->commit();$saved=null;return ['id'=>$id,'ticketId'=>$ticketId,'duplicate'=>false];
+            $data=['note'=>'Đính kèm file: '.$name,'fileId'=>$id,'ticketId'=>$ticketId,'covers'=>$input['covers']];$this->query("INSERT INTO jingo_order_actions(id,order_id,request_hash,admin_id,action,order_version,data) VALUES (?,?,?,?,'ATTACH_FILE',?,?)",[$input['requestId'],$orderId,$requestHash,$actor,$input['version']+1,json_encode($data,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR)]);OrderMail::enqueue($this->db,$orderId,'DELIVER',$input['version']+1);$committing=true;$this->db->commit();$saved=null;return ['id'=>$id,'ticketId'=>$ticketId,'duplicate'=>false];
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();if($saved!==null&&!$committing&&is_file($saved))unlink($saved);if($e instanceof PDOException&&($e->errorInfo[1] ?? null)===1062)throw new HttpError(409,'Mã thao tác hoặc file đã được ghi nhận.');throw $e;}
     }
     public function download(string $orderId,string $id,bool $customer=false):array

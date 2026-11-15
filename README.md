@@ -1,6 +1,6 @@
 # JinMemo — PHP + MySQL cho hosting
 
-Đây là bản chuyển đổi riêng. Hiện có trang chủ, sản phẩm, bài viết/cẩm nang, nội dung và Liên hệ công khai; giao diện quản trị cùng các API danh mục, tồn, voucher, tính giá và tạo/tra cứu đơn WEB. Đã nối giao diện đặt/tra cứu đơn; đã có ghi nhận thu tiền thủ công; đã có giao file vé gốc qua tra cứu; thanh toán trực tuyến, email và công cụ nhập dữ liệu cũ chưa hoàn tất; chưa thay thế hệ thống hiện tại. Xem [kế hoạch chuyển dữ liệu cũ](docs/MIGRATION.md).
+Đây là bản chuyển đổi riêng. Hiện có trang chủ, sản phẩm, bài viết/cẩm nang, nội dung và Liên hệ công khai; giao diện quản trị cùng các API danh mục, tồn, voucher, tính giá và tạo/tra cứu đơn WEB. Đã nối giao diện đặt/tra cứu đơn; đã có ghi nhận thu tiền thủ công; đã có giao file vé gốc qua tra cứu; đã có SMTP/email đơn vé và lưu trú; thanh toán trực tuyến và công cụ nhập dữ liệu cũ chưa hoàn tất; chưa thay thế hệ thống hiện tại. Xem [kế hoạch chuyển dữ liệu cũ](docs/MIGRATION.md).
 
 ## Cài đặt bộ khung
 
@@ -18,7 +18,7 @@ Chạy local từ thư mục này: `php -S 127.0.0.1:8088 -t public public/index
 - Đích PHP + MySQL, chuyển theo module và giữ hình thức giao diện hiện tại.
 - Giữ URL `/api/v1` và hợp đồng API khi chuyển từng module.
 - Vé đính kèm: lưu và gửi đúng file gốc cho khách. Không đọc QR từ PDF, tách trang hoặc tạo lại PDF mang thương hiệu.
-- Module đính kèm sẽ cần kiểm tra quyền upload/download, loại và dung lượng file, lưu ngoài web root và cơ chế giao file qua email/link có kiểm quyền. Bộ khung hiện chưa triển khai upload hoặc gửi mail.
+- Module đính kèm sẽ cần kiểm tra quyền upload/download, loại và dung lượng file, lưu ngoài web root và cơ chế giao file qua email/link có kiểm quyền. Bản PHP đã có upload/download file gốc và gửi liên kết nhận vé qua email; không trích QR hoặc tạo lại PDF.
 - Chuyển các module: đăng nhập/phân quyền → danh mục/nội dung → giá/lịch/tồn/voucher → giỏ/đơn/thanh toán → file gốc/email → quầy/CTV/công nợ/báo cáo/sao lưu.
 - Khi chuyển đơn/tồn/thanh toán, kiểm tra giao dịch đồng thời và chống ghi nhận lặp trên MySQL thật. Các bài kiểm thử Node.js là nguồn đối chiếu hành vi.
 
@@ -805,3 +805,31 @@ Chưa nối email vé/quà/CTV vào module này, chưa hoàn tiền lưu trú ho
 - Phạm vi chưa gồm thu/chi ca, thanh toán nhà cung cấp, hoàn quà/xe/giỏ/thanh toán chung hoặc tiền quà chưa có sổ thu. Báo cáo bán hàng và sổ công nợ hiện tại giữ cách tính riêng; không trừ hoàn vào chỉ tiêu giá trị đơn hoặc tự phân bổ trả nợ CTV về từng đơn.
 - Kiểm thử đã qua: biên ngày UTC/GMT+7, hoàn ghi lùi ngày, đơn trước kỳ, không đếm đôi receipt, phân loại cổng/hình thức chưa lưu, số âm, ngày trống, filters, tham chiếu lệch, tổng toàn kỳ/phân trang, dữ liệu trên 10.000 dòng và giới hạn CSV, formula/privacy, admin/CTV auth/method/query/HTTP; hồi quy bán hàng/hoàn tiền/HTTP. Chưa kiểm giao diện trình duyệt hoặc hosting thật.
 - Không thêm SQL. Cập nhật git pull --ff-only origin main; nếu chưa cài các đợt email/hoàn tiền thì chạy php bin/install.php để có schema tới 037. Chưa import dữ liệu cũ; PDF giữ nguyên file gốc.
+
+## Email đơn vé WEB/POS và cron chung — đợt 78
+
+- Chuyển luồng email cho đơn vé mới: lưu khóa tra cứu bằng AES-256-GCM, xếp CREATED khi tạo, PAY khi thu tiền, CONFIRM/CANCEL/INSTRUCTIONS khi cập nhật, DELIVER khi giao mã từ tay/kho hoặc upload file. Đơn và email cùng giao dịch; enqueue lỗi rollback cả đơn/thanh toán/giao vé/file, replay không sinh thư trùng. Không thay cấu trúc snapshot giá/tồn.
+- WEB giữ đúng accessKey khách đã dùng; POS sinh khóa khách riêng, hash và mã hóa cùng khóa đó, không dùng khóa thao tác quầy để mở vé cho khách. Khóa mã hóa dùng chung MEDIA_DIR/.smtp-key. Đơn CTV không được cấp liên kết email khách trong module này; tiếp tục nhận vé qua tài khoản CTV.
+- Giữ quy tắc nguồn cho vé: chỉ xếp email tự động khi SMTP đang bật, nhưng lưu khóa cho đơn mới kể cả khi SMTP tắt. Không gửi bù tự động sự kiện đã xảy ra khi tắt; có thể gửi lại trạng thái hiện tại từ admin sau khi bật SMTP. Email lưu trú vẫn giữ quy tắc hàng đợi đã có, gồm thư PENDING khi SMTP tắt.
+- Admin → Đơn hàng → xem đơn: trạng thái email, tối đa 100 dòng gần nhất, gửi lại trạng thái + liên kết riêng, thử lại FAILED và lý do không đủ điều kiện. Đơn cũ trước migration chưa có secret được báo NO_ACCESS_KEY; không đổi access_hash hoặc bịa khóa mới. CTV báo PARTNER. RequestId gửi lại idempotent và chặn dùng cho đơn khác; retry kiểm đúng job thuộc đơn, SMTP đang bật và điều kiện hiện tại.
+- Admin → Cấu hình website → SMTP & email: dùng chung SMTP cho vé/lưu trú, thêm nhật ký email vé có tìm mã, lọc trạng thái, phân trang 25 và mở đơn để xử lý. GET /api/v1/admin/smtp/journal, GET /admin/orders/:id/emails, POST /emails/resend và /emails/retry đều admin-only/no-store; mutation có Origin/header/schema. Không trả secret, access_hash, thông tin SMTP hoặc email khách trong nhật ký.
+- Email Việt/Anh dùng trạng thái hiện tại, tên sản phẩm/gói, ngày, tổng và hướng dẫn cho khách; có liên kết riêng /tra-cuu#CODE:KEY hoặc /en/orders#CODE:KEY. Không đưa ghi chú liên hệ/vận hành hoặc mã nhà cung cấp vào nội dung mail. File vé nhận qua liên kết riêng với kiểm quyền, PAID/trạng thái và thu hồi file tại thời điểm tải; chưa đính kèm byte PDF trực tiếp vào email, không tạo lại PDF và không mở luồng TICKET_READY qua email cho CTV.
+- Worker vé dùng TLS đã có, khóa cùng database với lưu trú, lease 120 giây, retry lỗi với backoff và tối đa 5 lần, lỗi được lược dữ liệu nhạy cảm. SENT chỉ là SMTP chấp nhận thư; nếu tiến trình ngắt sau khi gửi nhưng trước đánh dấu SENT vẫn có thể trùng thư khi phục hồi, như module lưu trú.
+- Migration 038 tạo order_mail_keys(order_id,secret) và mail_outbox(id,order_id,event,status,attempts,next_at,last_error,created_at,sent_at), đúng tên/thứ tự nguồn; contract ghi orderMailTables riêng. Chưa nhập các khóa/hàng đợi cũ hoặc import dữ liệu kinh doanh.
+- Sửa tương thích sổ hoàn tiền: nhận cả JG (mã đơn do bản PHP tạo) và JM (mã nguồn/export), không đổi mã đơn đã có. Kiểm thử dùng đơn thật tạo/thu qua Orders, không chỉ fixture JM. Không thêm khoản hoàn hoặc thay đổi sổ tiền hiện có khi cập nhật.
+- Kiểm thử đã qua: tạo WEB/POS, khóa đúng access_hash/mã hóa, off/partner/legacy guards, create/pay/deliver/file replay và rollback, SMTP TLS/link riêng/privacy, retry/lease/resend, JG refund, HTTP/schema và CLI chung; hồi quy đơn/tồn, POS, CTV, file PDF nguyên byte, kho mã, hoàn tiền, HTTP và email lưu trú. Chưa kiểm trình duyệt, SMTP thật hoặc hosting thật.
+
+### Cập nhật đợt 78 và đổi cron
+
+    git pull --ff-only origin main
+    php bin/install.php
+
+Không có Terminal thì import database/038-order-mail.sql sau schema 037 bằng phpMyAdmin. Cài migration trước khi nhận đơn mới hoặc giao file trên code mới.
+
+Đổi cron mỗi phút đang chạy bin/stay-mail.php thành bin/mail.php để xử lý cả hai hàng đợi, không cần tạo hai cron:
+
+    /opt/cpanel/ea-php82/root/usr/bin/php /home/USER/jinmemo.cloud/bin/mail.php 10 >> /home/USER/jinmemo-mail.log 2>&1
+
+Sửa USER/thư mục/binary PHP đúng hosting. Số 10 là tối đa 10 email tổng mỗi lượt, xử lý luân phiên vé/lưu trú; cho phép 1–50. bin/stay-mail.php vẫn dùng được nếu chỉ cần email lưu trú. SMTP là cấu hình dùng chung; khi bật, kiểm cả hai nhật ký và các thư đang chờ. Sao lưu database + MEDIA_DIR/.smtp-key cùng nhau, giữ .env/storage/log ngoài web root.
+
+Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn bộ dữ liệu cũ. PDF giữ nguyên file gốc.

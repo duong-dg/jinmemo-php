@@ -6,7 +6,7 @@ final class Refunds
     public function __construct(private PDO $db){}
     private function query(string $sql,array $args=[]):PDOStatement{$s=$this->db->prepare($sql);$s->execute($args);return $s;}
     private static function text(mixed $v,int $min,int $max):string{if(!is_string($v)||str_contains($v,"\0"))throw new HttpError(400,'Thông tin hoàn tiền không hợp lệ.');$v=preg_replace('/^[\s\x{FEFF}]+|[\s\x{FEFF}]+$/u','',$v);$n=$v===null?-1:strlen(mb_convert_encoding($v,'UTF-16LE','UTF-8'))/2;if($n<$min||$n>$max)throw new HttpError(400,'Kiểm tra độ dài thông tin hoàn tiền.');return $v;}
-    private static function code(mixed $v):string{$v=mb_strtoupper(self::text($v,1,80),'UTF-8');if(!preg_match('/^(?:J[MCBH][A-F0-9]{10}|JM-[XG][A-F0-9]{12})$/D',$v))throw new HttpError(400,'Mã đơn không hợp lệ.');return $v;}
+    private static function code(mixed $v):string{$v=mb_strtoupper(self::text($v,1,80),'UTF-8');if(!preg_match('/^(?:J[MGCBH][A-F0-9]{10}|JM-[XG][A-F0-9]{12})$/D',$v))throw new HttpError(400,'Mã đơn không hợp lệ.');return $v;}
     private static function uuid(mixed $v):string{if(!is_string($v)||!preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/iD',$v))throw new HttpError(400,'Mã yêu cầu không hợp lệ.');return strtolower($v);}
     private static function integer(mixed $v):int{if(!is_int($v)||$v<1||$v>15000000000)throw new HttpError(400,'Khoản hoàn từ 1 đến 15 tỷ đồng.');return $v;}
     private static function safe(mixed $v):int{if(!is_numeric($v)||$v<0||$v>9007199254740991||floor((float)$v)!=(float)$v)throw new HttpError(409,'Sổ tiền không hợp lệ. Cần đối chiếu dữ liệu.');return (int)$v;}
