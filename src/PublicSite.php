@@ -3,6 +3,7 @@ declare(strict_types=1);
 require_once __DIR__.'/FeatureSettings.php';
 require_once __DIR__.'/PublicStays.php';
 require_once __DIR__.'/TransportPlan.php';
+require_once __DIR__.'/RideLinks.php';
 
 final class PublicSite
 {
@@ -43,6 +44,7 @@ final class PublicSite
         $canonical=$base.$canonicalPath;$indexing=!$isLookup&&!($isCatalog&&($browse['filters']['q']!==''||$browse['page']>1))&&($this->config['SEO_INDEXING'] ?? 'false')==='true';
         header('Content-Type: text/html; charset=utf-8');header('Cache-Control: no-store');header('X-Content-Type-Options: nosniff');header('X-Frame-Options: DENY');header('Referrer-Policy: strict-origin-when-cross-origin');
         header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
+        $relatedRideLinks=$isPost?array_values(array_filter((new RideLinks($this->db))->list($lang)['data'],fn($r)=>in_array($r['id'],$post['relatedRideIds']??[],true))):[];
         require dirname(__DIR__).'/views/public.php';exit;
     }
 }

@@ -1,0 +1,2546 @@
+[
+  {
+    "variant": "base",
+    "en": false,
+    "admin": false,
+    "plan": {
+      "enabled": true,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 101,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng",
+        "vehicleName": "Xe 4 chỗ",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 101
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng",
+        "vehicleName": "Xe 4 chỗ",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/SHARED/2",
+        "mode": "SHARED",
+        "shareSize": 2,
+        "price": 50
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "base",
+    "en": false,
+    "admin": true,
+    "plan": {
+      "enabled": true,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 101,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng",
+        "vehicleName": "Xe 4 chỗ",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 101
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng",
+        "vehicleName": "Xe 4 chỗ",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/SHARED/2",
+        "mode": "SHARED",
+        "shareSize": 2,
+        "price": 50
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "base",
+    "en": true,
+    "admin": false,
+    "plan": {
+      "enabled": true,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 101,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hoi An",
+        "toName": "Da Nang",
+        "vehicleName": "Xe 4 cho",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 101
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hoi An",
+        "toName": "Da Nang",
+        "vehicleName": "Xe 4 cho",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/SHARED/2",
+        "mode": "SHARED",
+        "shareSize": 2,
+        "price": 50
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "Hoi An",
+        "toName": "Da Nang",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "base",
+    "en": true,
+    "admin": true,
+    "plan": {
+      "enabled": true,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 101,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hoi An",
+        "toName": "Da Nang",
+        "vehicleName": "Xe 4 cho",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 101
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hoi An",
+        "toName": "Da Nang",
+        "vehicleName": "Xe 4 cho",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/SHARED/2",
+        "mode": "SHARED",
+        "shareSize": 2,
+        "price": 50
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "Hoi An",
+        "toName": "Da Nang",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "off",
+    "en": false,
+    "admin": false,
+    "plan": {
+      "enabled": false,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 101,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": []
+  },
+  {
+    "variant": "off",
+    "en": false,
+    "admin": true,
+    "plan": {
+      "enabled": false,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 101,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng",
+        "vehicleName": "Xe 4 chỗ",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 101
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng",
+        "vehicleName": "Xe 4 chỗ",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/SHARED/2",
+        "mode": "SHARED",
+        "shareSize": 2,
+        "price": 50
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "off",
+    "en": true,
+    "admin": false,
+    "plan": {
+      "enabled": false,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 101,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": []
+  },
+  {
+    "variant": "off",
+    "en": true,
+    "admin": true,
+    "plan": {
+      "enabled": false,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 101,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hoi An",
+        "toName": "Da Nang",
+        "vehicleName": "Xe 4 cho",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 101
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hoi An",
+        "toName": "Da Nang",
+        "vehicleName": "Xe 4 cho",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/SHARED/2",
+        "mode": "SHARED",
+        "shareSize": 2,
+        "price": 50
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "Hoi An",
+        "toName": "Da Nang",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "return",
+    "en": false,
+    "admin": false,
+    "plan": {
+      "enabled": true,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 101,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true,
+          "roundTripOnly": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng",
+        "vehicleName": "Xe 4 chỗ",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": true,
+        "twoWay": true,
+        "id": "f1/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 101
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "return",
+    "en": false,
+    "admin": true,
+    "plan": {
+      "enabled": true,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 101,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true,
+          "roundTripOnly": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng",
+        "vehicleName": "Xe 4 chỗ",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": true,
+        "twoWay": true,
+        "id": "f1/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 101
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "return",
+    "en": true,
+    "admin": false,
+    "plan": {
+      "enabled": true,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 101,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true,
+          "roundTripOnly": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hoi An",
+        "toName": "Da Nang",
+        "vehicleName": "Xe 4 cho",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": true,
+        "twoWay": true,
+        "id": "f1/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 101
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "Hoi An",
+        "toName": "Da Nang",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "return",
+    "en": true,
+    "admin": true,
+    "plan": {
+      "enabled": true,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 101,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true,
+          "roundTripOnly": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hoi An",
+        "toName": "Da Nang",
+        "vehicleName": "Xe 4 cho",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": true,
+        "twoWay": true,
+        "id": "f1/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 101
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "Hoi An",
+        "toName": "Da Nang",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "zero",
+    "en": false,
+    "admin": false,
+    "plan": {
+      "enabled": true,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 0,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "zero",
+    "en": false,
+    "admin": true,
+    "plan": {
+      "enabled": true,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 0,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "zero",
+    "en": true,
+    "admin": false,
+    "plan": {
+      "enabled": true,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 0,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "Hoi An",
+        "toName": "Da Nang",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "zero",
+    "en": true,
+    "admin": true,
+    "plan": {
+      "enabled": true,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 0,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "Hoi An",
+        "toName": "Da Nang",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "english",
+    "en": false,
+    "admin": false,
+    "plan": {
+      "enabled": true,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": "",
+          "englishName": "Sedan"
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {},
+          "englishName": "  0  "
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng 東京 한글",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 101,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng 東京 한글",
+        "vehicleName": "Xe 4 chỗ",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 101
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng 東京 한글",
+        "vehicleName": "Xe 4 chỗ",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/SHARED/2",
+        "mode": "SHARED",
+        "shareSize": 2,
+        "price": 50
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng 東京 한글",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "english",
+    "en": false,
+    "admin": true,
+    "plan": {
+      "enabled": true,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": "",
+          "englishName": "Sedan"
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {},
+          "englishName": "  0  "
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng 東京 한글",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 101,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng 東京 한글",
+        "vehicleName": "Xe 4 chỗ",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 101
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng 東京 한글",
+        "vehicleName": "Xe 4 chỗ",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/SHARED/2",
+        "mode": "SHARED",
+        "shareSize": 2,
+        "price": 50
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "Hội An",
+        "toName": "Đà Nẵng 東京 한글",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "english",
+    "en": true,
+    "admin": false,
+    "plan": {
+      "enabled": true,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": "",
+          "englishName": "Sedan"
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {},
+          "englishName": "  0  "
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng 東京 한글",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 101,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "0",
+        "toName": "Da Nang 東京 한글",
+        "vehicleName": "Sedan",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 101
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "0",
+        "toName": "Da Nang 東京 한글",
+        "vehicleName": "Sedan",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/SHARED/2",
+        "mode": "SHARED",
+        "shareSize": 2,
+        "price": 50
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "0",
+        "toName": "Da Nang 東京 한글",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  },
+  {
+    "variant": "english",
+    "en": true,
+    "admin": true,
+    "plan": {
+      "enabled": true,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Xe 4 chỗ",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": "",
+          "englishName": "Sedan"
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Hội An",
+          "surcharges": {},
+          "englishName": "  0  "
+        },
+        {
+          "id": "b",
+          "name": "Đà Nẵng 東京 한글",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 101,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "expected": [
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "0",
+        "toName": "Da Nang 東京 한글",
+        "vehicleName": "Sedan",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 101
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v1",
+        "fromName": "0",
+        "toName": "Da Nang 東京 한글",
+        "vehicleName": "Sedan",
+        "seats": 4,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": true,
+        "id": "f1/SHARED/2",
+        "mode": "SHARED",
+        "shareSize": 2,
+        "price": 50
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "vehicleId": "v2",
+        "fromName": "0",
+        "toName": "Da Nang 東京 한글",
+        "vehicleName": "Van",
+        "seats": 7,
+        "image": null,
+        "durationMinutes": null,
+        "roundTrip": false,
+        "twoWay": false,
+        "id": "f2/PRIVATE",
+        "mode": "PRIVATE",
+        "shareSize": null,
+        "price": 200
+      }
+    ]
+  }
+]
