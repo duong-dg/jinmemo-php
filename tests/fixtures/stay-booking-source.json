@@ -1,0 +1,28 @@
+{
+  "keyHex": "0101010101010101010101010101010101010101010101010101010101010101",
+  "plain": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "encrypted": "AgICAgICAgICAgICZreoKCs2oJyyrd2pPcaj08PUsI6K0OwQvOaBmhmaFR4WHn9WDA7CjiZPM4j+Rj0ayxS/tsY7vEeqItLTAlUs65gmO71iboTMTlBUpj670zk=",
+  "input": {
+    "hotelId": "00000000-0000-4000-8000-000000000001",
+    "roomId": "00000000-0000-4000-8000-000000000002",
+    "checkIn": "2099-06-01",
+    "checkOut": "2099-06-03",
+    "rooms": 1,
+    "adults": 1,
+    "children": 0,
+    "voucherCode": "",
+    "locale": "vi",
+    "requestId": "00000000-0000-4000-8000-000000000020",
+    "accessKey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "expectedTotal": 200,
+    "paymentMethod": "PAY_LATER",
+    "accepted": true,
+    "contact": {
+      "name": "Guest",
+      "phone": "0901234567",
+      "email": "guest@example.test",
+      "note": ""
+    }
+  },
+  "fingerprint": "546e2fa2acc6d146e73c6020ce287315a7b0139358932749c687cd22ba1e5492"
+}
