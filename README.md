@@ -716,3 +716,12 @@ Giới hạn: chưa có OTP, tài khoản POS/CTV, sửa bản dịch loại s�
 - Đơn cũ giữ nguyên manualPreference; tắt hoặc sửa phương thức không thay hướng dẫn đã lưu hoặc cản tra cứu/thu tiền đơn cũ. Chưa mở cấu hình này cho luồng vé cũ; hiện dùng trong đặt phòng. Không bật cổng thanh toán online, không tự xác nhận chuyển khoản.
 - Kiểm thử cấu hình/defaults/strict validation/UTF-16/trùng mã/quá giới hạn/rollback/stale/auth/Origin và bộ đặt phòng, phân hệ, HTTP đã qua. Chưa kiểm trình duyệt hoặc hosting thật. Sửa mô tả cấu hình phân hệ để phản ánh đã có tạo đơn phòng.
 - Không thêm SQL; git pull --ff-only origin main. Chưa import dữ liệu cũ, PDF giữ nguyên bản gốc.
+
+## Ghi chú và nhật ký đơn phòng — đợt 72
+
+- Admin → Lưu trú → Đơn phòng: nút Lưu ghi chú riêng, có xác nhận và optimistic version. Không đổi trạng thái đặt phòng/thanh toán khi lưu ghi chú; cho phép xóa ghi chú bằng chuỗi rỗng. Yêu cầu đổi trạng thái không kèm operatorNote giữ ghi chú hiện có, tránh vô tình xóa nội dung. Ghi chú vẫn không xuất hiện trong tra cứu khách.
+- Xem lịch sử & khoản thu: đọc các khoản HOTEL_PAYMENT từ sổ payment_references và nhật ký tạo đơn/cập nhật trạng thái/lưu ghi chú/thu tiền từ audit. Hiện người thao tác, thời điểm UTC và mã/số tiền khoản thu. Đơn miễn phí không tạo khoản thu. Đây là nhật ký thao tác đã lưu, không có bản chụp nội dung ghi chú hoặc trạng thái trước/sau trong audit cũ; các dòng cùng giây không đảm bảo thứ tự thực thi.
+- GET /api/v1/admin/stays/bookings/:id/activity dành riêng admin, no-store, kiểm method/query, whitelist action và kind theo đúng đơn. Tối đa 100 dòng mới nhất mỗi danh sách, có thông báo khi còn thêm. Không trả secret, access_hash, request_hash, thông tin khách hoặc nội dung ghi chú từ endpoint này.
+- POST cập nhật đơn chấp nhận version + operatorNote cho ghi chú riêng, vẫn bắt version hợp lệ, giới hạn 2.000 ký tự UTF-16 và audit stay.booking.note trong cùng giao dịch. Lỗi audit rollback cả nội dung/version; stale version nhận 409. Không thêm cột hoặc đổi hợp đồng export.
+- Kiểm thử đã qua: lưu ghi chú không đổi trạng thái/tiền, stale version, rollback audit, giữ ghi chú khi đổi trạng thái, privacy khách, nhật ký và khoản thu đúng đơn, auth/method/query, toàn bộ bộ đơn phòng và hồi quy public/HTTP. Chưa kiểm trình duyệt hoặc hosting thật.
+- Cập nhật git pull --ff-only origin main, không thêm SQL. Email/hoàn tiền lưu trú chưa được nối; chưa import dữ liệu cũ; PDF giữ file gốc.
