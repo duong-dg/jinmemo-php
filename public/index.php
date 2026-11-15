@@ -216,6 +216,9 @@ try {
         $data=$path==='/api/v1/admin/pos/orders'?(new Orders($db))->createPos(jingoRequestBody(),$actor['id']):(new Quotes($db))->quote(jingoRequestBody(),'vi',true);
         header('Content-Type: application/json; charset=utf-8');header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');echo json_encode($data,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);exit;
     }
+    if(preg_match('~^/api/v1/admin/rides/pools/([a-f0-9-]{36})/guests$~D',(string)$path,$rideGuest)){
+        if(($_SERVER['REQUEST_METHOD']??'GET')!=='POST'){header('Allow: POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($_GET)throw new HttpError(400,'Yêu cầu không hợp lệ.');$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);$auth->mutation();$actor=$auth->me();jingoJson((new Rides($db))->addGuests($rideGuest[1],jingoRequestBody(),$actor['id']));
+    }
     if($path==='/api/v1/admin/rides'||preg_match('~^/api/v1/admin/rides/([a-f0-9-]{36})$~D',(string)$path,$rideMatch)){
         $write=$path!=='/api/v1/admin/rides';if(($_SERVER['REQUEST_METHOD']??'GET')!==($write?'POST':'GET')){header('Allow: '.($write?'POST':'GET'));throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($write&&$_GET)throw new HttpError(400,'Yêu cầu không hợp lệ.');$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($write)$auth->mutation();$actor=$auth->me();$rides=new Rides($db);jingoJson($write?$rides->update($rideMatch[1],jingoRequestBody(),$actor['id']):$rides->list($_GET));
     }
