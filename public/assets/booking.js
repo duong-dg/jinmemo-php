@@ -7,7 +7,7 @@
   const data=await response.json().catch(()=>({}));if(!response.ok){const e=new Error(data.message||'Không thể xử lý yêu cầu / Request failed.');e.status=response.status;throw e;}return data;
  }
  function detail(target,order,en){
-  target.replaceChildren(node('h2',(en?'Booking ':'Đơn ')+order.code));const s=order.snapshot;
+  target.replaceChildren(node('h2',(en?'Booking ':'Đơn ')+order.code));if(order.cartCode){const cart=node('a',(en?'View ticket cart ':'Xem giỏ vé ')+order.cartCode);cart.href=(en?'/en/carts':'/gio-ve')+'#'+order.cartCode;target.append(cart,node('p',en?'Use your email or the private cart link to look up the cart.':'Tra cứu giỏ bằng email hoặc liên kết riêng của giỏ.'));}const s=order.snapshot;
   for(const text of [s.productName,s.variantName,(en?'Visit date: ':'Ngày sử dụng: ')+s.date+(s.timeSlot?' · '+s.timeSlot.start:''),(en?'Total: ':'Tổng tiền: ')+money(s.total,en)])target.append(node('p',text));
   const labels=en?{CONFIRMED:'Confirmed',REQUESTED:'Requested',CANCELLED:'Cancelled',UNPAID:'Unpaid',PAID:'Paid',CREDIT:'Credit'}:{CONFIRMED:'Đã đặt',REQUESTED:'Chờ xác nhận',CANCELLED:'Đã hủy',UNPAID:'Chưa thanh toán',PAID:'Đã thanh toán',CREDIT:'Công nợ'};
   target.append(node('p',(en?'Booking: ':'Trạng thái đơn: ')+(labels[order.bookingStatus]||order.bookingStatus)),node('p',(en?'Payment: ':'Thanh toán: ')+(labels[order.paymentStatus]||order.paymentStatus)));

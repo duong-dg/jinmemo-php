@@ -20,7 +20,7 @@ final class PosPortal
     }
     private function project(array $order,array $actor):array
     {
-        $out=array_intersect_key($order,array_flip(['id','code','version','createdAt','channel','counter','bookingStatus','paymentStatus','fulfillmentStatus','snapshot','contact','instructions','deliveredGuests','totalGuests','archived','openShiftId','transportJob']));
+        $out=array_intersect_key($order,array_flip(['id','code','cartCode','version','createdAt','channel','counter','bookingStatus','paymentStatus','fulfillmentStatus','snapshot','contact','instructions','deliveredGuests','totalGuests','archived','openShiftId','transportJob']));
         $show=array_intersect(['PRINT','DELIVER'],$actor['permissions'])&&!$order['archived']&&$order['bookingStatus']==='CONFIRMED'&&$order['paymentStatus']==='PAID';$out['tickets']=$show?$order['tickets']:[];return $out;
     }
     public function detail(array $actor,string $id):array
@@ -31,8 +31,8 @@ final class PosPortal
     {
         if(array_diff(array_keys($input),['counterId']))throw new HttpError(400,'Bộ lọc đơn quầy không hợp lệ.');$ids=$actor['counterIds'];if(array_key_exists('counterId',$input))$ids=[self::counter($actor,$input['counterId'])];if(!$ids)return ['data'=>[]];
         $marks=implode(',',array_fill(0,count($ids),'?'));
-        $rows=$this->query('SELECT o.id,o.code,o.snapshot,o.contact,o.booking_status,o.payment_status,o.created_at,po.counter_id,c.data AS counter_data FROM jingo_orders o JOIN jingo_pos_orders po ON po.order_id=o.id JOIN jingo_counters c ON c.id=po.counter_id WHERE po.counter_id IN ('.$marks.') AND NOT EXISTS(SELECT 1 FROM jingo_order_archives a WHERE a.order_id=o.id) ORDER BY o.created_at DESC,o.id DESC LIMIT 200',$ids)->fetchAll(PDO::FETCH_ASSOC);
-        $out=[];foreach($rows as $r)$out[]=['id'=>$r['id'],'code'=>$r['code'],'snapshot'=>json_decode($r['snapshot'],true,512,JSON_THROW_ON_ERROR),'contact'=>json_decode($r['contact'],true,512,JSON_THROW_ON_ERROR),'bookingStatus'=>$r['booking_status'],'paymentStatus'=>$r['payment_status'],'createdAt'=>str_replace(' ','T',$r['created_at']).'Z','counter'=>['id'=>$r['counter_id'],'name'=>json_decode($r['counter_data'],true,512,JSON_THROW_ON_ERROR)['name']]];return ['data'=>$out];
+        $rows=$this->query('SELECT o.id,o.code,(SELECT c.code FROM jingo_cart_orders cm JOIN jingo_carts c ON c.id=cm.cart_id WHERE cm.order_id=o.id) AS cart_code,o.snapshot,o.contact,o.booking_status,o.payment_status,o.created_at,po.counter_id,c.data AS counter_data FROM jingo_orders o JOIN jingo_pos_orders po ON po.order_id=o.id JOIN jingo_counters c ON c.id=po.counter_id WHERE po.counter_id IN ('.$marks.') AND NOT EXISTS(SELECT 1 FROM jingo_order_archives a WHERE a.order_id=o.id) ORDER BY o.created_at DESC,o.id DESC LIMIT 200',$ids)->fetchAll(PDO::FETCH_ASSOC);
+        $out=[];foreach($rows as $r)$out[]=['id'=>$r['id'],'code'=>$r['code'],'snapshot'=>json_decode($r['snapshot'],true,512,JSON_THROW_ON_ERROR),'contact'=>json_decode($r['contact'],true,512,JSON_THROW_ON_ERROR),'bookingStatus'=>$r['booking_status'],'paymentStatus'=>$r['payment_status'],'createdAt'=>str_replace(' ','T',$r['created_at']).'Z','counter'=>['id'=>$r['counter_id'],'name'=>json_decode($r['counter_data'],true,512,JSON_THROW_ON_ERROR)['name']]]+($r['cart_code']!==null?['cartCode'=>$r['cart_code']]:[]);return ['data'=>$out];
     }
     public function create(array $actor,array $input):array
     {

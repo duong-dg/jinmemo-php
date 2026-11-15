@@ -18,5 +18,6 @@ function mount(id='partner-a'){const screen=new Element('section'),cart=context.
  await find(page.screen,'button','Kiểm tra ghi nợ cả giỏ').onclick();assert.equal(calls.filter(c=>c.body?.action==='CREDIT').length,0);await find(page.screen,'button','Xác nhận ghi nợ cả giỏ').onclick();assert.equal(charged.expectedTotal,280);assert.equal(charged.action,'CREDIT');assert.equal(session.has('jinmemo-ctv-cart:partner-a:pending'),true);page=mount();await find(page.screen,'button','Gửi lại yêu cầu đang chờ').onclick();await settle();const credits=calls.filter(c=>c.body?.action==='CREDIT');assert.equal(credits.length,2);assert.deepEqual(credits[0].body,credits[1].body);assert.equal(session.has('jinmemo-ctv-cart:partner-a:pending'),false);assert.equal(changed,2);
  // A settled cart no longer offers another charge.
  page=mount();await settle();assert.ok(!all(page.screen).some(n=>n.textContent==='Kiểm tra ghi nợ cả giỏ'));
+ await page.cart.open(code);assert.equal(calls.at(-1).path,'carts/'+code);assert.equal(calls.at(-1).body,null,'Opening parent from a child only performs a read');
  console.log('PASS: partner net-cart add/review, account-isolated pending storage and stale callback guard, reload/retry unchanged create and whole-cart credit, child file/share navigation.');
 })().catch(e=>{console.error(e);process.exitCode=1;});

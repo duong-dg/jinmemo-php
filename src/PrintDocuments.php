@@ -12,7 +12,7 @@ final class PrintDocuments
             if($actor!==null){PosAuth::permit($actor,'PRINT');PosPortal::counter($actor,$order['counter']['id'] ?? null);PosAccess::live($this->db,$actor['id'],$order['counter']['id'],'PRINT');}
             $usable=!$order['archived']&&$order['bookingStatus']==='CONFIRMED'&&in_array($order['paymentStatus'],['PAID','CREDIT'],true);
             $files=$usable?(new TicketFiles($this->db,''))->list($id):[];
-            $data=array_intersect_key($order,array_flip(['id','code','snapshot','contact','channel','counter','createdAt','bookingStatus','paymentStatus','archived','totalGuests','deliveredGuests','instructions']));
+            $data=array_intersect_key($order,array_flip(['id','code','cartCode','snapshot','contact','channel','counter','createdAt','bookingStatus','paymentStatus','archived','totalGuests','deliveredGuests','instructions']));
             $data['contact']=array_intersect_key($order['contact'],array_flip(['name','phone','email']));
             $data['tickets']=$usable?array_values(array_filter($order['tickets'],fn($t)=>!str_starts_with($t['code'],'FILE-'))):[];
             $data['files']=array_values(array_map(fn($f)=>['id'=>$f['id'],'name'=>$f['name']],array_filter($files,fn($f)=>$f['revoked_at']===null&&$f['deleted_at']===null)));
