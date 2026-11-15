@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require_once __DIR__.'/FeatureSettings.php';
 require_once __DIR__.'/PublicStays.php';
+require_once __DIR__.'/TransportPlan.php';
 
 final class PublicSite
 {
@@ -12,13 +13,14 @@ final class PublicSite
     }
     public function render(string $path): never
     {
-        $lang=str_starts_with($path,'/en')?'en':'vi';$en=$lang==='en';$pages=new Pages($this->db);$settings=new SiteSettings($this->db,$this->config);$branding=$settings->get('brand',true);$features=(new FeatureSettings($this->db))->read(true);$seo=$settings->get('site-seo',true);
+        $lang=str_starts_with($path,'/en')?'en':'vi';$en=$lang==='en';$pages=new Pages($this->db);$settings=new SiteSettings($this->db,$this->config);$branding=$settings->get('brand',true);$features=(new FeatureSettings($this->db))->read(true);$seo=$settings->get('site-seo',true);$ridesEnabled=(new TransportPlan($this->db))->read()['plan']['enabled'];
         $base=rtrim($this->config['PUBLIC_BASE_URL'] ?? '','/');$parts=parse_url($base);
         if(!$parts || !isset($parts['scheme'],$parts['host']) || !in_array($parts['scheme'],['http','https'],true) || isset($parts['query']) || isset($parts['fragment']) || isset($parts['user']))throw new HttpError(503,'Chưa cấu hình URL website.');
         $base=$parts['scheme'].'://'.$parts['host'].(isset($parts['port'])?':'.$parts['port']:'');
         $home=in_array($path,['/','/en','/en/'],true);$isProduct=(bool)preg_match('#^/(?:en/)?ve/[^/]+/?$#D',$path);$page=null;$product=null;$published=$pages->published($lang);$navigation=$pages->navigation($lang);$catalog=new Products($this->db);$publicProducts=$home?$catalog->list(false,$lang):[];
         $isDestinationIndex=in_array($path,['/diem-den','/diem-den/','/en/destinations','/en/destinations/'],true);$isDestination=(bool)preg_match('#^/(?:diem-den|en/destinations)/([^/]+)/?$#D',$path,$destinationMatch);$isType=(bool)preg_match('#^/(?:en/)?loai/([^/]+)/?$#D',$path,$typeMatch);$isCatalog=$isDestinationIndex||$isDestination||$isType;$browse=null;$catalogTypes=$home?(new ProductTypes($this->db))->list(false,$lang):[];
         $isStayIndex=in_array($path,['/dat-phong','/dat-phong/','/en/stays','/en/stays/'],true);$isStayDetail=(bool)preg_match('~^/(?:dat-phong|en/stays)/([^/]+)/?$~D',$path,$stayMatch);$stayCatalog=null;$stay=null;
+        $isRides=in_array($path,['/dat-xe','/dat-xe/','/en/rides','/en/rides/'],true);
         $isGifts=in_array($path,['/qua-luu-niem','/qua-luu-niem/','/en/gifts','/en/gifts/'],true);
         $isLookup=in_array($path,['/tra-cuu','/tra-cuu/','/en/orders','/en/orders/'],true);
         $isBlog=in_array($path,['/cam-nang','/cam-nang/','/en/blog','/en/blog/'],true);$isPost=(bool)preg_match('#^/(?:cam-nang|en/blog)/[^/]+/?$#D',$path);$post=null;$blogPosts=[];
@@ -26,6 +28,7 @@ final class PublicSite
         elseif($isPost){$post=(new Posts($this->db))->find(rawurldecode(basename(rtrim($path,'/'))),$lang);$canonicalPath=$post['localePaths'][$lang];$languagePaths=$post['localePaths'];$title=$post['seoTitle'] ?: $post['title'];$description=$post['seoDescription'] ?: $post['excerpt'];$image=$post['cover'];}
         elseif($isStayIndex){$canonicalPath=$en?'/en/stays':'/dat-phong';$title=$en?'Places to stay':'Lưu trú';$description=$en?'Explore rooms and check prices for your stay.':'Xem cơ sở lưu trú, loại phòng và giá theo ngày ở.';$image=null;$languagePaths=['vi'=>'/dat-phong','en'=>'/en/stays'];$stayCatalog=(new PublicStays($this->db))->catalog($lang);}
         elseif($isStayDetail){$stay=(new PublicStays($this->db))->detail(rawurldecode($stayMatch[1]),$lang);$canonicalPath=$stay['localePaths'][$lang];$languagePaths=$stay['localePaths'];$title=$stay['name'];$description=mb_substr($stay['description'],0,300);$image=isset($stay['coverId'])?['id'=>$stay['coverId'],'alt'=>$stay['name']]:null;}
+        elseif($isRides){$canonicalPath=$en?'/en/rides':'/dat-xe';$title=$en?'Private transfers':'Đặt xe riêng';$description=$en?'Find and request a private transfer.':'Tìm giá và đặt chuyến xe riêng.';$image=null;$languagePaths=['vi'=>'/dat-xe','en'=>'/en/rides'];}
         elseif($isGifts){$canonicalPath=$en?'/en/gifts':'/qua-luu-niem';$title=$en?'Souvenirs':'Quà lưu niệm';$description=$en?'Choose local souvenirs for pickup or delivery.':'Chọn quà lưu niệm, nhận tại quầy hoặc giao hàng.';$image=null;$languagePaths=['vi'=>'/qua-luu-niem','en'=>'/en/gifts'];}
         elseif($isLookup){$canonicalPath=$en?'/en/orders':'/tra-cuu';$title=$en?'Find your booking':'Tra cứu đơn hàng';$description=$en?'View your booking with your booking code and email.':'Xem đơn hàng bằng mã đơn và email đã đặt.';$image=null;$languagePaths=['vi'=>'/tra-cuu','en'=>'/en/orders'];}
         elseif($home){$canonicalPath=$en?'/en':'/';$title=$seo[$lang]['title'];$description=$seo[$lang]['description'];$image=$seo['image'];$languagePaths=['vi'=>'/','en'=>'/en'];}

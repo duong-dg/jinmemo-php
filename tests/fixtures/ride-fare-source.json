@@ -1,0 +1,127 @@
+[
+  {
+    "q": {
+      "base": 100,
+      "surcharge": 15,
+      "total": 115
+    },
+    "roundTrip": false,
+    "expected": {
+      "total": 115,
+      "roundTrip": false
+    }
+  },
+  {
+    "q": {
+      "base": 100,
+      "surcharge": 15,
+      "total": 115
+    },
+    "roundTrip": true,
+    "expected": {
+      "total": 230,
+      "roundTrip": true
+    }
+  },
+  {
+    "q": {
+      "base": 100,
+      "surcharge": 15,
+      "total": 115,
+      "roundTripOnly": true,
+      "roundTripPrice": 1
+    },
+    "roundTrip": false,
+    "expected": {
+      "total": 130,
+      "roundTrip": true
+    }
+  },
+  {
+    "q": {
+      "base": 100,
+      "surcharge": 15,
+      "total": 115,
+      "roundTripOnly": true,
+      "roundTripPrice": 1
+    },
+    "roundTrip": true,
+    "expected": {
+      "total": 130,
+      "roundTrip": true
+    }
+  },
+  {
+    "q": {
+      "base": 100,
+      "surcharge": 0,
+      "total": 100,
+      "roundTripPrice": 999
+    },
+    "roundTrip": false,
+    "expected": {
+      "total": 100,
+      "roundTrip": false
+    }
+  },
+  {
+    "q": {
+      "base": 100,
+      "surcharge": 0,
+      "total": 100,
+      "roundTripPrice": 999
+    },
+    "roundTrip": true,
+    "expected": {
+      "total": 200,
+      "roundTrip": true
+    }
+  },
+  {
+    "q": {
+      "base": 0,
+      "surcharge": 10,
+      "total": 10
+    },
+    "roundTrip": false,
+    "expected": {
+      "total": 10,
+      "roundTrip": false
+    }
+  },
+  {
+    "q": {
+      "base": 0,
+      "surcharge": 10,
+      "total": 10
+    },
+    "roundTrip": true,
+    "expected": null
+  },
+  {
+    "q": {
+      "base": 100,
+      "surcharge": 25,
+      "total": 125,
+      "roundTripOnly": false
+    },
+    "roundTrip": false,
+    "expected": {
+      "total": 125,
+      "roundTrip": false
+    }
+  },
+  {
+    "q": {
+      "base": 100,
+      "surcharge": 25,
+      "total": 125,
+      "roundTripOnly": false
+    },
+    "roundTrip": true,
+    "expected": {
+      "total": 250,
+      "roundTrip": true
+    }
+  }
+]

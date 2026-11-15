@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS jingo_ride_bookings (
+ id CHAR(36) CHARACTER SET ascii PRIMARY KEY,
+ code VARCHAR(17) CHARACTER SET ascii COLLATE ascii_bin NOT NULL UNIQUE,
+ request_key CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL UNIQUE,
+ visit_date CHAR(10) CHARACTER SET ascii NOT NULL,
+ status VARCHAR(20) CHARACTER SET ascii NOT NULL,
+ trip_id VARCHAR(80) COLLATE utf8mb4_bin NULL,
+ data JSON NOT NULL,
+ version INT NOT NULL DEFAULT 1,
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ INDEX ride_trip(trip_id),
+ INDEX ride_date(visit_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

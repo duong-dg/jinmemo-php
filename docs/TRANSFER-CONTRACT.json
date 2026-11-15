@@ -120,6 +120,7 @@
     "stay_aliases": ["lang", "slug", "hotel_id"],
     "stay_bookings": ["id", "code", "hotel_id", "room_id", "check_in", "check_out", "rooms", "status", "access_hash", "secret", "request_hash", "data", "expires_at", "version", "created_at"]
   },
+  "rideTables": {"ride_bookings": ["id","code","request_key","visit_date","status","trip_id","data","version","created_at"]},
   "transportTables": {
     "transport_jobs": ["order_id", "visit_date", "status", "data", "version"]
   },
