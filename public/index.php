@@ -250,6 +250,9 @@ try {
         $write=str_ends_with($path,'/read');if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!==($write?'POST':'GET')){header('Allow: '.($write?'POST':'GET'));throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($_GET)throw new HttpError(400,'Bộ lọc thông báo không hợp lệ.');$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($write)$auth->mutation();$actor=$auth->me();$service=new Notifications($db);$out=$write?$service->read($actor['id'],jingoRequestBody()):$service->list($actor['id']);header('Content-Type: application/json; charset=utf-8');header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');echo json_encode($out,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);exit;
     }
 
+    if(preg_match('~^/api/v1/admin/stays/([a-f0-9-]{36})/delete$~D',(string)$path,$stayDelete)){
+ if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='POST'){header('Allow: POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($_GET)throw new HttpError(400,'Yêu cầu không hợp lệ.');$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);$auth->mutation();$actor=$auth->me();jingoJson((new Stays($db))->remove($stayDelete[1],jingoRequestBody(),$actor['id']));
+ }
     if(preg_match('~^/api/v1/admin/stays/([a-f0-9-]{36})/calendar$~D',(string)$path,$stayCalendar)){
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}$config=jingoConfig();$db=jingoDatabase($config);(new AdminAuth($db,$config))->me();jingoJson((new Stays($db))->calendar($stayCalendar[1],$_GET));
     }

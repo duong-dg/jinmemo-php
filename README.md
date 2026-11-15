@@ -734,3 +734,12 @@ Giới hạn: chưa có OTP, tài khoản POS/CTV, sửa bản dịch loại s�
 - Kiểm Origin/header/JSON/schema/no-store và quota stay-search 120 lần/IP/phút, tách báo giá/tạo đơn. Tắt phân hệ chặn tìm kiếm. UI bỏ response cũ khi đổi input, có thông báo không có kết quả và nút trở về danh mục.
 - Kiểm thử service/HTTP: tiếng Việt không dấu, giá theo ngày, loại phòng phù hợp rẻ nhất, sức chứa, giữ phòng đã tạo, không khớp, strict schema, privacy, feature gate, Origin, form SSR; hồi quy đặt phòng/HTTP đã qua. Chưa kiểm trình duyệt hoặc hosting thật.
 - Không thêm SQL. Cập nhật git pull --ff-only origin main. Chưa import dữ liệu cũ; email/hoàn tiền lưu trú chưa được nối; PDF giữ nguyên bản gốc.
+
+## Xóa cơ sở chưa có lịch sử đơn — đợt 74
+
+- Admin → Lưu trú → Cơ sở & loại phòng: nút Xóa cơ sở chưa có đơn, xác nhận tên và phạm vi xóa vĩnh viễn. Xóa cơ sở, loại phòng và alias đường dẫn; ảnh trong thư viện không bị xóa. Khi có lịch sử đơn, dùng Chỉnh sửa → trạng thái Lưu trữ để ngừng bán và giữ hồ sơ.
+- POST /api/v1/admin/stays/:id/delete nhận đúng {version}, admin-only/Origin/header mutation/no-store, chặn query và sai method/schema/UUID. Khóa catalog và cơ sở trong giao dịch chung với tạo đơn/sửa cơ sở/voucher; stale hoặc cơ sở không còn tồn tại nhận 409.
+- Chặn xóa khi có bất kỳ đơn nào, bao gồm CANCELLED/EXPIRED/COMPLETED. Bổ sung guard so với bản nguồn: voucher còn chứa hotelId cũng chặn xóa, kể cả voucher đã tắt; cần bỏ tham chiếu hoặc lưu trữ cơ sở để không để lại hotelIds không tồn tại.
+- Xóa alias, cơ sở và audit stay.property.delete cùng giao dịch; lỗi audit rollback cả cơ sở lẫn alias. Không xóa booking, sổ tiền, thông báo, audit cũ, ảnh hoặc sửa voucher tự động. Không thêm bảng/cột hoặc thay đổi hợp đồng export.
+- Kiểm thử đã qua: schema/version/stale, lịch sử đơn/voucher guards, alias rollback và cleanup, audit actor, admin auth/Origin/method/query, hồi quy catalog/lịch tồn/đơn phòng/tìm kiếm public. Chưa kiểm giao diện bằng trình duyệt hoặc hosting thật.
+- Cập nhật git pull --ff-only origin main; cần schema hiện tại tới 035, không thêm SQL mới. Chưa import dữ liệu cũ; email/hoàn tiền lưu trú chưa được nối; PDF giữ nguyên bản gốc.
