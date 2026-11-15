@@ -1,0 +1,14 @@
+{
+  "input": {
+    "code": "JMABCDEF1234",
+    "requestId": "00000000-0000-4000-8000-000000000010",
+    "amount": 30,
+    "recipient": "Original payer",
+    "method": "BANK",
+    "reference": "refund-source-10",
+    "refundedOn": "2026-11-15",
+    "note": "Verified refund fixture",
+    "verified": true
+  },
+  "fingerprint": "a43cca6778708408bcc255551f50ef5ad61eb5114a999b48ee02cd49dc5d6984"
+}

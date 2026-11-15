@@ -1,6 +1,6 @@
 'use strict';
 const $=s=>document.querySelector(s);
-const names={smtp:'SMTP & email lưu trú','manual-payments':'Thanh toán thủ công','stay-bookings':'Đơn phòng','stay-vouchers':'Voucher phòng',stays:'Cơ sở & loại phòng',notifications:'Thông báo',features:'Bật/tắt phân hệ',gifts:'Danh mục & tồn quà',partners:'Tài khoản CTV','price-groups':'Nhóm giá CTV','pos-users':'Nhân viên quầy',pos:'Bán tại quầy',shifts:'Ca thu ngân',counters:'Quầy bán vé',reports:'Báo cáo bán hàng','ticket-stock':'Kho mã vé','supply-alerts':'Cảnh báo nguồn cung','supplier-statements':'Sao kê nhà cung cấp','supply-profit':'Báo cáo giá vốn','supplier-balances':'Công nợ nhà cung cấp',supply:'Lô nguồn cung',translations:'Bản dịch English','post-categories':'Chuyên mục bài viết',posts:'Bài viết',orders:'Đơn hàng',products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
+const names={refunds:'Sổ hoàn tiền',smtp:'SMTP & email lưu trú','manual-payments':'Thanh toán thủ công','stay-bookings':'Đơn phòng','stay-vouchers':'Voucher phòng',stays:'Cơ sở & loại phòng',notifications:'Thông báo',features:'Bật/tắt phân hệ',gifts:'Danh mục & tồn quà',partners:'Tài khoản CTV','price-groups':'Nhóm giá CTV','pos-users':'Nhân viên quầy',pos:'Bán tại quầy',shifts:'Ca thu ngân',counters:'Quầy bán vé',reports:'Báo cáo bán hàng','ticket-stock':'Kho mã vé','supply-alerts':'Cảnh báo nguồn cung','supplier-statements':'Sao kê nhà cung cấp','supply-profit':'Báo cáo giá vốn','supplier-balances':'Công nợ nhà cung cấp',supply:'Lô nguồn cung',translations:'Bản dịch English','post-categories':'Chuyên mục bài viết',posts:'Bài viết',orders:'Đơn hàng',products:'Sản phẩm',inventory:'Tồn vé',vouchers:'Mã giảm giá','product-types':'Loại sản phẩm',destinations:'Điểm đến',media:'Thư viện ảnh',suppliers:'Nhà cung cấp',pages:'Trang nội dung','contact-requests':'Yêu cầu liên hệ','site-seo':'SEO website',brand:'Thương hiệu'};
 const labels={ACTIVE:'Hoạt động',ARCHIVED:'Lưu trữ',DRAFT:'Bản nháp',PUBLISHED:'Đã xuất bản',TRASH:'Thùng rác',NEW:'Mới',DONE:'Đã xử lý',TICKET:'Vé',TOUR:'Tour',PAGE:'Trang thường',CONTACT:'Liên hệ'};
 let current='overview',records=[],draft=null,dirty=false,loading=0,contactStatus='NEW',editing=false,editorSection='';
 function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;}
@@ -11,7 +11,7 @@ async function api(path,body,extra={}){
  const options={method:body===undefined?'GET':'POST',credentials:'same-origin',cache:'no-store',headers};
  if(body!==undefined){if(body instanceof FormData)options.body=body;else{headers['Content-Type']='application/json';options.body=JSON.stringify(body);}}
  const response=await fetch('/api/v1/admin/'+path,options);if(response.status===401&&path!=='login')showLogin();let data;try{data=await response.json();}catch{throw new Error('Máy chủ chưa trả dữ liệu hợp lệ. Hãy thử lại cùng yêu cầu.');}if(!data||typeof data!=='object'||Array.isArray(data))throw new Error('Máy chủ chưa trả dữ liệu hợp lệ. Hãy thử lại cùng yêu cầu.');
- if(!response.ok)throw new Error(data.message||'Không thực hiện được thao tác.');return data;
+ if(!response.ok){const error=new Error(data.message||'Không thực hiện được thao tác.');error.status=response.status;throw error;}return data;
 }
 function showLogin(){loading++;notificationGeneration++;$('#notification-count').textContent='';if($('#editor').open)$('#editor').close();$('#screen').replaceChildren();records=[];draft=null;dirty=false;$('#workspace').hidden=true;$('#starting').hidden=true;$('#login').hidden=false;$('#login-form input').focus();}
 function showWorkspace(email){$('#login').hidden=true;$('#starting').hidden=true;$('#workspace').hidden=false;$('#account-email').textContent=email;render();}
@@ -40,6 +40,7 @@ async function render(){
  if(current==='stay-vouchers'){await renderStayVouchers(screen,id);return;}
  if(current==='stay-bookings'){await renderStayBookings(screen,id);return;}
  if(current==='stays'){await renderStays(screen,id);return;}
+ if(current==='refunds'){await renderRefunds(screen,id);return;}
  if(current==='smtp'){await renderMail(screen,id);return;}
  if(current==='manual-payments'){await renderManualPayments(screen,id);return;}
  if(current==='features'){await renderFeatures(screen,id);return;}
