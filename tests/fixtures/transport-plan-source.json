@@ -1,0 +1,848 @@
+[
+  {
+    "name": "source-0",
+    "plan": {
+      "enabled": false,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Car",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Airport",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "City",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 100,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "from": "a",
+    "to": "b",
+    "passengers": 1,
+    "expected": [
+      {
+        "vehicleId": "v1",
+        "fareId": "f1",
+        "sharedEnabled": true,
+        "base": 100,
+        "surcharge": 0,
+        "total": 100,
+        "seatPrice": 40,
+        "exact": true
+      },
+      {
+        "vehicleId": "v2",
+        "fareId": "f2",
+        "base": 200,
+        "surcharge": 0,
+        "total": 200,
+        "seatPrice": 80,
+        "exact": true
+      }
+    ]
+  },
+  {
+    "name": "source-1",
+    "plan": {
+      "enabled": false,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Car",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Airport",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "City",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 100,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "from": "a1",
+    "to": "b1",
+    "passengers": 1,
+    "expected": [
+      {
+        "vehicleId": "v1",
+        "fareId": "f1",
+        "sharedEnabled": true,
+        "base": 100,
+        "surcharge": 15,
+        "total": 115,
+        "seatPrice": 40,
+        "exact": false
+      },
+      {
+        "vehicleId": "v2",
+        "fareId": "f2",
+        "base": 200,
+        "surcharge": 20,
+        "total": 220,
+        "seatPrice": 80,
+        "exact": false
+      }
+    ]
+  },
+  {
+    "name": "source-2",
+    "plan": {
+      "enabled": false,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Car",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Airport",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "City",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 100,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "from": "b1",
+    "to": "a1",
+    "passengers": 1,
+    "expected": [
+      {
+        "vehicleId": "v1",
+        "fareId": "f1",
+        "sharedEnabled": true,
+        "base": 100,
+        "surcharge": 15,
+        "total": 115,
+        "seatPrice": 40,
+        "exact": false
+      }
+    ]
+  },
+  {
+    "name": "source-3",
+    "plan": {
+      "enabled": false,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Car",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Airport",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "City",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 100,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "from": "a1",
+    "to": "b2",
+    "passengers": 5,
+    "expected": [
+      {
+        "vehicleId": "v2",
+        "fareId": "f2",
+        "base": 200,
+        "surcharge": 20,
+        "total": 220,
+        "seatPrice": 80,
+        "exact": false
+      }
+    ]
+  },
+  {
+    "name": "source-4",
+    "plan": {
+      "enabled": false,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Car",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Airport",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "City",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 100,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "from": "a",
+    "to": "a",
+    "passengers": 1,
+    "expected": []
+  },
+  {
+    "name": "source-5",
+    "plan": {
+      "enabled": false,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Car",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Airport",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "City",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 100,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "from": "missing",
+    "to": "b",
+    "passengers": 1,
+    "expected": []
+  },
+  {
+    "name": "source-6",
+    "plan": {
+      "enabled": false,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Car",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Airport",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "City",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 100,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        },
+        {
+          "id": "exact",
+          "from": "a1",
+          "to": "b1",
+          "vehicleId": "v1",
+          "privatePrice": 150,
+          "seatPrice": 60
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "from": "a1",
+    "to": "b2",
+    "passengers": 1,
+    "expected": [
+      {
+        "vehicleId": "v1",
+        "fareId": "exact",
+        "base": 150,
+        "surcharge": 7,
+        "total": 157,
+        "seatPrice": 60,
+        "exact": false
+      },
+      {
+        "vehicleId": "v2",
+        "fareId": "f2",
+        "base": 200,
+        "surcharge": 20,
+        "total": 220,
+        "seatPrice": 80,
+        "exact": false
+      }
+    ]
+  },
+  {
+    "name": "source-7",
+    "plan": {
+      "enabled": false,
+      "qrEnabled": false,
+      "vehicles": [
+        {
+          "id": "v1",
+          "name": "Car",
+          "seats": 4,
+          "sharedSizes": [
+            2
+          ],
+          "luggageNote": ""
+        },
+        {
+          "id": "v2",
+          "name": "Van",
+          "seats": 7,
+          "sharedSizes": [
+            3,
+            4
+          ],
+          "luggageNote": ""
+        }
+      ],
+      "areas": [
+        {
+          "id": "a",
+          "name": "Airport",
+          "surcharges": {}
+        },
+        {
+          "id": "b",
+          "name": "City",
+          "surcharges": {}
+        },
+        {
+          "id": "a1",
+          "name": "Airport gate",
+          "parentId": "a",
+          "surcharges": {
+            "v1": 10,
+            "v2": 20
+          }
+        },
+        {
+          "id": "b1",
+          "name": "Hotel district",
+          "parentId": "b",
+          "surcharges": {
+            "v1": 5
+          }
+        },
+        {
+          "id": "b2",
+          "name": "Small street",
+          "parentId": "b1",
+          "surcharges": {
+            "v1": 7
+          }
+        }
+      ],
+      "fares": [
+        {
+          "id": "f1",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 100,
+          "seatPrice": 40,
+          "twoWay": true,
+          "sharedEnabled": true
+        },
+        {
+          "id": "f2",
+          "from": "a",
+          "to": "b",
+          "vehicleId": "v2",
+          "privatePrice": 200,
+          "seatPrice": 80
+        },
+        {
+          "id": "tie1",
+          "from": "a1",
+          "to": "b",
+          "vehicleId": "v1",
+          "privatePrice": 150,
+          "seatPrice": 60
+        },
+        {
+          "id": "tie2",
+          "from": "a",
+          "to": "b1",
+          "vehicleId": "v1",
+          "privatePrice": 160,
+          "seatPrice": 60
+        }
+      ],
+      "trips": [],
+      "requests": []
+    },
+    "from": "a1",
+    "to": "b2",
+    "passengers": 1,
+    "expected": [
+      {
+        "vehicleId": "v1",
+        "error": "Có nhiều giá tuyến cùng mức ưu tiên. Cần nhập giá riêng cho tuyến này."
+      },
+      {
+        "vehicleId": "v2",
+        "fareId": "f2",
+        "base": 200,
+        "surcharge": 20,
+        "total": 220,
+        "seatPrice": 80,
+        "exact": false
+      }
+    ]
+  }
+]
