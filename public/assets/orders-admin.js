@@ -31,6 +31,7 @@ async function openOrder(id,serial){
   const detail=el('div',undefined,'full order-detail');fields.append(detail);
   detail.append(el('p','Kênh bán: '+(order.channel==='POS'?'POS · '+order.counter.name:order.channel==='CTV'?'CTV · '+(order.partner?.name||'CTV'):'Website')));if(order.channel==='POS'&&order.paymentStatus==='UNPAID')detail.append(el('p',order.openShiftId?'Khoản thu sẽ gắn ca đang mở tại thời điểm ghi nhận.':'Quầy chưa mở ca. Thu tiền lúc này sẽ không gắn ca.','muted'));
   if(order.cartCode){detail.append(el('p','Thuộc giỏ '+order.cartCode+'. Thao tác bên dưới chỉ áp dụng cho gói này.'),button('Mở giỏ '+order.cartCode+' / thu chung',()=>{if(editing)return;dialog.close();draft=null;dirty=false;openCartFor(order.cartCode);}));}
+  if(order.paymentPreferenceLabel){const m=order.paymentPreferenceLabel;detail.append(el('p','Khách chọn thanh toán: '+m.name),el('p',m.instructions||''));}
   renderOrderMail(detail,order.id,serial);
   const printLink=el('a','In phiếu đặt vé ↗','quiet');printLink.href='/admin/print/orders/'+id;printLink.target='_blank';printLink.rel='noopener noreferrer';detail.append(printLink);
   const groupLabels={ADULT:'Người lớn',CHILD:'Trẻ em',SENIOR:'Người cao tuổi',LOCAL_ADULT:'Người lớn địa phương',LOCAL_CHILD:'Trẻ em địa phương',LOCAL_SENIOR:'Người cao tuổi địa phương'};
