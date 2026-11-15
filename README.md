@@ -743,3 +743,39 @@ Giới hạn: chưa có OTP, tài khoản POS/CTV, sửa bản dịch loại s�
 - Xóa alias, cơ sở và audit stay.property.delete cùng giao dịch; lỗi audit rollback cả cơ sở lẫn alias. Không xóa booking, sổ tiền, thông báo, audit cũ, ảnh hoặc sửa voucher tự động. Không thêm bảng/cột hoặc thay đổi hợp đồng export.
 - Kiểm thử đã qua: schema/version/stale, lịch sử đơn/voucher guards, alias rollback và cleanup, audit actor, admin auth/Origin/method/query, hồi quy catalog/lịch tồn/đơn phòng/tìm kiếm public. Chưa kiểm giao diện bằng trình duyệt hoặc hosting thật.
 - Cập nhật git pull --ff-only origin main; cần schema hiện tại tới 035, không thêm SQL mới. Chưa import dữ liệu cũ; email/hoàn tiền lưu trú chưa được nối; PDF giữ nguyên bản gốc.
+
+## Email lưu trú: SMTP, hàng đợi và cron cPanel — đợt 75
+
+Đợt này chuyển trọn module email lưu trú. Không gửi email thật trong quá trình phát triển; kiểm thử dùng SMTP giả lập chạy tại máy local.
+
+- Admin → Cấu hình website → SMTP & email lưu trú: cấu hình host/port, STARTTLS hoặc TLS, tài khoản, mật khẩu, email/tên gửi và bật/tắt. Mật khẩu được mã hóa AES-256-GCM trong settings id smtp bằng MEDIA_DIR/.smtp-key, tương thích envelope nguồn. API chỉ trả passwordConfigured, không trả mật khẩu/ciphertext. Để trống mật khẩu khi sửa là giữ mật khẩu đã lưu. Có version và audit smtp.save cùng giao dịch.
+- Có gửi thử tới email nhập rõ ràng, xác nhận trước gửi, dùng cấu hình đã lưu (kể cả khi đang tắt gửi tự động), không chứa dữ liệu đơn. Giới hạn 5 lần/admin/phút. SMTP bắt buộc TLS 1.2 trở lên và xác minh chứng chỉ/tên máy chủ, không fallback plaintext; hỗ trợ AUTH LOGIN, MIME UTF-8/base64. Không cần Composer hay thư viện ngoài, cần PHP openssl + mbstring và host cho phép kết nối SMTP ra ngoài.
+- Tạo đơn xếp CREATED; thu tiền xếp PAID; đổi trạng thái xếp sự kiện tương ứng trong chính giao dịch booking/audit. Nếu enqueue lỗi, rollback toàn bộ thay đổi. Replay tạo/thu không tạo email trùng. Lưu ghi chú riêng không gửi mail. Email Việt/Anh lấy snapshot đơn và trạng thái hiện tại, có hướng dẫn thanh toán và liên kết tra cứu riêng; không có ghi chú vận hành, hash hoặc thông tin SMTP. Sự kiện trạng thái cũ đổi thành thông báo cập nhật nếu đơn đã chuyển sang trạng thái khác.
+- Migration 036 tạo jingo_stay_mail đúng thứ tự cột nguồn: id,booking_id,event,status,attempts,next_at,last_error,created_at,sent_at. Đây là hàng đợi vận hành, ghi riêng stayMailTables trong contract; chưa thêm vào luồng import dữ liệu kinh doanh cũ hoặc nhập hàng đợi cũ. Không gửi bù email tự động cho đơn đã có từ trước migration.
+- Admin → Đơn phòng → Gửi lại email trạng thái: xếp STATUS với requestId idempotent, kiểm mã yêu cầu không bị dùng cho đơn khác. SMTP → Nhật ký: lọc mã đơn/trạng thái, phân trang 25, xem lần thử/thời điểm gửi/lần chạy tiếp/lỗi đã lược thông tin nhạy cảm. Email FAILED có nút thử lại khi SMTP đang bật; không reset job đang PENDING/SENDING/SENT.
+- Cron xử lý tối đa 1–50 email/lần (mặc định 10), khóa worker theo database để các cron không gửi chồng. Job SENDING có lease 120 giây để phục hồi khi tiến trình chết. Lỗi tự thử lại sau 1/2/4/8 phút, tối đa 5 lần rồi FAILED; lỗi không ghi server response, mật khẩu hoặc liên kết riêng vào log. SMTP tắt giữ hàng đợi; bật lại có thể gửi cả thư cũ đang chờ, vì vậy kiểm nhật ký trước khi bật.
+- SENT nghĩa là SMTP đã chấp nhận thư, không đảm bảo đã vào inbox. SMTP không có giao dịch chung với MySQL: nếu tiến trình chết sau khi SMTP nhận nhưng trước khi đánh dấu SENT, có thể gửi trùng khi phục hồi. Message-ID ổn định cho cùng job giúp nhận diện, không đảm bảo nhà cung cấp loại trùng. Trước khi thử lại lỗi không rõ kết quả, kiểm hộp thư người nhận.
+- Kiểm thử có SMTP TLS/STARTTLS thật tại local với chứng chỉ fixture, từ chối chứng chỉ không tin cậy, AUTH LOGIN, MIME Việt/Anh/private link/trạng thái hiện tại; settings validation/crypto/stale/rollback/privacy; queue atomicity/replay/note silence, retry/exhaustion/lease, cron khóa chống chạy chồng, resend, nhật ký/auth/quota và PHP CLI. Hồi quy booking/catalog/public/notifications/HTTP đã qua. Chưa kiểm trình duyệt, SMTP thật hoặc hosting thật.
+
+### Cài cập nhật và cron
+
+Chạy tại thư mục repository trên host:
+
+    git pull --ff-only origin main
+    php bin/install.php
+
+Nếu không có Terminal, import database/036-stay-mail.sql sau schema 035 bằng phpMyAdmin. Phải cài migration trước khi nhận đơn trên code mới.
+
+Trong cPanel → Cron Jobs, chọn chạy mỗi phút và sửa đường dẫn PHP/thư mục cho tài khoản của bạn, ví dụ:
+
+    /opt/cpanel/ea-php82/root/usr/bin/php /home/USER/jinmemo.cloud/bin/stay-mail.php 10 >> /home/USER/jinmemo-stay-mail.log 2>&1
+
+Có thể dùng /usr/local/bin/php nếu đó là PHP 8.1+ trên host. bin/stay-mail.php chỉ chạy qua CLI, không mở URL cron công khai. Đường dẫn phải trỏ thư mục repo chứa .env, không phải chỉ thư mục public. Worker tự đọc .env, dùng giờ UTC cho database, không cần đặt biến môi trường trong lệnh cron.
+
+1. Sao lưu database và MEDIA_DIR, gồm file ẩn .smtp-key; giữ khóa khi chuyển host. MEDIA_DIR phải ngoài public và không đưa .env/khóa/log ra web.
+2. Cài migration 036, mở admin cấu hình SMTP; nhập email From được nhà cung cấp cho phép.
+3. Lưu cấu hình, gửi thử tới email của bạn, kiểm inbox/thư rác. Gửi thử không tạo đơn hoặc thay đổi trạng thái đơn.
+4. Thêm cron, bật gửi tự động khi sẵn sàng. Theo dõi nhật ký; nếu job đứng PENDING thì kiểm cron/SMTP enabled, nếu SENDING chờ lease, nếu FAILED kiểm TLS/SMTP/khóa/URL rồi thử lại.
+5. Nếu CLI báo lỗi chung, kiểm PHP có openssl/mbstring/pdo_mysql, quyền đọc .env/.smtp-key, schema 036, PUBLIC_BASE_URL HTTPS và quyền gửi From. Không xóa hoặc tạo lại .smtp-key cho dữ liệu cũ.
+
+Chưa nối email vé/quà/CTV vào module này, chưa hoàn tiền lưu trú hoặc import dữ liệu cũ. PDF tiếp tục giữ nguyên file gốc.
