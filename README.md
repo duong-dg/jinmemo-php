@@ -725,3 +725,12 @@ Giới hạn: chưa có OTP, tài khoản POS/CTV, sửa bản dịch loại s�
 - POST cập nhật đơn chấp nhận version + operatorNote cho ghi chú riêng, vẫn bắt version hợp lệ, giới hạn 2.000 ký tự UTF-16 và audit stay.booking.note trong cùng giao dịch. Lỗi audit rollback cả nội dung/version; stale version nhận 409. Không thêm cột hoặc đổi hợp đồng export.
 - Kiểm thử đã qua: lưu ghi chú không đổi trạng thái/tiền, stale version, rollback audit, giữ ghi chú khi đổi trạng thái, privacy khách, nhật ký và khoản thu đúng đơn, auth/method/query, toàn bộ bộ đơn phòng và hồi quy public/HTTP. Chưa kiểm trình duyệt hoặc hosting thật.
 - Cập nhật git pull --ff-only origin main, không thêm SQL. Email/hoàn tiền lưu trú chưa được nối; chưa import dữ liệu cũ; PDF giữ file gốc.
+
+## Tìm phòng trống theo kỳ lưu trú — đợt 73
+
+- Trang Lưu trú Việt/Anh có tìm kiếm theo tên/điểm đến/địa chỉ, ngày nhận/trả, số phòng/người lớn/trẻ em. Tìm không dấu và không phân biệt hoa thường cho tiếng Việt; chỉ hiển thị cơ sở PUBLISHED với loại phòng active phù hợp. Kết quả hiện tổng kỳ ở từ loại phòng đủ chỗ rẻ nhất, có liên kết xem phòng và đặt; chưa tự chuyển lựa chọn tìm kiếm sang form chi tiết.
+- POST /api/v1/stays/search giữ schema nguồn checkIn,checkOut,rooms,adults,children,locale,query; không nhận hotelId/roomId/voucherCode hoặc tổng từ client. Dùng giá, ưu đãi phòng, sức chứa và lịch ngày của cùng core StayPricing; tìm kiếm chưa áp voucher. Sắp xếp cơ sở theo sortOrder như nguồn, không tự đổi thành sắp giá toàn danh mục.
+- Đọc giá và tồn trong giao dịch khóa catalog chung; nhả PENDING hết hạn/UNPAID trước khi tính. Đếm phòng giữ từng đêm check_in<=date<check_out, bỏ CANCELLED/EXPIRED; không tạo đơn, giữ chỗ hoặc dùng lượt voucher. Kết quả thêm searchTotal/searchRoomId vào projection công khai, không lộ raw stock/rates/ghi chú hoặc dữ liệu khách.
+- Kiểm Origin/header/JSON/schema/no-store và quota stay-search 120 lần/IP/phút, tách báo giá/tạo đơn. Tắt phân hệ chặn tìm kiếm. UI bỏ response cũ khi đổi input, có thông báo không có kết quả và nút trở về danh mục.
+- Kiểm thử service/HTTP: tiếng Việt không dấu, giá theo ngày, loại phòng phù hợp rẻ nhất, sức chứa, giữ phòng đã tạo, không khớp, strict schema, privacy, feature gate, Origin, form SSR; hồi quy đặt phòng/HTTP đã qua. Chưa kiểm trình duyệt hoặc hosting thật.
+- Không thêm SQL. Cập nhật git pull --ff-only origin main. Chưa import dữ liệu cũ; email/hoàn tiền lưu trú chưa được nối; PDF giữ nguyên bản gốc.
