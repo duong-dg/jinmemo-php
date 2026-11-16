@@ -1,0 +1,19 @@
+{
+  "secret": "HMAC-source-fixture-secret-0123456789",
+  "cases": [
+    {
+      "raw": "{ \"content\": \"Thanh toán phòng Hội An\", \"transferAmount\":100 }",
+      "timestamp": "1794819600",
+      "signature": "sha256=627cb04c6d73f603561d3a1ae411acc3a85624132c2f8b4880d01e30451f5497",
+      "now": 1794819600,
+      "verified": true
+    },
+    {
+      "raw": "{\n\"content\":\"JMPAAAAAAAAAAAAAAAAAAAAAAAA\",\n\"transferAmount\":100\n}",
+      "timestamp": "1794819600",
+      "signature": "sha256=32a3f061e91c3c90e780d10963850217f3031e1544f6ececdd1fe22b9d5cc1f7",
+      "now": 1794819600,
+      "verified": true
+    }
+  ]
+}

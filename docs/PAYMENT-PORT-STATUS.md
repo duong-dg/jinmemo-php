@@ -1,6 +1,6 @@
 # Tiến độ chuyển phần thanh toán
 
-Cập nhật 16/11/2026, sau đợt 95. Schema cần có: **045**.
+Cập nhật 16/11/2026, sau đợt 96. Schema cần có: **046**.
 
 | Luồng | Trạng thái PHP |
 | --- | --- |
@@ -10,9 +10,10 @@ Cập nhật 16/11/2026, sau đợt 95. Schema cần có: **045**.
 | Admin thu JB CASH/BANK | Đã có giao dịch nguyên khối, replay, chặn thu con; không tự gắn ca quầy |
 | Hoàn JB và báo cáo thu–hoàn | Đã có cap theo thực thu, chặn hoàn con và tránh đếm lại phân bổ vé |
 | VNPAY / QR / thẻ quốc tế VNPAY | Đã có cấu hình TEST/LIVE, checkout và IPN cho vé đơn WEB, JC WEB, JB và phòng JH; chưa thử giao dịch nhà cung cấp thật |
-| SePay, PayPal, online POS/CTV, xe riêng | Chưa chuyển trong đợt này |
+| SePay chuyển khoản API Key / HMAC | Đã có cấu hình, checkout, webhook và journal cho vé WEB, JC, JB, JH; chưa thử ngân hàng thật |
+| SePay OAuth / thẻ, PayPal, online POS/CTV, xe riêng | Còn thiếu |
 | Đặt phòng online JH | Đã có giữ phòng 30 phút, IPN nguyên khối, email PAID và REVIEW sau hết hạn |
-| Nhật ký VNPAY, chống ghi thu trùng, REVIEW | Đã có; REVIEW chỉ xem, chưa có xử lý đối soát/hoàn tự động |
+| Nhật ký VNPAY/SePay, chống ghi thu trùng, REVIEW | Đã có; REVIEW chỉ xem, chưa có xử lý đối soát/hoàn tự động |
 | Import SQL/dữ liệu cũ | Chưa thực hiện; giữ tên/thứ tự trường theo TRANSFER-CONTRACT.json |
 
 Phần thanh toán nguồn chưa được chuyển đủ toàn bộ. Các luồng online còn cần đối chiếu `payments.service.ts`, `protocol.ts`, `settings.ts`, `ride-payments.ts`, `hotel-payments.ts`, `paypal.ts`, `reconciliation.ts` và bộ kiểm thử tương ứng tại sourceCommit ghi trong hợp đồng chuyển dữ liệu.
