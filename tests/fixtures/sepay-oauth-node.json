@@ -1,0 +1,113 @@
+{
+  "secret": "oauth-fixture-Hoi-An-secret-12345678901234567890",
+  "clientId": "jinmemo-php-client",
+  "now": 1794819600,
+  "issuedToken": "eyJhdWQiOiJzZXBheS13ZWJob29rIiwic3ViIjoiamlubWVtby1waHAtY2xpZW50IiwibW9kZSI6IkxJVkUiLCJpYXQiOjE3OTQ4MTk2MDAsImV4cCI6MTc5NDgyMzIwMH0.k-zN6J5sRLvet0iyTOGpudUzZ8yrrwdy4AvIvW2AyF8",
+  "cases": [
+    {
+      "name": "LIVE",
+      "token": "eyJhdWQiOiJzZXBheS13ZWJob29rIiwic3ViIjoiamlubWVtby1waHAtY2xpZW50IiwibW9kZSI6IkxJVkUiLCJpYXQiOjE3OTQ4MTk2MDAsImV4cCI6MTc5NDgyMzIwMH0.k-zN6J5sRLvet0iyTOGpudUzZ8yrrwdy4AvIvW2AyF8",
+      "mode": "LIVE",
+      "now": 1794819600,
+      "verified": true
+    },
+    {
+      "name": "before-expiry",
+      "token": "eyJhdWQiOiJzZXBheS13ZWJob29rIiwic3ViIjoiamlubWVtby1waHAtY2xpZW50IiwibW9kZSI6IkxJVkUiLCJpYXQiOjE3OTQ4MTk2MDAsImV4cCI6MTc5NDgyMzIwMH0.k-zN6J5sRLvet0iyTOGpudUzZ8yrrwdy4AvIvW2AyF8",
+      "mode": "LIVE",
+      "now": 1794823199,
+      "verified": true
+    },
+    {
+      "name": "expired",
+      "token": "eyJhdWQiOiJzZXBheS13ZWJob29rIiwic3ViIjoiamlubWVtby1waHAtY2xpZW50IiwibW9kZSI6IkxJVkUiLCJpYXQiOjE3OTQ4MTk2MDAsImV4cCI6MTc5NDgyMzIwMH0.k-zN6J5sRLvet0iyTOGpudUzZ8yrrwdy4AvIvW2AyF8",
+      "mode": "LIVE",
+      "now": 1794823200,
+      "verified": false
+    },
+    {
+      "name": "wrong-mode",
+      "token": "eyJhdWQiOiJzZXBheS13ZWJob29rIiwic3ViIjoiamlubWVtby1waHAtY2xpZW50IiwibW9kZSI6IkxJVkUiLCJpYXQiOjE3OTQ4MTk2MDAsImV4cCI6MTc5NDgyMzIwMH0.k-zN6J5sRLvet0iyTOGpudUzZ8yrrwdy4AvIvW2AyF8",
+      "mode": "TEST",
+      "now": 1794819600,
+      "verified": false
+    },
+    {
+      "name": "future",
+      "token": "eyJhdWQiOiJzZXBheS13ZWJob29rIiwic3ViIjoiamlubWVtby1waHAtY2xpZW50IiwibW9kZSI6IkxJVkUiLCJpYXQiOjE3OTQ4MTk2MDEsImV4cCI6MTc5NDgyMzIwMX0.xs3J-rOJIE0xdfFjLpJA5Oe_c3ktunejTk3hCV8eGqM",
+      "mode": "LIVE",
+      "now": 1794819600,
+      "verified": false
+    },
+    {
+      "name": "wrong-client",
+      "token": "eyJhdWQiOiJzZXBheS13ZWJob29rIiwic3ViIjoib3RoZXItY2xpZW50IiwibW9kZSI6IkxJVkUiLCJpYXQiOjE3OTQ4MTk2MDAsImV4cCI6MTc5NDgyMzIwMH0.5Y8yq3jV1MCX5Un3jNFWgEby8wie-aPo1V-itt3AVkM",
+      "mode": "LIVE",
+      "now": 1794819600,
+      "verified": false
+    },
+    {
+      "name": "wrong-audience",
+      "token": "eyJhdWQiOiJhZG1pbiIsInN1YiI6Imppbm1lbW8tcGhwLWNsaWVudCIsIm1vZGUiOiJMSVZFIiwiaWF0IjoxNzk0ODE5NjAwLCJleHAiOjE3OTQ4MjMyMDB9.1xx350PpHq_MX1M0OTRztfTHIxjdWbkDx52TZwc1_a4",
+      "mode": "LIVE",
+      "now": 1794819600,
+      "verified": false
+    },
+    {
+      "name": "long-lifetime",
+      "token": "eyJhdWQiOiJzZXBheS13ZWJob29rIiwic3ViIjoiamlubWVtby1waHAtY2xpZW50IiwibW9kZSI6IkxJVkUiLCJpYXQiOjE3OTQ4MTk2MDAsImV4cCI6MTc5NDgyMzIwMX0.Iki-hztPfbVPBglJBnXC2PNKljZzI2tife9U4NF3Zek",
+      "mode": "LIVE",
+      "now": 1794819600,
+      "verified": false
+    },
+    {
+      "name": "string-exp",
+      "token": "eyJhdWQiOiJzZXBheS13ZWJob29rIiwic3ViIjoiamlubWVtby1waHAtY2xpZW50IiwibW9kZSI6IkxJVkUiLCJpYXQiOjE3OTQ4MTk2MDAsImV4cCI6IjE3OTQ4MjMyMDAifQ.kwC5PfvF6oPRRkObM0WyNE48sNKUWB7N5GDLROl6jAE",
+      "mode": "LIVE",
+      "now": 1794819600,
+      "verified": false
+    },
+    {
+      "name": "fractional-iat",
+      "token": "eyJhdWQiOiJzZXBheS13ZWJob29rIiwic3ViIjoiamlubWVtby1waHAtY2xpZW50IiwibW9kZSI6IkxJVkUiLCJpYXQiOjE3OTQ4MTk1OTkuOSwiZXhwIjoxNzk0ODIzMjAwfQ.Vsd5KsWb-lA_pfHQxiMNMAFsvz-mLGZOv0ve_EWuG4w",
+      "mode": "LIVE",
+      "now": 1794819600,
+      "verified": false
+    },
+    {
+      "name": "null-iat",
+      "token": "eyJhdWQiOiJzZXBheS13ZWJob29rIiwic3ViIjoiamlubWVtby1waHAtY2xpZW50IiwibW9kZSI6IkxJVkUiLCJpYXQiOm51bGwsImV4cCI6MTc5NDgyMzIwMH0.khqNOikUezEODRMwU9aJQZVk2qXU8-m6P1XQU4BmbII",
+      "mode": "LIVE",
+      "now": 1794819600,
+      "verified": false
+    },
+    {
+      "name": "extra-claim",
+      "token": "eyJhdWQiOiJzZXBheS13ZWJob29rIiwic3ViIjoiamlubWVtby1waHAtY2xpZW50IiwibW9kZSI6IkxJVkUiLCJpYXQiOjE3OTQ4MTk2MDAsImV4cCI6MTc5NDgyMzIwMCwiZXh0cmEiOiJpZ25vcmVkIn0.v-da_XBDMHV5fo6ojsLClLpfDWZJEgPAYFH-8BU1e4M",
+      "mode": "LIVE",
+      "now": 1794819600,
+      "verified": true
+    },
+    {
+      "name": "integer-decimals",
+      "token": "eyJhdWQiOiJzZXBheS13ZWJob29rIiwic3ViIjoiamlubWVtby1waHAtY2xpZW50IiwibW9kZSI6IkxJVkUiLCJpYXQiOjE3OTQ4MTk2MDAuMCwiZXhwIjoxNzk0ODIzMjAwLjB9.y-KaDN6R-OBsFFp4lmNn7PMZf-qWsTrZpyY4JYfMxHs",
+      "mode": "LIVE",
+      "now": 1794819600,
+      "verified": true
+    },
+    {
+      "name": "wrong-purpose-signature",
+      "token": "eyJhdWQiOiJzZXBheS13ZWJob29rIiwic3ViIjoiamlubWVtby1waHAtY2xpZW50IiwibW9kZSI6IkxJVkUiLCJpYXQiOjE3OTQ4MTk2MDAsImV4cCI6MTc5NDgyMzIwMH0.3eoQjxXnO9ifykHJ9UuEvhsv0fd4gqv_DBIqMOodpaI",
+      "mode": "LIVE",
+      "now": 1794819600,
+      "verified": false
+    },
+    {
+      "name": "bad-format",
+      "token": "eyJhdWQiOiJzZXBheS13ZWJob29rIiwic3ViIjoiamlubWVtby1waHAtY2xpZW50IiwibW9kZSI6IkxJVkUiLCJpYXQiOjE3OTQ4MTk2MDAsImV4cCI6MTc5NDgyMzIwMH0.k-zN6J5sRLvet0iyTOGpudUzZ8yrrwdy4AvIvW2AyF8.tail",
+      "mode": "LIVE",
+      "now": 1794819600,
+      "verified": false
+    }
+  ]
+}
