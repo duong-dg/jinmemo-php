@@ -161,5 +161,6 @@
       "data",
       "version"
     ]
-  }
+  },
+  "checkoutTables": {"checkout_bundles":["id","code","access_hash","total","status","data","created_at"],"checkout_members":["kind","entity_id","bundle_id"]}
 }

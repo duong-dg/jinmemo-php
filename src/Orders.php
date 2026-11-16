@@ -7,6 +7,7 @@ require_once __DIR__.'/SupplyLots.php';
 require_once __DIR__.'/SupplyAllocation.php';
 require_once __DIR__.'/PosAccess.php';
 require_once __DIR__.'/ManualMethods.php';
+require_once __DIR__.'/CheckoutLinks.php';
 
 /** Web order creation. Prices and allocations are committed together. */
 final class Orders
@@ -172,7 +173,7 @@ final class Orders
             if($action==='PAY'||$staffId!==null){$counter=$this->query('SELECT counter_id FROM jingo_pos_orders WHERE order_id=?',[$id])->fetchColumn();if($counter!==false)$this->query('SELECT id FROM jingo_counters WHERE id=? FOR UPDATE',[$counter]);}
             if($staffId!==null){if($counter===false)throw new HttpError(404,'Không tìm thấy đơn quầy.');$permission=match($action){'PAY'=>'COLLECT','CANCEL'=>'CANCEL','DELIVER'=>'DELIVER',default=>null};if($permission===null)throw new HttpError(403,'Thao tác này chỉ dành cho admin.');PosAccess::live($this->db,$staffId,$counter,$permission);$actor='pos-user:'.$staffId;}
             $row=$this->query('SELECT * FROM jingo_orders WHERE id=? FOR UPDATE',[$id])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy đơn.');
-            $prior=$this->query('SELECT request_hash FROM jingo_order_actions WHERE id=?',[$input['requestId']])->fetchColumn();if($prior!==false){if(!hash_equals($prior,$hash))throw new HttpError(409,'Mã thao tác đã dùng.');$result=$this->get($id);if(!$nested)$this->db->commit();return $result;}
+            if($action==='PAY'&&!$nested){$parent=$this->query('SELECT cart_id FROM jingo_cart_orders WHERE order_id=?',[$id])->fetchColumn();if($parent!==false)CheckoutLinks::guard($this->db,'cartId',$parent);}$prior=$this->query('SELECT request_hash FROM jingo_order_actions WHERE id=?',[$input['requestId']])->fetchColumn();if($prior!==false){if(!hash_equals($prior,$hash))throw new HttpError(409,'Mã thao tác đã dùng.');$result=$this->get($id);if(!$nested)$this->db->commit();return $result;}
             if((int)$row['version']!==$input['version'])throw new HttpError(409,'Đơn đã thay đổi. Tải lại trước khi xử lý.');if($row['booking_status']==='CANCELLED'&&!in_array($action,['ARCHIVE','RESTORE'],true))throw new HttpError(409,'Đơn đã hủy.');
             $archived=$this->query('SELECT order_id FROM jingo_order_archives WHERE order_id=?',[$id])->fetchColumn();if($archived&&$action!=='RESTORE')throw new HttpError(409,'Đơn đang lưu trữ. Khôi phục trước khi xử lý.');if(!$archived&&$action==='RESTORE')throw new HttpError(409,'Đơn chưa được lưu trữ.');
             if($action==='ARCHIVE'){
