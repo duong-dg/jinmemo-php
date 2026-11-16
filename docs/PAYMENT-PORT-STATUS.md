@@ -1,6 +1,6 @@
 # Tiến độ chuyển phần thanh toán
 
-Cập nhật 16/11/2026, sau đợt 94. Schema cần có: **044**.
+Cập nhật 16/11/2026, sau đợt 95. Schema cần có: **045**.
 
 | Luồng | Trạng thái PHP |
 | --- | --- |
@@ -9,8 +9,9 @@ Cập nhật 16/11/2026, sau đợt 94. Schema cần có: **044**.
 | JB gom giỏ vé WEB, xe WEB và quà | Đã có tạo/tra cứu, kiểm proof, chống gom trùng và snapshot từng giá |
 | Admin thu JB CASH/BANK | Đã có giao dịch nguyên khối, replay, chặn thu con; không tự gắn ca quầy |
 | Hoàn JB và báo cáo thu–hoàn | Đã có cap theo thực thu, chặn hoàn con và tránh đếm lại phân bổ vé |
-| VNPAY / QR / thẻ quốc tế VNPAY | Đã có cấu hình TEST/LIVE, checkout và IPN cho vé đơn WEB, JC WEB, JB; chưa thử giao dịch nhà cung cấp thật |
-| SePay, PayPal, online POS/CTV, khách sạn, xe riêng | Chưa chuyển trong đợt này |
+| VNPAY / QR / thẻ quốc tế VNPAY | Đã có cấu hình TEST/LIVE, checkout và IPN cho vé đơn WEB, JC WEB, JB và phòng JH; chưa thử giao dịch nhà cung cấp thật |
+| SePay, PayPal, online POS/CTV, xe riêng | Chưa chuyển trong đợt này |
+| Đặt phòng online JH | Đã có giữ phòng 30 phút, IPN nguyên khối, email PAID và REVIEW sau hết hạn |
 | Nhật ký VNPAY, chống ghi thu trùng, REVIEW | Đã có; REVIEW chỉ xem, chưa có xử lý đối soát/hoàn tự động |
 | Import SQL/dữ liệu cũ | Chưa thực hiện; giữ tên/thứ tự trường theo TRANSFER-CONTRACT.json |
 
