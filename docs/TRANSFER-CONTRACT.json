@@ -162,5 +162,6 @@
       "version"
     ]
   },
-  "checkoutTables": {"checkout_bundles":["id","code","access_hash","total","status","data","created_at"],"checkout_members":["kind","entity_id","bundle_id"]}
+  "checkoutTables": {"checkout_bundles":["id","code","access_hash","total","status","data","created_at"],"checkout_members":["kind","entity_id","bundle_id"]},
+  "gatewayTables": {"gateway_attempts":["id","order_id","provider","mode","amount","config_version","config","status","created_at","expires_at"],"gateway_events":["id","attempt_id","order_id","provider","mode","amount","status","reason","fingerprint","created_at"]}
 }

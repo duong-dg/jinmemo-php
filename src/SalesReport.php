@@ -65,7 +65,7 @@ final class SalesReport
             }
             $payments=$this->query("SELECT p.amount,p.method,p.created_at,pt.order_id AS partner_order,po.counter_id,JSON_UNQUOTE(JSON_EXTRACT(c.data,'$.name')) AS counter_name FROM jingo_order_payments p JOIN jingo_orders o ON o.id=p.order_id".$joins.' WHERE p.created_at>=? AND p.created_at<?'.$where.' ORDER BY p.created_at,p.id',$args);
             while($payment=$payments->fetch(PDO::FETCH_ASSOC)){
-                if(!in_array($payment['method'],['CASH','BANK'],true))throw new HttpError(409,'Có phương thức thu chưa được hỗ trợ trong báo cáo.');
+                if(!in_array($payment['method'],['CASH','BANK','VNPAY','VNPAY_QR','VNPAY_CARD','SEPAY','SEPAY_CARD','PAYPAL'],true))throw new HttpError(409,'Có phương thức thu chưa được hỗ trợ trong báo cáo.');
                 $amount=self::amount($payment['amount']);$record($dateOf($payment['created_at']),$groupKey($payment),['collected'=>$amount,($payment['method']==='CASH'?'cash':'bank')=>$amount]);
             }
             ksort($groups,SORT_STRING);$this->db->commit();
@@ -74,7 +74,7 @@ final class SalesReport
     }
     public static function csv(array $report):string
     {
-        $rows=[['Loại dòng','Từ ngày (GMT+7)','Đến ngày (GMT+7)','Ngày (GMT+7)','Kênh','Số đơn chưa hủy','Đơn hủy','Giá trị đơn (VND)','Đã thu (VND)','Tiền mặt (VND)','Chuyển khoản (VND)','Giá trị đơn chưa thu (VND)','Mã quầy','Tên quầy']];
+        $rows=[['Loại dòng','Từ ngày (GMT+7)','Đến ngày (GMT+7)','Ngày (GMT+7)','Kênh','Số đơn chưa hủy','Đơn hủy','Giá trị đơn (VND)','Đã thu (VND)','Tiền mặt (VND)','Chuyển khoản / cổng (VND)','Giá trị đơn chưa thu (VND)','Mã quầy','Tên quầy']];
         $row=static fn($kind,$date,$v,$channel,$counter,$name)=>[$kind,$report['from'],$report['to'],$date,$channel,$v['orders'],$v['cancelled'],$v['bookingValue'],$v['collected'],$v['cash'],$v['bank'],$v['unpaidBookingValue'],$counter,$name];
         $rows[]=$row('TỔNG','',$report['totals'],$report['channel'],$report['counterId'] ?? '','');
         foreach($report['daily'] as $day)$rows[]=$row('NGÀY',$day['date'],$day,$report['channel'],$report['counterId'] ?? '','');

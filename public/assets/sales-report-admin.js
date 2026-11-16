@@ -36,7 +36,7 @@ async function renderSalesReport(screen,serial){
   if(!report.channels.length)screen.append(el('p','Không có phát sinh trong bộ lọc này.','muted'));
   else{
    const wrap=el('div',undefined,'table-wrap'),table=el('table'),head=el('tr'),thead=el('thead'),body=el('tbody');
-   for(const title of ['Kênh / Quầy','Đơn chưa hủy','Đơn hủy','Giá trị đơn','Hiện chưa thu','Đã thu','Tiền mặt','Chuyển khoản'])head.append(el('th',title));thead.append(head);table.append(thead);
+   for(const title of ['Kênh / Quầy','Đơn chưa hủy','Đơn hủy','Giá trị đơn','Hiện chưa thu','Đã thu','Tiền mặt','Chuyển khoản / cổng'])head.append(el('th',title));thead.append(head);table.append(thead);
    for(const group of report.channels){const tr=el('tr'),who=el('td');who.append(el('strong',group.name),el('small',group.channel+(group.counterId?' · '+group.counterId:'')));tr.append(who);for(const key of ['orders','cancelled','bookingValue','unpaidBookingValue','collected','cash','bank'])tr.append(el('td',['orders','cancelled'].includes(key)?String(group[key]):orderMoney(group[key])));body.append(tr);}
    table.append(body);wrap.append(table);screen.append(wrap);
   }
@@ -44,7 +44,7 @@ async function renderSalesReport(screen,serial){
   function draw(){
    rows.replaceChildren();const pages=Math.max(1,Math.ceil(report.daily.length/31));salesReportPage=Math.min(salesReportPage,pages);
    const wrap=el('div',undefined,'table-wrap'),table=el('table'),head=el('tr'),thead=el('thead'),body=el('tbody');
-   for(const title of ['Ngày','Đơn chưa hủy','Đơn hủy','Giá trị đơn','Hiện chưa thu','Đã thu','Tiền mặt','Chuyển khoản'])head.append(el('th',title));thead.append(head);table.append(thead);
+   for(const title of ['Ngày','Đơn chưa hủy','Đơn hủy','Giá trị đơn','Hiện chưa thu','Đã thu','Tiền mặt','Chuyển khoản / cổng'])head.append(el('th',title));thead.append(head);table.append(thead);
    for(const day of report.daily.slice((salesReportPage-1)*31,salesReportPage*31)){const tr=el('tr');for(const key of ['date','orders','cancelled','bookingValue','unpaidBookingValue','collected','cash','bank'])tr.append(el('td',['date','orders','cancelled'].includes(key)?String(day[key]):orderMoney(day[key])));body.append(tr);}
    table.append(body);wrap.append(table);rows.append(wrap);
    const pager=toolbar('Trang '+salesReportPage+' / '+pages+' · 31 ngày/trang');

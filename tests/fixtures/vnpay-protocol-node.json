@@ -1,0 +1,34 @@
+{
+  "secret": "synthetic-protocol-secret-1234567890",
+  "cases": [
+    {
+      "params": {
+        "vnp_Amount": "1234500",
+        "vnp_TxnRef": "JMPABC",
+        "vnp_TmnCode": "TMN"
+      },
+      "canonical": "vnp_Amount=1234500&vnp_TmnCode=TMN&vnp_TxnRef=JMPABC",
+      "signature": "9a9cf85beaf9092f91d622d36a66c31da5a1576bcd998d096b5f88417cfa3e230f903e2274a31bf3c213dcf171d70f936bad03739539643520bae82e90b12dd2"
+    },
+    {
+      "params": {
+        "vnp_OrderInfo": "Thanh toán Đà Nẵng + % & / ? ~ ! ' () *",
+        "vnp_Amount": "10000",
+        "vnp_ReturnUrl": "https://example.test/tra-cuu?x=hello world"
+      },
+      "canonical": "vnp_Amount=10000&vnp_OrderInfo=Thanh+to%C3%A1n+%C4%90%C3%A0+N%E1%BA%B5ng+%2B+%25+%26+%2F+%3F+~+!+'+()+*&vnp_ReturnUrl=https%3A%2F%2Fexample.test%2Ftra-cuu%3Fx%3Dhello+world",
+      "signature": "42520450963e6cd299c5327a9554cfa37cd3bb9617cf7d2e51e291b1833aee5ab32880a94220713260afceff8f94a34f460af771962fdb04782204ef18a44938"
+    },
+    {
+      "params": {
+        "vnp_Empty": "",
+        "vnp_SecureHash": "ignore",
+        "vnp_SecureHashType": "SHA512",
+        "vnp_Locale": "vn",
+        "vnp_OrderInfo": "a b c"
+      },
+      "canonical": "vnp_Locale=vn&vnp_OrderInfo=a%E2%80%A8b%E2%80%A9c",
+      "signature": "4d22863831ff837e6be6a3ee5f16694510e690459f6f376610eeeafdfe57b4bbf424f0a9f6217eb87f0e16436686633ef7644d291ac2ad3873df672b5e7f5d2c"
+    }
+  ]
+}
