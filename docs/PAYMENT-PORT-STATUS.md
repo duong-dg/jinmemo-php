@@ -1,6 +1,6 @@
 # Tiến độ chuyển phần thanh toán
 
-Cập nhật 16/11/2026, sau đợt 96. Schema cần có: **046**.
+Cập nhật 16/11/2026, sau đợt 97. Schema cần có: **047**.
 
 | Luồng | Trạng thái PHP |
 | --- | --- |
@@ -13,7 +13,9 @@ Cập nhật 16/11/2026, sau đợt 96. Schema cần có: **046**.
 | SePay chuyển khoản API Key / HMAC | Đã có cấu hình, checkout, webhook và journal cho vé WEB, JC, JB, JH; chưa thử ngân hàng thật |
 | SePay OAuth / thẻ, PayPal, online POS/CTV, xe riêng | Còn thiếu |
 | Đặt phòng online JH | Đã có giữ phòng 30 phút, IPN nguyên khối, email PAID và REVIEW sau hết hạn |
-| Nhật ký VNPAY/SePay, chống ghi thu trùng, REVIEW | Đã có; REVIEW chỉ xem, chưa có xử lý đối soát/hoàn tự động |
+| Nhật ký VNPAY/SePay, chống ghi thu trùng | Đã có và lưu lịch sử đối soát |
+| Đối soát SePay LIVE REVIEW | Đã có preview/xác nhận cho vé WEB, JC, JB, JH; ghi BANK theo quản trị viên, giữ lý do/đơn ban đầu |
+| Đối soát xe riêng/POS/CTV, hoàn qua ngân hàng | Chưa mở; không chia hoặc bù khoản thu |
 | Import SQL/dữ liệu cũ | Chưa thực hiện; giữ tên/thứ tự trường theo TRANSFER-CONTRACT.json |
 
 Phần thanh toán nguồn chưa được chuyển đủ toàn bộ. Các luồng online còn cần đối chiếu `payments.service.ts`, `protocol.ts`, `settings.ts`, `ride-payments.ts`, `hotel-payments.ts`, `paypal.ts`, `reconciliation.ts` và bộ kiểm thử tương ứng tại sourceCommit ghi trong hợp đồng chuyển dữ liệu.

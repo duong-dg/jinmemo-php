@@ -36,6 +36,7 @@ require_once dirname(__DIR__) . '/src/Carts.php';
 require_once dirname(__DIR__) . '/src/CheckoutBundles.php';
 require_once dirname(__DIR__) . '/src/VnpayPayments.php';
 require_once dirname(__DIR__) . '/src/SepayPayments.php';
+require_once dirname(__DIR__) . '/src/PaymentReconciliation.php';
 require dirname(__DIR__) . '/src/SalesReport.php';
 require dirname(__DIR__) . '/src/Counters.php';
 require dirname(__DIR__) . '/src/PosUsers.php';
@@ -230,6 +231,9 @@ try {
     }
     if(preg_match('~^/api/v1/admin/carts/(JC[A-F0-9]{10})(/actions)?$~D',(string)$path,$cartAdmin)){
         $write=isset($cartAdmin[2]);if(($_SERVER['REQUEST_METHOD']??'GET')!==($write?'POST':'GET')){header('Allow: '.($write?'POST':'GET'));throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($_GET)throw new HttpError(400,'Yêu cầu không hợp lệ.');$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($write)$auth->mutation();$actor=$auth->me();$carts=new Carts($db);if($write){$in=jingoRequestBody();jingoJson(($in['action']??null)==='CREDIT'?$carts->credit($cartAdmin[1],$in,$actor['id']):$carts->pay($cartAdmin[1],$in,$actor['id']));}jingoJson($carts->view($cartAdmin[1]));
+    }
+    if(in_array($path,['/api/v1/admin/payments/reconciliation/preview','/api/v1/admin/payments/reconciliation/resolve'],true)){
+        if(($_SERVER['REQUEST_METHOD']??'GET')!=='POST'){header('Allow: POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($_GET)throw new HttpError(400,'Yêu cầu không hợp lệ.');$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);$auth->mutation();$actor=$auth->me();$service=new PaymentReconciliation($db);$body=jingoRequestBody();jingoJson(str_ends_with($path,'/preview')?$service->preview($body):$service->resolve($body,$actor['id']));
     }
     if(in_array($path,['/api/v1/admin/payments','/api/v1/admin/payments/events','/api/v1/admin/payments/test-checkout'],true)){
         $method=$_SERVER['REQUEST_METHOD']??'GET';$settings=$path==='/api/v1/admin/payments';$test=str_ends_with($path,'/test-checkout');$allowed=$settings?['GET','POST']:[$test?'POST':'GET'];if(!in_array($method,$allowed,true)){header('Allow: '.implode(', ',$allowed));throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($_GET&&($settings||$test))throw new HttpError(400,'Yêu cầu không hợp lệ.');$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);if($method==='POST')$auth->mutation();$actor=$auth->me();$service=new VnpayPayments($db,$config);$preferences=new PaymentSettings($db,$config);jingoJson($settings?($method==='POST'?$preferences->save(jingoRequestBody(),$actor['id']):$preferences->view()):($test?((($body=jingoRequestBody())['provider']??null)==='SEPAY'?(new SepayPayments($db,$config))->checkout($body,true):$service->checkout($body,'127.0.0.1',true)):$service->events($_GET)));
