@@ -1209,3 +1209,9 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - SQL này không phải staging jm_transfer từ Node, không kèm media/.tickets/.smtp-key/.env/mã nguồn. Chưa có HTTP restore, chưa chuyển bộ tạo archive GPG/cron/retention và phục hồi stack Ubuntu sang cPanel. Không tự tạo lịch hoặc đánh dấu đã thử phục hồi dữ liệu thật. Xem docs/BACKUP-RESTORE-PHP.md.
 - Đã export/import toàn bộ cấu trúc vào database local riêng, đối chiếu Unicode/emoji/NULL/binary/bit/BIGINT/DECIMAL/DATETIME(6)/cột sinh, bỏ phiên, giới hạn/khóa/rollback/audit và quyền HTTP/CSRF/download. Kiểm thử mới php tests/backups.php và node tests/backups-ui.cjs; đã xem fixture admin desktop/mobile, không tràn ngang theo DOM ở kích thước đã kiểm. Chưa dùng dữ liệu thật hoặc hosting cPanel thật.
 - Cập nhật git pull --ff-only origin main rồi Ctrl+F5. Không SQL mới, vẫn schema 052. BACKUP_DIR chỉ cần nếu dùng danh sách archive; xuất SQL dùng được ngay với database/quyền hiện có và thư mục tạm hợp lệ.
+
+### Tách giỏ đang chọn và giỏ đã đặt — đợt 113 (17/11/2026)
+
+- /gio-ve và /en/carts mặc định chỉ hiển thị các gói đang chọn và form đặt giỏ. Không hiển thị form tra cứu giỏ cũ cùng màn hình.
+- Tra cứu giỏ JC mở từ trang Tra cứu đơn hàng bằng ?view=lookup. Link nhận vé tạo mới dùng chế độ này; link cũ có #JC... vẫn tự mở đúng chế độ tra cứu. Không xóa hoặc chuyển dữ liệu local/session storage và không đổi proof/API.
+- Sửa pattern điện thoại giỏ để nhận +84/dấu ngoặc/gạch nối đúng định dạng đã hỗ trợ. Kiểm thử cart-view.php/cart-view-ui.cjs, cùng carts-ui/checkout-ui/public-lookup-ui đã đạt. Đã xem hai chế độ bằng renderer thực tế trên fixture cục bộ. Không SQL mới, vẫn schema 052.
