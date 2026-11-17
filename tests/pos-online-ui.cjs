@@ -1,0 +1,19 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),crypto=require('node:crypto');
+class Element{
+ constructor(tag,text=''){this.tagName=tag;this.textContent=text;this.children=[];this.value='';this.checked=false;this.disabled=false;this.isConnected=true;}
+ append(...nodes){this.children.push(...nodes);}
+ replaceChildren(...nodes){this.children=nodes;}
+}
+const all=n=>[n,...n.children.flatMap(all)],find=(n,tag,text)=>{const r=all(n).find(c=>c.tagName===tag&&c.textContent===text);assert.ok(r,tag+': '+text);return r;},field=(n,title)=>find(n,'label',title).children[0],settle=()=>new Promise(r=>setImmediate(r));
+(async()=>{
+ const code='JC1234567890',storage={getItem:()=>null,setItem(){},removeItem(){}},mounted=[];let current={id:'staff',counterId:'main'},cartCounter='main';
+ const row=()=>({code,channel:'POS',payable:300,total:300,version:1,onlinePaymentEligible:true,items:[{id:'child',code:'JM1234567890',counter:{id:cartCounter,name:cartCounter},snapshot:{productName:'Ticket',variantName:'One',date:'2099-06-01',total:300},bookingStatus:'CONFIRMED',paymentStatus:'UNPAID'}]});
+ const render=async(parent,proof,en,session)=>{mounted.push({parent,proof:structuredClone(proof),session});};
+ const ctx=vm.createContext({window:{renderOnlinePayment:render},document:{createElement:t=>new Element(t)},localStorage:storage,sessionStorage:storage,crypto:{randomUUID:crypto.randomUUID},Intl,structuredClone});vm.runInContext(fs.readFileSync(__dirname+'/../public/assets/pos-carts.js','utf8'),ctx);
+ const make=permissions=>{const screen=new Element('section'),cart=ctx.window.posCartTools({screen,actor:{id:'staff',permissions},counter:{id:'main',name:'Main'},api:async()=>row(),current:()=>current,openOrder(){},onChange(){}});return cart;};
+ await make(['SELL','COLLECT']).open(code);assert.equal(mounted.length,1);assert.deepEqual(mounted[0].proof,{code});assert.equal(mounted[0].session.current(),true);current={id:'staff',counterId:'Main'};assert.equal(mounted[0].session.current(),false,'Selected counter is part of payment identity');current={id:'other',counterId:'main'};assert.equal(mounted[0].session.current(),false,'Staff change invalidates mounted payment');current={id:'staff',counterId:'main'};
+ await make(['SELL']).open(code);assert.equal(mounted.length,1,'Seller without COLLECT cannot see online choices');cartCounter='Main';await make(['SELL','COLLECT']).open(code);assert.equal(mounted.length,1,'Different cart counter must not use selected counter tools');cartCounter='main';
+ const calls=[],adminScreen=new Element('section');let adminSession=null;const admin=vm.createContext({window:{renderOnlinePayment:async(parent,proof,en,session)=>{adminSession=session;assert.equal(proof.code,code);await session.api('payments/options');await session.api('payments/checkout',{code,provider:'VNPAY'});}},el:(t,text)=>new Element(t,text),button:(text,onclick)=>Object.assign(new Element('button',text),{onclick}),loading:1,editing:false,orderMoney:String,crypto:{randomUUID:crypto.randomUUID},api:async(path,body)=>{calls.push({path,body});return row();},openRefundFor(){},openOrder(){}});vm.runInContext(fs.readFileSync(__dirname+'/../public/assets/carts-admin.js','utf8'),admin);vm.runInContext("cartPrefill='"+code+"'",admin);await admin.renderCarts(adminScreen,1);assert.ok(calls.some(c=>c.path==='payments/pos-options'));assert.ok(calls.some(c=>c.path==='payments/pos-checkout'&&c.body.provider==='VNPAY'));assert.equal(adminSession.current(),true);admin.loading=2;assert.equal(adminSession.current(),false,'Admin navigation invalidates pending online response');
+ console.log('PASS: POS online choices require COLLECT and matching selected counter, staff/counter changes invalidate sessions, admin adapter uses authenticated POS-only payment routes.');
+})().catch(e=>{console.error(e);process.exitCode=1;});

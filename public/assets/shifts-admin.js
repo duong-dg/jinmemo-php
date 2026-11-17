@@ -19,7 +19,7 @@ function shiftDialog(title){draft=null;dirty=false;$('#editor-title').textConten
 async function showShift(id){
  try{const s=await api('shifts/'+id),dialog=shiftDialog('Chi tiết ca thu ngân'),box=el('div',undefined,'full'),totals=s.summary;
   box.append(el('h3',s.counterName),el('p',s.id),el('p','Mở: '+shiftTime(s.openedAt)+' · '+s.openedName),el('p',s.openingNote||''));
-  for(const [key,label]of [['openingCash','Đầu ca'],['cash','Thu tiền mặt'],['bank','Thu chuyển khoản'],['cashIn','Thu vào ca (gồm tiền xe)'],['cashOut','Rút/chi'],['expectedCash','Tiền mặt theo sổ'],['countedCash','Thực đếm'],['difference','Chênh lệch']]){const value=key==='openingCash'?s.openingCash:totals[key];if(value!==undefined)box.append(el('p',label+': '+orderMoney(value)));}
+  for(const [key,label]of [['openingCash','Đầu ca'],['cash','Thu tiền mặt'],['bank','Thu không tiền mặt (ngân hàng/cổng)'],['cashIn','Thu vào ca (gồm tiền xe)'],['cashOut','Rút/chi'],['expectedCash','Tiền mặt theo sổ'],['countedCash','Thực đếm'],['difference','Chênh lệch']]){const value=key==='openingCash'?s.openingCash:totals[key];if(value!==undefined)box.append(el('p',label+': '+orderMoney(value)));}
   if(s.closedAt)box.append(el('p','Chốt: '+shiftTime(s.closedAt)),el('p',s.closeNote));
   const actions=el('div',undefined,'toolbar');if(s.canClose)for(const [action,label]of [['IN','Bổ sung tiền'],['OUT','Rút/chi tiền'],['close','Chốt ca']])actions.append(button(label,()=>{dialog.close();shiftForm(null,s,action);}));
   if(s.closedAt){const link=el('a','In biên bản bàn giao ↗','quiet');link.href='/admin/print/shifts/'+id;link.target='_blank';link.rel='noopener noreferrer';actions.append(link);}
