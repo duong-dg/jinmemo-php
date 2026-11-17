@@ -46,7 +46,7 @@ final class PublicSite
         if($path!==$canonicalPath){$query=$isCatalog?array_filter($browse['filters'],fn($value)=>$value!==''):[];if($isCatalog&&$browse['kind']!=='destinations')unset($query[$browse['kind']==='type'?'type':'destination']);if($isCatalog&&$browse['page']>1)$query['page']=$browse['page'];header('Location: '.$canonicalPath.($query?'?'.http_build_query($query):''),true,308);exit;}
         $canonical=$base.$canonicalPath;$indexing=!$isCheckout&&!$isCart&&!$isLookup&&!($isCatalog&&($browse['filters']['q']!==''||$browse['page']>1))&&($this->config['SEO_INDEXING'] ?? 'false')==='true';
         header('Content-Type: text/html; charset=utf-8');header('Cache-Control: no-store');header('X-Content-Type-Options: nosniff');header('X-Frame-Options: DENY');header('Referrer-Policy: strict-origin-when-cross-origin');
-        header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
+        header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self' https://pay.sepay.vn/v1/checkout/init");
         $relatedRideLinks=$isPost?array_values(array_filter((new RideLinks($this->db))->list($lang)['data'],fn($r)=>in_array($r['id'],$post['relatedRideIds']??[],true))):[];
         require dirname(__DIR__).'/views/public.php';exit;
     }

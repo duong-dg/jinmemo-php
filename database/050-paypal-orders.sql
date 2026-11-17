@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS jingo_paypal_orders (
+ id VARCHAR(40) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+ attempt_id VARCHAR(27) CHARACTER SET ascii COLLATE ascii_bin NOT NULL UNIQUE,
+ approval_url TEXT NOT NULL,
+ created_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+ FOREIGN KEY(attempt_id) REFERENCES jingo_gateway_attempts(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
