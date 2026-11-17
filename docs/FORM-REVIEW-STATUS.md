@@ -31,3 +31,7 @@ Form admin thời tiết có nhóm cấu hình, mật khẩu API Key, kiểm tra
 ## Đợt 110 — bảo mật và bộ chọn ngôn ngữ
 
 Thêm form OTP đăng nhập và form chính sách có bước nhận mã/xác nhận, khóa thao tác khi gửi, giữ lựa chọn đã kiểm tra và cho nhập lại OTP sai. Bộ chọn ngôn ngữ dùng cờ/tên/ngôn ngữ hiện tại và mục thiếu bản dịch; Escape/nhấp ngoài đóng danh sách. Menu chính bỏ Giỏ vé/Thanh toán chung, chuyển giỏ sang biểu tượng riêng. Đã xem picker trên fixture PHP desktop/mobile; không thay dữ liệu vận hành. Kiểm thử admin-security-ui.cjs, language-picker.php và language-picker-ui.cjs. Schema 052; xem ADMIN-SECURITY.md. Chưa xem toàn bộ form bảo mật trong phiên hosting thật.
+
+## Đợt 111 — menu và thông báo lỗi
+
+Header desktop nhóm Thông tin và giữ Liên hệ riêng; mobile dùng nút Menu có tra cứu đơn hàng, cùng nhãn Việt/Anh và cùng điều kiện feature. Kiểm panel bằng Escape/nhấp ngoài/focus/breakpoint. Form khách dùng thông điệp lỗi English theo errorText nguồn (40 fixture đối chiếu), giữ status và cơ chế retry. Đã kiểm PHP/Node/HTTP/feature flags và xem fixture header desktop/mobile, không tràn ngang theo DOM ở kích thước đã kiểm. Không thay schema 052. Chưa chuyển hoàn chỉnh cart drawer/thiết kế toàn site và chưa kiểm hosting thật.

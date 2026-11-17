@@ -1,0 +1,162 @@
+[
+  {
+    "message": "Không thể tra cứu.",
+    "en": "Unable to find your booking."
+  },
+  {
+    "message": "Không thể kiểm tra giá.",
+    "en": "Unable to check prices."
+  },
+  {
+    "message": "Chưa gửi được yêu cầu.",
+    "en": "Unable to send your request."
+  },
+  {
+    "message": "Đã hủy",
+    "en": "Cancelled"
+  },
+  {
+    "message": "Chưa thanh toán",
+    "en": "Unpaid"
+  },
+  {
+    "message": "Đã thanh toán",
+    "en": "Paid"
+  },
+  {
+    "message": "Người lớn",
+    "en": "Adult"
+  },
+  {
+    "message": "Trẻ em",
+    "en": "Child"
+  },
+  {
+    "message": "Người cao tuổi",
+    "en": "Senior"
+  },
+  {
+    "message": "Đang tra cứu…",
+    "en": "Looking up…"
+  },
+  {
+    "message": "Họ tên",
+    "en": "Full name"
+  },
+  {
+    "message": "Ghi chú",
+    "en": "Notes"
+  },
+  {
+    "message": "Khóa tra cứu riêng",
+    "en": "Private access key"
+  },
+  {
+    "message": "Địa chỉ đón",
+    "en": "Pickup address"
+  },
+  {
+    "message": "Địa chỉ trả",
+    "en": "Drop-off address"
+  },
+  {
+    "message": "Thanh toán",
+    "en": "Payment"
+  },
+  {
+    "message": "Nhận tại quầy",
+    "en": "Counter pickup"
+  },
+  {
+    "message": "Đã xác nhận",
+    "en": "Confirmed"
+  },
+  {
+    "message": "Trang chủ",
+    "en": "Home"
+  },
+  {
+    "message": "Ngày / khung giờ này chưa được mở tồn vé. Vui lòng chọn ngày khác.",
+    "en": "This date / time is not open for sale. Please choose another date."
+  },
+  {
+    "message": "Đã đặt vé",
+    "en": "Booked"
+  },
+  {
+    "message": "Mã đơn",
+    "en": "Booking code"
+  },
+  {
+    "message": "Sản phẩm",
+    "en": "Products"
+  },
+  {
+    "message": "Ngày sử dụng",
+    "en": "Visit date"
+  },
+  {
+    "message": "Cẩm nang",
+    "en": "Travel journal"
+  },
+  {
+    "message": "Đường dẫn",
+    "en": "Breadcrumbs"
+  },
+  {
+    "message": "Ưu đãi online không cộng dồn mã giảm giá. Bỏ mã để dùng giá online.",
+    "en": "Online offers cannot be combined with a voucher. Remove the voucher to use the online price."
+  },
+  {
+    "message": "Quà lưu niệm",
+    "en": "Souvenirs"
+  },
+  {
+    "message": "Mã giảm giá không hợp lệ.",
+    "en": "Invalid voucher code."
+  },
+  {
+    "message": "Người lớn · Địa phương",
+    "en": "Local adult"
+  },
+  {
+    "message": "Trẻ em · Địa phương",
+    "en": "Local child"
+  },
+  {
+    "message": "Người cao tuổi · Địa phương",
+    "en": "Local senior"
+  },
+  {
+    "message": "Mã giảm giá không tồn tại, chưa có hiệu lực hoặc đã hết hạn.",
+    "en": "This voucher is invalid, not yet active or expired."
+  },
+  {
+    "message": "Mã giảm giá không áp dụng cho sản phẩm hoặc gói vé đang chọn.",
+    "en": "This voucher does not apply to the selected experience or ticket package."
+  },
+  {
+    "message": "Mã giảm giá không áp dụng cho ngày sử dụng vé đã chọn.",
+    "en": "This voucher does not apply to the selected visit date."
+  },
+  {
+    "message": "Đơn chưa đạt giá trị tối thiểu của mã giảm giá.",
+    "en": "This booking does not meet the voucher minimum spend."
+  },
+  {
+    "message": "Mã giảm giá không áp dụng cho đơn miễn phí.",
+    "en": "Vouchers cannot be used on free bookings."
+  },
+  {
+    "message": "Mã giảm giá đã hết lượt sử dụng.",
+    "en": "This voucher has reached its usage limit."
+  },
+  {
+    "message": "Chỉ còn 12 suất cho ngày 2026-12-01",
+    "en": "Only 12 spots remain for this date / time. Reduce the number of guests or choose another date."
+  },
+  {
+    "message": "Unmapped fixture",
+    "en": "Unable to complete this request. Please refresh availability or contact JinMemo for help."
+  }
+]

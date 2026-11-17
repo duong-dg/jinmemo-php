@@ -1193,3 +1193,11 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Gỡ Giỏ vé/Thanh toán chung khỏi menu chính, đưa giỏ ra biểu tượng riêng. Khôi phục picker cờ VI/EN, tên ngôn ngữ, dấu chọn và trạng thái Chưa có bản dịch; giữ query/hash khi chuyển ngôn ngữ. Giữ URL và luồng JC/JB hiện có. Chưa chuyển toàn bộ giao diện giống nguồn.
 - Đã kiểm MySQL/HTTP, consume OTP đồng thời, audit rollback và cookie rotation; Node UI cùng picker desktop/mobile bằng dữ liệu thử. Không gửi OTP thật, không gọi DB-IP thật, chưa kiểm hosting.
 - Cập nhật git pull --ff-only origin main rồi php bin/install.php (SQL mới 052-admin-otp.sql), Ctrl+F5.
+
+### Menu responsive và lỗi song ngữ — đợt 111 (17/11/2026)
+
+- Tách header dùng chung thành views/site-header.php. Desktop nhóm các trang showInMenu (trừ Liên hệ) vào Thông tin/Information; mobile có nút Menu và các mục cùng ngôn ngữ, gồm Tra cứu đơn hàng. Giữ các điều kiện bật xe/phòng/quà; trang footer-only không lộ ra header. Giỏ vẫn ở biểu tượng riêng và giữ URL PHP cũ.
+- Panel đóng khi chọn liên kết, Escape, nhấp ngoài, chuyển focus hoặc đổi breakpoint; chỉ mở một panel tại một thời điểm. Native details vẫn dùng được khi JavaScript không tải. Nhãn dài được xuống dòng, menu dài có vùng cuộn.
+- Nối guestError vào các thông báo lỗi API trên form khách: báo giá/đơn vé, giỏ, JB, liên hệ, xe, quà, phòng và thanh toán. Chọn English dùng thông điệp/errorText của nguồn; lỗi tồn còn số lượng cụ thể, lỗi chưa có bản dịch dùng fallback English của nguồn. Giữ nguyên HTTP status, payload đang chờ và quy tắc retry; thông báo Việt giữ nguyên. Không sửa dữ liệu đã lưu hoặc tự dịch nội dung quản trị chưa có bản English.
+- Kiểm thử mới site-navigation.php (16 tổ hợp ngôn ngữ/feature), site-navigation-ui.cjs, locale-errors-ui.cjs và 40 fixture từ errorText Node. Đã chạy lại full HTTP, features.php và các kiểm thử UI vé/giỏ/JB/xe/phòng/thanh toán liên quan. Đã xem header thật trên fixture PHP desktop 1280px/mobile 390px, menu Việt/Anh và nhóm Thông tin; không tràn ngang ở các kích thước đã kiểm. Chưa kiểm hosting thật, chưa hoàn thành toàn bộ thiết kế/cart drawer như nguồn.
+- Cập nhật git pull --ff-only origin main rồi Ctrl+F5. Không SQL mới, vẫn schema 052. Nếu chưa cập nhật đợt trước thì vẫn cần php bin/install.php để áp dụng 052.
