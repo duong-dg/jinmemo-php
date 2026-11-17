@@ -1,6 +1,6 @@
 # Sao lưu và phục hồi PHP trên cPanel
 
-Cập nhật đợt 122, schema vẫn 052. Admin → Cấu hình website → Sao lưu & phục hồi.
+Cập nhật đợt 123, schema vẫn 052. Admin → Cấu hình website → Sao lưu & phục hồi.
 
 ## Phân biệt file
 
@@ -125,3 +125,23 @@ Snapshot DB vẫn loại phiên đăng nhập/OTP/rate limit như DatabaseExport
 5. Kiểm dữ liệu, tổng thu/hoàn/tồn, tra cứu/file vé gốc và khả năng giải mã cấu hình bằng khóa đã phục hồi; đối soát phát sinh từ lúc snapshot trước khi chuyển domain. Tài khoản cPanel, document root, SSL, lịch cron và nơi giữ bản offsite phải cấu hình riêng. Chưa có endpoint/script tự ghi đè hệ thống đang chạy.
 
 Đã thử archive mã hóa thật, SQL import vào database riêng và giải mã dữ liệu bằng .smtp-key lấy lại từ media, PDF nguyên byte, hash/source revision, HTTP/worker drain/503, lỗi preflight/thiếu khóa/source bẩn/đường dẫn chồng và retention theo scope. Chưa thử tài khoản cPanel thật hoặc tự động khôi phục vào hệ thống vận hành. Lệnh kiểm thử: php tests/application-backup.php với JINGO_TEST_DSN, JINGO_TEST_GPG và JINGO_TEST_GIT trỏ công cụ local.
+
+## Kiểm tra archive trước khi phục hồi — đợt 123
+
+Lệnh `bin/verify-backup.php` dùng cùng cấu hình GPG/key ở trên, không cần kết nối MySQL. Chạy trên máy/thư mục riêng tin cậy, chuẩn bị thư mục kiểm tra có sẵn với quyền 0700, ngoài public/source/MEDIA_DIR:
+
+```bash
+/usr/local/bin/php /home/USER/jinmemo.cloud/bin/verify-backup.php --archive=/home/USER/private-backups/jinmemo-backup-20261117T031500Z-1234abcd.tar.gpg --work-dir=/home/USER/private-restore-check --sha256=HASH_64_HEX
+```
+
+Thay ID và HASH_64_HEX bằng bản muốn kiểm và SHA-256 trên trang admin; hash là 64 ký tự hex thường. Có thể bỏ --sha256 để chỉ nhận hash trong kết quả, nhưng nên so với metadata tin cậy trước khi phục hồi. Khóa GPG nằm trong file riêng theo BACKUP_PASSPHRASE_FILE, không đưa vào tham số hoặc log. Có --help; exit 0 khi kiểm đạt, exit 1 khi lỗi. Không đưa lệnh này lên HTTP.
+
+Công cụ sao chép ciphertext vào workspace riêng, kiểm hash nếu được cung cấp, giải mã GPG qua pipe có giới hạn dung lượng rồi đọc tar bằng bộ đọc tuần tự. Chỉ các container có tên cố định được chép tiếp trong workspace; không giải nén đường dẫn do archive cung cấp. Nó từ chối đường dẫn tuyệt đối/drive/../backslash/control, file trùng, xung đột file-thư mục, hardlink/symlink/device/FIFO, checksum/padding/terminator lỗi, dữ liệu giấu sau cuối tar và extension không hỗ trợ. Có đọc GNU long name và PAX path/timestamp/comment Git cần cho archive native. Producer application cũng từ chối source symlink/submodule, thay vì tạo bản thiếu mã hoặc khó phục hồi.
+
+Định dạng được nhận là PHP_DATABASE_ONLY và PHP_APPLICATION của các lệnh native. SQL phải có header/footer hoàn chỉnh, hash và số dòng bảng khớp manifest. Bản ứng dụng kiểm hash/size tất cả phần, từng file media, khóa .smtp-key 32 byte, file vé gốc và revision trong Git tar; không đọc/xử lý nội dung PDF. Archive Node hoặc SQL staging jm_transfer không được xem như bản PHP này. Cấu hình/source bên trong chỉ là dữ liệu để đối chiếu, không được thực thi hay dùng để mở kết nối mạng/database.
+
+Kết quả JSON ghi verification=INTEGRITY_ONLY, scope/revision/hash/counts và databaseImported=false/filesRestored=false. Không ghi restore-test.json hoặc thay đổi marker trên trang admin. Đây không phải chứng nhận đã nhập SQL thành công, chạy được website, xác thực người tạo archive hay chứng minh SQL/code an toàn. Chỉ dùng bản do tác vụ tin cậy tạo và tiếp tục bước phục hồi vào database/thư mục thử riêng để xác nhận vận hành.
+
+Giới hạn kiểm tra: ciphertext và plaintext tar tối đa 8 GiB, SQL 512 MiB, manifest 32 MiB, config JSON 1 MiB, 2.000 bảng, 50.000 file media/2 GiB nội dung media, tối đa 100.000 entry trong mỗi tar lồng, path 4 KiB/128 cấp. Container media được chừa thêm chỗ cho header tar; source cũng bị giới hạn bởi archive ngoài. Chuẩn bị quota nhiều lần kích thước archive giải mã. Workspace tạm được dọn cả khi lỗi có xử lý; kill/mất điện có thể để lại thư mục .verify-* riêng tư, chỉ dọn khi không còn tác vụ chạy. Input gốc, passphrase, database và media vận hành không bị ghi đè.
+
+Kiểm thử thêm: tests/backup-tar.php (PAX/GNU/binary, traversal/link/duplicate/padding/trailer/limits), database-backup.php (CLI không dùng MySQL, sai key/hash, hash SQL/footer/counts bị sửa, không fake marker) và application-backup.php (archive ứng dụng thật, media/PDF/key/source/config). Kiểm tra với GPG local thật; chưa thử cPanel thật.

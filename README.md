@@ -1283,3 +1283,10 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Gate phối hợp request/worker bootstrap: chờ tiến trình cũ kết thúc, trả 503 có Retry-After khi đang chụp, nhả trước GPG và khi lỗi. Chỉ bật khi cấu hình coordination directory giống nhau trong .env/web/CLI; nguồn ghi SQL/FTP/deploy ngoài ứng dụng phải dừng riêng. Không tự kích hoạt bảo trì khi cập nhật code.
 - Manifest kiểm hash từng file/phần; PDF giữ nguyên, không nhận symlink hoặc âm thầm bỏ file. Admin phân biệt scope ứng dụng/DB/archive ngoài; retention riêng từng scope. Không tự cài cron, SSL hoặc ghi đè dữ liệu phục hồi.
 - Kiểm thử archive GPG thật, SQL restore + khóa phục hồi, PDF/hash/Git/config, HTTP/worker drain/503, lỗi/nhả gate và retention; regression DB backup, backups UI/API và full HTTP qua. Chưa kiểm cPanel thật. Xem [cấu hình và phục hồi riêng](docs/BACKUP-RESTORE-PHP.md).
+
+## Kiểm tra backup trước phục hồi — đợt 123
+
+- Thêm bin/verify-backup.php kiểm GPG, hash và cấu trúc archive PHP native, SQL/footer/table counts, media/file vé/khóa và source revision. Không kết nối MySQL, chạy SQL, ghi đè source/media hay tạo marker phục hồi giả; kết quả ghi INTEGRITY_ONLY.
+- Bộ đọc tar tuần tự có giới hạn, từ chối traversal/link/file trùng/xung đột/thành phần lạ. Chỉ chép container tên cố định vào workspace riêng để kiểm; input gốc không đổi.
+- Có kiểm GPG thật, CLI không cần MySQL, bản ứng dụng/DB, sai khóa/hash, SQL/footer/counts bị sửa và tar độc hại; chưa kiểm hosting thật. Source symlink/submodule bị chặn khi tạo snapshot ứng dụng. Không đổi schema 052.
+- Cách dùng và giới hạn xem [hướng dẫn backup](docs/BACKUP-RESTORE-PHP.md). Vẫn cần thử phục hồi vào môi trường riêng và kiểm ứng dụng trước khi chuyển vận hành.
