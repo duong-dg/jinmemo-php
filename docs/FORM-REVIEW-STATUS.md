@@ -55,3 +55,7 @@ Form liên hệ dùng chung vé/xe/quà, địa chỉ đón/trả và nhận qu�
 ## Đợt 119 — chọn cổng và trạng thái thanh toán chung
 
 Form chốt và gom mã có lựa chọn thủ công/online theo LIVE; bắt buộc chọn rõ, khử trùng VNPAY/QR, lỗi tải lại không giữ lựa chọn cũ làm hợp lệ. Sau đặt JB hiển thị cổng đã chọn, kiểm trạng thái bằng nút riêng, chặn mở cổng khi số tiền không khớp và không hiện tạo thanh toán cho đơn đã trả. Đã xem danh sách VI và kết quả EN bằng fixture, không tạo thanh toán thật. Schema vẫn 052.
+
+## Đợt 120 — thông tin vận chuyển từng gói
+
+Form riêng theo ID dòng ở giỏ vé và chốt đơn chung, có sức chứa xe riêng, giờ/số chỗ xe ghép, chuyến bay và khứ hồi. Review hiển thị tuyến, ngày/giờ, số khách trước nút xác nhận; khóa ô chuyến khi review, giữ giá trị lúc làm mới giá, retry body trip cố định. Không dùng chung input giữa các dòng. Đã xem VI desktop/EN mobile với fixture không tạo đơn; test frontend và backend transport/carts/full HTTP qua. Schema giữ 052.

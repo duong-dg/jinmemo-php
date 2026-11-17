@@ -1262,3 +1262,10 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Sau khi tạo JB, trang kiểm trạng thái/số tiền từ server và đưa cổng đã chọn lên đầu. Khách bấm mới tạo QR/liên kết; đơn đã thanh toán không hiện tạo thanh toán mới. Cổng bị tắt có hướng dẫn tiếp tục trên cùng đơn, không đặt lại booking.
 - Giữ nguyên journal/fingerprint/locale khi gửi lại; backend replay vẫn trả cùng JB nếu cấu hình đổi. Online preference không bị đưa nhầm vào phương thức thủ công của vé. Không đổi schema 052, không cần import SQL.
 - Kiểm tra bundle-payment-ui, draft/legacy checkout, payments-ui, journal; backend checkout-bundles (sáu provider và HTTP), VNPAY, SePay, thẻ SePay, PayPal và full HTTP đều qua. Đã xem VI/EN với fixture; chưa thử hosting hoặc thanh toán thật. Các trường vận chuyển riêng từng gói vé vẫn cần chuyển tiếp.
+
+## Thông tin vận chuyển cho gói vé — đợt 120
+
+- Giỏ vé và chốt đơn chung có form từng dòng xe: đón/trả, giờ đón Việt Nam, số khách, chuyến bay và ngày/giờ chiều về. Xe riêng kiểm sức chứa/một xe mỗi dòng; xe ghép theo số chỗ và khóa giờ theo suất đã chọn.
+- Báo giá và tạo JC đều gửi trip đúng trường nguồn. Review có chi tiết chuyến; làm mới giá giữ ô đang nhập, yêu cầu mất mạng/reload/VI-EN gửi lại nguyên body. Dòng vừa đổi ở tab khác được giữ sau khi đặt xong.
+- Draft mới chỉ lưu cấu hình xe, không lưu địa chỉ/chuyến bay vào localStorage; các draft cũ có trip vẫn dùng được. Không đổi schema 052 hoặc hợp đồng export SQL; PDF vẫn chỉ giao file gốc.
+- Kiểm tra transport-fields-ui, carts-ui, draft-checkout-ui và các test giỏ/checkout; backend transport.php, carts.php, full http.php qua. Đã xem VI desktop/EN mobile trên fixture, chưa kiểm hosting thật. Các phần còn thiếu khác xem PORT-COMPLETION.md.
