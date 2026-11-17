@@ -1290,3 +1290,9 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Bộ đọc tar tuần tự có giới hạn, từ chối traversal/link/file trùng/xung đột/thành phần lạ. Chỉ chép container tên cố định vào workspace riêng để kiểm; input gốc không đổi.
 - Có kiểm GPG thật, CLI không cần MySQL, bản ứng dụng/DB, sai khóa/hash, SQL/footer/counts bị sửa và tar độc hại; chưa kiểm hosting thật. Source symlink/submodule bị chặn khi tạo snapshot ứng dụng. Không đổi schema 052.
 - Cách dùng và giới hạn xem [hướng dẫn backup](docs/BACKUP-RESTORE-PHP.md). Vẫn cần thử phục hồi vào môi trường riêng và kiểm ứng dụng trước khi chuyển vận hành.
+
+## Kiểm file SQL từ bản Node — đợt 124
+
+- Thêm `php bin/check-transfer.php --file=/private/path/export.sql`: đọc file transfer v1, kiểm kết thúc/số dòng, whitelist và mẫu 61 bảng/365 cột, kiểu giá trị cơ bản. Không kết nối MySQL, chạy SQL, nhập dữ liệu hoặc sửa dump.
+- Báo bảng thiếu/lệch schema, lỗi có giới hạn và hash file đã đọc hết; không in nội dung khách hàng. Mẫu được ghim source revision/hash, fixture sinh bằng hàm exporter Node thật. Kiểm thử dữ liệu hỏng/SQL lạ/độ chính xác số/riêng tư và CLI đã qua.
+- `importReady` luôn false: còn kiểm quan hệ, adapter, ledger/tồn, file vật lý và viết importer toàn bộ. Không đổi schema 052. Xem [hướng dẫn kiểm transfer](docs/TRANSFER-FILE-AUDIT.md).
