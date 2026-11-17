@@ -1231,3 +1231,11 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Chỉ khi xác nhận mới lưu payload cùng requestId và snapshot vào session rồi POST. Mất mạng/5xx/401/403/404/408/429/response không hợp lệ giữ yêu cầu để retry; tải lại/đổi ngôn ngữ không tự gửi và không phụ thuộc catalog cho replay. Lỗi nghiệp vụ 400/409/422 xác định cho quay lại tải danh mục mới, giữ thông tin khách để review lại. Đơn thành công chỉ dọn dòng không thay đổi revision/số lượng, giữ lựa chọn vừa sửa/thêm ở tab khác. Thông tin khách không nằm trong localStorage giỏ quà.
 - Kiểm thử mới gift-cart-ui.cjs/gifts-ui.cjs/gift-drawer-ui.cjs: shared locale state, giới hạn, pending lock, private session, revision-aware cleanup, frozen retry sau reload/EN/429, 409 fresh review, current price/names, stale response và không tạo đơn từ drawer. Các test vé/giỏ/JB và PHP gift-orders/full HTTP đã đạt. Xem renderer thật với API mô phỏng ở desktop/mobile: thêm quà, panel, đổi VI sang EN vẫn giữ món và hiển thị tên/giá đúng ngôn ngữ; không tràn ngang theo DOM ở kích thước đã kiểm. Không gửi đơn hoặc thu tiền trên hosting thật.
 - Cập nhật git pull --ff-only origin main rồi Ctrl+F5. Không SQL mới, vẫn schema 052.
+
+## Giỏ xe cùng vé/quà — đợt 116
+
+- Lựa chọn xe riêng/xe ghép được lưu trong sessionStorage theo tab, dùng chung khi đổi VI/EN; chỉ lưu tuyến, giờ, xe, nhóm ghép và giá đã chọn, không lưu liên hệ vào draft.
+- Trang xe có nút thêm vào giỏ. Panel hiển thị chuyến, số khách, giá tham khảo và nút bỏ/quay lại đặt; không đưa mã đơn hoặc khóa tra cứu vào panel.
+- Quay lại trang xe khôi phục tiêu chí tìm kiếm, nhưng phải tìm lại để kiểm tra giá/chỗ rồi xác nhận đặt. Không tự gửi yêu cầu hoặc tạo QR. Checkout hợp nhất từ mọi lựa chọn vẫn chưa hoàn tất.
+- Khóa sửa/bỏ draft khi còn yêu cầu xe chờ kết quả; gửi lại đúng payload sau mất kết nối. Chỉ xóa draft khớp khi nhận được kết quả đặt thành công; POS giữ kho yêu cầu riêng theo nhân viên. Phản hồi 401/403/429 không mở đường sửa thành yêu cầu mới.
+- Kiểm tra: ride-cart-ui, rides-ui (private/shared/POS, khôi phục draft, retry, 429), cart-drawer-ui, gift-drawer-ui (vé/quà/xe), ride-payments-ui và ride-cash-ui; lint JS/PHP. Chưa xác nhận hiển thị trên hosting thật. Schema giữ 052, không cần import SQL cho đợt này.
