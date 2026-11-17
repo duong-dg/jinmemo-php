@@ -1,0 +1,182 @@
+{
+  "secret": "fixture-card-secret-1234567890",
+  "signatures": [
+    {
+      "fields": {
+        "order_amount": "15000000000",
+        "merchant": "MERCHANT_1",
+        "currency": "VND",
+        "operation": "PURCHASE",
+        "order_description": "Thanh toan JC1234567890",
+        "order_invoice_number": "JMPAAAAAAAAAAAAAAAAAAAAAAAA",
+        "payment_method": "CARD",
+        "success_url": "https://merchant.example.test/api/v1/payments/sepay/card-return",
+        "error_url": "https://merchant.example.test/api/v1/payments/sepay/card-return",
+        "cancel_url": "https://merchant.example.test/api/v1/payments/sepay/card-return"
+      },
+      "signature": "PnNU5gEertquiJ2rsX/3S5N1+Mg4zrxuRmJxmM0Ao6c="
+    },
+    {
+      "fields": {
+        "order_amount": "15000000000",
+        "merchant": "MERCHANT_1",
+        "currency": "VND",
+        "operation": "PURCHASE",
+        "order_description": "Thanh toan JC1234567890",
+        "order_invoice_number": "JMPAAAAAAAAAAAAAAAAAAAAAAAA",
+        "payment_method": "CARD",
+        "success_url": "https://merchant.example.test/api/v1/payments/sepay/card-return",
+        "error_url": "https://merchant.example.test/api/v1/payments/sepay/card-return",
+        "cancel_url": "https://merchant.example.test/api/v1/payments/sepay/card-return",
+        "customer_id": "Khách + & = , Hội An"
+      },
+      "signature": "8nAZ3H5mkt8sqcGSb4ZDSfbFeHxpa+dDOqFqKtQYuG0="
+    },
+    {
+      "fields": {
+        "order_amount": "15000000000",
+        "merchant": "MERCHANT_1",
+        "currency": "VND",
+        "operation": "PURCHASE",
+        "order_description": "Thanh toan JC1234567890",
+        "order_invoice_number": "JMPAAAAAAAAAAAAAAAAAAAAAAAA",
+        "payment_method": "CARD",
+        "success_url": "https://merchant.example.test/api/v1/payments/sepay/card-return",
+        "error_url": "https://merchant.example.test/api/v1/payments/sepay/card-return",
+        "cancel_url": "https://merchant.example.test/api/v1/payments/sepay/card-return",
+        "customer_id": ""
+      },
+      "signature": "KYML/TpCTrp+J+iadB+cxq8zJIZMkRoW8rzMqVDBNj8="
+    },
+    {
+      "fields": {
+        "unknown": "ignore",
+        "signature": "ignore",
+        "cancel_url": "https://merchant.example.test/api/v1/payments/sepay/card-return",
+        "error_url": "https://merchant.example.test/api/v1/payments/sepay/card-return",
+        "success_url": "https://merchant.example.test/api/v1/payments/sepay/card-return",
+        "payment_method": "CARD",
+        "order_invoice_number": "JMPAAAAAAAAAAAAAAAAAAAAAAAA",
+        "order_description": "Thanh toan JC1234567890",
+        "operation": "PURCHASE",
+        "currency": "VND",
+        "merchant": "MERCHANT_1",
+        "order_amount": "15000000000"
+      },
+      "signature": "PnNU5gEertquiJ2rsX/3S5N1+Mg4zrxuRmJxmM0Ao6c="
+    }
+  ],
+  "money": [
+    {
+      "value": "1",
+      "amount": 1
+    },
+    {
+      "value": "00000000001",
+      "amount": 1
+    },
+    {
+      "value": "100.0",
+      "amount": 100
+    },
+    {
+      "value": "100.00",
+      "amount": 100
+    },
+    {
+      "value": "15000000000",
+      "amount": 15000000000
+    },
+    {
+      "value": "15000000000.00",
+      "amount": 15000000000
+    },
+    {
+      "value": "0",
+      "amount": null
+    },
+    {
+      "value": "0.00",
+      "amount": null
+    },
+    {
+      "value": "15000000001",
+      "amount": null
+    },
+    {
+      "value": "000000000001",
+      "amount": null
+    },
+    {
+      "value": "1.01",
+      "amount": null
+    },
+    {
+      "value": "1.000",
+      "amount": null
+    },
+    {
+      "value": "1e2",
+      "amount": null
+    },
+    {
+      "value": "+1",
+      "amount": null
+    },
+    {
+      "value": "-1",
+      "amount": null
+    },
+    {
+      "value": " 1",
+      "amount": null
+    },
+    {
+      "value": "1 ",
+      "amount": null
+    },
+    {
+      "value": "1\n",
+      "amount": null
+    },
+    {
+      "value": "1,000",
+      "amount": null
+    },
+    {
+      "value": "NaN",
+      "amount": null
+    },
+    {
+      "value": "Infinity",
+      "amount": null
+    },
+    {
+      "value": "",
+      "amount": null
+    },
+    {
+      "value": ".00",
+      "amount": null
+    },
+    {
+      "value": "１",
+      "amount": null
+    }
+  ],
+  "normalized": {
+    "invoice": "JMPAAAAAAAAAAAAAAAAAAAAAAAA",
+    "order": "ORDER_1",
+    "transaction": "TX-1",
+    "amount": 100,
+    "orderAmount": 100,
+    "currency": "VND",
+    "transactionCurrency": "VND",
+    "method": "CARD",
+    "status": "CAPTURED",
+    "transactionStatus": "APPROVED",
+    "type": "PAYMENT",
+    "notification": "ORDER_PAID"
+  },
+  "fingerprint": "12dfce8fb4baf1bed16c70b47b776787bc3bcb1a3c6d44eb4987ba8662c93058"
+}
