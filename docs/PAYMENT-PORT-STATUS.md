@@ -29,3 +29,5 @@ Phần thanh toán nguồn chưa được chuyển đủ toàn bộ. Các luồn
 Đã kiểm PHP/MySQL, HTTP cục bộ và Node DOM. Các kết quả này chưa thay cho kiểm giao diện trên trình duyệt, hosting thật hoặc giao dịch sandbox/live của nhà cung cấp.
 
 Đợt 118 đã nối giỏ lựa chọn vào JC/JM-X/JM-G rồi JB qua journal session, có review và khôi phục từng phần. Chọn phương thức thủ công tại form chung; provider online trên form chung chưa đối chiếu đủ nguồn, trang tra cứu JB giữ luồng online hiện có. Không tự thu tiền/tạo QR; xem [luồng chốt đơn](DRAFT-CHECKOUT.md).
+
+Đợt 119: form chung và gom mã cũ dùng danh sách manual + provider LIVE từ payments/options; JB chấp nhận sáu provider online đã sẵn sàng, giữ nguyên fingerprint/replay khi cổng tắt sau đó. WebPaymentMethods dùng chung quy tắc readiness với API options. Chọn online không gửi ID provider vào paymentPreference thủ công của vé. Bước sau đặt tra trạng thái JB, xác minh tổng tiền, đưa cổng đã chọn lên đầu; khách bấm mới tạo QR/link, không suy ra PAID từ URL. Đã kiểm provider mô phỏng và HTTP, chưa thử giao dịch thật.

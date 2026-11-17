@@ -1,6 +1,6 @@
 <section id="draft-checkout" data-lang="<?=$lang?>" class="page-content draft-checkout">
 <h1><?=$en?'Review your order':'Kiểm tra đơn hàng'?></h1>
-<p><?=$en?'Book your selected tickets, transfer and souvenirs together. Review the details before confirming.':'Đặt vé, xe và quà đã chọn trong cùng một lần chốt đơn. Kiểm tra thông tin trước khi xác nhận.'?></p>
+<p id="draft-checkout-intro"><?=$en?'Book your selected tickets, transfer and souvenirs together. Review the details before confirming.':'Đặt vé, xe và quà đã chọn trong cùng một lần chốt đơn. Kiểm tra thông tin trước khi xác nhận.'?></p>
 <div id="draft-checkout-message" role="status"></div><div id="draft-checkout-content"></div>
 <p><a href="<?=$en?'/en/checkout':'/chot-don'?>?view=lookup"><?=$en?'Look up a combined order':'Tra cứu đơn thanh toán chung'?></a> · <a href="<?=$en?'/en/checkout':'/chot-don'?>?view=combine"><?=$en?'Combine bookings you already made':'Gom các đơn đã đặt trước đó'?></a></p>
 </section>

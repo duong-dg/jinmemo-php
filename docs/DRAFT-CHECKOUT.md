@@ -2,7 +2,7 @@
 
 Schema giữ 052. Không cần import SQL. Tải lại các tab cũ sau khi cập nhật mã.
 
-`/chot-don` và `/en/checkout` mặc định mở giỏ vé/xe/quà đang chọn. Khách nhập liên hệ một lần, địa chỉ đón/trả nếu có xe, quầy hoặc địa chỉ nhận quà, chọn phương thức thủ công đang bật và kiểm tra tổng tiền. Phí giao chỉ tính khi chọn giao quà. Bước review kiểm lại báo giá vé/xe; server từng module vẫn kiểm giá/tồn khi tạo đơn. Không tự đặt, tạo QR hoặc thu tiền khi mở trang.
+`/chot-don` và `/en/checkout` mặc định mở giỏ vé/xe/quà đang chọn. Khách nhập liên hệ một lần, địa chỉ đón/trả nếu có xe, quầy hoặc địa chỉ nhận quà, chọn phương thức đang bật và kiểm tra tổng tiền. Phí giao chỉ tính khi chọn giao quà. Bước review kiểm lại báo giá vé/xe; server từng module vẫn kiểm giá/tồn khi tạo đơn. Không tự đặt, tạo QR hoặc thu tiền khi mở trang.
 
 Khách xác nhận mới ghi journal `jinmemo-draft-checkout:v1` vào sessionStorage rồi lần lượt tạo JC, JM-X, JM-G và JB bằng API hiện có. Body, locale và khóa idempotency được cố định trước khi gửi; kết quả mỗi phần được lưu trước khi chuyển bước. Reload/đổi VI-EN chỉ hiện nút tiếp tục, không tự POST. Chỉ gửi lại phần chưa có kết quả và dùng nguyên body. Thông tin khách và khóa riêng không được đưa vào localStorage hoặc sự kiện giỏ.
 
@@ -16,6 +16,6 @@ Các helper khóa sửa giỏ trong cùng tab khi journal chưa hoàn tất. Jou
 
 `?view=combine` giữ luồng gom đơn có sẵn; `?view=lookup` và liên kết `#JB…:key` chỉ mở tra cứu. Các liên kết cũ vẫn hoạt động. Panel giỏ trỏ vào chốt đơn chung và không chứa form tra cứu mã cũ.
 
-Giới hạn còn lại: lựa chọn provider online ngay trên form chung và các trường vận chuyển riêng từng gói vé chưa được đối chiếu hết với nguồn. Bản này chọn phương thức thủ công khi chốt; trang JB tiếp tục dùng luồng thanh toán/provider đã có. Chưa kiểm giao dịch thật, SMTP hoặc hosting cPanel. Chưa có importer toàn bộ database cũ. PDF chỉ giao file gốc.
+Đợt 119 đã bổ sung chọn provider online LIVE trên form chung. Sau khi có JB, tra trạng thái server và đưa cổng đã chọn lên đầu; chỉ tạo QR/liên kết khi khách bấm, kiểm số tiền khớp tổng JB trước khi cho mở. Đơn đã trả tiền không hiện bước tạo thanh toán. Giới hạn còn lại: các trường vận chuyển riêng từng gói vé chưa được đối chiếu hết với nguồn. Chưa kiểm giao dịch thật, SMTP hoặc hosting cPanel. Chưa có importer toàn bộ database cũ. PDF chỉ giao file gốc.
 
 Kiểm tra: checkout-journal-ui, draft-checkout-ui, checkout-ui, các test giỏ/quà/xe và tra cứu; checkout-bundles.php và full http.php. Đã xem form VI/EN, phí giao và bước review trên desktop/mobile bằng fixture không tạo đơn. Worker kiểm thử đồng thời dùng UTC giống bootstrap ứng dụng để báo cáo thu không phụ thuộc múi giờ MySQL máy chạy test.

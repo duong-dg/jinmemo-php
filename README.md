@@ -1255,3 +1255,10 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Khi bị từ chối xác định có thể dừng phần chưa tạo, giữ mã/proof của phần đã đặt và mở gom thanh toán riêng. Mất mạng/401/403/429/response không hợp lệ luôn giữ yêu cầu. Không tự hủy booking, thu tiền hoặc tạo QR.
 - Tra cứu và gom mã cũ dùng view riêng, giữ liên kết cũ. Xem [chi tiết và giới hạn](docs/DRAFT-CHECKOUT.md): chưa đối chiếu hết trường vận chuyển từng vé và chọn provider online ngay trên form chung; chưa kiểm hosting/provider thật.
 - Kiểm tra journal, form chung, các giỏ/đặt riêng/tra cứu; checkout-bundles.php và full HTTP qua. Đã kiểm form VI/EN trên trình duyệt với dữ liệu mô phỏng. Schema vẫn 052, không cần import SQL.
+
+## Chọn cổng online khi chốt đơn — đợt 119
+
+- Form chung và gom mã cho chọn VNPAY/QR/thẻ, SePay QR/thẻ, PayPal và các phương thức thủ công đang bật. Chỉ provider LIVE sẵn sàng được nhận ở API tạo JB; chọn cổng chưa ghi nhận thu tiền.
+- Sau khi tạo JB, trang kiểm trạng thái/số tiền từ server và đưa cổng đã chọn lên đầu. Khách bấm mới tạo QR/liên kết; đơn đã thanh toán không hiện tạo thanh toán mới. Cổng bị tắt có hướng dẫn tiếp tục trên cùng đơn, không đặt lại booking.
+- Giữ nguyên journal/fingerprint/locale khi gửi lại; backend replay vẫn trả cùng JB nếu cấu hình đổi. Online preference không bị đưa nhầm vào phương thức thủ công của vé. Không đổi schema 052, không cần import SQL.
+- Kiểm tra bundle-payment-ui, draft/legacy checkout, payments-ui, journal; backend checkout-bundles (sáu provider và HTTP), VNPAY, SePay, thẻ SePay, PayPal và full HTTP đều qua. Đã xem VI/EN với fixture; chưa thử hosting hoặc thanh toán thật. Các trường vận chuyển riêng từng gói vé vẫn cần chuyển tiếp.

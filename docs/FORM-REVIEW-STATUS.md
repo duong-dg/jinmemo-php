@@ -51,3 +51,7 @@ Số lượng quà được lưu chung giữa VI/EN; nút Thêm vào giỏ mở 
 ## Đợt 118 — form chốt đơn chung
 
 Form liên hệ dùng chung vé/xe/quà, địa chỉ đón/trả và nhận quà có required/giới hạn, phí giao cập nhật riêng, summary từng phần và bước review trước POST tạo đơn. Có focus vùng xác nhận, hai cột desktop và một cột mobile, khung tổng không che bước xác nhận. Tra cứu JB/gom mã cũ tách khỏi form đặt mới. Đã xem VI/EN và review bằng fixture, không bấm tạo đơn thật; xem DRAFT-CHECKOUT.md về journal/retry và phần chưa hoàn tất. Schema giữ 052.
+
+## Đợt 119 — chọn cổng và trạng thái thanh toán chung
+
+Form chốt và gom mã có lựa chọn thủ công/online theo LIVE; bắt buộc chọn rõ, khử trùng VNPAY/QR, lỗi tải lại không giữ lựa chọn cũ làm hợp lệ. Sau đặt JB hiển thị cổng đã chọn, kiểm trạng thái bằng nút riêng, chặn mở cổng khi số tiền không khớp và không hiện tạo thanh toán cho đơn đã trả. Đã xem danh sách VI và kết quả EN bằng fixture, không tạo thanh toán thật. Schema vẫn 052.

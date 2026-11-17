@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__.'/PaymentSettings.php';
+require_once __DIR__.'/WebPaymentMethods.php';
 require_once __DIR__.'/PaymentProtocol.php';
 require_once __DIR__.'/PaymentTargets.php';
 require_once __DIR__.'/CheckoutBundles.php';
@@ -11,7 +12,7 @@ final class VnpayPayments
     public function __construct(private PDO $db,private array $env=[]){$this->settings=new PaymentSettings($db,$env);}
     private function query(string $sql,array $args=[]):PDOStatement{$s=$this->db->prepare($sql);$s->execute($args);return $s;}
     private function tx(callable $fn):array{$this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();try{if(!$this->query("SELECT id FROM jingo_catalog_locks WHERE id='catalog' FOR UPDATE")->fetchColumn())throw new HttpError(503,'Chưa cài khóa danh mục.');$r=$fn();$this->db->commit();return $r;}catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}}
-    public function options():array{$c=$this->settings->config();$manual=(new ManualMethods($this->db))->active();return ['mode'=>$c['mode'],'paypalRate'=>$c['paypalEnabled']?$c['paypalRate']:null,'manualOptions'=>$manual,'manualMethods'=>array_column($manual,'id'),'providers'=>$c['mode']==='LIVE'?array_merge($c['vnpayEnabled']?array_merge(['VNPAY','VNPAY_QR'],$c['vnpayCardEnabled']?['VNPAY_CARD']:[]):[],SepaySettings::ready($c)?['SEPAY']:[],SepayCardSettings::ready($c)?['SEPAY_CARD']:[],PaypalSettings::ready($c)?['PAYPAL']:[]):[]];}
+    public function options():array{$c=$this->settings->config();$manual=(new ManualMethods($this->db))->active();return ['mode'=>$c['mode'],'paypalRate'=>$c['paypalEnabled']?$c['paypalRate']:null,'manualOptions'=>$manual,'manualMethods'=>array_column($manual,'id'),'providers'=>WebPaymentMethods::providers($c)];}
     public function checkout(array $in,string $ip,bool $test=false,?array $context=null):array
     {
         if(array_diff(array_keys($in),['code','accessKey','email','provider'])||!is_string($in['code']??null)||!preg_match('/^J[GMCBH][A-F0-9]{10}$/D',$in['code'])||!in_array($in['provider']??null,['VNPAY','VNPAY_QR','VNPAY_CARD'],true)||array_key_exists('accessKey',$in)&&(!is_string($in['accessKey'])||!preg_match('/^[a-f0-9]{64}$/D',$in['accessKey']))||array_key_exists('email',$in)&&(!is_string($in['email'])||strlen($in['email'])>200||!filter_var($in['email'],FILTER_VALIDATE_EMAIL)))throw new HttpError(400,'Kiểm tra mã đơn, khóa/email và cổng thanh toán.');if($context!==null&&($test||!str_starts_with($in['code'],'JC')))throw new HttpError(400,'Chỉ thanh toán giỏ POS/CTV LIVE.');if(!$test&&$context===null&&!isset($in['accessKey'])&&!isset($in['email']))throw new HttpError(400,'Nhập khóa hoặc email tra cứu.');if($test&&(str_starts_with($in['code'],'JB')||str_starts_with($in['code'],'JH')))throw new HttpError(400,'TEST dùng vé đơn hoặc giỏ vé web.');
