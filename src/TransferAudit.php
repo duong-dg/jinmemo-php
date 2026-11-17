@@ -13,7 +13,8 @@ final class TransferAudit
         $this->profile = json_decode((string)file_get_contents($profilePath ?? dirname(__DIR__).'/docs/TRANSFER-EXPORT-SCHEMA.json'), true, 512, JSON_THROW_ON_ERROR);
     }
 
-    public function run(string $path): array
+    /** Optional trusted observer is for internal audits only; raw values never enter reports. */
+    public function run(string $path, ?callable $observeRow = null): array
     {
         if (is_link($path) || !is_file($path) || !is_readable($path)) throw new InvalidArgumentException('Provide a readable regular SQL file.');
         $file = fopen($path, 'rb');
@@ -27,7 +28,7 @@ final class TransferAudit
                 $report['errorCount']++;
                 if (count($report['errors']) < 100) $report['errors'][] = array_filter(['code'=>$code,'line'=>$line,'table'=>$table,'column'=>$column], static fn($v)=>$v!==null);
             };
-            $hash = hash_init('sha256'); $lineNo = 0; $state = 'header'; $table = null; $columns = []; $counts = []; $profileMatches = true; $complete = false;
+            $hash = hash_init('sha256'); $lineNo = 0; $state = 'header'; $table = null; $columns = []; $counts = []; $profileMatches = true; $complete = false; $tableMatches = false;
             $preamble = [
                 '-- DATA TRANSFER ONLY: jm_transfer_* staging tables, not a runnable PHP application schema.',
                 '-- Import into a separate database. No DROP, overwrite, auth sessions or gateway secrets.',
@@ -58,14 +59,15 @@ final class TransferAudit
                         $complete = true; $state = 'done'; continue;
                     }
                     if (!preg_match('/^CREATE TABLE `(jm_transfer_[a-z_]+)` \($/D', $line, $m) || !isset($this->profile['tables'][$m[1]]) || isset($counts[$m[1]])) { $error('UNEXPECTED_TABLE_OR_SQL', $lineNo); break; }
-                    $table = $m[1]; $columns = []; $counts[$table] = 0; $state = 'columns'; continue;
+                    $table = $m[1]; $columns = []; $counts[$table] = 0; $tableMatches = false; $state = 'columns'; continue;
                 }
                 if ($state === 'columns') {
                     if ($line === ') ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;') {
                         if ($columns === [] || end($columns)['comma']) { $error('INVALID_COLUMNS', $lineNo, $table); break; }
                         $actual = array_map(static fn($c)=>['name'=>$c['name'],'type'=>$c['type']], $columns);
                         $expected = array_map(static fn($c)=>['name'=>$c['name'],'type'=>$c['type']], $this->profile['tables'][$table]);
-                        if ($actual !== $expected) { $profileMatches = false; $error('SCHEMA_PROFILE_MISMATCH', $lineNo, $table); }
+                        $tableMatches = $actual === $expected;
+                        if (!$tableMatches) { $profileMatches = false; $error('SCHEMA_PROFILE_MISMATCH', $lineNo, $table); }
                         $report['tables'][$table] = ['rows'=>0,'columns'=>$actual]; $state = 'rows'; continue;
                     }
                     if (count($columns) >= 256 || ($columns !== [] && !end($columns)['comma']) || !preg_match('/^  `([a-z_][a-z0-9_]{0,63})` (JSON|CHAR\(36\)|TINYINT\(1\)|BIGINT|DECIMAL\(65,20\)|DOUBLE|DATE|DATETIME\(6\)|LONGTEXT) NULL(,?)$/D', $line, $m)) { $error('INVALID_COLUMN_DECLARATION', $lineNo, $table); break; }
@@ -78,11 +80,13 @@ final class TransferAudit
                 $values = $this->values(substr($line, strlen($prefix), -2));
                 if ($values === null || count($values) !== count($columns)) { $error('INVALID_VALUES', $lineNo, $table); break; }
                 $profile = $this->profile['tables'][$table];
+                $validRow = true;
                 foreach ($columns as $i=>$column) {
                     $source = $profile[$i] ?? null;
                     if ($source !== null && ($source['name'] !== $column['name'] || $source['type'] !== $column['type'])) $source = null;
-                    if (!$this->validValue($values[$i], $column['type'], $source)) $error('INVALID_VALUE', $lineNo, $table, $column['name']);
+                    if (!$this->validValue($values[$i], $column['type'], $source)) { $validRow = false; $error('INVALID_VALUE', $lineNo, $table, $column['name']); }
                 }
+                if ($observeRow !== null && $validRow && $tableMatches) $observeRow($table, $columns, $values, $lineNo, $counts[$table]+1);
                 $counts[$table]++; $report['tables'][$table]['rows']++;
             }
             if (!feof($file) && $state !== 'done' && $report['errorCount'] === 0) $error('READ_FAILED', $lineNo);

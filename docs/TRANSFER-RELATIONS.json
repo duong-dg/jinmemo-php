@@ -1,0 +1,1073 @@
+{
+  "sourceCommit": "7e3578d2c27f166ba42a48ce4ee5b21e7ff33cbb",
+  "schemaSha256": "3a508f95dcd70361672a9a1a905a3fc423bc47231d2523ccb2192b2eaf616244",
+  "tables": {
+    "jm_transfer_product_types": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "slug"
+        ]
+      ],
+      "foreign": []
+    },
+    "jm_transfer_destinations": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "slug"
+        ]
+      ],
+      "foreign": []
+    },
+    "jm_transfer_suppliers": {
+      "primary": [
+        "id"
+      ],
+      "unique": [],
+      "foreign": []
+    },
+    "jm_transfer_media": {
+      "primary": [
+        "id"
+      ],
+      "unique": [],
+      "foreign": []
+    },
+    "jm_transfer_products": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "slug"
+        ]
+      ],
+      "foreign": []
+    },
+    "jm_transfer_pages": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "slug"
+        ]
+      ],
+      "foreign": []
+    },
+    "jm_transfer_post_categories": {
+      "primary": [
+        "name"
+      ],
+      "unique": [],
+      "foreign": []
+    },
+    "jm_transfer_posts": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "slug"
+        ]
+      ],
+      "foreign": []
+    },
+    "jm_transfer_post_revisions": {
+      "primary": [
+        "post_id",
+        "version"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "post_id"
+          ],
+          "targetTable": "jm_transfer_posts",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_post_metrics": {
+      "primary": [
+        "post_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "post_id"
+          ],
+          "targetTable": "jm_transfer_posts",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_slug_aliases": {
+      "primary": [
+        "kind",
+        "slug"
+      ],
+      "unique": [],
+      "foreign": []
+    },
+    "jm_transfer_policy_pages": {
+      "primary": [
+        "policy_key"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "page_id"
+          ],
+          "targetTable": "jm_transfer_pages",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_orders": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "code"
+        ],
+        [
+          "request_id"
+        ]
+      ],
+      "foreign": []
+    },
+    "jm_transfer_carts": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "code"
+        ],
+        [
+          "request_id"
+        ]
+      ],
+      "foreign": []
+    },
+    "jm_transfer_cart_orders": {
+      "primary": [
+        "order_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "cart_id"
+          ],
+          "targetTable": "jm_transfer_carts",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_cart_actions": {
+      "primary": [
+        "id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "cart_id"
+          ],
+          "targetTable": "jm_transfer_carts",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_order_archives": {
+      "primary": [
+        "order_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_order_payments": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "order_id"
+        ],
+        [
+          "reference"
+        ]
+      ],
+      "foreign": [
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_order_actions": {
+      "primary": [
+        "id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_order_tickets": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "code_hash"
+        ]
+      ],
+      "foreign": [
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_ticket_files": {
+      "primary": [
+        "id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "ticket_id"
+          ],
+          "targetTable": "jm_transfer_order_tickets",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_ticket_stock": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "code_hash"
+        ]
+      ],
+      "foreign": [
+        {
+          "columns": [
+            "lot_id"
+          ],
+          "targetTable": "jm_transfer_supply_lots",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "ticket_id"
+          ],
+          "targetTable": "jm_transfer_order_tickets",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_stock_imports": {
+      "primary": [
+        "id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "lot_id"
+          ],
+          "targetTable": "jm_transfer_supply_lots",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_vouchers": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "code"
+        ]
+      ],
+      "foreign": []
+    },
+    "jm_transfer_voucher_uses": {
+      "primary": [
+        "order_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "voucher_id"
+          ],
+          "targetTable": "jm_transfer_vouchers",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_inventory_configs": {
+      "primary": [
+        "product_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "product_id"
+          ],
+          "targetTable": "jm_transfer_products",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_inventory_buckets": {
+      "primary": [
+        "product_id",
+        "variant_id",
+        "visit_date",
+        "slot_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "product_id"
+          ],
+          "targetTable": "jm_transfer_products",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_inventory_allocations": {
+      "primary": [
+        "order_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "product_id"
+          ],
+          "targetTable": "jm_transfer_products",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_supply_lots": {
+      "primary": [
+        "id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "supplier_id"
+          ],
+          "targetTable": "jm_transfer_suppliers",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "product_id"
+          ],
+          "targetTable": "jm_transfer_products",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_supply_purchases": {
+      "primary": [
+        "id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "lot_id"
+          ],
+          "targetTable": "jm_transfer_supply_lots",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "supplier_id"
+          ],
+          "targetTable": "jm_transfer_suppliers",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_supply_allocations": {
+      "primary": [
+        "order_id",
+        "lot_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "lot_id"
+          ],
+          "targetTable": "jm_transfer_supply_lots",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_supply_actions": {
+      "primary": [
+        "id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_supplier_payments": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "reference"
+        ]
+      ],
+      "foreign": [
+        {
+          "columns": [
+            "supplier_id"
+          ],
+          "targetTable": "jm_transfer_suppliers",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_counters": {
+      "primary": [
+        "id"
+      ],
+      "unique": [],
+      "foreign": []
+    },
+    "jm_transfer_pos_orders": {
+      "primary": [
+        "order_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "counter_id"
+          ],
+          "targetTable": "jm_transfer_counters",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_pos_shifts": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "close_request"
+        ]
+      ],
+      "foreign": [
+        {
+          "columns": [
+            "counter_id"
+          ],
+          "targetTable": "jm_transfer_counters",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_pos_open_shifts": {
+      "primary": [
+        "counter_id"
+      ],
+      "unique": [
+        [
+          "shift_id"
+        ]
+      ],
+      "foreign": [
+        {
+          "columns": [
+            "counter_id"
+          ],
+          "targetTable": "jm_transfer_counters",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "shift_id"
+          ],
+          "targetTable": "jm_transfer_pos_shifts",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_pos_shift_receipts": {
+      "primary": [
+        "payment_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "payment_id"
+          ],
+          "targetTable": "jm_transfer_order_payments",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "shift_id"
+          ],
+          "targetTable": "jm_transfer_pos_shifts",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_pos_cash_movements": {
+      "primary": [
+        "id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "shift_id"
+          ],
+          "targetTable": "jm_transfer_pos_shifts",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_payment_methods": {
+      "primary": [
+        "payment_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "payment_id"
+          ],
+          "targetTable": "jm_transfer_order_payments",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_price_groups": {
+      "primary": [
+        "id"
+      ],
+      "unique": [],
+      "foreign": []
+    },
+    "jm_transfer_partners": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "email"
+        ]
+      ],
+      "foreign": []
+    },
+    "jm_transfer_partner_orders": {
+      "primary": [
+        "order_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "partner_id"
+          ],
+          "targetTable": "jm_transfer_partners",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_partner_ledger": {
+      "primary": [
+        "id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "partner_id"
+          ],
+          "targetTable": "jm_transfer_partners",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_payment_references": {
+      "primary": [
+        "reference"
+      ],
+      "unique": [],
+      "foreign": []
+    },
+    "jm_transfer_gateway_events": {
+      "primary": [
+        "id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "attempt_id"
+          ],
+          "targetTable": "jm_transfer_gateway_attempts",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_gateway_resolutions": {
+      "primary": [
+        "event_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "event_id"
+          ],
+          "targetTable": "jm_transfer_gateway_events",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_transport_jobs": {
+      "primary": [
+        "order_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "order_id"
+          ],
+          "targetTable": "jm_transfer_orders",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_ride_bookings": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "code"
+        ],
+        [
+          "request_key"
+        ]
+      ],
+      "foreign": []
+    },
+    "jm_transfer_ride_pools": {
+      "primary": [
+        "id"
+      ],
+      "unique": [],
+      "foreign": []
+    },
+    "jm_transfer_ride_payment_events": {
+      "primary": [
+        "event_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "event_id"
+          ],
+          "targetTable": "jm_transfer_gateway_events",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "ride_id"
+          ],
+          "targetTable": "jm_transfer_ride_bookings",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_gift_orders": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "code"
+        ]
+      ],
+      "foreign": []
+    },
+    "jm_transfer_checkout_bundles": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "code"
+        ]
+      ],
+      "foreign": []
+    },
+    "jm_transfer_checkout_members": {
+      "primary": [
+        "kind",
+        "entity_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "bundle_id"
+          ],
+          "targetTable": "jm_transfer_checkout_bundles",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_refunds": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "reference_key"
+        ]
+      ],
+      "foreign": []
+    },
+    "jm_transfer_stays": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "slug"
+        ]
+      ],
+      "foreign": []
+    },
+    "jm_transfer_stay_aliases": {
+      "primary": [
+        "lang",
+        "slug"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "hotel_id"
+          ],
+          "targetTable": "jm_transfer_stays",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_stay_bookings": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "code"
+        ]
+      ],
+      "foreign": [
+        {
+          "columns": [
+            "hotel_id"
+          ],
+          "targetTable": "jm_transfer_stays",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_stay_vouchers": {
+      "primary": [
+        "id"
+      ],
+      "unique": [
+        [
+          "code"
+        ]
+      ],
+      "foreign": []
+    },
+    "jm_transfer_stay_payment_events": {
+      "primary": [
+        "event_id"
+      ],
+      "unique": [],
+      "foreign": [
+        {
+          "columns": [
+            "event_id"
+          ],
+          "targetTable": "jm_transfer_gateway_events",
+          "targetColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "booking_id"
+          ],
+          "targetTable": "jm_transfer_stay_bookings",
+          "targetColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "jm_transfer_contact_requests": {
+      "primary": [
+        "id"
+      ],
+      "unique": [],
+      "foreign": []
+    }
+  }
+}

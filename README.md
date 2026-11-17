@@ -1296,3 +1296,9 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Thêm `php bin/check-transfer.php --file=/private/path/export.sql`: đọc file transfer v1, kiểm kết thúc/số dòng, whitelist và mẫu 61 bảng/365 cột, kiểu giá trị cơ bản. Không kết nối MySQL, chạy SQL, nhập dữ liệu hoặc sửa dump.
 - Báo bảng thiếu/lệch schema, lỗi có giới hạn và hash file đã đọc hết; không in nội dung khách hàng. Mẫu được ghim source revision/hash, fixture sinh bằng hàm exporter Node thật. Kiểm thử dữ liệu hỏng/SQL lạ/độ chính xác số/riêng tư và CLI đã qua.
 - `importReady` luôn false: còn kiểm quan hệ, adapter, ledger/tồn, file vật lý và viết importer toàn bộ. Không đổi schema 052. Xem [hướng dẫn kiểm transfer](docs/TRANSFER-FILE-AUDIT.md).
+
+## Đối chiếu quan hệ SQL nguồn — đợt 125
+
+- Thêm `--relations` cho `bin/check-transfer.php`: kiểm 61 khóa chính, 26 unique và 55 khóa ngoại khai báo trong schema nguồn đóng băng. Hai lượt đọc không chạy SQL, phát hiện khóa đơn/ghép trùng và bản ghi thiếu cha, báo riêng bảng đích chưa xuất/ngoài whitelist.
+- Chỉ mục hash có giới hạn, không lưu ID khách hàng trong báo cáo; hỗ trợ UNIQUE nullable, UUID và số nguyên chính xác. Đã qua kiểm thử lỗi/giới hạn/riêng tư/CLI và bộ kiểm file cũ; mẫu ràng buộc được tái đối chiếu với schema nguồn.
+- Chưa kiểm tham chiếu JSON/đa loại, ledger/tồn/collation đích hoặc importer toàn bộ; `importReady` vẫn false. Không đổi schema 052, không cần chạy migration. Xem [cách dùng và đọc kết quả](docs/TRANSFER-FILE-AUDIT.md).
