@@ -39,3 +39,7 @@ Header desktop nhóm Thông tin và giữ Liên hệ riêng; mobile dùng nút M
 ## Đợt 112 — sao lưu admin
 
 Có review trước xuất SQL, khóa nút khi đang tải và bỏ phản hồi khi rời mục. Thẻ archive hiển thị ngày GMT+7, kích thước, số lượng, SHA-256 và marker phục hồi; nhãn dài tự xuống dòng. Đã kiểm Node UI và xem fixture desktop/mobile (không tải file vận hành); không tràn ngang theo DOM ở kích thước đã kiểm. Xem BACKUP-RESTORE-PHP.md cho giới hạn chức năng và quy trình. Không thay schema 052.
+
+## Đợt 114 — giỏ vé trượt
+
+Header có badge số vé, mở panel vé đang chọn từ mọi trang khách. Thêm gói từ báo giá mở panel; panel chỉ xem/bỏ gói/đi đến form đặt, giữ phần tra cứu ở chế độ riêng. Đã kiểm modal/focus/scroll và dữ liệu mô phỏng desktop/mobile, cùng test count/concurrent removal/pending/malformed state. Chưa có giỏ nháp xe/quà chung hoặc đồng bộ giỏ giữa hai ngôn ngữ. Không thay schema 052.

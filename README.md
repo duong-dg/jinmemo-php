@@ -1215,3 +1215,11 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - /gio-ve và /en/carts mặc định chỉ hiển thị các gói đang chọn và form đặt giỏ. Không hiển thị form tra cứu giỏ cũ cùng màn hình.
 - Tra cứu giỏ JC mở từ trang Tra cứu đơn hàng bằng ?view=lookup. Link nhận vé tạo mới dùng chế độ này; link cũ có #JC... vẫn tự mở đúng chế độ tra cứu. Không xóa hoặc chuyển dữ liệu local/session storage và không đổi proof/API.
 - Sửa pattern điện thoại giỏ để nhận +84/dấu ngoặc/gạch nối đúng định dạng đã hỗ trợ. Kiểm thử cart-view.php/cart-view-ui.cjs, cùng carts-ui/checkout-ui/public-lookup-ui đã đạt. Đã xem hai chế độ bằng renderer thực tế trên fixture cục bộ. Không SQL mới, vẫn schema 052.
+
+### Giỏ vé trượt và số lượng trên header — đợt 114 (17/11/2026)
+
+- Bấm biểu tượng Giỏ mở panel bên phải để xem các gói vé đang chọn, số vé, ngày dùng và tổng dự kiến; bỏ gói hoặc tiếp tục chọn/đi đến Kiểm tra & đặt vé. Không có form tra cứu đơn cũ hoặc form liên hệ trong panel. Link giỏ thông thường vẫn dùng khi không có JavaScript/dialog.
+- Badge đếm tổng vé; thêm gói từ báo giá mở panel và cập nhật số lượng. Cập nhật từ tab khác được phản ánh qua storage event. Bỏ gói đọc lại trạng thái hiện tại để giữ các dòng vừa thêm ở tab khác; giỏ có yêu cầu pending khóa bỏ gói. Không gửi POST, giữ vé, thu tiền hoặc sửa payload đang chờ từ panel xem nhanh.
+- Dialog có tên, Escape/đóng/nhấp nền, khóa cuộn khi mở và trả focus khi đóng. Nút sang checkout trên chính trang giỏ đóng panel/cuộn đến form thay vì tải lại làm mất dữ liệu đang nhập. Panel Việt/Anh, nhãn từ storage hiển thị text-only.
+- Đợt này là panel vé, chưa chuyển giỏ nháp xe/quà dùng chung hoặc dùng chung dữ liệu giỏ giữa ngôn ngữ như nguồn. Luồng xe/quà/JB hiện có vẫn hoạt động riêng. Giá panel là dự kiến từ lựa chọn, backend vẫn kiểm lại giá/tồn/voucher khi đặt.
+- Kiểm thử cart-drawer-ui.cjs và carts-ui.cjs gồm mở/cập nhật từ thêm gói, count, XSS/text-only, thay đổi tab khác, khóa pending, dữ liệu lỗi, fallback và focus/cuộn. Các kiểm thử cart-view/site-navigation hiện có đạt; đã xem panel với dữ liệu mô phỏng trên desktop 1280/mobile 390, không tràn ngang theo DOM ở kích thước đã kiểm. Không SQL mới, vẫn schema 052.
