@@ -1239,3 +1239,11 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Quay lại trang xe khôi phục tiêu chí tìm kiếm, nhưng phải tìm lại để kiểm tra giá/chỗ rồi xác nhận đặt. Không tự gửi yêu cầu hoặc tạo QR. Checkout hợp nhất từ mọi lựa chọn vẫn chưa hoàn tất.
 - Khóa sửa/bỏ draft khi còn yêu cầu xe chờ kết quả; gửi lại đúng payload sau mất kết nối. Chỉ xóa draft khớp khi nhận được kết quả đặt thành công; POS giữ kho yêu cầu riêng theo nhân viên. Phản hồi 401/403/429 không mở đường sửa thành yêu cầu mới.
 - Kiểm tra: ride-cart-ui, rides-ui (private/shared/POS, khôi phục draft, retry, 429), cart-drawer-ui, gift-drawer-ui (vé/quà/xe), ride-payments-ui và ride-cash-ui; lint JS/PHP. Chưa xác nhận hiển thị trên hosting thật. Schema giữ 052, không cần import SQL cho đợt này.
+
+## Giỏ vé dùng chung Việt/Anh — đợt 117
+
+- Giỏ vé dùng localStorage chung hai ngôn ngữ; panel và trang giỏ cùng đọc/ghi qua ticket-cart.js. Liên hệ/khóa tra cứu tiếp tục chỉ nằm trong yêu cầu chờ ở sessionStorage.
+- Lần đầu nhận lại giỏ vi/en cũ, gộp theo ID dòng và giữ bản cũ làm dự phòng. Không tự cộng số khách hoặc bỏ dòng khác ID; có thể nhận tối đa 40 dòng từ hai giỏ cũ, nhưng phải bỏ bớt để đặt tối đa 20 dòng mỗi lần. Bản chung đã có là nguồn chính, tránh dòng đã bỏ xuất hiện lại từ bản dự phòng. Nên tải lại các tab cũ sau cập nhật.
+- Khi đổi ngôn ngữ, yêu cầu đang chờ được gửi lại nguyên payload/locale/requestId; lần lượt khôi phục cả hai khóa chờ cũ nếu có. Dữ liệu lỗi/xung đột giữ nguyên và báo lỗi, không âm thầm chuyển thành giỏ rỗng.
+- Kiểm tra lại snapshot khi xác nhận để chặn giỏ vừa bị đổi ở tab khác. 401/403/429 và phản hồi thành công thiếu mã/khóa hợp lệ đều giữ yêu cầu cũ; chỉ 400/409/422 mở lại chỉnh sửa.
+- Kiểm tra Node: ticket-cart-ui, carts-ui (gửi lại qua EN, thay đổi giữa review/confirm, 401/403/429, phản hồi lỗi), cart-view-ui, cart-drawer-ui, gift-drawer-ui, checkout-ui và public-lookup-ui; lint JS/PHP và toàn bộ tests/http.php đều qua. Chưa kiểm hosting thật. Schema giữ 052, không cần import SQL.
