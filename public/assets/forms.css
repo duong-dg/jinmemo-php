@@ -1,0 +1,41 @@
+/* Shared controls for the public site, admin, POS and partner portal. */
+:root{--form-accent:#245b48;--form-border:#c9d6ce;--form-soft:#f3f7f4;--form-radius:10px;--form-control-height:44px;--form-font-size:14px}
+body label{line-height:1.55;margin-bottom:14px;overflow-wrap:anywhere}
+body :is(input,select,textarea):not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=submit]):not([type=button]){box-sizing:border-box;display:block;width:100%;margin-top:6px;min-height:var(--form-control-height);max-width:100%;min-width:0;padding:11px 13px;border:1px solid var(--form-border);border-radius:var(--form-radius);background-color:#fff;color:inherit;font:inherit;font-size:var(--form-font-size);line-height:1.4;box-shadow:0 1px 2px #173b2c05;transition:border-color .15s,box-shadow .15s}
+body textarea{--form-control-height:112px;resize:vertical}
+body :is(input,textarea)::placeholder{color:#7b8881;opacity:1}
+body :is(input,select,textarea):focus-visible{outline:3px solid #4f987b33;outline-offset:2px;border-color:var(--form-accent)}
+body :is(input,select,textarea):disabled{background:#f0f3f1;color:#68766e;cursor:not-allowed}
+body input[readonly],body textarea[readonly]{background:var(--form-soft)}
+body input:is([type=checkbox],[type=radio]){appearance:auto;display:inline-block;vertical-align:middle;width:19px;height:19px;min-height:19px;padding:0;margin:0 8px 0 0;accent-color:var(--form-accent);flex:0 0 19px;box-shadow:none;cursor:pointer}
+body label:has(>input[type=checkbox]),body label:has(>input[type=radio]){display:grid;grid-template-columns:19px minmax(0,1fr);align-items:start;gap:10px;padding:10px 12px;border:1px solid #dce5df;border-radius:var(--form-radius);background:#f8faf8;font-weight:500}
+body label>input:is([type=checkbox],[type=radio]){margin:3px 0 0;grid-column:1;grid-row:1}
+body :is(button,.button,.outline-button){min-height:42px;max-width:100%;padding:10px 16px;border-radius:var(--form-radius);font-weight:600;line-height:1.45;white-space:normal;overflow-wrap:anywhere;vertical-align:middle;transition:box-shadow .15s,background-color .15s}
+body button{margin:4px 6px 4px 0;border:1px solid var(--form-accent);background:var(--form-accent);color:#fff}
+body :is(button,.button,.outline-button):focus-visible{outline:3px solid #4f987b66;outline-offset:3px}
+body button:disabled{cursor:not-allowed;opacity:.55;box-shadow:none}
+body :is(.toolbar,.actions,.form-actions){display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+body :is(.toolbar,.actions,.form-actions)>button{margin:0}
+body fieldset{min-width:0;max-width:100%}
+body legend{font-weight:650;padding:0 6px}
+body .settings-group{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 20px;background:#fff;border:1px solid #d9e3dc;border-radius:14px;padding:20px;margin:0 0 22px}
+body .settings-group legend{font-size:17px;letter-spacing:-.02em;color:var(--form-accent)}
+body .settings-group>label{margin:0;align-self:start}
+body .settings-group>p{grid-column:1/-1;font-size:13px;line-height:1.6;margin:0;color:#64746a;overflow-wrap:anywhere}
+body .settings-group input:not([type=checkbox]):not([type=radio]),body .settings-group select{width:100%}
+body .settings-group label:has(>input[type=checkbox]){grid-column:1/-1}
+body :is(.table-wrap,dialog){overscroll-behavior:contain}
+@media(max-width:640px){
+ :root{--form-control-height:46px;--form-font-size:16px}
+ body :is(input,select,textarea):not([type=checkbox]):not([type=radio]):not([type=hidden]){font-size:16px;min-height:46px}
+ body :is(button,.button,.outline-button){min-height:44px}
+ body .settings-group{grid-template-columns:minmax(0,1fr);padding:16px;gap:14px}
+ body label:has(>input[type=checkbox]),body label:has(>input[type=radio]){min-height:44px}
+}
+@media(prefers-reduced-motion:reduce){body :is(button,input,select,textarea,.button,.outline-button){transition:none}}
+
+body input::file-selector-button{border:1px solid #c9d6ce;border-radius:7px;padding:6px 10px;margin-right:12px;background:#edf4ef;color:#245b48;font:inherit;cursor:pointer}
+
+body .settings-fields{border:0;padding:0;margin:0}body .payment-settings-form{container-type:inline-size}@container(max-width:560px){body .settings-group{grid-template-columns:minmax(0,1fr)}}
+
+body .password-field button{min-height:30px;padding:4px 8px;margin:0}
