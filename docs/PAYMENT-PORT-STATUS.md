@@ -1,6 +1,6 @@
 # Tiến độ chuyển phần thanh toán
 
-Cập nhật 17/11/2026, sau đợt 102. Schema cần có: **050** (thêm paypal_orders, giữ tên/thứ tự trường nguồn).
+Cập nhật 17/11/2026, sau đợt 103. Schema cần có: **050** (đợt này không thêm SQL).
 
 | Luồng | Trạng thái PHP |
 | --- | --- |
@@ -15,7 +15,8 @@ Cập nhật 17/11/2026, sau đợt 102. Schema cần có: **050** (thêm paypal
 | SePay OAuth token | Đã có Client Credentials Basic/form, JSON tương thích, Bearer có hạn và cấu hình mã hóa; chưa thử tài khoản SePay thật |
 | Thẻ SePay | Đã có Merchant/khóa mã hóa, form TEST/LIVE, IPN X-Secret-Key và ghi thu vé WEB/JC/JB/JH; chưa thử tài khoản thật |
 | PayPal WEB/JC/JB/JH | Đã nối cấu hình, snapshot USD/tỷ giá, mapping, checkout, capture/webhook, trang quay về và sổ thu/báo cáo/refund; kiểm thử provider mô phỏng, chưa thử tài khoản thật |
-| Online POS/CTV | Còn thiếu |
+| Online CTV cho giỏ JC | Đã có VNPAY/QR/thẻ VNPAY, SePay/thẻ SePay và PayPal trong tài khoản CTV; giữ giá net, chủ giỏ, không tạo/trả công nợ; chưa thử nhà cung cấp thật |
+| Online POS | Còn thiếu phần quyền quầy/ca và giao diện |
 | Đặt phòng online JH | Đã có giữ phòng 30 phút, IPN nguyên khối, email PAID và REVIEW sau hết hạn |
 | Nhật ký VNPAY/SePay, chống ghi thu trùng | Đã có và lưu lịch sử đối soát |
 | Đối soát SePay LIVE REVIEW | Đã có preview/xác nhận cho vé WEB, JC, JB, JH và xe WEB JM-X; ghi BANK theo quản trị viên, giữ lý do/đơn ban đầu |
