@@ -27,3 +27,7 @@ Khóa ô và nút trong lúc lưu sau khi đã lấy FormData; trạng thái lư
 ## Đợt 109 — thời tiết
 
 Form admin thời tiết có nhóm cấu hình, mật khẩu API Key, kiểm tra/xác nhận và khóa input khi đang xác nhận/gửi; giữ payload khi thử lại lỗi. Public có dự báo ba ngày, gợi ý, timestamp GMT+7, responsive ba cột/một cột. Đã xem renderer thật với dữ liệu mô phỏng trên desktop/mobile và chạy weather-ui.cjs; chưa dùng provider hoặc hosting thật. Schema mới 051; xem WEATHER.md.
+
+## Đợt 110 — bảo mật và bộ chọn ngôn ngữ
+
+Thêm form OTP đăng nhập và form chính sách có bước nhận mã/xác nhận, khóa thao tác khi gửi, giữ lựa chọn đã kiểm tra và cho nhập lại OTP sai. Bộ chọn ngôn ngữ dùng cờ/tên/ngôn ngữ hiện tại và mục thiếu bản dịch; Escape/nhấp ngoài đóng danh sách. Menu chính bỏ Giỏ vé/Thanh toán chung, chuyển giỏ sang biểu tượng riêng. Đã xem picker trên fixture PHP desktop/mobile; không thay dữ liệu vận hành. Kiểm thử admin-security-ui.cjs, language-picker.php và language-picker-ui.cjs. Schema 052; xem ADMIN-SECURITY.md. Chưa xem toàn bộ form bảo mật trong phiên hosting thật.

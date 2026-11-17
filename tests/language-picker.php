@@ -1,0 +1,5 @@
+<?php
+declare(strict_types=1);
+$e=static fn($v)=>htmlspecialchars((string)$v,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');
+foreach([['vi',false,['vi'=>'/ve/ban-viet']],['en',true,['vi'=>'/ve/ban-viet','en'=>'/en/ve/english']]] as [$lang,$en,$languagePaths]){ob_start();require dirname(__DIR__).'/views/language-picker.php';$html=ob_get_clean();$doc=new DOMDocument();@$doc->loadHTML('<?xml encoding="utf-8" ?>'.$html);$xpath=new DOMXPath($doc);if($xpath->query('//summary')->length!==1||$xpath->query('//*[contains(@class,"language-flag")]')->length!==3)throw new RuntimeException('Missing source picker/flags');if($xpath->query('//a[@aria-current="page" and @lang="'.$lang.'"]')->length!==1)throw new RuntimeException('Selected language');if($lang==='vi'&&($xpath->query('//*[@aria-disabled="true"]')->length!==1||str_contains($html,'href="/en')))throw new RuntimeException('Unavailable translation must not link to another page');}
+echo "PASS: source language picker flags, current language and disabled missing translation.\n";

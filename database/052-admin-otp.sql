@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS jingo_admin_otp (
+ id CHAR(36) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+ admin_id VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+ purpose VARCHAR(10) CHARACTER SET ascii NOT NULL,
+ code_hash CHAR(64) CHARACTER SET ascii NOT NULL,
+ binding_hash CHAR(64) CHARACTER SET ascii NOT NULL,
+ data JSON NOT NULL,
+ status VARCHAR(10) CHARACTER SET ascii NOT NULL DEFAULT 'PENDING',
+ attempts INT NOT NULL DEFAULT 0,
+ expires_at DATETIME(6) NOT NULL,
+ created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+ INDEX (expires_at), INDEX (admin_id,purpose,created_at),
+ FOREIGN KEY (admin_id) REFERENCES jingo_admins(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS jingo_admin_geo_cache (
+ id CHAR(64) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+ data JSON NOT NULL,
+ expires_at DATETIME(6) NOT NULL
+) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS jingo_admin_geo_usage (
+ id CHAR(10) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+ calls INT NOT NULL DEFAULT 0
+) ENGINE=InnoDB;

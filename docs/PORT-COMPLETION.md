@@ -1,11 +1,11 @@
 # Phần chuyển đổi còn cần hoàn tất
 
-Cập nhật sau đợt 109 (schema 051). Đây là danh sách phần thiếu đã xác nhận, không phải chứng nhận đã đối chiếu hết mọi endpoint của nguồn.
+Cập nhật sau đợt 110 (schema 052). Đây là danh sách phần thiếu đã xác nhận, không phải chứng nhận đã đối chiếu hết mọi endpoint của nguồn.
 
 | Phần | Trạng thái và điều kiện hoàn tất |
 | --- | --- |
 | Thời tiết | Đã chuyển cấu hình, API, cache/hạn mức, gợi ý và hiển thị; xem WEATHER.md. Còn kiểm tích hợp bằng tài khoản thật trên hosting |
-| OTP và chính sách bảo mật admin | AdminAuth.php vẫn chủ động trả 503 khi bật otpEnabled. Cần chuyển auth.service.ts/security.service.ts, SMTP OTP, giới hạn/challenge, UI và kiểm thử; không tự tắt OTP để cho đăng nhập |
+| OTP và chính sách bảo mật admin | Đã chuyển OTP đăng nhập/đổi chính sách, đường dẫn riêng, nhật ký và geo opt-in; xem ADMIN-SECURITY.md. Còn kiểm SMTP thật và cấu hình hosting; không import phiên/challenge Node |
 | Sao lưu/khôi phục trong ứng dụng | Chưa chuyển đầy đủ backups.module.ts và giao diện quản trị tương ứng. Không coi việc sao lưu qua cPanel là đã chuyển chức năng nguồn |
 | Chuyển dữ liệu cũ | Đã có importer ảnh/bài viết riêng. Chưa có importer toàn bộ danh mục, đơn, tồn, ledger và quan hệ; xem MIGRATION.md và TRANSFER-CONTRACT.json |
 | Thanh toán | Đã có nhiều luồng vận hành, nhưng vẫn cần đối chiếu chi tiết nguồn và kiểm provider thật; xem PAYMENT-PORT-STATUS.md. Sổ hoàn không đồng nghĩa đã chuyển tiền hoàn qua ngân hàng/provider |

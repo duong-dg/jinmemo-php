@@ -31,7 +31,7 @@ Không dùng hai database độc lập để cùng ghi đơn và trừ tồn tro
 - Cookie `jingo_admin`: HttpOnly, SameSite Strict, Secure trên HTTPS, hết hạn 8 giờ. Database chỉ lưu SHA-256 của token. `/me` kiểm tra phiên tại database, logout xóa phiên.
 - Giới hạn 5 lần thử/tài khoản và 100 lần/IP trong 15 phút, có khóa dòng khi cập nhật; lưu nhật ký thành công/thất bại/đăng xuất. Chỉ lấy IP kết nối trực tiếp, chưa tin header proxy.
 - Tạo tài khoản: `php bin/create-admin.php admin@example.com`, nhập mật khẩu qua stdin (12–72 byte). Lệnh không ghi đè tài khoản đã có. Mật khẩu có thể hiện trên terminal khi nhập; không đặt mật khẩu trong tham số dòng lệnh.
-- **Chưa chuyển:** gửi/xác minh OTP, thay đổi chính sách qua OTP, tra vị trí IP, giao diện và quyền POS/CTV. Giao diện admin chủ đã có tại `/admin`. Khi policy bật OTP, login PHP trả 503 và không tạo phiên. Không dùng bản này thay thế quản trị đang bật OTP.
+- OTP đăng nhập/thay đổi chính sách, đường dẫn riêng, nhật ký và tra vị trí IP opt-in đã chuyển ở đợt 110/schema 052; xem [bảo mật admin](docs/ADMIN-SECURITY.md). Cần kiểm SMTP thật trước khi vận hành. Các ghi chú hạn chế ở từng đợt cũ bên dưới chỉ mô tả trạng thái tại thời điểm đó.
 - Hash scrypt của Node chưa được hỗ trợ. Khi chuyển dữ liệu phải tạo lại mật khẩu admin bằng cơ chế PHP; không nhập nguyên hash cũ rồi kỳ vọng đăng nhập được. Không nhập phiên Node đang hoạt động.
 - Kiểm thử: `JINGO_TEST_DSN` trỏ server MySQL/MariaDB thử riêng, không chứa dbname; `JINGO_TEST_USER` và `JINGO_TEST_PASSWORD` cấp tài khoản có quyền tạo/xóa database thử. Chạy `php tests/admin-auth.php`. Test tạo database tên ngẫu nhiên và xóa đúng database đó khi kết thúc.
 - Đã kiểm tra tích hợp trên MariaDB 10.4 đi kèm XAMPP. Chưa kiểm tra trên MySQL của hosting.
@@ -1186,3 +1186,10 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Admin có form kiểm tra/xác nhận, frozen retry và bỏ phản hồi tải cũ. Public hiện cập nhật GMT+7, nhãn cache cũ, nội dung text-only và bố cục ba cột/một cột. Không lộ API Key hoặc lỗi upstream.
 - Migration mới `051-weather.sql` giữ tên/thứ tự cột cache/usage của nguồn. Cập nhật bằng `git pull --ff-only origin main` rồi `php bin/install.php`; không có terminal thì import riêng file 051 qua phpMyAdmin. Không import lại dump hoặc xóa dữ liệu. Xem [hướng dẫn thời tiết](docs/WEATHER.md).
 - Đã kiểm MySQL/HTTP, 80 fixture gợi ý Node VI/EN, DOM admin/public và xem widget/form với dữ liệu mô phỏng trên desktop/mobile. Chưa gọi provider thật hoặc kiểm hosting thật. Danh sách phần thiếu đã xác nhận ở [PORT-COMPLETION.md](docs/PORT-COMPLETION.md); chưa tuyên bố chuyển xong toàn hệ thống.
+
+### Bảo mật và menu/ngôn ngữ — đợt 110 (17/11/2026)
+
+- Đã chuyển OTP email cho đăng nhập và thay đổi chính sách; mã HMAC dùng một lần/hạn 5 phút, binding trình duyệt/phiên, giới hạn gửi/thử và transaction chống xác minh lặp. Đổi chính sách xoay cookie, thu hồi phiên admin cũ và challenge LOGIN; không tự bật hoặc bỏ OTP. Thêm nhật ký phân trang và geo DB-IP opt-in/cache/hạn mức. Chi tiết và kiểm thử tại docs/ADMIN-SECURITY.md.
+- Gỡ Giỏ vé/Thanh toán chung khỏi menu chính, đưa giỏ ra biểu tượng riêng. Khôi phục picker cờ VI/EN, tên ngôn ngữ, dấu chọn và trạng thái Chưa có bản dịch; giữ query/hash khi chuyển ngôn ngữ. Giữ URL và luồng JC/JB hiện có. Chưa chuyển toàn bộ giao diện giống nguồn.
+- Đã kiểm MySQL/HTTP, consume OTP đồng thời, audit rollback và cookie rotation; Node UI cùng picker desktop/mobile bằng dữ liệu thử. Không gửi OTP thật, không gọi DB-IP thật, chưa kiểm hosting.
+- Cập nhật git pull --ff-only origin main rồi php bin/install.php (SQL mới 052-admin-otp.sql), Ctrl+F5.

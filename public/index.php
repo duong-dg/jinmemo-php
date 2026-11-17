@@ -196,7 +196,7 @@ try {
             $actor=$auth->me();$portal=new PosPortal($db);$data=match($resource){'me'=>$actor,'counters'=>['data'=>$portal->counters($actor)],'products'=>['data'=>$portal->products($actor)],'quotes'=>(function()use($actor,$db){PosAuth::permit($actor,'SELL');return (new Quotes($db))->quote(jingoRequestBody(),'vi',true);})(),'orders'=>$action?$portal->act($actor,$id,jingoRequestBody()):($id!==''?$portal->detail($actor,$id):($method==='POST'?$portal->create($actor,jingoRequestBody()):$portal->list($actor,$_GET))),default=>throw new HttpError(404,'Không tìm thấy.')};
         }header('Content-Type: application/json; charset=utf-8');header('Cache-Control: private, no-store');header('X-Content-Type-Options: nosniff');echo json_encode($data,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);exit;
     }
-    if($path==='/admin' || $path==='/admin/' || preg_match('#^/(jingo-[a-f0-9]{24})/?$#D',(string)$path,$entryMatch)) {
+    if($path==='/admin' || $path==='/admin/' || preg_match('#^/((?:jingo|jinmemo)-[a-f0-9]{24})/?$#D',(string)$path,$entryMatch)) {
         if(($_SERVER['REQUEST_METHOD'] ?? 'GET')!=='GET') { header('Allow: GET'); throw new HttpError(405,'Phương thức không được hỗ trợ.'); }
         $config=jingoConfig(); $entry=$entryMatch[1] ?? '';
         $branding=null;
@@ -567,6 +567,9 @@ try {
     }
     $routes = ['login'=>'POST','me'=>'GET','logout'=>'POST','login-policy'=>'GET'];
     $action = str_starts_with((string)$path, '/api/v1/admin/') ? substr($path, strlen('/api/v1/admin/')) : '';
+    if(in_array($action,['login/otp','security','security/challenge','security/logs'],true)){
+        $method=$_SERVER['REQUEST_METHOD']??'GET';$allowed=$action==='security'?['GET','POST']:($action==='security/logs'?['GET']:['POST']);if(!in_array($method,$allowed,true)){header('Allow: '.implode(', ',$allowed));throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($action!=='security/logs'&&$_GET)throw new HttpError(400,'Yêu cầu không hợp lệ.');$config=jingoConfig();$auth=new AdminAuth(jingoDatabase($config),$config);if($action==='login/otp')jingoJson($auth->verifyOtp(jingoRequestBody()));if($method==='POST')$auth->mutation();$admin=$auth->me();$security=$auth->security();if($action==='security/logs')jingoJson($security->journal($_GET));if($action==='security/challenge'){if(jingoRequestBody())throw new HttpError(400,'Yêu cầu không hợp lệ.');jingoJson($security->challenge($admin,'SETUP',$_COOKIE['jingo_admin']));}if($method==='GET')jingoJson($security->policy());$result=$security->save(jingoRequestBody(),$admin,$_COOKIE['jingo_admin']);$auth->promote($result['token']);jingoJson($result['policy']);
+    }
     if (str_starts_with($action,'login-entry/')) {
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') { header('Allow: GET'); throw new HttpError(405,'Phương thức không được hỗ trợ.'); }
         $auth = new AdminAuth(jingoDatabase(jingoConfig()),jingoConfig());
