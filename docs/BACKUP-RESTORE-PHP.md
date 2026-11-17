@@ -1,6 +1,6 @@
 # Sao lưu và phục hồi PHP trên cPanel
 
-Cập nhật đợt 121, schema vẫn 052. Admin → Cấu hình website → Sao lưu & phục hồi.
+Cập nhật đợt 122, schema vẫn 052. Admin → Cấu hình website → Sao lưu & phục hồi.
 
 ## Phân biệt file
 
@@ -48,7 +48,7 @@ Không cấu hình thì mặc định dùng storage/backups; nếu chưa có th�
 
 `GET /api/v1/admin/backups` và `GET /api/v1/admin/backups/:id/download` chỉ cho admin. File phải là file thường trong thư mục riêng; không nhận tên tùy ý, symlink hoặc đường dẫn thoát thư mục. Khi tải, kiểm lại SHA-256 trên chính file đang mở, rồi mới ghi audit và gửi bytes. SHA-256 xác minh file khớp metadata; ứng dụng không tự giải mã hoặc xác nhận nội dung archive đã phục hồi được. Marker thử phục hồi là ghi nhận từ tác vụ ngoài.
 
-**Phần còn thiếu sau đợt 121:** archive đầy đủ media/file vé/khóa/.env/mã nguồn, tự cài/xác minh lịch và phục hồi toàn bộ stack Ubuntu của bản Node sang cPanel. CLI bên dưới chỉ sao lưu database PHP, có GPG và retention riêng. Không tự tạo setup.json để giả rằng đã cài lịch. Không có tự upload SQL/giải nén/ghi đè dữ liệu bằng HTTP. Bản tar.gpg của Node không tự trở thành bản PHP hoặc được chuyển sang MySQL chỉ vì được liệt kê ở đây.
+**Phần còn thiếu sau đợt 122:** tự cài/xác minh lịch, thử phục hồi trên cPanel thật và cấu hình tài khoản/SSL/cron/offsite. Lệnh database bên dưới chỉ sao lưu database; lệnh application bổ sung media/file vé/khóa/cấu hình/source Git, không phải bản sao nguyên tài khoản cPanel hoặc hệ điều hành Ubuntu. Không tự tạo setup.json để giả rằng đã cài lịch. Không có tự upload SQL/giải nén/ghi đè dữ liệu bằng HTTP. Bản tar.gpg của Node không tự trở thành bản PHP hoặc được chuyển sang MySQL chỉ vì được liệt kê ở đây.
 
 ## Kiểm thử
 
@@ -89,3 +89,39 @@ SQL/tar giải mã tạm nằm trong thư mục .work riêng 0700, được dọ
 Phục hồi: chép archive và passphrase sang máy tin cậy/thư mục riêng, dùng GPG giải mã, kiểm manifest.databaseSha256 của database.sql rồi làm quy trình nhập vào database mới trống ở trên. Sau đó vẫn phải phục hồi riêng media/khóa/.env/code đúng thời điểm. verifiedAt chỉ xác nhận archive giải mã khớp byte, không phải chứng nhận đã thử phục hồi trên hosting; CLI không tạo restore-test.json giả.
 
 Kiểm thử mới: php tests/database-backup.php với JINGO_TEST_DSN server thử riêng và JINGO_TEST_GPG đường dẫn GPG. Có mã hóa/giải mã thật, SQL import vào database riêng, manifest, scope, CLI/env, khóa chạy trùng, retention giữ bản ngoài/tampered và lỗi mã hóa không công bố file chưa kiểm.
+
+## Snapshot ứng dụng PHP — đợt 122
+
+`bin/application-backup.php` tạo scope PHP_APPLICATION, khác PHP_DATABASE_ONLY. Dùng cùng cấu hình GPG/thư mục riêng ở trên, thêm:
+
+```dotenv
+BACKUP_COORDINATION_DIR=/home/USER/private-backup-coordination
+BACKUP_GIT_BINARY=/usr/bin/git
+```
+
+Tạo coordination directory trước với quyền 0700, ngoài public, source và media. PHP web và PHP CLI phải cùng tài khoản hoặc có quyền mở file khóa 0600; không mở rộng thành 777. BACKUP_COORDINATION_DIR phải được lưu thật trong .env với cùng đường dẫn tuyệt đối, không chỉ đặt cho cron. Không để môi trường web/worker ghi đè sang thư mục khác. Triển khai mã mới, làm mới PHP/worker cũ và kiểm một request bình thường hoạt động trước khi dùng tác vụ này. Khi không cấu hình biến này, các request hiện có hoạt động như trước.
+
+Chỉ chạy khi đã dừng nguồn ghi SQL/FTP/import/deploy ngoài ứng dụng và thống nhất DB/MEDIA/config giữa web và CLI. Gate chỉ phối hợp các kết nối qua bootstrap PHP, không khóa phpMyAdmin, FTP, ứng dụng khác hoặc tiến trình chạy mã cũ. Ví dụ chạy thủ công trong giờ bảo trì:
+
+```bash
+cd /home/USER/jinmemo.cloud
+/usr/local/bin/php bin/application-backup.php --maintenance --revision="$(git rev-parse HEAD)" --keep=7
+```
+
+Không tự cài cron hoặc thay cấu hình website khi git pull. Cờ --maintenance là xác nhận chạy cửa sổ chụp; sau khi operator đã thử thành công mới cân nhắc lịch ở giờ ít truy cập. Tác vụ chờ tối đa 30 giây cho request/worker cũ kết thúc. Trong lúc chụp, request cần database trả HTTP 503 + Retry-After: 30, worker mới cũng bị chặn; ảnh/CSS được phục vụ trực tiếp có thể vẫn tải được. Cửa sổ chụp gồm SQL, quét/đối chiếu media và Git/config; có thể kéo dài theo dung lượng và tốc độ hosting. Gate được nhả trước khi đóng gói ngoài/mã hóa GPG, hoặc khi gặp lỗi, không giữ website chờ toàn bộ bước mã hóa.
+
+Phải có Git repository sạch, HEAD khớp revision, .env là file thường và MEDIA_DIR riêng ngoài public. Bản sao code là Git archive theo commit, không gồm .git/history, không tự lưu sửa đổi chưa commit hoặc file code untracked. Text được xuất với LF để không phụ thuộc autocrlf của máy chạy. Nếu có sửa riêng trên host, phải rà soát/commit hoặc dùng backup hosting phù hợp trước, không bỏ qua kiểm tra sạch.
+
+Archive ngoài chứa đúng database.sql, manifest.json, media.tar, source.tar, environment.env và effective-config.json. Media gồm file ẩn, khóa .smtp-key và file vé gốc trong .tickets; không phân tích hay đổi PDF. Mỗi file media và các phần archive có SHA-256/bytes trong manifest; đọc lại archive media và quét lại nguồn để phát hiện thay đổi. .smtp-key phải có sẵn đúng 32 byte của ứng dụng; không tạo khóa mới để thay khóa cũ đã mất. Mật khẩu GPG/GPG home/backup directory/coordination phải tách khỏi source và media, để không tự đưa archive hoặc khóa giải mã vào bản sao. Symlink/file đặc biệt và tên file không hỗ trợ làm dừng tác vụ, không âm thầm bỏ qua. Giới hạn hiện tại: SQL 512 MiB, media 50.000 file/2 GiB; cần đủ quota cho các bản SQL/tar/mã hóa/giải mã tạm.
+
+Snapshot DB vẫn loại phiên đăng nhập/OTP/rate limit như DatabaseExport. SQL và media ổn định khi mọi nguồn ghi tuân thủ gate và các nguồn ngoài đã dừng. environment.env là file cấu hình trên đĩa; effective-config.json là cấu hình CLI đã dùng, cả hai đều riêng tư trong archive mã hóa. Marker verifiedAt chỉ xác nhận GPG giải mã khớp byte, không tự tuyên bố đã thử vận hành cPanel. Admin phân biệt bản ứng dụng PHP/bản chỉ DB/bản từ tác vụ ngoài. Retention tính riêng mỗi scope, không để giữ một bản DB làm xóa bản ứng dụng.
+
+### Thử phục hồi độc lập
+
+1. Đem archive và mật khẩu GPG đến máy/thư mục riêng tin cậy, giải mã và kiểm SHA-256 từng phần theo manifest; kiểm danh sách đường dẫn trước khi giải nén archive của chính mình. Không giải nén vào public hoặc thư mục vận hành.
+2. Tạo database mới trống và nhập database.sql; không chạy installer trước. Các phiên cũ không được phục hồi.
+3. Đặt source Git từ source.tar vào một thư mục triển khai mới; media.tar vào MEDIA_DIR mới ngoài public, gồm .tickets và .smtp-key nguyên gốc. Giữ quyền thư mục riêng 0700 và khóa 0600; quyền code/public chỉnh theo PHP/web server của môi trường thử.
+4. Dùng environment.env/effective-config.json để đối chiếu, không chép nguyên cấu hình sản xuất rồi mở website. Chỉnh DB/URL/MEDIA/coordination/backup paths riêng, APP_ENV development, SEO false; tắt cron, gửi email và provider LIVE trong môi trường thử trước khi khởi động ứng dụng. Không dùng khóa GPG hoặc thư mục backup sản xuất cho môi trường thử.
+5. Kiểm dữ liệu, tổng thu/hoàn/tồn, tra cứu/file vé gốc và khả năng giải mã cấu hình bằng khóa đã phục hồi; đối soát phát sinh từ lúc snapshot trước khi chuyển domain. Tài khoản cPanel, document root, SSL, lịch cron và nơi giữ bản offsite phải cấu hình riêng. Chưa có endpoint/script tự ghi đè hệ thống đang chạy.
+
+Đã thử archive mã hóa thật, SQL import vào database riêng và giải mã dữ liệu bằng .smtp-key lấy lại từ media, PDF nguyên byte, hash/source revision, HTTP/worker drain/503, lỗi preflight/thiếu khóa/source bẩn/đường dẫn chồng và retention theo scope. Chưa thử tài khoản cPanel thật hoặc tự động khôi phục vào hệ thống vận hành. Lệnh kiểm thử: php tests/application-backup.php với JINGO_TEST_DSN, JINGO_TEST_GPG và JINGO_TEST_GIT trỏ công cụ local.

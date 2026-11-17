@@ -1276,3 +1276,10 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Admin ghi rõ archive chỉ database, không gồm media/file vé, khóa, .env hay code. Không tự cài cron, không ghi marker thử phục hồi giả. Không đổi schema 052.
 - Cấu hình GPG/passphrase và cách đặt Cron Jobs xem [hướng dẫn sao lưu](docs/BACKUP-RESTORE-PHP.md). Cần GPG/proc_open trên hosting; chưa kiểm cPanel thật. Full-stack backup vẫn còn cần chuyển.
 - Đã thử GPG thật, giải mã và nhập SQL vào database trống, CLI/env, lỗi mã hóa/lock/retention và quyền/path; backups.php, backups-ui và full HTTP qua.
+
+## Snapshot ứng dụng PHP — đợt 122
+
+- Thêm bin/application-backup.php --maintenance để chụp database, toàn bộ media/file vé gốc, .smtp-key, cấu hình và source Git sạch/đúng revision; mã hóa/giải mã kiểm tra như bản DB. Không đổi schema 052.
+- Gate phối hợp request/worker bootstrap: chờ tiến trình cũ kết thúc, trả 503 có Retry-After khi đang chụp, nhả trước GPG và khi lỗi. Chỉ bật khi cấu hình coordination directory giống nhau trong .env/web/CLI; nguồn ghi SQL/FTP/deploy ngoài ứng dụng phải dừng riêng. Không tự kích hoạt bảo trì khi cập nhật code.
+- Manifest kiểm hash từng file/phần; PDF giữ nguyên, không nhận symlink hoặc âm thầm bỏ file. Admin phân biệt scope ứng dụng/DB/archive ngoài; retention riêng từng scope. Không tự cài cron, SSL hoặc ghi đè dữ liệu phục hồi.
+- Kiểm thử archive GPG thật, SQL restore + khóa phục hồi, PDF/hash/Git/config, HTTP/worker drain/503, lỗi/nhả gate và retention; regression DB backup, backups UI/API và full HTTP qua. Chưa kiểm cPanel thật. Xem [cấu hình và phục hồi riêng](docs/BACKUP-RESTORE-PHP.md).

@@ -2,10 +2,10 @@
 declare(strict_types=1);
 require_once __DIR__.'/DatabaseExport.php';
 require_once __DIR__.'/Backups.php';
-/** Encrypted database-only recovery archive. Does not imply a full-stack backup. */
+/** Verified native PHP archive; optionally captures application files under a coordination gate. */
 final class DatabaseBackup
 {
-    public function __construct(private PDO $db,private array $config){}
+    public function __construct(private PDO $db,private array $config,private ?ApplicationSnapshot $application=null){}
     private static function regular(string $path):bool{return is_file($path)&&!is_link($path);}
     private static function privatePath(string $path,bool $directory):string
     {
@@ -31,6 +31,10 @@ final class DatabaseBackup
     }
     public function run(int $keep,string $revision):array
     {
+        try{return $this->execute($keep,$revision);}finally{$this->application?->release();}
+    }
+    private function execute(int $keep,string $revision):array
+    {
         if($keep<1||$keep>90||!preg_match('/^[a-f0-9]{40,64}$/D',$revision))throw new InvalidArgumentException('Invalid keep/revision.');
         if(!in_array($this->config['BACKUP_GPG_PATH_STYLE']??'NATIVE',['NATIVE','CYGWIN'],true))throw new RuntimeException('Invalid GPG path style.');
         if(!class_exists('PharData')||!function_exists('proc_open'))throw new RuntimeException('CLI requires Phar and proc_open.');
@@ -46,14 +50,15 @@ final class DatabaseBackup
             $handle=fopen($work.'/database.sql','rb');fseek($handle,-min(filesize($work.'/database.sql'),65536),SEEK_END);$tail=stream_get_contents($handle);fclose($handle);if(!preg_match('/-- PHP DATABASE COMPLETE (\{[^\r\n]+\})\s*$/D',$tail,$match))throw new RuntimeException('Incomplete database snapshot.');$counts=json_decode($match[1],true,32,JSON_THROW_ON_ERROR);
             $snapshot=['orders'=>$counts['jingo_orders']??0,'carts'=>$counts['jingo_carts']??0,'products'=>$counts['jingo_products']??0,'payments'=>$counts['jingo_order_payments']??0,'ticketFiles'=>0];
             $manifest=['format'=>'jinmemo-php-database-backup-v1','scope'=>'PHP_DATABASE_ONLY','id'=>$id,'createdAt'=>$started,'revision'=>$revision,'databaseFile'=>'database.sql','databaseSha256'=>hash_file('sha256',$work.'/database.sql'),'tables'=>$counts,'excluded'=>['media','original-ticket-files','smtp-key','environment','source-code']];
-            self::json($work.'/manifest.json',$manifest);$phase='compose-snapshot';$state('RUNNING');$tar=new PharData($work.'/snapshot.tar');$tar->addFile($work.'/database.sql','database.sql');$tar->addFile($work.'/manifest.json','manifest.json');unset($tar);chmod($work.'/snapshot.tar',0600);
+            if($this->application){$phase='media-archive';$state('RUNNING');$manifest=$this->application->capture($work,$manifest);$snapshot['ticketFiles']=count(array_filter(array_keys($manifest['media']),fn($p)=>str_starts_with($p,'.tickets/')&&!str_starts_with(basename($p),'.')));}
+            self::json($work.'/manifest.json',$manifest);$phase='compose-snapshot';$state('RUNNING');$tar=new PharData($work.'/snapshot.tar');$tar->addFile($work.'/database.sql','database.sql');$tar->addFile($work.'/manifest.json','manifest.json');if($this->application)foreach(['media.tar','source.tar','environment.env','effective-config.json'] as $file)$tar->addFile($work.'/'.$file,$file);unset($tar);chmod($work.'/snapshot.tar',0600);
             $phase='encryption';$state('RUNNING');$this->gpg(['--cipher-algo','AES256','--output',$work.'/encrypted.tar.gpg','--symmetric',$work.'/snapshot.tar'],$home,$key,$binary);chmod($work.'/encrypted.tar.gpg',0600);
             $phase='archive-verification';$state('RUNNING');$this->gpg(['--output',$work.'/verified.tar','--decrypt',$work.'/encrypted.tar.gpg'],$home,$key,$binary);chmod($work.'/verified.tar',0600);if(!hash_equals(hash_file('sha256',$work.'/snapshot.tar'),hash_file('sha256',$work.'/verified.tar')))throw new RuntimeException('Archive verification mismatch.');
-            $meta=['format'=>'jinmemo-php-database-backup-v1','id'=>$id,'createdAt'=>$started,'verifiedAt'=>gmdate('Y-m-d\TH:i:s\Z'),'bytes'=>filesize($work.'/encrypted.tar.gpg'),'sha256'=>hash_file('sha256',$work.'/encrypted.tar.gpg'),'revision'=>$revision,'snapshot'=>$snapshot,'scope'=>'PHP_DATABASE_ONLY'];
+            $meta=['format'=>$manifest['format'],'id'=>$id,'createdAt'=>$started,'verifiedAt'=>gmdate('Y-m-d\TH:i:s\Z'),'bytes'=>filesize($work.'/encrypted.tar.gpg'),'sha256'=>hash_file('sha256',$work.'/encrypted.tar.gpg'),'revision'=>$revision,'snapshot'=>$snapshot,'scope'=>$manifest['scope']];
             $phase='publish-backup';$state('RUNNING');if(file_exists($root.'/'.$id.'.tar.gpg')||is_link($root.'/'.$id.'.tar.gpg')||file_exists($root.'/'.$id.'.json')||is_link($root.'/'.$id.'.json'))throw new RuntimeException('Backup id already exists.');if(!rename($work.'/encrypted.tar.gpg',$root.'/'.$id.'.tar.gpg'))throw new RuntimeException('Cannot publish archive.');try{self::json($root.'/'.$id.'.json',$meta);}catch(Throwable $e){if(self::regular($root.'/'.$id.'.tar.gpg'))unlink($root.'/'.$id.'.tar.gpg');throw $e;}
-            $view=new Backups($this->db,$root);$records=[];foreach(glob($root.'/jinmemo-backup-*.json')?:[] as $file){try{$r=$view->record(basename($file,'.json'));if(($r['scope']??null)==='PHP_DATABASE_ONLY'&&$r['id']!==$id)$records[]=$r;}catch(HttpError){}}usort($records,fn($a,$b)=>strcmp($b['id'],$a['id']));$remove=array_slice($records,$keep-1);
+            $view=new Backups($this->db,$root);$records=[];foreach(glob($root.'/jinmemo-backup-*.json')?:[] as $file){try{$r=$view->record(basename($file,'.json'));if(($r['scope']??null)===$meta['scope']&&$r['id']!==$id)$records[]=$r;}catch(HttpError){}}usort($records,fn($a,$b)=>strcmp($b['id'],$a['id']));$remove=array_slice($records,$keep-1);
             foreach($remove as $old){$path=$root.'/'.$old['id'].'.tar.gpg';if(!self::regular($path)||!hash_equals($old['sha256'],hash_file('sha256',$path)))continue;foreach(['.json','.restore-test.json','.tar.gpg'] as $suffix){$p=$root.'/'.$old['id'].$suffix;if(self::regular($p)&&!unlink($p))throw new RuntimeException('Cannot rotate verified backups.');}}
             $state('SUCCESS');return array_intersect_key($meta,array_flip(['id','scope','bytes','sha256','revision']));
-        }catch(Throwable $e){try{$state('FAILED');}catch(Throwable){}throw $e;}finally{if(is_resource($sql))fclose($sql);if($created)foreach(['database.sql','manifest.json','snapshot.tar','encrypted.tar.gpg','verified.tar'] as $name)if(self::regular($work.'/'.$name))unlink($work.'/'.$name);if($created&&is_dir($work)&&!is_link($work))rmdir($work);flock($lock,LOCK_UN);fclose($lock);}
+        }catch(Throwable $e){try{$state('FAILED');}catch(Throwable){}throw $e;}finally{if(is_resource($sql))fclose($sql);if($created)foreach(['database.sql','manifest.json','snapshot.tar','encrypted.tar.gpg','verified.tar','media.tar','source.tar','environment.env','effective-config.json'] as $name)if(self::regular($work.'/'.$name))unlink($work.'/'.$name);if($created&&is_dir($work)&&!is_link($work))rmdir($work);flock($lock,LOCK_UN);fclose($lock);}
     }
 }

@@ -14,7 +14,7 @@ function jingoConfig(): array
             $values[trim($pair[0])] = trim(trim($pair[1]), "\"'");
         }
     }
-    foreach (['APP_ENV', 'APP_NAME', 'SEO_INDEXING', 'MEDIA_DIR', 'BACKUP_DIR', 'PUBLIC_BASE_URL', 'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD'] as $key) {
+    foreach (['APP_ENV', 'APP_NAME', 'SEO_INDEXING', 'MEDIA_DIR', 'BACKUP_DIR', 'BACKUP_COORDINATION_DIR', 'PUBLIC_BASE_URL', 'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD'] as $key) {
         $value = getenv($key);
         if ($value !== false) $values[$key] = $value;
     }
@@ -31,8 +31,9 @@ function jingoRequestBody(int $limit=65536): array
     return $input;
 }
 
-function jingoDatabase(array $config): PDO
+function jingoDatabase(array $config, ?BackupGate $snapshotOwner=null): PDO
 {
+    if(!empty($config['BACKUP_COORDINATION_DIR'])){require_once __DIR__.'/BackupGate.php';if($snapshotOwner){if(PHP_SAPI!=='cli'||!$snapshotOwner->owns($config['BACKUP_COORDINATION_DIR']))throw new LogicException('Invalid snapshot owner.');}else BackupGate::shared($config['BACKUP_COORDINATION_DIR']);}
     foreach (['DB_HOST', 'DB_DATABASE', 'DB_USERNAME'] as $key) {
         if (empty($config[$key])) throw new RuntimeException('Database configuration is incomplete.');
     }
