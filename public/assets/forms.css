@@ -51,3 +51,7 @@ body .payment-status-test{background:#eaf1ff;color:#2d5a9b}
 body .payment-status-failed{background:#fff0ed;color:#a1332f}
 body .empty-state{padding:24px;border:1px dashed #c9d6ce;border-radius:12px;color:#64746a;background:#fafcf9}
 @media(max-width:900px){body .payment-filters{grid-template-columns:minmax(0,1fr);padding:16px}}
+body .guest-contact-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 20px}
+body .guest-contact-fields>label{margin:0;min-width:0}
+body .guest-contact-fields>label:first-of-type,body .guest-contact-fields>label:has(textarea),body .guest-contact-fields>label:has(select),body .guest-contact-fields>label:has(input[type=checkbox]),body .guest-contact-fields>:is(p,div,button){grid-column:1/-1}
+@media(max-width:640px){body .guest-contact-fields{grid-template-columns:minmax(0,1fr);gap:14px}}
