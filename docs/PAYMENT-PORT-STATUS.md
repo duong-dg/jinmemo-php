@@ -1,6 +1,6 @@
 # Tiến độ chuyển phần thanh toán
 
-Cập nhật 17/11/2026, sau đợt 100. Schema cần có: **049** (mở rộng độ dài method, giữ tên/thứ tự trường).
+Cập nhật 17/11/2026, sau đợt 101. Schema cần có: **049** (mở rộng độ dài method, giữ tên/thứ tự trường).
 
 | Luồng | Trạng thái PHP |
 | --- | --- |
@@ -14,7 +14,8 @@ Cập nhật 17/11/2026, sau đợt 100. Schema cần có: **049** (mở rộng 
 | QR SePay cho xe WEB JM-X | Đã có JMR, tra cứu/admin, webhook, báo cáo/refund và đối soát REVIEW; chưa thử ngân hàng thật |
 | SePay OAuth token | Đã có Client Credentials Basic/form, JSON tương thích, Bearer có hạn và cấu hình mã hóa; chưa thử tài khoản SePay thật |
 | Thẻ SePay | Đã có Merchant/khóa mã hóa, form TEST/LIVE, IPN X-Secret-Key và ghi thu vé WEB/JC/JB/JH; chưa thử tài khoản thật |
-| PayPal, online POS/CTV | Còn thiếu |
+| PayPal API máy chủ | Đã có quy đổi USD, tạo order, guarded capture, đọc lại sau mất phản hồi và xác minh webhook; kiểm thử bằng transport mô phỏng |
+| PayPal checkout/ghi thu/giao diện, online POS/CTV | Còn thiếu; PayPal chưa hiện trong providers |
 | Đặt phòng online JH | Đã có giữ phòng 30 phút, IPN nguyên khối, email PAID và REVIEW sau hết hạn |
 | Nhật ký VNPAY/SePay, chống ghi thu trùng | Đã có và lưu lịch sử đối soát |
 | Đối soát SePay LIVE REVIEW | Đã có preview/xác nhận cho vé WEB, JC, JB, JH và xe WEB JM-X; ghi BANK theo quản trị viên, giữ lý do/đơn ban đầu |
