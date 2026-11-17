@@ -1,13 +1,13 @@
 # Sao lưu và phục hồi PHP trên cPanel
 
-Đợt 112, schema vẫn 052. Admin → Cấu hình website → Sao lưu & phục hồi.
+Cập nhật đợt 121, schema vẫn 052. Admin → Cấu hình website → Sao lưu & phục hồi.
 
 ## Phân biệt file
 
 | File | Dùng cho |
 | --- | --- |
 | `jinmemo-php-database-YYYY-MM-DD.sql` | Khôi phục database PHP vào một database mới, trống. Có cấu trúc `jingo_*` và dữ liệu vận hành |
-| `jinmemo-backup-...tar.gpg` | Bản sao mã hóa do tác vụ ngoài ứng dụng tạo; phải dùng khóa và quy trình của chính hệ thống tạo archive |
+| `jinmemo-backup-...tar.gpg` | Archive mã hóa; xem nhãn chỉ database PHP hoặc tác vụ ngoài. Dùng khóa và quy trình của chính hệ thống tạo archive |
 | SQL chứa `jm_transfer_*` từ bản Node | Dữ liệu staging để importer chuyển sang PHP theo TRANSFER-CONTRACT.json; không phải database PHP chạy được |
 
 ## Xuất SQL database PHP
@@ -48,10 +48,44 @@ Không cấu hình thì mặc định dùng storage/backups; nếu chưa có th�
 
 `GET /api/v1/admin/backups` và `GET /api/v1/admin/backups/:id/download` chỉ cho admin. File phải là file thường trong thư mục riêng; không nhận tên tùy ý, symlink hoặc đường dẫn thoát thư mục. Khi tải, kiểm lại SHA-256 trên chính file đang mở, rồi mới ghi audit và gửi bytes. SHA-256 xác minh file khớp metadata; ứng dụng không tự giải mã hoặc xác nhận nội dung archive đã phục hồi được. Marker thử phục hồi là ghi nhận từ tác vụ ngoài.
 
-**Chưa chuyển trong đợt này:** bộ tạo archive GPG/lịch cron/retention và quy trình phục hồi toàn bộ stack Ubuntu của bản Node sang cPanel. Không tự tạo setup.json để giả rằng đã cài lịch. Không có tự upload SQL/giải nén/ghi đè dữ liệu bằng HTTP. Bản tar.gpg của Node không tự trở thành bản PHP hoặc được chuyển sang MySQL chỉ vì được liệt kê ở đây.
+**Phần còn thiếu sau đợt 121:** archive đầy đủ media/file vé/khóa/.env/mã nguồn, tự cài/xác minh lịch và phục hồi toàn bộ stack Ubuntu của bản Node sang cPanel. CLI bên dưới chỉ sao lưu database PHP, có GPG và retention riêng. Không tự tạo setup.json để giả rằng đã cài lịch. Không có tự upload SQL/giải nén/ghi đè dữ liệu bằng HTTP. Bản tar.gpg của Node không tự trở thành bản PHP hoặc được chuyển sang MySQL chỉ vì được liệt kê ở đây.
 
 ## Kiểm thử
 
 `php tests/backups.php` với JINGO_TEST_DSN server thử riêng, không dbname: metadata/private whitelist, kích thước/SHA-256/restore marker, đường dẫn riêng, export rồi import toàn bộ cấu trúc, Unicode/emoji/numeric/binary/bit/null/time precision/cột sinh, bỏ phiên, giới hạn dung lượng, khóa đồng thời, rollback/audit, quyền HTTP/CSRF/cookie và header tải file.
 
 `node tests/backups-ui.cjs`: review chưa tạo export, chống bấm lặp, kiểm định dạng response, giữ private-entry header, dọn blob và bỏ phản hồi cũ sau khi rời trang. Đã xem renderer thật bằng fixture mô phỏng tại desktop/mobile; không tải SQL hoặc archive sản xuất.
+
+## CLI sao lưu database mã hóa — đợt 121
+
+Lệnh mới dành cho CLI, không có endpoint HTTP chạy mã hóa. Cần PHP CLI với pdo_mysql/Phar/proc_open và GnuPG 2 có loopback pinentry. Hosting không cho dùng GPG/proc_open thì dùng công cụ backup của hosting; không thay bằng SQL công khai. Đã thử GPG thật và phục hồi database local; chưa kiểm cPanel thật.
+
+Cấu hình đường dẫn tuyệt đối trong .env (hoặc env của cron):
+
+```dotenv
+BACKUP_DIR=/home/USER/private-backups
+BACKUP_GPG_BINARY=/usr/bin/gpg
+BACKUP_GPG_HOME=/home/USER/private-gpg
+BACKUP_PASSPHRASE_FILE=/home/USER/private-secrets/backup-passphrase
+```
+
+Tạo sẵn các thư mục riêng ngoài public, quyền 0700; file passphrase là file thường, 0600, một dòng ít nhất 32 byte. Nên tạo từ 32 byte ngẫu nhiên, không ghi passphrase vào .env, tham số lệnh hoặc cron log. Giữ một bản khóa an toàn ngoài hosting trước khi phụ thuộc vào archive; mất khóa sẽ không giải mã được. GPG home dành riêng cho tác vụ này. Không dùng symlink cho thư mục/file cấu hình. Trên Windows dùng GPG đi kèm Git có thể đặt BACKUP_GPG_PATH_STYLE=CYGWIN; cPanel không cần tùy chọn này.
+
+Chạy thử từ thư mục mã PHP đã clone Git:
+
+```bash
+cd /home/USER/jinmemo.cloud
+/usr/local/bin/php bin/database-backup.php --revision="$(git rev-parse HEAD)" --keep=7
+```
+
+Chỉnh đúng đường dẫn PHP CLI của hosting. Revision phải là commit 40–64 hex của mã tương ứng. Lệnh không tự cài cron hay tạo setup.json. Sau khi chạy thử và giữ khóa ngoài hosting, có thể đặt chính lệnh này vào Cron Jobs của cPanel; chọn giờ theo múi giờ server. Nếu server UTC, 20:15 UTC tương ứng 03:15 hôm sau ở Việt Nam. Màn hình chưa xác nhận lịch chỉ có nghĩa chưa có metadata xác nhận cài lịch; kiểm last-run và lịch cPanel thực tế.
+
+Tác vụ xuất consistent SQL bằng DatabaseExport (vẫn bỏ dữ liệu phiên/OTP/giới hạn), đóng thành tar gồm đúng database.sql và manifest.json, mã hóa AES256, giải mã lại và so SHA-256 tar trước khi publish. Manifest có scope PHP_DATABASE_ONLY, hash SQL, số dòng bảng và revision. Admin hiển thị nhãn chỉ database rõ ràng, không gồm ảnh/file vé, .smtp-key, .env hoặc code. Snapshot ticketFiles luôn 0 vì file vé không nằm trong archive. payments là số dòng jingo_order_payments, không phải doanh thu.
+
+Khóa file ngăn chạy chồng cùng thư mục; export còn dùng khóa database hiện có. Chỉ giữ 1–90 archive do CLI này tạo và xác minh metadata/hash trước khi xóa bản cũ. Không xóa archive ngoài ứng dụng, archive bị sửa SHA-256 hoặc metadata hỏng; do đó có thể còn nhiều file hơn keep nếu có file không xác minh được. Bản mới luôn được giữ, kể cả khi lỗi retention sau publish. last-run chỉ ghi trạng thái/phase, không ghi khóa, đường dẫn hoặc stderr GPG; preflight cấu hình không đạt có thể dừng trước khi cập nhật last-run.
+
+SQL/tar giải mã tạm nằm trong thư mục .work riêng 0700, được dọn khi hoàn tất hoặc lỗi có xử lý. Dừng tiến trình đột ngột/mất điện có thể để lại .work; chỉ dọn khi chắc chắn không có tác vụ chạy. Cần đủ quota cho SQL, tar, ciphertext và bản giải mã đối chiếu (có thể nhiều lần kích thước SQL); giới hạn SQL vẫn 512 MiB.
+
+Phục hồi: chép archive và passphrase sang máy tin cậy/thư mục riêng, dùng GPG giải mã, kiểm manifest.databaseSha256 của database.sql rồi làm quy trình nhập vào database mới trống ở trên. Sau đó vẫn phải phục hồi riêng media/khóa/.env/code đúng thời điểm. verifiedAt chỉ xác nhận archive giải mã khớp byte, không phải chứng nhận đã thử phục hồi trên hosting; CLI không tạo restore-test.json giả.
+
+Kiểm thử mới: php tests/database-backup.php với JINGO_TEST_DSN server thử riêng và JINGO_TEST_GPG đường dẫn GPG. Có mã hóa/giải mã thật, SQL import vào database riêng, manifest, scope, CLI/env, khóa chạy trùng, retention giữ bản ngoài/tampered và lỗi mã hóa không công bố file chưa kiểm.

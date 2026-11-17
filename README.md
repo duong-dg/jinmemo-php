@@ -1269,3 +1269,10 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Báo giá và tạo JC đều gửi trip đúng trường nguồn. Review có chi tiết chuyến; làm mới giá giữ ô đang nhập, yêu cầu mất mạng/reload/VI-EN gửi lại nguyên body. Dòng vừa đổi ở tab khác được giữ sau khi đặt xong.
 - Draft mới chỉ lưu cấu hình xe, không lưu địa chỉ/chuyến bay vào localStorage; các draft cũ có trip vẫn dùng được. Không đổi schema 052 hoặc hợp đồng export SQL; PDF vẫn chỉ giao file gốc.
 - Kiểm tra transport-fields-ui, carts-ui, draft-checkout-ui và các test giỏ/checkout; backend transport.php, carts.php, full http.php qua. Đã xem VI desktop/EN mobile trên fixture, chưa kiểm hosting thật. Các phần còn thiếu khác xem PORT-COMPLETION.md.
+
+## Sao lưu database mã hóa bằng CLI — đợt 121
+
+- Thêm bin/database-backup.php để xuất database PHP nhất quán, đóng tar SQL/manifest, mã hóa GPG AES256 rồi giải mã/so hash trước khi công bố. Có khóa chạy chồng, trạng thái và giữ 1–90 bản native đã xác minh; giữ nguyên bản ngoài hoặc sai hash.
+- Admin ghi rõ archive chỉ database, không gồm media/file vé, khóa, .env hay code. Không tự cài cron, không ghi marker thử phục hồi giả. Không đổi schema 052.
+- Cấu hình GPG/passphrase và cách đặt Cron Jobs xem [hướng dẫn sao lưu](docs/BACKUP-RESTORE-PHP.md). Cần GPG/proc_open trên hosting; chưa kiểm cPanel thật. Full-stack backup vẫn còn cần chuyển.
+- Đã thử GPG thật, giải mã và nhập SQL vào database trống, CLI/env, lỗi mã hóa/lock/retention và quyền/path; backups.php, backups-ui và full HTTP qua.
