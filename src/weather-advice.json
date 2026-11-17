@@ -1,0 +1,78 @@
+{
+  "thunder": {
+    "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+    "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+  },
+  "wind-strong": {
+    "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+    "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+  },
+  "wind": {
+    "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+    "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+  },
+  "heavy-rain": {
+    "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+    "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+  },
+  "rain": {
+    "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+    "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+  },
+  "showers": {
+    "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+    "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+  },
+  "hot": {
+    "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+    "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+  },
+  "muggy": {
+    "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+    "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+  },
+  "warm": {
+    "vi": "Trời khá ấm; chuẩn bị nước uống và quần áo nhẹ khi đi bộ tham quan.",
+    "en": "Warm weather: pack drinking water and lightweight clothes for walking tours."
+  },
+  "cold": {
+    "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+    "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+  },
+  "cool": {
+    "vi": "Mang thêm áo khoác nhẹ nếu đi sớm, về muộn hoặc tham quan vùng cao.",
+    "en": "Bring a light jacket for early starts, late returns or visits to higher ground."
+  },
+  "uv-very-high": {
+    "vi": "UV dự báo rất cao; ưu tiên bóng râm và chuẩn bị mũ, kính, kem chống nắng.",
+    "en": "Very high UV is forecast; favour shade and bring a hat, sunglasses and sunscreen."
+  },
+  "uv-high": {
+    "vi": "UV dự báo cao dù có thể nhiều mây; chuẩn bị đồ chống nắng khi ở ngoài trời.",
+    "en": "High UV is forecast even if cloudy; prepare sun protection for time outdoors."
+  },
+  "visibility": {
+    "vi": "Tầm nhìn có thể hạn chế; lưu ý thời gian di chuyển và kiểm tra dự báo tại điểm ngắm cảnh.",
+    "en": "Visibility may be limited; allow for travel delays and check conditions at viewpoints."
+  },
+  "evening-rain": {
+    "vi": "Buổi tối có khả năng mưa; chuẩn bị áo mưa nếu xem show ngoài trời.",
+    "en": "Evening rain is possible; bring a raincoat for outdoor shows."
+  },
+  "evening-cool": {
+    "vi": "Nhiệt độ buổi tối giảm so với ban ngày; mang thêm một lớp áo mỏng khi về muộn.",
+    "en": "Evenings may be noticeably cooler; bring an extra light layer for a late return."
+  },
+  "damp": {
+    "vi": "Độ ẩm cao và có khả năng mưa; chọn giày dễ khô, cẩn thận ở lối đi ướt.",
+    "en": "High humidity and possible rain: choose quick-drying footwear and take care on wet paths."
+  },
+  "pleasant": {
+    "vi": "Dự báo khá dễ chịu, ít khả năng mưa; có thể cân nhắc đi bộ và tham quan ngoài trời.",
+    "en": "The forecast looks mild with a low chance of rain; consider walking and outdoor sightseeing."
+  },
+  "prepare": {
+    "vi": "Kiểm tra lại dự báo gần giờ đi và chuẩn bị trang phục phù hợp với lịch trình.",
+    "en": "Check the forecast again close to departure and dress for your itinerary."
+  }
+}

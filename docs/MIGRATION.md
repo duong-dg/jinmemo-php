@@ -41,3 +41,5 @@ Tham chiếu exporter tại commit `585cd8a36c106dd3552fb397281f7f2e9c299f50`. [
 Đợt 19 bổ sung `jingo_post_categories`, `jingo_posts`, `jingo_post_revisions`, `jingo_post_metrics`, giữ đúng tên cột nguồn (danh sách `postTables` trong contract). Fixture SQL sinh bởi exporter thật đã được nhập vào database thử và ánh xạ đủ bốn bảng. Đây là kiểm thử cấu trúc, chưa phải lệnh nhập dữ liệu sản xuất.
 
 Giữ nguyên JSON data gồm English/status/sourceHash, publishedAt, relatedProductIds, relatedRideIds và featured; giữ created_at/updated_at/revision.created_at ở UTC với microsecond, saved_by/reason/version và BIGINT views. Không đưa trường views từ client vào đè bộ đếm đã nhập. Giữ alias POST/POST_EN trong bảng slug_aliases và chép ảnh media theo ID cũ. Bản PHP đọc được nội dung EN đã xuất bản; chưa có trình biên tập bản dịch, luồng xe, quản lý chuyên mục đầy đủ hoặc ghi lượt xem mới.
+
+Đợt 109 bổ sung phân hệ thời tiết, migration 051. Cache và hạn mức là dữ liệu runtime riêng; công cụ import đơn/ledger/tồn vẫn chưa hoàn tất. Các trường bảng nguồn không được đổi tên để ép nhập. Xem WEATHER.md và PORT-COMPLETION.md.

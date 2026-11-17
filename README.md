@@ -1179,3 +1179,10 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Hàng Hủy/Lưu bám dưới khi cuộn form dài; cột nhập có min-width:0, một cột trên mobile, tiêu đề dài tự xuống dòng. Dialog được đặt tên bằng tiêu đề cho trình đọc màn hình. Không thay payload hoặc schema.
 - Kiểm thử node tests/admin-editor-ui.cjs mô phỏng yêu cầu chờ, gửi lặp, lỗi/thử lại, dữ liệu chụp trước khi khóa và chuyển mục. Đã kiểm cú pháp JS/PHP; chưa kiểm trực quan thay đổi bố cục đợt này hoặc thử hosting thật.
 - Cập nhật git pull --ff-only origin main rồi Ctrl+F5. Không SQL mới, vẫn schema 050.
+
+### Thời tiết & gợi ý — đợt 109 (17/11/2026)
+
+- Chuyển trọn phân hệ weather: cấu hình admin có mã hóa khóa/version/audit, API public, tọa độ điểm cha, cache chung/lease, hạn mức 90.000 lượt/tháng UTC và dừng khi provider hết lượt. Có hiện tại/dự báo ba ngày, thống kê buổi tối và gợi ý VI/EN đúng thứ tự nguồn; trang điểm đến và sản phẩm tự hiển thị khi có dữ liệu.
+- Admin có form kiểm tra/xác nhận, frozen retry và bỏ phản hồi tải cũ. Public hiện cập nhật GMT+7, nhãn cache cũ, nội dung text-only và bố cục ba cột/một cột. Không lộ API Key hoặc lỗi upstream.
+- Migration mới `051-weather.sql` giữ tên/thứ tự cột cache/usage của nguồn. Cập nhật bằng `git pull --ff-only origin main` rồi `php bin/install.php`; không có terminal thì import riêng file 051 qua phpMyAdmin. Không import lại dump hoặc xóa dữ liệu. Xem [hướng dẫn thời tiết](docs/WEATHER.md).
+- Đã kiểm MySQL/HTTP, 80 fixture gợi ý Node VI/EN, DOM admin/public và xem widget/form với dữ liệu mô phỏng trên desktop/mobile. Chưa gọi provider thật hoặc kiểm hosting thật. Danh sách phần thiếu đã xác nhận ở [PORT-COMPLETION.md](docs/PORT-COMPLETION.md); chưa tuyên bố chuyển xong toàn hệ thống.

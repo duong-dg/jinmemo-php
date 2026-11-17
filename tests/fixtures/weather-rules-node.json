@@ -1,0 +1,2633 @@
+{
+  "source": "apps/api/src/weather/weather-rules.ts",
+  "cases": [
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 28,
+        "rain": 10,
+        "precip": 0,
+        "wind": 10,
+        "humidity": 60,
+        "visibility": 10,
+        "uv": 3,
+        "code": 1003
+      },
+      "expected": [
+        {
+          "id": "pleasant",
+          "vi": "Dự báo khá dễ chịu, ít khả năng mưa; có thể cân nhắc đi bộ và tham quan ngoài trời.",
+          "en": "The forecast looks mild with a low chance of rain; consider walking and outdoor sightseeing."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 1.9,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 2,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 1.9,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 10,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 10,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 2,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 2,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 1.9,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 2,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 2,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 2,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 1.9,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 1.9,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 2,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 10,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 1.9,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 10,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 10,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 2,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 10,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 2,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 2,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 2,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 1.9,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 1.9,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 10,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 10,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 10,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 10,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 10,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 1.9,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 2,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 1.9,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 1.9,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 1.9,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 2,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 10,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 10,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 10,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 2,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 2,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 10,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 1.9,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 10,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 10,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 1.9,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 10,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 1.9,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 10,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 10,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 1.9,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 2,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 10,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 1.9,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 2,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 1.9,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 10,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 1.9,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 10,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 10,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 2,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 1.9,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 1.9,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 10,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 10,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 1.9,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 1.9,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 2,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 10,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 10,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 10,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 2,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 10,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 2,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 2,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 23,
+        "max": 34,
+        "rain": 30,
+        "precip": 0,
+        "wind": 40,
+        "humidity": 89,
+        "visibility": 2,
+        "uv": 5,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind-strong",
+          "vi": "Gió khá mạnh; kiểm tra tình trạng vận hành của tàu, tour biển hoặc cáp treo trước khi khởi hành.",
+          "en": "Strong winds are forecast; check boat, sea tour or cable car operating updates before departure."
+        },
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 15,
+        "max": 35,
+        "rain": 59,
+        "precip": 5,
+        "wind": 24,
+        "humidity": 90,
+        "visibility": 1.9,
+        "uv": 6,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "showers",
+          "vi": "Có thể có mưa rào; mang ô hoặc áo mưa nhẹ để chủ động lịch trình.",
+          "en": "Showers are possible; pack an umbrella or light raincoat for a flexible itinerary."
+        },
+        {
+          "id": "hot",
+          "vi": "Trời nóng; mang nước, đội mũ và ưu tiên tham quan sáng sớm hoặc chiều muộn.",
+          "en": "Hot weather: bring water and a hat, and favour early morning or late afternoon visits."
+        },
+        {
+          "id": "cold",
+          "vi": "Sáng sớm hoặc tối có thể lạnh; chuẩn bị áo khoác và kiểm tra dự báo theo giờ trước khi đi.",
+          "en": "Early mornings or evenings may be cold; pack a jacket and check hourly forecasts before leaving."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 20,
+        "max": 29,
+        "rain": 60,
+        "precip": 29,
+        "wind": 25,
+        "humidity": 79,
+        "visibility": 1.9,
+        "uv": 7.9,
+        "code": 1087,
+        "eveningRain": 10,
+        "eveningMin": 22
+      },
+      "expected": [
+        {
+          "id": "thunder",
+          "vi": "Có dự báo dông. Kiểm tra thông báo của đơn vị tổ chức trước các hoạt động ngoài trời, trên núi hoặc trên biển.",
+          "en": "Thunderstorms are forecast. Check operator updates before outdoor, mountain or sea activities."
+        },
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "rain",
+          "vi": "Khả năng mưa cao; mang áo mưa gọn và túi chống nước cho điện thoại.",
+          "en": "Rain is likely; bring a compact raincoat and a waterproof phone pouch."
+        }
+      ]
+    },
+    {
+      "day": {
+        "date": "2026-11-17",
+        "min": 21,
+        "max": 30,
+        "rain": 29,
+        "precip": 30,
+        "wind": 39,
+        "humidity": 80,
+        "visibility": 10,
+        "uv": 8,
+        "code": 1000,
+        "eveningRain": 60,
+        "eveningMin": 15
+      },
+      "expected": [
+        {
+          "id": "wind",
+          "vi": "Có gió; giữ chắc mũ và đồ dùng nhẹ khi tham quan ngoài trời.",
+          "en": "Breezy conditions: secure hats and lightweight belongings outdoors."
+        },
+        {
+          "id": "heavy-rain",
+          "vi": "Lượng mưa dự báo khá lớn. Dự phòng thời gian di chuyển và theo dõi thông báo tại điểm đến.",
+          "en": "Substantial rainfall is forecast. Allow extra travel time and follow destination updates."
+        },
+        {
+          "id": "muggy",
+          "vi": "Thời tiết có thể oi ẩm; chọn trang phục thoáng và dành thời gian nghỉ giữa các hoạt động.",
+          "en": "Conditions may feel humid and muggy; wear breathable clothing and take breaks between activities."
+        }
+      ]
+    }
+  ]
+}

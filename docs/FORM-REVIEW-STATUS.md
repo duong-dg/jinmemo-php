@@ -23,3 +23,7 @@ Kiểm thử chức năng gồm tiếng Việt/Anh, dữ liệu không hợp l�
 ## Đợt 108 — editor admin dùng chung
 
 Khóa ô và nút trong lúc lưu sau khi đã lấy FormData; trạng thái lưu có thông báo hỗ trợ trình đọc màn hình. Lỗi giữ bản nháp và trả lại trạng thái disabled cũ; gửi lặp không tạo thêm yêu cầu. Hàng nút Hủy/Lưu bám dưới form dài, cột nhập co được và tiêu đề xuống dòng. Kiểm thử hành vi tại tests/admin-editor-ui.cjs; chưa kiểm trực quan CSS đợt 108 hoặc hosting thật. Các form chuyên biệt có luồng lưu riêng cần tiếp tục rà riêng. Không SQL mới.
+
+## Đợt 109 — thời tiết
+
+Form admin thời tiết có nhóm cấu hình, mật khẩu API Key, kiểm tra/xác nhận và khóa input khi đang xác nhận/gửi; giữ payload khi thử lại lỗi. Public có dự báo ba ngày, gợi ý, timestamp GMT+7, responsive ba cột/một cột. Đã xem renderer thật với dữ liệu mô phỏng trên desktop/mobile và chạy weather-ui.cjs; chưa dùng provider hoặc hosting thật. Schema mới 051; xem WEATHER.md.

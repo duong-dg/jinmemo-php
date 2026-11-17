@@ -55,3 +55,5 @@ body .guest-contact-fields{display:grid;grid-template-columns:repeat(2,minmax(0,
 body .guest-contact-fields>label{margin:0;min-width:0}
 body .guest-contact-fields>label:first-of-type,body .guest-contact-fields>label:has(textarea),body .guest-contact-fields>label:has(select),body .guest-contact-fields>label:has(input[type=checkbox]),body .guest-contact-fields>:is(p,div,button){grid-column:1/-1}
 @media(max-width:640px){body .guest-contact-fields{grid-template-columns:minmax(0,1fr);gap:14px}}
+
+.destination-weather{padding:24px;border:1px solid #d9e3dc;border-radius:14px;background:#f8faf8;margin:24px 0;overflow-wrap:anywhere}.weather-days{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.weather-days article{padding:16px;background:#fff;border:1px solid #d9e3dc;border-radius:10px}.weather-days ul{padding-left:20px}.weather-days li{margin:10px 0}.destination-weather small{display:block;margin-top:18px}@media(max-width:700px){.weather-days{grid-template-columns:minmax(0,1fr)}.destination-weather{padding:16px}}
