@@ -43,3 +43,7 @@ Có review trước xuất SQL, khóa nút khi đang tải và bỏ phản hồi
 ## Đợt 114 — giỏ vé trượt
 
 Header có badge số vé, mở panel vé đang chọn từ mọi trang khách. Thêm gói từ báo giá mở panel; panel chỉ xem/bỏ gói/đi đến form đặt, giữ phần tra cứu ở chế độ riêng. Đã kiểm modal/focus/scroll và dữ liệu mô phỏng desktop/mobile, cùng test count/concurrent removal/pending/malformed state. Chưa có giỏ nháp xe/quà chung hoặc đồng bộ giỏ giữa hai ngôn ngữ. Không thay schema 052.
+
+## Đợt 115 — giỏ quà và form đặt quà
+
+Số lượng quà được lưu chung giữa VI/EN; nút Thêm vào giỏ mở panel có giá/tên mới. Form khách có review riêng và session payload cố định khi chờ, hỗ trợ reload/retry; 4xx xác định quay lại danh mục mới và giữ thông tin liên hệ. Phone hỗ trợ +84, pickup counter required khi có quầy, tổng kiểm safe integer. Đã kiểm các test gift-cart/gifts/gift-drawer UI, backend GiftOrders và full HTTP; đã xem thêm quà, chuyển EN và panel mobile với API mô phỏng. Chưa hoàn tất giỏ xe hoặc checkout hợp nhất từ draft. Không thay schema 052.
