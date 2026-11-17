@@ -19,3 +19,7 @@ Cập nhật 17/11/2026, sau đợt 107. Không đổi tên trường dữ liệ
 Kiểm thử chức năng gồm tiếng Việt/Anh, dữ liệu không hợp lệ trước xác nhận, không tạo đơn ở bước xem lại, ghi chú có xuống dòng và gửi lại nguyên payload khi mất phản hồi. Những thuộc tính hỗ trợ trình duyệt không thay thế kiểm tra dữ liệu tại server. Chưa import dữ liệu cũ.
 
 - Tra cứu JC/JB khóa nút và ô nhập trong lúc tải để tránh gửi lặp. JB chụp mã/khóa theo từng yêu cầu, bỏ phản hồi cũ nếu mã vừa tạo đã được tra cứu mới. Kiểm thử `node tests/public-lookup-ui.cjs` mô phỏng phản hồi đảo thứ tự, tạo mã trong lúc tra cứu, lỗi tải và mở lại nút.
+
+## Đợt 108 — editor admin dùng chung
+
+Khóa ô và nút trong lúc lưu sau khi đã lấy FormData; trạng thái lưu có thông báo hỗ trợ trình đọc màn hình. Lỗi giữ bản nháp và trả lại trạng thái disabled cũ; gửi lặp không tạo thêm yêu cầu. Hàng nút Hủy/Lưu bám dưới form dài, cột nhập co được và tiêu đề xuống dòng. Kiểm thử hành vi tại tests/admin-editor-ui.cjs; chưa kiểm trực quan CSS đợt 108 hoặc hosting thật. Các form chuyên biệt có luồng lưu riêng cần tiếp tục rà riêng. Không SQL mới.

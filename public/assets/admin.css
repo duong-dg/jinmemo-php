@@ -21,3 +21,6 @@
 .order-filters>label input{display:block;min-width:140px;width:100%}
 
 .stay-rates-editor,.stay-rates-editor fieldset{min-width:0;max-width:100%;box-sizing:border-box}.stay-rates-editor fieldset{margin:0 0 1rem;padding:1rem}.stay-rates-editor .table-wrap{width:100%;max-width:100%;overflow-x:auto}.stay-rates-editor table{min-width:650px}
+
+/* Keep editor actions visible while scrolling long forms. */
+#editor .fields{grid-template-columns:repeat(2,minmax(0,1fr))}#editor .fields>label{min-width:0}#editor .dialog-actions{position:sticky;bottom:-28px;background:var(--paper);z-index:2;padding:16px 0;margin-top:16px;align-items:center;flex-wrap:wrap}#edit-status{margin-right:auto;font-size:13px}#editor .dialog-heading>div{min-width:0}#editor-title{overflow-wrap:anywhere}@media(max-width:640px){#editor .fields{grid-template-columns:minmax(0,1fr)}#editor .dialog-actions{bottom:-22px;gap:10px}#edit-status:not(:empty){flex-basis:100%}}

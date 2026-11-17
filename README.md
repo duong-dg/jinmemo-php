@@ -1172,3 +1172,10 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Cập nhật: git pull --ff-only origin main, Ctrl+F5 để tải lại CSS/JS nếu cần. Không SQL mới, vẫn schema 050; chưa import dữ liệu cũ.
 
 - Tra cứu JC/JB khóa nút và ô nhập trong lúc tải để tránh gửi lặp. JB chụp mã/khóa theo từng yêu cầu, bỏ phản hồi cũ nếu mã vừa tạo đã được tra cứu mới. Kiểm thử `node tests/public-lookup-ui.cjs` mô phỏng phản hồi đảo thứ tự, tạo mã trong lúc tra cứu, lỗi tải và mở lại nút.
+
+### Biểu mẫu chỉnh sửa admin — đợt 108 (17/11/2026)
+
+- Form sửa dữ liệu chung chụp dữ liệu trước khi khóa các ô/nút trong lúc lưu, hiện trạng thái Đang lưu thay đổi và aria-busy. Chặn gửi lặp, hỗ trợ submit không có submitter; lỗi giữ bản nháp và khôi phục đúng trạng thái disabled ban đầu. Giữ kiểm tra mục quản trị trước khi ghi.
+- Hàng Hủy/Lưu bám dưới khi cuộn form dài; cột nhập có min-width:0, một cột trên mobile, tiêu đề dài tự xuống dòng. Dialog được đặt tên bằng tiêu đề cho trình đọc màn hình. Không thay payload hoặc schema.
+- Kiểm thử node tests/admin-editor-ui.cjs mô phỏng yêu cầu chờ, gửi lặp, lỗi/thử lại, dữ liệu chụp trước khi khóa và chuyển mục. Đã kiểm cú pháp JS/PHP; chưa kiểm trực quan thay đổi bố cục đợt này hoặc thử hosting thật.
+- Cập nhật git pull --ff-only origin main rồi Ctrl+F5. Không SQL mới, vẫn schema 050.

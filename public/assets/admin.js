@@ -135,7 +135,7 @@ async function openEditor(record,createContact=false){
  if($('#workspace').hidden){draft=null;return;}$('#editor').showModal();$('#editor input')?.focus();dirty=false;
 }
 $('#edit-form').onsubmit=async e=>{
- e.preventDefault();if(!draft||editing)return;const submit=e.submitter;editing=true;submit.disabled=true;$('#edit-error').hidden=true;
+ e.preventDefault();if(!draft||editing)return;const submit=e.submitter||$('#edit-form button[type=submit]'),formElement=e.target,controls=Array.from(formElement.querySelectorAll('input,select,textarea,button')),disabledBefore=controls.map(control=>control.disabled);editing=true;submit.disabled=true;formElement.setAttribute('aria-busy','true');$('#edit-status').textContent='Đang lưu thay đổi…';$('#edit-error').hidden=true;
  try{
   if(current!==editorSection)throw new Error('Mục quản trị đã thay đổi. Đóng biểu mẫu và mở lại trước khi lưu.');
   const data=structuredClone(draft),form=new FormData(e.target);
@@ -148,8 +148,8 @@ $('#edit-form').onsubmit=async e=>{
    if(form.has('_english')){data.english={};for(const key of ['title','slug','contentHtml','description','menuLabel','seoTitle','seoDescription'])data.english[key]=form.get('_en.'+key)||'';data.english.published=form.has('_en.published');}
   }
   for(const key of Object.keys(data))if(key.startsWith('_'))delete data[key];
-  await api(current,data);if(current==='brand')refreshBrand(data);dirty=false;$('#editor').close();draft=null;await render();notice('Đã lưu thay đổi.');
- }catch(error){$('#edit-error').textContent=error.message;$('#edit-error').hidden=false;}finally{editing=false;submit.disabled=false;}
+  for(const control of controls)control.disabled=true;await api(current,data);if(current==='brand')refreshBrand(data);dirty=false;$('#editor').close();draft=null;await render();notice('Đã lưu thay đổi.');
+ }catch(error){$('#edit-error').textContent=error.message;$('#edit-error').hidden=false;}finally{editing=false;controls.forEach((control,index)=>control.disabled=disabledBefore[index]);formElement.setAttribute('aria-busy','false');$('#edit-status').textContent='';}
 };
 function openContact(record){
  draft=null;dirty=false;$('#fields').replaceChildren();$('#edit-error').hidden=true;$('#editor-title').textContent=record.data.subject;$('#edit-form button[type=submit]').hidden=true;
