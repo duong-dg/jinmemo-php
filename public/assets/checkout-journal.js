@@ -1,0 +1,15 @@
+'use strict';
+(()=>{
+ const key='jinmemo-draft-checkout:v1',groups=['tickets','ride','gifts'],copy=v=>JSON.parse(JSON.stringify(v));let running=false;
+ const fail=()=>Error(document.documentElement.lang==='en'?'Unable to read or save this checkout. Your previous request is preserved.':'Không đọc hoặc lưu được lần chốt đơn này. Yêu cầu cũ vẫn được giữ nguyên.');
+ function read(){const raw=sessionStorage.getItem(key);if(raw===null)return null;try{const s=JSON.parse(raw);if(s?.version!==1||!s.steps||!s.bundle||!groups.some(g=>s.steps[g])||Object.keys(s.steps).some(g=>!groups.includes(g))||!Number.isSafeInteger(s.bundle.expectedTotal)||s.bundle.expectedTotal<1||s.bundle.expectedTotal>15000000000)throw fail();for(const g of groups)if(s.steps[g]&&(!s.steps[g].body||!s.steps[g].source))throw fail();return s;}catch{throw fail();}}
+ function active(){try{const s=read();return !!s&&(!(s.receipt||s.closed)||!s.cleaned);}catch{return true;}}
+ function save(s){sessionStorage.setItem(key,JSON.stringify(s));window.dispatchEvent(new Event('jinmemo-checkout-change'));return s;}
+ function start(s){if(read())throw fail();return save(copy({...s,version:1}));}
+ function valid(g,r,b){return r&&typeof r==='object'&&(g==='tickets'?/^JC[A-F0-9]{10}$/.test(r.code)&&r.accessKey===b.accessKey:g==='ride'?/^JM-X[A-F0-9]{12}$/.test(r.code):g==='gifts'?/^JM-G[A-F0-9]{12}$/.test(r.code)&&r.total===b.expectedTotal:/^JB[A-F0-9]{10}$/.test(r.code)&&r.total===b.expectedTotal);}
+ async function run(submit){if(running)throw fail();running=true;let s;try{s=read();if(!s||s.closed)throw fail();if(s.receipt)return s;for(const g of [...groups,'bundle']){if(g!=='bundle'&&(!s.steps[g]||s.steps[g].result))continue;let body;if(g==='bundle'){body=s.bundle;for(const kind of groups){const step=s.steps[kind];if(step)body[kind]={code:step.result.code,[kind==='tickets'?'accessKey':kind==='ride'?'requestKey':'requestId']:step.body[kind==='tickets'?'accessKey':kind==='ride'?'requestKey':'requestId']};}s=save(s);}else body=s.steps[g].body;delete s.failure;s=save(s);const before=JSON.stringify(s);let result;try{result=await submit(g,copy(body));if(!valid(g,result,body))throw fail();}catch(e){if([400,409,422].includes(e.status)){s.failure={group:g,status:e.status};save(s);}throw e;}if(JSON.stringify(read())!==before)throw fail();delete s.failure;if(g==='bundle')s.receipt={code:result.code,total:result.total};else s.steps[g].result={code:result.code,...(g==='tickets'?{accessKey:result.accessKey}:{})};s=save(s);}return s;}finally{running=false;}}
+ function release(){const s=read();if(running||!s?.failure||s.receipt||s.closed)throw fail();s.closed=true;return save(s);}
+ function markCleaned(){const s=read();if(!s||!s.receipt&&!s.closed)throw fail();s.cleaned=true;return save(s);}
+ function clear(){const s=read();if(running||s&&(!s.closed&&!s.receipt||!s.cleaned))throw fail();sessionStorage.removeItem(key);window.dispatchEvent(new Event('jinmemo-checkout-change'));}
+ window.jinmemoCheckout={key,groups,read,active,start,run,release,markCleaned,clear};
+})();

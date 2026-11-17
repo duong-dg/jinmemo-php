@@ -27,3 +27,5 @@ Cập nhật 17/11/2026, sau đợt 106. Schema cần có: **050** (đợt này 
 Phần thanh toán nguồn chưa được chuyển đủ toàn bộ. Các luồng online còn cần đối chiếu `payments.service.ts`, `protocol.ts`, `settings.ts`, `ride-payments.ts`, `hotel-payments.ts`, `paypal.ts`, `reconciliation.ts` và bộ kiểm thử tương ứng tại sourceCommit ghi trong hợp đồng chuyển dữ liệu.
 
 Đã kiểm PHP/MySQL, HTTP cục bộ và Node DOM. Các kết quả này chưa thay cho kiểm giao diện trên trình duyệt, hosting thật hoặc giao dịch sandbox/live của nhà cung cấp.
+
+Đợt 118 đã nối giỏ lựa chọn vào JC/JM-X/JM-G rồi JB qua journal session, có review và khôi phục từng phần. Chọn phương thức thủ công tại form chung; provider online trên form chung chưa đối chiếu đủ nguồn, trang tra cứu JB giữ luồng online hiện có. Không tự thu tiền/tạo QR; xem [luồng chốt đơn](DRAFT-CHECKOUT.md).

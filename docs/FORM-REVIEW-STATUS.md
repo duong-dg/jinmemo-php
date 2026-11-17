@@ -47,3 +47,7 @@ Header có badge số vé, mở panel vé đang chọn từ mọi trang khách. 
 ## Đợt 115 — giỏ quà và form đặt quà
 
 Số lượng quà được lưu chung giữa VI/EN; nút Thêm vào giỏ mở panel có giá/tên mới. Form khách có review riêng và session payload cố định khi chờ, hỗ trợ reload/retry; 4xx xác định quay lại danh mục mới và giữ thông tin liên hệ. Phone hỗ trợ +84, pickup counter required khi có quầy, tổng kiểm safe integer. Đã kiểm các test gift-cart/gifts/gift-drawer UI, backend GiftOrders và full HTTP; đã xem thêm quà, chuyển EN và panel mobile với API mô phỏng. Chưa hoàn tất giỏ xe hoặc checkout hợp nhất từ draft. Không thay schema 052.
+
+## Đợt 118 — form chốt đơn chung
+
+Form liên hệ dùng chung vé/xe/quà, địa chỉ đón/trả và nhận quà có required/giới hạn, phí giao cập nhật riêng, summary từng phần và bước review trước POST tạo đơn. Có focus vùng xác nhận, hai cột desktop và một cột mobile, khung tổng không che bước xác nhận. Tra cứu JB/gom mã cũ tách khỏi form đặt mới. Đã xem VI/EN và review bằng fixture, không bấm tạo đơn thật; xem DRAFT-CHECKOUT.md về journal/retry và phần chưa hoàn tất. Schema giữ 052.

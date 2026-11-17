@@ -1247,3 +1247,11 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Khi đổi ngôn ngữ, yêu cầu đang chờ được gửi lại nguyên payload/locale/requestId; lần lượt khôi phục cả hai khóa chờ cũ nếu có. Dữ liệu lỗi/xung đột giữ nguyên và báo lỗi, không âm thầm chuyển thành giỏ rỗng.
 - Kiểm tra lại snapshot khi xác nhận để chặn giỏ vừa bị đổi ở tab khác. 401/403/429 và phản hồi thành công thiếu mã/khóa hợp lệ đều giữ yêu cầu cũ; chỉ 400/409/422 mở lại chỉnh sửa.
 - Kiểm tra Node: ticket-cart-ui, carts-ui (gửi lại qua EN, thay đổi giữa review/confirm, 401/403/429, phản hồi lỗi), cart-view-ui, cart-drawer-ui, gift-drawer-ui, checkout-ui và public-lookup-ui; lint JS/PHP và toàn bộ tests/http.php đều qua. Chưa kiểm hosting thật. Schema giữ 052, không cần import SQL.
+
+## Chốt đơn từ giỏ vé/xe/quà — đợt 118
+
+- Mở chốt đơn từ panel để nhập liên hệ một lần, địa chỉ xe/nhận quà, xem tổng từng phần và phí giao; kiểm lại giá trước bước xác nhận. Form VI/EN có desktop/mobile.
+- Tạo từng phần rồi JB theo journal session: reload/đổi ngôn ngữ gửi lại đúng yêu cầu còn thiếu, không đặt lại phần đã thành công. Khóa sửa giỏ khi chờ, chỉ dọn snapshot khớp và khôi phục dọn giỏ khi đóng trang đột ngột.
+- Khi bị từ chối xác định có thể dừng phần chưa tạo, giữ mã/proof của phần đã đặt và mở gom thanh toán riêng. Mất mạng/401/403/429/response không hợp lệ luôn giữ yêu cầu. Không tự hủy booking, thu tiền hoặc tạo QR.
+- Tra cứu và gom mã cũ dùng view riêng, giữ liên kết cũ. Xem [chi tiết và giới hạn](docs/DRAFT-CHECKOUT.md): chưa đối chiếu hết trường vận chuyển từng vé và chọn provider online ngay trên form chung; chưa kiểm hosting/provider thật.
+- Kiểm tra journal, form chung, các giỏ/đặt riêng/tra cứu; checkout-bundles.php và full HTTP qua. Đã kiểm form VI/EN trên trình duyệt với dữ liệu mô phỏng. Schema vẫn 052, không cần import SQL.

@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),store=new Map(),events=[];
-const context=vm.createContext({document:{documentElement:{lang:'en'}},window:{dispatchEvent:e=>events.push(e.type)},Event:class{constructor(type){this.type=type;}},sessionStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v),removeItem:k=>store.delete(k)}});
+const context=vm.createContext({crypto:{randomUUID:require('node:crypto').randomUUID},document:{documentElement:{lang:'en'}},window:{dispatchEvent:e=>events.push(e.type)},Event:class{constructor(type){this.type=type;}},sessionStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v),removeItem:k=>store.delete(k)}});
 vm.runInContext(fs.readFileSync(__dirname+'/../public/assets/ride-cart.js','utf8'),context);
 const cart=context.window.jinmemoRideCart,draft={fromName:'A',toName:'B',vehicleName:'Car',selection:{from:'a',to:'b',date:'2099-01-01',time:'10:00',passengers:2,mode:'PRIVATE',roundTrip:false,flexMinutes:0,vehicleId:'car',expectedTotal:500,contact:{name:'Not a draft field'}}};
 cart.set(draft);assert.equal(cart.read().selection.passengers,2);assert.ok(!store.get(cart.key).includes('contact'),'Draft excludes contact details');
