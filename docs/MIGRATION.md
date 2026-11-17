@@ -18,7 +18,7 @@ Có thể chuyển dữ liệu. Bản Node hiện có **Xuất dữ liệu MySQL
 
 - Giữ ID sản phẩm, gói vé, nhà cung cấp, voucher và đơn; chuyển kiểu JSON, boolean và thời gian UTC đúng nghĩa.
 - Giữ mã đơn, snapshot, liên hệ, lịch sử, thanh toán, mã giao dịch duy nhất và phân bổ tồn/voucher. Chỉ nhập những module mà PHP đã hỗ trợ đầy đủ; bảng chưa hỗ trợ phải được giữ trong bản sao lưu để chuyển sau.
-- Bảng `jingo_orders` ở PHP hiện hỗ trợ tạo/tra cứu đơn WEB; chưa đủ để nhận toàn bộ dữ liệu POS, CTV, thanh toán và giao vé của bản cũ.
+- PHP đã có luồng WEB/POS/CTV, giỏ, thanh toán và giao vé tương ứng các đợt chuyển gần đây (schema 050). Tuy nhiên chưa có importer toàn bộ đơn/ledger/tồn từ staging: không import trực tiếp dump bản cũ vào bảng vận hành chỉ vì tên cột giống nhau. Cần kiểm tra đầy đủ quan hệ và sổ thu trước khi chuyển dữ liệu thật.
 - Mật khẩu admin bản Node dùng scrypt, bản PHP hiện dùng bcrypt: cần đặt lại mật khẩu hoặc bổ sung cơ chế xác minh/chuyển hash có kiểm thử. Phiên đăng nhập cũ không mang sang.
 - Cấu hình SMTP, khóa mã hóa, domain và callback thanh toán phải được đối chiếu khi chuyển các module tương ứng. Không đưa bí mật vào file xuất công khai hoặc Git.
 - Chuyển giữa hai phiên bản PHP/MySQL sau này: giữ database và chạy migration bổ sung theo hướng dẫn từng phiên bản; không xóa database để cài lại.

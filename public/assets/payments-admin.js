@@ -25,5 +25,37 @@ async function renderPayments(screen,serial){
  }catch(e){message.textContent=e.message;}await renderPaymentEvents(eventsBox,serial);
 }
 async function renderPaymentEvents(screen,serial){
- let page=1,request=0;const form=el('form'),q=el('input'),status=el('select'),submit=el('button','Lọc nhật ký'),journalMessage=el('p'),output=el('div');q.placeholder='Mã đơn / JC / JB / JH / JMP / giao dịch';q.maxLength=100;for(const v of ['ALL','PAID','REVIEW','TEST','FAILED']){const o=el('option',v);o.value=v;status.append(o);}submit.type='submit';form.append(q,status,submit);screen.replaceChildren(el('h2','Nhật ký cổng thanh toán'),form,journalMessage,output);async function load(){const seq=++request;submit.disabled=true;try{const r=await api('payments/events?'+new URLSearchParams({q:q.value.trim(),status:status.value,page}));if(serial!==loading||seq!==request)return;page=r.page;output.replaceChildren(el('p',r.total+' giao dịch · Trang '+r.page));for(const row of r.data){const record=el('section');record.append(el('p',row.status+' · '+row.provider+' · '+row.mode+' · '+row.id+' · '+orderMoney(row.amount)),el('p',[row.order_code,row.cart_code,row.bundle_code,row.hotel_code].filter(Boolean).join(' · ')),el('p',row.reason||''));if(row.provider==='PAYPAL'&&Number.isSafeInteger(row.usd_cents)&&Number.isSafeInteger(row.exchange_rate))record.append(el('p',(row.usd_cents/100).toFixed(2)+' USD · '+row.exchange_rate+' VND/USD'));if(row.resolved_target_code)record.append(el('p','Đã gắn vào '+row.resolved_target_code+' · '+row.resolved_by+' · '+row.resolved_at+' UTC'),el('p','Ghi chú đối soát: '+row.resolution_note),el('p','Lý do ban đầu: '+row.original_reason));if(row.provider==='SEPAY'&&row.mode==='LIVE'&&row.status==='REVIEW'&&row.amount>0){const box=el('div'),open=button('Đối soát giao dịch',()=>{if(editing)return;open.disabled=true;renderPaymentReconciliation(box,row,async result=>{await load();journalMessage.textContent='Đã đối soát vào '+result.targetCode+'. Không có lệnh chuyển tiền ngân hàng.';},serial);});record.append(open,box);}output.append(record);}const nav=el('div');for(const [text,delta]of [['← Trước',-1],['Sau →',1]]){const b=button(text,()=>{page+=delta;load();});b.disabled=delta<0?page<=1:page*25>=r.total;nav.append(b);}output.append(nav);}catch(e){output.replaceChildren(el('p',e.message));}finally{submit.disabled=false;}}form.onsubmit=e=>{e.preventDefault();page=1;load();};await load();
+ let page=1,request=0,busy=false,applied=Object.freeze({q:'',status:'ALL'});
+ const form=el('form'),q=el('input'),status=el('select'),provider=el('select'),mode=el('select'),submit=el('button','Lọc nhật ký'),reset=el('button','Xóa bộ lọc'),journalMessage=el('p'),output=el('div');
+ form.className='payment-filters';output.className='payment-events';journalMessage.role='status';
+ q.placeholder='Mã đơn, giỏ hoặc mã giao dịch';q.maxLength=120;
+ function select(control,options){for(const [value,text]of options){const o=el('option',text);o.value=value;control.append(o);}}
+ select(status,[['ALL','Tất cả trạng thái'],['PAID','Đã ghi thu'],['REVIEW','Cần đối soát'],['TEST','Thử nghiệm'],['FAILED','Không thành công']]);
+ select(provider,[['','Tất cả cổng'],['VNPAY','VNPAY'],['SEPAY','SePay chuyển khoản'],['SEPAY_CARD','Thẻ SePay'],['PAYPAL','PayPal']]);
+ select(mode,[['','Tất cả môi trường'],['LIVE','LIVE · Thực tế'],['TEST','TEST · Thử nghiệm']]);status.value='ALL';provider.value=mode.value='';
+ for(const [control,title]of [[q,'Tìm giao dịch'],[status,'Trạng thái'],[provider,'Cổng thanh toán'],[mode,'Môi trường']]){const label=el('label',title);label.append(control);form.append(label);}
+ submit.type='submit';reset.type='button';reset.className='secondary';const actions=el('div');actions.className='form-actions';actions.append(submit,reset);form.append(actions);
+ screen.replaceChildren(el('h2','Nhật ký cổng thanh toán'),el('p','Lọc theo cổng, môi trường và trạng thái. Chỉ đối soát giao dịch SePay LIVE đã được kiểm tra thực nhận.','muted'),form,journalMessage,output);
+ const active=()=>serial===loading&&screen.isConnected!==false;
+ function stamp(raw){if(typeof raw!=='string')return '';const d=new Date(raw.endsWith('Z')?raw:raw.replace(' ','T').replace(/(\.\d{3})\d+$/,'$1')+'Z');return Number.isFinite(d.getTime())?d.toLocaleString('vi-VN',{timeZone:'Asia/Ho_Chi_Minh'})+' (GMT+7)':raw+' UTC';}
+ async function load(){
+  if(!active())return;const seq=++request;busy=true;submit.disabled=true;journalMessage.textContent='Đang tải giao dịch…';
+  try{
+   const r=await api('payments/events?'+new URLSearchParams({...applied,page}));if(!active()||seq!==request)return;page=r.page;journalMessage.textContent='';
+   output.replaceChildren(el('p',r.total+' giao dịch · Trang '+r.page));if(!r.data.length)output.append(el('p','Không có giao dịch phù hợp. Thử đổi hoặc xóa bộ lọc.','empty-state'));
+   const labels={PAID:'Đã ghi thu',REVIEW:'Cần đối soát',TEST:'Thử nghiệm',FAILED:'Không thành công'};
+   for(const row of r.data){
+    const record=el('section'),badge=el('span',labels[row.status]||row.status);record.className='payment-event';badge.className='payment-status'+(Object.hasOwn(labels,row.status)?' payment-status-'+row.status.toLowerCase():'');record.append(badge,el('p',row.status+' · '+row.provider+' · '+row.mode+' · '+row.id+' · '+orderMoney(row.amount)),el('p',[row.order_code,row.cart_code,row.bundle_code,row.hotel_code].filter(Boolean).join(' · ')),el('p',row.reason||''));
+    if(row.created_at)record.append(el('p',stamp(row.created_at),'muted'));if(row.channel)record.append(el('p','Kênh: '+row.channel,'muted'));
+    if(row.provider==='PAYPAL'&&Number.isSafeInteger(row.usd_cents)&&Number.isSafeInteger(row.exchange_rate))record.append(el('p',(row.usd_cents/100).toFixed(2)+' USD · '+row.exchange_rate+' VND/USD'));
+    if(row.resolved_target_code)record.append(el('p','Đã gắn vào '+row.resolved_target_code+' · '+row.resolved_by+' · '+row.resolved_at+' UTC'),el('p','Ghi chú đối soát: '+row.resolution_note),el('p','Lý do ban đầu: '+row.original_reason));
+    if(row.provider==='SEPAY'&&row.mode==='LIVE'&&row.status==='REVIEW'&&row.amount>0){const box=el('div'),open=button('Đối soát giao dịch',()=>{if(editing)return;open.disabled=true;renderPaymentReconciliation(box,row,async result=>{await load();if(active())journalMessage.textContent='Đã đối soát vào '+result.targetCode+'. Không có lệnh chuyển tiền ngân hàng.';},serial);});record.append(open,box);}
+    output.append(record);
+   }
+   const nav=el('div');nav.className='form-actions';for(const [text,delta]of [['← Trước',-1],['Sau →',1]]){const b=button(text,()=>{if(busy||!active())return;page+=delta;load();});b.disabled=delta<0?page<=1:page*25>=r.total;nav.append(b);}output.append(nav);
+  }catch(e){if(active()&&seq===request){journalMessage.textContent=e.message;output.replaceChildren(button('Thử lại',load));}}
+  finally{if(active()&&seq===request){busy=false;submit.disabled=false;}}
+ }
+ form.onsubmit=e=>{e.preventDefault();applied=Object.freeze({q:q.value.trim(),status:status.value,...(provider.value?{provider:provider.value}:{}),...(mode.value?{mode:mode.value}:{})});page=1;return load();};
+ reset.onclick=()=>{q.value='';status.value='ALL';provider.value=mode.value='';applied=Object.freeze({q:'',status:'ALL'});page=1;return load();};await load();
 }

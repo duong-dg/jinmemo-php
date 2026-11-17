@@ -1,6 +1,6 @@
 # Tiến độ chuyển phần thanh toán
 
-Cập nhật 17/11/2026, sau đợt 105. Schema cần có: **050** (đợt này không thêm SQL).
+Cập nhật 17/11/2026, sau đợt 106. Schema cần có: **050** (đợt này không thêm SQL).
 
 | Luồng | Trạng thái PHP |
 | --- | --- |
@@ -18,7 +18,7 @@ Cập nhật 17/11/2026, sau đợt 105. Schema cần có: **050** (đợt này 
 | Online CTV cho giỏ JC | Đã có VNPAY/QR/thẻ VNPAY, SePay/thẻ SePay và PayPal trong tài khoản CTV; giữ giá net, chủ giỏ, không tạo/trả công nợ; chưa thử nhà cung cấp thật |
 | Online POS cho giỏ JC | Đã có sáu lựa chọn, quyền COLLECT/quầy, giao diện quầy/admin, callback gắn ca đang mở và thống kê không tiền mặt; chưa thử nhà cung cấp thật |
 | Đặt phòng online JH | Đã có giữ phòng 30 phút, IPN nguyên khối, email PAID và REVIEW sau hết hạn |
-| Nhật ký VNPAY/SePay, chống ghi thu trùng | Đã có và lưu lịch sử đối soát |
+| Nhật ký VNPAY/SePay/thẻ SePay/PayPal | Đã có lọc cổng/môi trường/trạng thái, tìm mã, phân trang ổn định và lịch sử đối soát |
 | Đối soát SePay LIVE REVIEW | Đã có preview/xác nhận cho vé WEB, JC, JB, JH và xe WEB JM-X; ghi BANK theo quản trị viên, giữ lý do/đơn ban đầu |
 | Đối soát SePay LIVE cho JC POS/CTV | Đã có xem trước kênh/quầy/CTV, admin xác nhận toàn bộ giỏ, POS gắn ca hiện tại và CTV không thay đổi công nợ |
 | Hoàn qua ngân hàng/nhà cung cấp | Chưa có lệnh chuyển tiền tự động |
