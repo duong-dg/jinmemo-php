@@ -35,3 +35,7 @@ Thêm form OTP đăng nhập và form chính sách có bước nhận mã/xác n
 ## Đợt 111 — menu và thông báo lỗi
 
 Header desktop nhóm Thông tin và giữ Liên hệ riêng; mobile dùng nút Menu có tra cứu đơn hàng, cùng nhãn Việt/Anh và cùng điều kiện feature. Kiểm panel bằng Escape/nhấp ngoài/focus/breakpoint. Form khách dùng thông điệp lỗi English theo errorText nguồn (40 fixture đối chiếu), giữ status và cơ chế retry. Đã kiểm PHP/Node/HTTP/feature flags và xem fixture header desktop/mobile, không tràn ngang theo DOM ở kích thước đã kiểm. Không thay schema 052. Chưa chuyển hoàn chỉnh cart drawer/thiết kế toàn site và chưa kiểm hosting thật.
+
+## Đợt 112 — sao lưu admin
+
+Có review trước xuất SQL, khóa nút khi đang tải và bỏ phản hồi khi rời mục. Thẻ archive hiển thị ngày GMT+7, kích thước, số lượng, SHA-256 và marker phục hồi; nhãn dài tự xuống dòng. Đã kiểm Node UI và xem fixture desktop/mobile (không tải file vận hành); không tràn ngang theo DOM ở kích thước đã kiểm. Xem BACKUP-RESTORE-PHP.md cho giới hạn chức năng và quy trình. Không thay schema 052.
