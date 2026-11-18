@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/PartnerMigration.php';
 require_once __DIR__.'/Pricing.php';
 require_once __DIR__.'/Orders.php';
 final class PartnerCredit
@@ -25,9 +26,10 @@ final class PartnerCredit
     }
     private function account(string $id,bool $write):array
     {
+        if($write)PartnerMigration::requireReady($this->db,$id);
         $raw=$this->query('SELECT data FROM jingo_partners WHERE id=?'.($write?' FOR UPDATE':' LOCK IN SHARE MODE'),[$id])->fetchColumn();if($raw===false)throw new HttpError(404,'Không tìm thấy CTV.');$a=json_decode($raw,true,512,JSON_THROW_ON_ERROR);if(!is_int($a['creditLimit'] ?? null)||$a['creditLimit']<0||$a['creditLimit']>1000000000000||!is_int($a['creditDays'] ?? null)||$a['creditDays']<1||$a['creditDays']>90||!is_bool($a['creditEnabled'] ?? null))throw new HttpError(409,'Cấu hình công nợ CTV không hợp lệ.');return $a;
     }
-    private function view(string $id,array $account):array{$entries=$this->rows($id);return self::summary($entries,$account['creditLimit'])+['creditEnabled'=>$account['creditEnabled'],'creditDays'=>$account['creditDays'],'entries'=>$entries];}
+    private function view(string $id,array $account):array{$entries=$this->rows($id);$summary=self::summary($entries,$account['creditLimit']);if((bool)$this->query('SELECT transfer_pending FROM jingo_partners WHERE id=?',[$id])->fetchColumn()){$summary['available']=0;$summary['transferPending']=true;}return $summary+['creditEnabled'=>$account['creditEnabled'],'creditDays'=>$account['creditDays'],'entries'=>$entries];}
     public function ledger(string $id,?string $partnerId=null):array
     {
         if($partnerId!==null&&$partnerId!==$id)throw new HttpError(404,'Không tìm thấy sổ CTV.');$this->db->exec('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');$this->db->beginTransaction();try{$a=$this->account($id,false);if($partnerId!==null&&!in_array($a['status'] ?? '',['ACTIVE','PAUSED'],true))throw new HttpError(403,'Tài khoản CTV không còn hợp lệ.');$out=$this->view($id,$a);$this->db->commit();return $out;}catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}

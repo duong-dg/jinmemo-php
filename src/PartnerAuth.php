@@ -33,10 +33,10 @@ final class PartnerAuth
         if(array_diff(array_keys($input),['email','password'])||!is_string($email)||strlen($email)>200||!filter_var($email,FILTER_VALIDATE_EMAIL)||!is_string($password)||$password===''||str_contains($password,"\0")||strlen(mb_convert_encoding($password,'UTF-16LE','UTF-8'))/2>200)throw new HttpError(400,'Email hoặc mật khẩu không hợp lệ.');
         $email=strtolower($email);$this->throttle('ip:'.($_SERVER['REMOTE_ADDR'] ?? 'unknown'),50);$this->throttle('account:'.$email,5);
         $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();try{
-            $row=$this->query('SELECT id,email,password_hash,data,version FROM jingo_partners WHERE email=? LOCK IN SHARE MODE',[$email])->fetch(PDO::FETCH_ASSOC);
-            $hash=$row['password_hash'] ?? '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.';
+            $row=$this->query('SELECT id,email,password_hash,data,version,transfer_pending FROM jingo_partners WHERE email=? LOCK IN SHARE MODE',[$email])->fetch(PDO::FETCH_ASSOC);
+            $missingPassword=($row['password_hash']??null)===Partners::TRANSFER_PASSWORD;$hash=$missingPassword?'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.':($row['password_hash'] ?? '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.');
             $ok=password_verify($password,$hash)&&!(preg_match('/^\$2[aby]\$/',$hash)&&strlen($password)>72);$data=$row?json_decode($row['data'],true,512,JSON_THROW_ON_ERROR):null;
-            if(!$ok||!$row||!in_array($data['status'] ?? '',['ACTIVE','PAUSED'],true))throw new HttpError(401,'Email hoặc mật khẩu không đúng.');
+            if(!$ok||!$row||$missingPassword||!empty($row['transfer_pending'])||!in_array($data['status'] ?? '',['ACTIVE','PAUSED'],true))throw new HttpError(401,'Email hoặc mật khẩu không đúng.');
             $account=$this->account($row);$token=bin2hex(random_bytes(32));$old=$this->token();if($old)$this->query("DELETE FROM jingo_partner_sessions WHERE token_hash=?",[hash('sha256',$old)]);
             $this->query('DELETE FROM jingo_partner_sessions WHERE expires_at<=UTC_TIMESTAMP()');$this->query("INSERT INTO jingo_partner_sessions(token_hash,partner_id,expires_at) VALUES (?,?,?)",[hash('sha256',$token),$row['id'],gmdate('Y-m-d H:i:s',time()+28800)]);
             $this->query('DELETE FROM jingo_partner_login_limits WHERE id=?',[hash('sha256','account:'.$email)]);$this->db->commit();
@@ -50,7 +50,7 @@ final class PartnerAuth
     }
     public function me():array
     {
-        $token=$this->token();if(!$token)throw new HttpError(401,'Vui lòng đăng nhập CTV.');$row=$this->query('SELECT p.id,p.email,p.data,p.version FROM jingo_partner_sessions s JOIN jingo_partners p ON p.id=s.partner_id WHERE s.token_hash=? AND s.expires_at>UTC_TIMESTAMP()',[hash('sha256',$token)])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(401,'Phiên CTV đã hết hạn hoặc tài khoản đã khóa.');$account=$this->account($row);
+        $token=$this->token();if(!$token)throw new HttpError(401,'Vui lòng đăng nhập CTV.');$row=$this->query('SELECT p.id,p.email,p.data,p.version,p.transfer_pending FROM jingo_partner_sessions s JOIN jingo_partners p ON p.id=s.partner_id WHERE s.token_hash=? AND s.expires_at>UTC_TIMESTAMP()',[hash('sha256',$token)])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(401,'Phiên CTV đã hết hạn hoặc tài khoản đã khóa.');if(!empty($row['transfer_pending']))throw new HttpError(401,'Tài khoản CTV chưa hoàn tất chuyển dữ liệu.');$account=$this->account($row);
         $raw=$this->query('SELECT data FROM jingo_price_groups WHERE id=?',[$account['groupId']])->fetchColumn();$g=$raw===false?null:json_decode($raw,true,512,JSON_THROW_ON_ERROR);$group=$g?['id'=>$account['groupId'],'name'=>$g['name'] ?? '', 'status'=>$g['status'] ?? 'ARCHIVED']:null;require_once __DIR__.'/PartnerCredit.php';return ['account'=>$account,'group'=>$group,'credit'=>(new PartnerCredit($this->db))->ledger($account['id'],$account['id'])];
     }
     public function logout():array

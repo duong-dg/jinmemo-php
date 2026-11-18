@@ -3,6 +3,7 @@
   "sourceCommit": "585cd8a36c106dd3552fb397281f7f2e9c299f50",
   "stagingPrefix": "jm_transfer_",
   "runtimePrefix": "jingo_",
+  "runtimeOnlyColumns": {"partners": ["transfer_pending"]},
   "tables": {
     "order_tickets": [
       "id",

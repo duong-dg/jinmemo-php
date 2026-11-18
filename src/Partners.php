@@ -1,7 +1,13 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/PartnerMigration.php';
 final class Partners
 {
+    public const TRANSFER_PASSWORD='!NODE_TRANSFER_PASSWORD_RESET_REQUIRED';
+    public static function requireMigrationReady(PDO $db,string $id):void
+    {
+        PartnerMigration::requireReady($db,$id);
+    }
     public function __construct(private PDO $db){}
     private function query(string $sql,array $args=[]):PDOStatement{$s=$this->db->prepare($sql);$s->execute($args);return $s;}
     private static function uuid(mixed $v):bool{return is_string($v)&&(bool)preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/iD',$v);}
@@ -15,7 +21,7 @@ final class Partners
     }
     public function list():array
     {
-        $out=[];foreach($this->query('SELECT id,email,data,version FROM jingo_partners ORDER BY email,id')->fetchAll(PDO::FETCH_ASSOC) as $row){$data=json_decode($row['data'],true,512,JSON_THROW_ON_ERROR);$out[]=['id'=>$row['id'],'email'=>$row['email']]+array_intersect_key($data,array_flip(['name','phone','groupId','status','creditEnabled','creditLimit','creditDays']))+['version'=>(int)$row['version']];}return $out;
+        $out=[];foreach($this->query('SELECT id,email,data,version,password_hash,transfer_pending FROM jingo_partners ORDER BY email,id')->fetchAll(PDO::FETCH_ASSOC) as $row){$data=json_decode($row['data'],true,512,JSON_THROW_ON_ERROR);$out[]=['id'=>$row['id'],'email'=>$row['email']]+array_intersect_key($data,array_flip(['name','phone','groupId','status','creditEnabled','creditLimit','creditDays']))+['version'=>(int)$row['version']]+(!empty($row['transfer_pending'])||$row['password_hash']===self::TRANSFER_PASSWORD?['transferPending'=>(bool)$row['transfer_pending'],'passwordResetRequired'=>$row['password_hash']===self::TRANSFER_PASSWORD]:[]);}return $out;
     }
     public function save(array $input,string $actor):array
     {

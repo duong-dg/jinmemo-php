@@ -1,5 +1,7 @@
 # Rà soát form và thao tác nhập liệu
 
+Đợt 133: admin CTV hiện trạng thái chờ chuyển dữ liệu/cần cấp mật khẩu cho tài khoản nhập mới; đặt mật khẩu không tự mở khóa. Màn sổ chờ có giải thích chưa đủ số dư và không có thao tác ghi trả nợ. Đã kiểm Node DOM và backend/regression CTV, chưa kiểm layout/cPanel thật. Cần migration 056; xem IMPORT-PARTNERS.md.
+
 Đợt 129: thư viện ảnh có active/thùng rác, xác nhận trash/restore, lỗi tham chiếu giữ thao tác và chặn gửi từ màn hình cũ. Upload chỉ hiện trong thư viện. Đã kiểm Node DOM/HTTP/MySQL, chưa kiểm layout/cPanel thật; schema mới 054, xem MEDIA-TRASH.md.
 
 Đợt 128: màn Thu tiền xe tại POS có tra cứu theo COLLECT và nút chủ động tạo QR đủ điều kiện; giữ thu tiền mặt, khóa phần nhập cash khi đã tạo QR và bỏ phản hồi/view cũ khi đổi mã. Đã kiểm Node DOM và quyền HTTP, chưa kiểm trực quan layout/cPanel thật. Không SQL mới; xem POS-RIDE-QR.md.

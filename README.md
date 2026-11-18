@@ -1345,3 +1345,9 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Thêm bin/import-price-groups.php, nối nhóm giá DIRECT/DISCOUNT và dữ liệu legacy với sản phẩm/gói/nhóm khách. Giữ JSON/version/trạng thái, kiểm tham chiếu/rule, không ghi đè hoặc gán nhóm vào tài khoản.
 - Dry-run mặc định, --apply cần hash riêng; ghi toàn nhóm nguyên khối. Đã kiểm fixture exporter/MySQL/CLI, giá CTV sau nhập, rollback/replay/hai worker và regression sản phẩm/nhóm giá.
 - Không SQL mới, schema vẫn 055. Chưa nhập dữ liệu thật; tài khoản CTV, đơn/tồn/công nợ/ledger còn thiếu. Xem [import nhóm giá CTV](docs/IMPORT-PRICE-GROUPS.md).
+
+## Import hồ sơ CTV — đợt 133
+
+- Thêm bin/import-partners.php: giữ ID/email/JSON/version/nhóm và hạn mức, không nhập mật khẩu/session. Tài khoản mới ở trạng thái chờ nhập/đối chiếu đơn và công nợ; chưa được login/giao dịch. Cấp mật khẩu qua admin không tự mở khóa chuyển đổi.
+- Admin có nhãn chờ/cấp mật khẩu và màn sổ không cho ghi trả nợ khi chưa đủ dữ liệu. Tài khoản PHP cũ khớp metadata giữ mật khẩu/cờ hiện tại. Đã kiểm importer/dry-run/rollback/replay/hai worker, pending gates và regression CTV/đơn/giỏ/công nợ.
+- **Import database/056-partner-transfer-pending.sql sau git pull**. Chưa nhập dữ liệu thật; còn đơn/tồn/ledger, đối soát và bước mở khóa sau chuyển hệ thống. Xem [import hồ sơ CTV](docs/IMPORT-PARTNERS.md).

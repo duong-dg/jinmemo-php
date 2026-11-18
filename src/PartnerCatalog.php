@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/PartnerMigration.php';
 require_once __DIR__.'/Transport.php';
 require_once __DIR__.'/PriceGroups.php';
 require_once __DIR__.'/Products.php';
@@ -11,7 +12,7 @@ final class PartnerCatalog
     private function read(array $actor,callable $load):array
     {
         $this->db->exec('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');$this->db->beginTransaction();try{
-            if(!$this->query("SELECT id FROM jingo_catalog_locks WHERE id='catalog' LOCK IN SHARE MODE")->fetchColumn())throw new HttpError(503,'Chưa cài khóa danh mục.');$raw=$this->query('SELECT data FROM jingo_partners WHERE id=? LOCK IN SHARE MODE',[$actor['id']])->fetchColumn();$account=$raw===false?null:json_decode($raw,true,512,JSON_THROW_ON_ERROR);if(!$account||($account['status'] ?? '')!=='ACTIVE')throw new HttpError(403,'Tài khoản tạm dừng nhận đơn mới.');$row=$this->query('SELECT data,version FROM jingo_price_groups WHERE id=? LOCK IN SHARE MODE',[$account['groupId'] ?? ''])->fetch(PDO::FETCH_ASSOC);$group=$row?json_decode($row['data'],true,512,JSON_THROW_ON_ERROR):null;if($group)$group['version']=(int)$row['version'];$result=$load($group);$this->db->commit();return $result;
+            if(!$this->query("SELECT id FROM jingo_catalog_locks WHERE id='catalog' LOCK IN SHARE MODE")->fetchColumn())throw new HttpError(503,'Chưa cài khóa danh mục.');PartnerMigration::requireReady($this->db,$actor['id']);$raw=$this->query('SELECT data FROM jingo_partners WHERE id=? LOCK IN SHARE MODE',[$actor['id']])->fetchColumn();$account=$raw===false?null:json_decode($raw,true,512,JSON_THROW_ON_ERROR);if(!$account||($account['status'] ?? '')!=='ACTIVE')throw new HttpError(403,'Tài khoản tạm dừng nhận đơn mới.');$row=$this->query('SELECT data,version FROM jingo_price_groups WHERE id=? LOCK IN SHARE MODE',[$account['groupId'] ?? ''])->fetch(PDO::FETCH_ASSOC);$group=$row?json_decode($row['data'],true,512,JSON_THROW_ON_ERROR):null;if($group)$group['version']=(int)$row['version'];$result=$load($group);$this->db->commit();return $result;
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
     private static function applies(array $r,array $quote,string $type):bool{return $r['productId']===$quote['productId']&&$r['variantId']===$quote['variantId']&&$r['customerType']===$type&&$r['startDate']<=$quote['date']&&$quote['date']<=$r['endDate'];}

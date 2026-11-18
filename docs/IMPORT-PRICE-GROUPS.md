@@ -1,5 +1,7 @@
 # Import nhóm giá CTV — đợt 132
 
+Đợt 133 thêm importer hồ sơ CTV riêng, kèm cờ chờ nhập/đối chiếu và migration 056; xem IMPORT-PARTNERS.md. Lệnh trong tài liệu này vẫn không nhập tài khoản.
+
 Thêm **bin/import-price-groups.php**, dùng chung engine với importer sản phẩm/danh mục. Phạm vi gồm loại sản phẩm/điểm đến/nhà cung cấp/quầy, sản phẩm/gói vé/alias và **price_groups**. Chưa nhập partners, mật khẩu/phiên đăng nhập, đơn, công nợ hoặc ledger. Không tự gắn nhóm vào tài khoản, mở bán, thu tiền hoặc ghi công nợ.
 
 Không thêm SQL migration; đích cần schema **055** từ đợt trước. Staging nằm trên cùng MySQL và cần các bảng của IMPORT-PRODUCTS.md cùng jm_transfer_price_groups. Bảng này giữ đúng **id, data, version** sang jingo_price_groups, không đổi ID hoặc tạo lại nhóm qua API save.

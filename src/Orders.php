@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/PartnerMigration.php';
 require_once __DIR__.'/Notifications.php';
 require_once __DIR__.'/OrderMail.php';
 require_once __DIR__.'/Transport.php';
@@ -60,7 +61,7 @@ final class Orders
         // READ COMMITTED lets a second worker observe the first worker's replay after the product lock.
         if($nested){if(!$this->db->inTransaction())throw new LogicException('Cart order requires parent transaction.');}else{$this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();}try{
             if(isset($input['contact']['paymentPreference'])&&!$this->query("SELECT id FROM jingo_catalog_locks WHERE id='catalog' FOR UPDATE")->fetchColumn())throw new HttpError(503,'Chưa cài khóa danh mục.');$group=null;if($partnerId!==null){
-                if(!$this->query("SELECT id FROM jingo_catalog_locks WHERE id='catalog' FOR UPDATE")->fetchColumn())throw new HttpError(503,'Chưa cài khóa danh mục.');$raw=$this->query('SELECT data FROM jingo_partners WHERE id=? FOR UPDATE',[$partnerId])->fetchColumn();$account=$raw===false?null:json_decode($raw,true,512,JSON_THROW_ON_ERROR);if(!$account||($account['status'] ?? '')!=='ACTIVE')throw new HttpError(403,'CTV không được tạo đơn mới.');$row=$this->query('SELECT data,version FROM jingo_price_groups WHERE id=? LOCK IN SHARE MODE',[$account['groupId'] ?? ''])->fetch(PDO::FETCH_ASSOC);if(!$row)self::fail('Không tìm thấy bảng giá CTV.');$group=json_decode($row['data'],true,512,JSON_THROW_ON_ERROR);$group['version']=(int)$row['version'];if(($group['status'] ?? '')!=='ACTIVE')self::fail('Bảng giá CTV tạm ngừng.');
+                if(!$this->query("SELECT id FROM jingo_catalog_locks WHERE id='catalog' FOR UPDATE")->fetchColumn())throw new HttpError(503,'Chưa cài khóa danh mục.');PartnerMigration::requireReady($this->db,$partnerId);$raw=$this->query('SELECT data FROM jingo_partners WHERE id=? FOR UPDATE',[$partnerId])->fetchColumn();$account=$raw===false?null:json_decode($raw,true,512,JSON_THROW_ON_ERROR);if(!$account||($account['status'] ?? '')!=='ACTIVE')throw new HttpError(403,'CTV không được tạo đơn mới.');$row=$this->query('SELECT data,version FROM jingo_price_groups WHERE id=? LOCK IN SHARE MODE',[$account['groupId'] ?? ''])->fetch(PDO::FETCH_ASSOC);if(!$row)self::fail('Không tìm thấy bảng giá CTV.');$group=json_decode($row['data'],true,512,JSON_THROW_ON_ERROR);$group['version']=(int)$row['version'];if(($group['status'] ?? '')!=='ACTIVE')self::fail('Bảng giá CTV tạm ngừng.');
             }
             if(isset($pos['staffId'])){$this->query('SELECT id FROM jingo_counters WHERE id=? FOR UPDATE',[$pos['counterId']]);PosAccess::live($this->db,$pos['staffId'],$pos['counterId'],'SELL');}
             if($prior=$this->prior($input,$hash)){if(!$nested)$this->db->commit();return $prior;}
