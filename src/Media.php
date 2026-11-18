@@ -19,10 +19,25 @@ final class Media
         unset($row['created_by']); foreach(['width','height','bytes'] as $key) $row[$key]=(int)$row[$key];
         $row['url']='/api/v1/media/'.$row['id']; return $row;
     }
-    public function list(): array { return array_map(fn($r)=>$this->metadata($r),$this->query('SELECT * FROM jingo_media ORDER BY created_at DESC,id DESC LIMIT 100')->fetchAll(PDO::FETCH_ASSOC)); }
+    public function list(bool $trash=false): array { return array_map(fn($r)=>$this->metadata($r),$this->query('SELECT * FROM jingo_media WHERE deleted_at IS '.($trash?'NOT NULL':'NULL').' ORDER BY created_at DESC,id DESC LIMIT 100')->fetchAll(PDO::FETCH_ASSOC)); }
+    public function trash(string $id,array $input,string $actor):array
+    {
+        if(!self::uuid($id)||count($input)!==1||!is_bool($input['trashed']??null))throw new HttpError(400,'Kiểm tra thao tác ảnh.');
+        $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();
+        try{
+            if(!$this->query("SELECT id FROM jingo_catalog_locks WHERE id='catalog' FOR UPDATE")->fetchColumn())throw new HttpError(503,'Chưa cài khóa danh mục.');
+            if(!$this->query('SELECT id FROM jingo_media WHERE id=? FOR UPDATE',[$id])->fetchColumn())throw new HttpError(404,'Không tìm thấy ảnh.');
+            if($input['trashed'])foreach(['jingo_products'=>'data','jingo_posts'=>'data','jingo_post_revisions'=>'data','jingo_destinations'=>'data','jingo_pages'=>'data','jingo_settings'=>'data','jingo_stays'=>'data','jingo_orders'=>'snapshot','jingo_gift_orders'=>'data','jingo_checkout_bundles'=>'data'] as $table=>$column){
+                if($this->query('SELECT 1 FROM '.$table.' WHERE LOCATE(LOWER(?),LOWER(CONVERT('.$column.' USING utf8mb4)))>0 LIMIT 1',[$id])->fetchColumn())throw new HttpError(409,'Ảnh đang được sử dụng trong nội dung, cấu hình, đơn hoặc bản lưu lịch sử. Gỡ ảnh khỏi nội dung trước khi đưa vào thùng rác.');
+            }
+            $this->query('UPDATE jingo_media SET deleted_at='.($input['trashed']?'UTC_TIMESTAMP(6)':'NULL').' WHERE id=?',[$id]);
+            $this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),$actor,$input['trashed']?'media.trash':'media.restore',$id]);
+            $this->db->commit();return ['ok'=>true];
+        }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
+    }
     public function validateIds(array $ids): void
     {
-        foreach(array_unique($ids) as $id) if(!is_string($id) || !self::uuid($id) || !$this->query('SELECT id FROM jingo_media WHERE id=?',[$id])->fetchColumn()) throw new HttpError(400,'Ảnh tham chiếu không tồn tại trong thư viện.');
+        foreach(array_unique($ids) as $id) if(!is_string($id) || !self::uuid($id) || !$this->query('SELECT id FROM jingo_media WHERE id=? AND deleted_at IS NULL',[$id])->fetchColumn()) throw new HttpError(400,'Ảnh tham chiếu không tồn tại trong thư viện hoặc đang ở thùng rác.');
     }
     public function file(string $id): string
     {

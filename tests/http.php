@@ -244,10 +244,17 @@ try {
         if($code!==200 || $type!==$mime || !getimagesizefromstring($binary)) throw new RuntimeException('Media public file');
         if($mime==='image/jpeg') { $size=getimagesizefromstring($binary); if($size[0]!==1200 || $size[1]!==630) throw new RuntimeException('Share dimensions'); }
     }
+    $trashUrl='/api/v1/admin/media/'.$uploaded['id'].'/trash';
+    request($base,$trashUrl,405);request($base,$trashUrl,401,'POST',array_values(array_filter($headers,fn($h)=>!str_starts_with(strtolower($h),'cookie:'))),['trashed'=>true]);
+    request($base,$trashUrl,200,'POST',$headers,['trashed'=>true]);
+    if(count(request($base,'/api/v1/admin/media',200,'GET',[$cookie])['data'])!==0||count(request($base,'/api/v1/admin/media?trash=1',200,'GET',[$cookie])['data'])!==1)throw new RuntimeException('Media trash projection');
+    request($base,'/api/v1/admin/media?trash[]=1',400,'GET',[$cookie]);
+    request($base,$trashUrl,200,'POST',$headers,['trashed'=>false]);
     $saved=request($base,'/api/v1/admin/destinations',200,'GET',[$cookie])['data'][0];
     $saved['cover']=['id'=>$uploaded['id'],'alt'=>'Ảnh bìa']; request($base,'/api/v1/admin/destinations',200,'POST',$headers,$saved);
     $savedSeo['image']=['id'=>$uploaded['id'],'alt'=>'Ảnh chia sẻ'];request($base,'/api/v1/admin/site-seo',200,'POST',$headers,$savedSeo);
     $savedBrand['logo']=['id'=>$uploaded['id'],'alt'=>'Logo'];request($base,'/api/v1/admin/brand',200,'POST',$headers,$savedBrand);
+    request($base,$trashUrl,409,'POST',$headers,['trashed'=>true]);
     if(!str_contains(file_get_contents($base.'/admin'),'class="brand-logo"')) throw new RuntimeException('Brand logo rendering');
     $curl=curl_init($base.'/api/v1/admin/media'); file_put_contents($fixture,'not an image');
     curl_setopt_array($curl,[CURLOPT_POST=>true,CURLOPT_RETURNTRANSFER=>true,CURLOPT_TIMEOUT=>10,CURLOPT_HTTPHEADER=>$headers,CURLOPT_POSTFIELDS=>['file'=>new CURLFile($fixture,'image/png','fake.png')]]);

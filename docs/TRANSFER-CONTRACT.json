@@ -79,7 +79,8 @@
       "height",
       "bytes",
       "created_by",
-      "created_at"
+      "created_at",
+      "deleted_at"
     ]
   },
   "posTables": {

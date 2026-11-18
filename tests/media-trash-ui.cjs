@@ -1,0 +1,14 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+class Element{constructor(tag,text){this.tagName=tag;this.textContent=text??'';this.children=[];this.disabled=false;this.hidden=false;}append(...nodes){this.children.push(...nodes);}replaceChildren(...nodes){this.children=nodes;}}
+const all=n=>[n,...n.children.flatMap(all)],find=(n,tag,text)=>{const e=all(n).find(e=>e.tagName===tag&&e.textContent===text);assert.ok(e,tag+' '+text);return e;};
+const row={id:'00000000-0000-4000-8000-000000000099',url:'/image',filename:'test.webp',alt:'Image',width:8,height:8,bytes:50};let trashed=false,fail=true;
+const calls=[],source=fs.readFileSync(__dirname+'/../public/assets/admin.js','utf8'),start=source.indexOf('function renderMedia(screen){'),end=source.indexOf('function refreshBrand',start),screen=new Element('section');
+const context=vm.createContext({screen,loading:1,current:'media',mediaTrash:false,editing:false,records:[row],el:(tag,text)=>new Element(tag,text),toolbar:text=>new Element('div',text),empty:text=>new Element('p',text),button:(text,onclick)=>Object.assign(new Element('button',text),{onclick}),notice(){},api:async(path,body)=>{calls.push({path,body});if(fail)throw Error('Ảnh đang được sử dụng');trashed=body.trashed;},render:async()=>{context.loading++;context.records=trashed===context.mediaTrash?[row]:[];screen.children=[];vm.runInContext('renderMedia(screen)',context);}});
+vm.runInContext(source.slice(start,end),context);
+(async()=>{
+ vm.runInContext('renderMedia(screen)',context);find(screen,'button','Đưa vào thùng rác').onclick();assert.equal(calls.length,0,'Review changed media');await find(screen,'button','Xác nhận').onclick();assert.equal(calls.length,1);assert.ok(all(screen).some(e=>e.textContent==='Ảnh đang được sử dụng'));find(screen,'button','Quay lại').onclick();assert.equal(find(screen,'button','Đưa vào thùng rác').disabled,false);
+ fail=false;find(screen,'button','Đưa vào thùng rác').onclick();await find(screen,'button','Xác nhận').onclick();assert.equal(trashed,true);assert.equal(context.records.length,0);find(screen,'button','Xem thùng rác').onclick();await Promise.resolve();assert.equal(all(screen).find(e=>e.tagName==='form').hidden,true);find(screen,'button','Khôi phục').onclick();await find(screen,'button','Xác nhận').onclick();assert.equal(trashed,false);assert.equal(calls.at(-1).body.trashed,false);
+ context.mediaTrash=false;await context.render();find(screen,'button','Đưa vào thùng rác').onclick();context.current='products';const count=calls.length;await find(screen,'button','Xác nhận').onclick();assert.equal(calls.length,count,'Detached section saved a media action');
+ console.log('PASS: media trash preview, reference failure/retry, no destructive auto action, restore, hidden upload and stale section guards.');
+})().catch(e=>{console.error(e);process.exit(1);});

@@ -1,0 +1,19 @@
+<?php
+declare(strict_types=1);
+require dirname(__DIR__).'/src/AdminAuth.php';require dirname(__DIR__).'/src/Media.php';
+function trashCheck(bool $ok,string $why):void{if(!$ok)throw new RuntimeException($why);}
+function trashStatus(int $code,callable $action):void{try{$action();}catch(HttpError $e){trashCheck($e->status===$code,'Wrong status');return;}throw new RuntimeException('Expected '.$code);}
+$dsn=getenv('JINGO_TEST_DSN');if(!$dsn)exit(1);$opts=[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_EMULATE_PREPARES=>false];$user=getenv('JINGO_TEST_USER')?:'root';$pass=getenv('JINGO_TEST_PASSWORD')?:'';$server=new PDO($dsn,$user,$pass,$opts);$name='jingo_media_trash_'.bin2hex(random_bytes(6));$server->exec("CREATE DATABASE `$name` CHARACTER SET utf8mb4");$dir=sys_get_temp_dir().'/'.$name;mkdir($dir,0700);$db=null;
+try{
+ $db=new PDO($dsn.';dbname='.$name,$user,$pass,$opts);foreach(glob(dirname(__DIR__).'/database/*.sql') as $f)foreach(explode(';',file_get_contents($f)) as $sql)if(trim($sql)!=='')$db->exec($sql);
+ $id='00000000-0000-4000-8000-000000000099';$path=$dir.'/'.$id.'.webp';copy(__DIR__.'/fixtures/transfer-media.webp',$path);$hash=hash_file('sha256',$path);$db->prepare('INSERT INTO jingo_media(id,filename,alt,width,height,bytes,created_by) VALUES (?,?,?,8,8,?,?)')->execute([$id,'fixture.webp','Fixture',filesize($path),'fixture']);$media=new Media($db,$dir);
+ foreach(['jingo_products'=>'data','jingo_posts'=>'data','jingo_post_revisions'=>'data','jingo_destinations'=>'data','jingo_pages'=>'data','jingo_settings'=>'data','jingo_stays'=>'data','jingo_orders'=>'snapshot','jingo_gift_orders'=>'data','jingo_checkout_bundles'=>'data'] as $table=>$column){
+  $db->exec('CREATE TEMPORARY TABLE '.$table.' ('.$column.' JSON)');try{$db->prepare('INSERT INTO '.$table.' VALUES (?)')->execute([json_encode(['reference'=>strtoupper($id)])]);trashStatus(409,fn()=>$media->trash($id,['trashed'=>true],'fixture'));trashCheck(count($media->list())===1,'Referenced image trashed');}finally{$db->exec('DROP TEMPORARY TABLE '.$table);}
+ }
+ trashStatus(400,fn()=>$media->trash($id,['trashed'=>'true'],'fixture'));trashStatus(400,fn()=>$media->trash($id,['trashed'=>true,'extra'=>1],'fixture'));trashStatus(404,fn()=>$media->trash('00000000-0000-4000-8000-000000000098',['trashed'=>true],'fixture'));
+ $db->exec("CREATE TRIGGER media_trash_fail BEFORE INSERT ON jingo_audit FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='fixture rollback'");try{$media->trash($id,['trashed'=>true],'fixture');throw new RuntimeException('Rollback failure not raised');}catch(PDOException){}$db->exec('DROP TRIGGER media_trash_fail');trashCheck(count($media->list())===1,'Audit failure did not roll back');
+ $media->trash($id,['trashed'=>true],'fixture');trashCheck($media->list()===[]&&count($media->list(true))===1,'Trash lists wrong');trashStatus(400,fn()=>$media->validateIds([$id]));trashCheck($media->file($id)===$path&&hash_file('sha256',$path)===$hash,'File URL or bytes changed');
+ $media->trash($id,['trashed'=>false],'fixture');$media->validateIds([$id]);trashCheck(count($media->list())===1&&$media->list(true)===[],'Restore failed');trashCheck((int)$db->query("SELECT COUNT(*) FROM jingo_audit WHERE action IN ('media.trash','media.restore')")->fetchColumn()===2,'Audit wrong');
+ foreach(explode(';',file_get_contents(dirname(__DIR__).'/database/054-media-trash.sql')) as $sql)if(trim($sql)!=='')$db->exec($sql);trashCheck(count($media->list())===1,'Migration replay failed');
+ echo "Media trash passed: all ten reference stores, validation, active/trash lists, restore, file preservation, rollback/audit and migration replay.\n";
+}finally{if($db&&$db->inTransaction())$db->rollBack();$db=null;$server->exec('DROP DATABASE '.$name);foreach(glob($dir.'/*') as $f)unlink($f);rmdir($dir);}

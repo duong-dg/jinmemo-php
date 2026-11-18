@@ -1321,3 +1321,9 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Bổ sung tra cứu/tạo QR theo mã JM-X cho nhân viên COLLECT tại Quầy → Thu tiền xe; kiểm lại quyền trước tạo QR, giữ điều kiện xác nhận/chốt nhóm và chặn đơn thuộc JB/đã trả/hủy. Không cần khóa khách ở luồng nhân viên đã xác thực.
 - Đơn POS vẫn không cho thanh toán bằng proof công khai. Webhook xác thực ghi thu đúng một lần vào sổ cổng, không tăng tiền mặt ca; QR đang hiệu lực chặn thu cash. Đã kiểm MySQL/HTTP/DOM và regression POS/cash/QR WEB.
 - Không thêm SQL, schema vẫn 053; chưa thử SePay/cPanel thật. Xem [QR xe tại POS](docs/POS-RIDE-QR.md). Importer tổng thể và các phần chưa đối chiếu vẫn chưa hoàn tất.
+
+## Thùng rác và khôi phục ảnh — đợt 129
+
+- Thư viện ảnh có danh sách active/thùng rác, xác nhận trash/restore và chặn ảnh đang được 10 kho nội dung/đơn/lịch sử dùng. File gốc và URL cũ được giữ, không xóa vật lý.
+- Importer ảnh giữ deleted_at từ nguồn mới, vẫn nhận nguồn cũ 8 cột và không ghi đè trạng thái khác. Đã kiểm MySQL/HTTP/Node và regression importer/editor; chưa kiểm layout/cPanel thật.
+- **Import database/054-media-trash.sql sau git pull**, giữ `.env`/storage. Không tự nhập dữ liệu cũ. Xem [thùng rác ảnh](docs/MEDIA-TRASH.md); importer tổng thể vẫn chưa hoàn tất.

@@ -1,5 +1,7 @@
 # Rà soát form và thao tác nhập liệu
 
+Đợt 129: thư viện ảnh có active/thùng rác, xác nhận trash/restore, lỗi tham chiếu giữ thao tác và chặn gửi từ màn hình cũ. Upload chỉ hiện trong thư viện. Đã kiểm Node DOM/HTTP/MySQL, chưa kiểm layout/cPanel thật; schema mới 054, xem MEDIA-TRASH.md.
+
 Đợt 128: màn Thu tiền xe tại POS có tra cứu theo COLLECT và nút chủ động tạo QR đủ điều kiện; giữ thu tiền mặt, khóa phần nhập cash khi đã tạo QR và bỏ phản hồi/view cũ khi đổi mã. Đã kiểm Node DOM và quyền HTTP, chưa kiểm trực quan layout/cPanel thật. Không SQL mới; xem POS-RIDE-QR.md.
 
 Đợt 127: admin đơn xe có ô tìm có nhãn hỗ trợ, giới hạn 100 ký tự và nút xuất CSV theo ngày/trạng thái/từ khóa. Chặn tải lặp khi đang gửi và khi xem điều xe hôm nay; lỗi giữ bộ lọc. Đã kiểm Node DOM/HTTP/MySQL; chưa kiểm layout trình duyệt hoặc Excel thật. Xem RIDE-EXPORT.md; không SQL mới.

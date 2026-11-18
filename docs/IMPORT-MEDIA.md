@@ -1,5 +1,7 @@
 # Nhập ảnh từ MySQL transfer v1
 
+Đợt 129: cần schema **054**, hỗ trợ thêm deleted_at UTC/microsecond từ nguồn mới 9 cột; nguồn cũ 8 cột được coi deleted_at=NULL. Không ghi đè trạng thái khác ở target. Vẫn dry-run mặc định, không tự import khi cập nhật; xem MEDIA-TRASH.md. Các hướng dẫn trường/fixture cũ bên dưới có trước cột này.
+
 Lệnh này nhập metadata ảnh trong `jm_transfer_media`, giữ nguyên các trường id/filename/alt/width/height/bytes/created_by/created_at. File ảnh vật lý không nằm trong SQL. Công cụ không chép, ghi đè, nén lại, đổi tên hoặc tạo ID mới cho ảnh.
 
 ## Chuẩn bị

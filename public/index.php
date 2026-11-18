@@ -498,13 +498,17 @@ try {
         $lang=($_GET['lang'] ?? '')==='en'?'en':'vi';
         jingoJson(['data'=>isset($destinationMatch[1])?$destinations->find(rawurldecode($destinationMatch[1]),$lang):array_map(fn($node)=>Destinations::publicView($node,$lang),$destinations->list())]);
     }
+    if(preg_match('#^/api/v1/admin/media/([a-f0-9-]{36})/trash$#Di',(string)$path,$mediaTrash)){
+        if(($_SERVER['REQUEST_METHOD']??'GET')!=='POST'){header('Allow: POST');throw new HttpError(405,'Phương thức không được hỗ trợ.');}if($_GET)throw new HttpError(400,'Yêu cầu ảnh không hợp lệ.');$config=jingoConfig();$db=jingoDatabase($config);$auth=new AdminAuth($db,$config);$auth->mutation();$actor=$auth->me();jingoJson((new Media($db,$config['MEDIA_DIR']??dirname(__DIR__).'/storage/media'))->trash($mediaTrash[1],jingoRequestBody(),$actor['id']));
+    }
     if($path==='/api/v1/admin/media' || preg_match('#^/api/v1/media/([^/]+)(/share\.jpg)?$#D',(string)$path,$mediaMatch)) {
         $admin=$path==='/api/v1/admin/media'; $method=$_SERVER['REQUEST_METHOD'] ?? 'GET';
         if(!in_array($method,$admin?['GET','POST']:['GET'],true)) { header('Allow: '.($admin?'GET, POST':'GET')); throw new HttpError(405,'Phương thức không được hỗ trợ.'); }
         $config=jingoConfig(); $db=jingoDatabase($config); $media=new Media($db,$config['MEDIA_DIR'] ?? dirname(__DIR__).'/storage/media');
         if($admin) {
             $auth=new AdminAuth($db,$config); if($method==='POST') $auth->mutation(); $actor=$auth->me();
-            if($method==='GET') jingoJson(['data'=>$media->list()]);
+            if(array_diff(array_keys($_GET),$method==='GET'?['trash']:[])||isset($_GET['trash'])&&(!is_string($_GET['trash'])||!in_array($_GET['trash'],['0','1'],true)))throw new HttpError(400,'Bộ lọc ảnh không hợp lệ.');
+            if($method==='GET') jingoJson(['data'=>$media->list(($_GET['trash']??'0')==='1')]);
             if(!str_starts_with(strtolower($_SERVER['CONTENT_TYPE'] ?? ''),'multipart/form-data;')) throw new HttpError(415,'Yêu cầu multipart/form-data.');
             if(array_diff(array_keys($_POST),['alt']) || array_diff(array_keys($_FILES),['file'])) throw new HttpError(400,'Chỉ nhận một ảnh và mô tả alt.');
             $file=$_FILES['file'] ?? null;
