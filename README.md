@@ -1391,3 +1391,5 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 Admin có **Cấu hình website → Dữ liệu chuyển đổi** để xem kho chờ/tìm đơn gốc và lịch sử; chỉ admin, không lộ proof/hash, không thu/gửi/kích hoạt. Tổng hợp 167 bài hồi quy và hai bài mới của màn đối chiếu: 169 bài độc lập đạt; 18 bài nhóm chuyển dữ liệu đã chạy lại sau tích hợp cuối.
 
 Đợt 140: nhận export Node **full-v2** (68 bảng nguồn + manifest), tự kiểm cột/số dòng/SHA-256, giữ hỗ trợ v1. Chỉ lưu kho chờ; chưa xuất bản toàn bộ dữ liệu vận hành. Quy trình hai bên: [EXPORT-IMPORT-COORDINATION.md](docs/EXPORT-IMPORT-COORDINATION.md).
+
+Đợt 141: có adapter **import vào runtime** cho cấu hình thanh toán thủ công và danh mục quà từ full-v2; dry-run/fingerprint/atomic/no-overwrite. Quà có đơn lịch sử còn bị chặn để chờ adapter đơn/tồn. Xem [IMPORT-BUSINESS-SETTINGS.md](docs/IMPORT-BUSINESS-SETTINGS.md).

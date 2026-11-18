@@ -30,3 +30,6 @@ for(const [file,missing]of [['full-v2-node.sql',new Set()],['full-v2-missing-nod
  const text=build(missing),target=new URL('./fixtures/'+file,import.meta.url);if(process.argv.includes('--check')){if(fs.readFileSync(target,'utf8')!==text)throw Error('Fixture differs '+file);}else fs.writeFileSync(target,text);
 }
 console.log('Node full-v2 fixtures generated; nested credentials removed, numeric tokens preserved.');
+
+rows.jm_transfer_settings=rows.jm_transfer_settings.map(r=>({...r,version:'7',data:r.id==='manual-payments'?JSON.stringify({methods:[{id:'PAY_LATER',name:'Thanh toán sau',englishName:'Pay later',instructions:'Liên hệ xác nhận',englishInstructions:'Contact to confirm',enabled:true}]}):r.id==='gifts'?JSON.stringify({enabled:true,shippingFee:50000,items:[{id:'00000000-0000-4000-8000-000000009999',name:'Quà mẫu',description:'Mô tả',nameEn:'Gift',descriptionEn:'Description',price:100000,stock:7,active:true}]}):r.data}));
+{const text=build(),target=new URL('./fixtures/business-settings-v2-node.sql',import.meta.url);if(process.argv.includes('--check')){if(fs.readFileSync(target,'utf8')!==text)throw Error('Business fixture differs');}else fs.writeFileSync(target,text);}

@@ -30,3 +30,7 @@ Sau tích hợp cuối đợt 139 có màn đối chiếu admin readonly (Cấu 
 Đợt 140: thêm parser và kho chờ full-v2, 68 bảng nguồn + manifest, kiểm checksum INSERT/cột/số dòng, thiếu nguồn và credential JSON; giữ v1. Chưa hoàn tất atomic publication/native adapters và khôi phục liên kết/credential, chưa import thật. Quy trình phối hợp Node/PHP ở EXPORT-IMPORT-COORDINATION.md.
 
 Kiểm đợt 140: 19 bài nhóm transfer đạt; ca full-v2 mở rộng chạy lại đạt với 161 dòng mẫu, CLI tự nhận định dạng, admin review và kiểm PDF nguyên bytes. Hai bộ sinh profile/fixture --check khớp Node exporter đã ghim. Chỉ kiểm local tổng hợp, chưa dùng dữ liệu production.
+
+Đợt 141: adapter runtime cho manual-payments/gifts từ full-v2, kiểm schema/checksum/quan hệ, dùng validator chung, giữ raw JSON/version/stock/VI-EN, fingerprint gắn đích, transaction/lock/audit và chặn ghi đè. Có đơn quà nguồn thì chặn tồn để chờ adapter đơn; cấu hình khác và toàn bộ publication vẫn chưa hoàn tất. Xem IMPORT-BUSINESS-SETTINGS.md.
+
+Kiểm đợt 141: 20 bài nhóm transfer đạt; kiểm thêm gift-catalog, gift-orders, payments, carts và HTTP đều đạt. Ca mới kiểm ghi runtime/đọc qua module, tồn/VI-EN/version, schema, source gift order dependency, ảnh thiếu, feature conflict, fingerprint, audit rollback, replay và CLI dry-run theo scope. Fixture Node --check khớp. Không nhập dữ liệu production.
