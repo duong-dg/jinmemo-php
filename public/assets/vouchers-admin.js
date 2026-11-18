@@ -1,6 +1,7 @@
 'use strict';
 async function buildVoucherFields(existing){
  delete draft.status;
+ if(draft.transferPending){$('#fields').append(el('p','Voucher đang chờ nhập và đối soát lượt dùng từ đơn cũ. Lưu hoặc bật chương trình không tự mở khóa sử dụng.','full muted'));}delete draft.transferPending;
  if(!existing)Object.assign(draft,{code:'',name:'',discountType:'PERCENT',value:10,minSubtotal:0,maxDiscount:null,startDate:'',endDate:'',maxUses:null,enabled:false,notes:'',scope:'ALL',targets:[],visitFrom:null,visitTo:null,visitWeekdays:[]});
  const code=field('code','Mã giảm giá','text',[],true,40);code.readOnly=existing;field('name','Tên chương trình','text',[],true,150);const type=field('discountType','Cách giảm','select',[['PERCENT','Phần trăm'],['FIXED','Số tiền cố định']],true);
  const amount=field('value','Mức giảm (% hoặc VND)','number',[],true);amount.min='1';amount.step='1';const minimum=field('minSubtotal','Giá trị tối thiểu (VND)','number',[],true);minimum.min='0';minimum.max='15000000000';

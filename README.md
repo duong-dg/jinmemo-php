@@ -1357,3 +1357,9 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Thêm bin/check-partner-credit-transfer.php: kiểm CHARGE theo tổng/chủ/trạng thái đơn, mã trả nợ hai chiều, số nguyên an toàn và FIFO/quá hạn từ file export Node. Digest kết quả đã đối chiếu với creditSummary bản gốc.
 - Chỉ đọc file, không MySQL/SQL/import/mở khóa CTV; importReady luôn false. Cần mốc UTC --as-of rõ ràng. Chưa đối chiếu dữ liệu đích hoặc chuyển đơn/tồn/ledger.
 - Không SQL mới, schema vẫn 056; không nhập dữ liệu thật khi git pull. Xem [đối soát công nợ nguồn](docs/PARTNER-CREDIT-TRANSFER-AUDIT.md).
+
+## Import voucher vé — đợt 135
+
+- Thêm bin/import-vouchers.php: giữ ID/mã/JSON/version, phạm vi sản phẩm/gói và lịch sử dụng, cùng danh mục/sản phẩm phụ thuộc. Mặc định dry-run, --apply cần fingerprint và ghi nguyên khối/audit.
+- Voucher mới chờ nhập/đối soát lịch sử lượt dùng: chưa báo giá/ghi hoặc trả lượt, admin có nhãn chờ và không báo 0 lượt sai. Lưu/bật không tự mở khóa; voucher PHP đang có giữ trạng thái/lượt dùng.
+- **Import database/057-voucher-transfer-pending.sql sau git pull**. Chưa nhập dữ liệu thật hoặc voucher_uses/đơn/tồn/ledger. Xem [import voucher vé](docs/IMPORT-VOUCHERS.md).
