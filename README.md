@@ -1315,3 +1315,9 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Admin tìm theo mã/tên/điện thoại/email, dùng chung bộ lọc cho danh sách và xuất CSV. Xuất toàn bộ đơn khớp bộ lọc, đúng 25 cột nguồn, thứ tự ổn định, tối đa 10.000 đơn và có audit. Chỉ admin có phiên/Origin hợp lệ được xuất.
 - Giữ Unicode, số 0 đầu điện thoại, giá vốn 0, ghi chú nhiều dòng; escape CSV và chặn công thức theo helper Node. Đã đối chiếu byte fixture nguồn, kiểm MySQL/HTTP/DOM và regression đơn xe; chưa kiểm hosting/Excel thật.
 - Không thêm migration SQL, schema vẫn 053. Chi tiết [tìm/xuất đơn xe](docs/RIDE-EXPORT.md); importer tổng thể và các phần chưa đối chiếu vẫn còn trong PORT-COMPLETION.md.
+
+## QR thu tiền xe tại POS — đợt 128
+
+- Bổ sung tra cứu/tạo QR theo mã JM-X cho nhân viên COLLECT tại Quầy → Thu tiền xe; kiểm lại quyền trước tạo QR, giữ điều kiện xác nhận/chốt nhóm và chặn đơn thuộc JB/đã trả/hủy. Không cần khóa khách ở luồng nhân viên đã xác thực.
+- Đơn POS vẫn không cho thanh toán bằng proof công khai. Webhook xác thực ghi thu đúng một lần vào sổ cổng, không tăng tiền mặt ca; QR đang hiệu lực chặn thu cash. Đã kiểm MySQL/HTTP/DOM và regression POS/cash/QR WEB.
+- Không thêm SQL, schema vẫn 053; chưa thử SePay/cPanel thật. Xem [QR xe tại POS](docs/POS-RIDE-QR.md). Importer tổng thể và các phần chưa đối chiếu vẫn chưa hoàn tất.

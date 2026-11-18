@@ -1,5 +1,7 @@
 # Tiến độ chuyển phần thanh toán
 
+Đợt 128 (schema 053, không thêm SQL): đã nối POS `rides/status`/`rides/payment`, QR cho đơn xe WEB/POS đã xác nhận qua quyền COLLECT, kiểm lại quyền trong transaction, webhook replay và ledger GATEWAY. Không ghi tiền mặt ca; public proof vẫn không trả QR cho đơn POS. Kiểm thử MySQL/HTTP/Node đã qua, chưa thử nhà cung cấp thật; xem POS-RIDE-QR.md. Bảng phía dưới là lịch sử các luồng trước đó.
+
 Cập nhật 17/11/2026, sau đợt 106. Schema cần có: **050** (đợt này không thêm SQL).
 
 | Luồng | Trạng thái PHP |

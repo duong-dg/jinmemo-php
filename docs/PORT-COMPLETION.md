@@ -1,9 +1,10 @@
 # Phần chuyển đổi còn cần hoàn tất
 
-Cập nhật sau đợt 127 (schema 053). Đây là danh sách phần thiếu đã xác nhận, không phải chứng nhận đã đối chiếu hết mọi endpoint của nguồn.
+Cập nhật sau đợt 128 (schema 053). Đây là danh sách phần thiếu đã xác nhận, không phải chứng nhận đã đối chiếu hết mọi endpoint của nguồn.
 
 | Phần | Trạng thái và điều kiện hoàn tất |
 | --- | --- |
+| QR thu tiền xe tại POS | Đã chuyển status/payment theo quyền COLLECT, tra cứu/tạo QR tại quầy, live permission check và ghi thu webhook cho đơn POS, giữ chặn public proof và không tính thành tiền mặt ca. Đã kiểm MySQL/HTTP/DOM, còn provider/cPanel/layout thật; xem POS-RIDE-QR.md |
 | Tìm/xuất đơn xe | Đã chuyển tìm mã/tên/điện thoại/email, API và nút xuất CSV đúng 25 cột nguồn, filter/sort/10.000 dòng/audit; đã kiểm fixture Node và MySQL/HTTP/DOM. Còn kiểm trình duyệt/hosting và ứng dụng bảng tính thật; xem RIDE-EXPORT.md |
 | Danh mục địa chỉ và cấu hình xe | Đã chuyển API tỉnh/huyện/xã v1/v2, cache có giới hạn, admin xem trước/thêm khu vực giữ mục cũ, bộ chọn địa chỉ giao quà VI/EN ở hai form và lưu riêng từng mục cấu hình xe chống ghi đè chéo. Đã kiểm MySQL/HTTP/Node DOM, còn kiểm provider/layout/hosting thật; xem AREA-SOURCE.md |
 | Thời tiết | Đã chuyển cấu hình, API, cache/hạn mức, gợi ý và hiển thị; xem WEATHER.md. Còn kiểm tích hợp bằng tài khoản thật trên hosting |
