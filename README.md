@@ -1363,3 +1363,9 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Thêm bin/import-vouchers.php: giữ ID/mã/JSON/version, phạm vi sản phẩm/gói và lịch sử dụng, cùng danh mục/sản phẩm phụ thuộc. Mặc định dry-run, --apply cần fingerprint và ghi nguyên khối/audit.
 - Voucher mới chờ nhập/đối soát lịch sử lượt dùng: chưa báo giá/ghi hoặc trả lượt, admin có nhãn chờ và không báo 0 lượt sai. Lưu/bật không tự mở khóa; voucher PHP đang có giữ trạng thái/lượt dùng.
 - **Import database/057-voucher-transfer-pending.sql sau git pull**. Chưa nhập dữ liệu thật hoặc voucher_uses/đơn/tồn/ledger. Xem [import voucher vé](docs/IMPORT-VOUCHERS.md).
+
+## Import lịch sử lượt voucher — đợt 136
+
+- Thêm bin/import-voucher-uses.php cho lượt đang dùng/đã trả, kiểm liên kết hai chiều và hạn mức. Chỉ nhập khi đơn/voucher cha đích khớp toàn bộ dữ liệu nguồn; thiếu đơn thì chặn, không tự tạo đơn hoặc tính lại giá lịch sử.
+- Mặc định read-only dry-run, --apply cần hash riêng; transaction/audit/replay/hai worker đã kiểm. Thêm lượt mới cần voucher pending; nhập xong vẫn chưa mở khóa.
+- **Import database/058-order-time-precision.sql sau git pull** để giữ created_at đơn UTC microsecond. Chưa nhập dữ liệu thật; importer đơn/tồn/ledger và đối soát/mở khóa tổng thể còn thiếu. Xem [import lượt voucher](docs/IMPORT-VOUCHER-USES.md).

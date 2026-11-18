@@ -57,3 +57,5 @@ node tests/admin-editor-ui.cjs
 Fixture sinh từ helper exporter Node đã kiểm SHA-256: voucher ALL legacy, theo gói với lịch sử dụng, FIXED tắt, cột version khác JSON; bảng uses có lượt còn hiệu lực và đã released. Kiểm dry-run không ghi, ID/code/JSON/version, thiếu sản phẩm/gói, trùng mã, metadata/schema/fingerprint, rollback audit, apply/replay, giữ trạng thái và lượt voucher PHP, migration replay, hai worker và CLI. Kiểm pending chặn quote/allocate/release, lưu/bật không mở khóa, form bỏ cờ runtime và danh sách không báo lượt 0 sai.
 
 Các kiểm PHP cần JINGO_TEST_DSN MySQL thử, tự tạo/xóa DB ngẫu nhiên. Node DOM chạy đầy đủ script admin/form; chưa kiểm layout/trình duyệt/cPanel thật. Không dùng dump thật, không import dữ liệu vận hành. Importer đơn/tồn/voucher_uses/ledger và quy trình đối soát/mở khóa vẫn còn.
+
+Đợt 136 bổ sung [import lịch sử lượt dùng](IMPORT-VOUCHER-USES.md), chạy sau khi đơn/voucher cha đã được chuyển và khớp. Giữ released và hạn mức, không tự tạo đơn hoặc xóa transfer_pending. Migration 058 giữ timestamp đơn microsecond. Importer đơn tổng thể còn thiếu nên chưa chạy chuỗi này trên dữ liệu thật.
