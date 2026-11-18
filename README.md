@@ -1327,3 +1327,9 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Thư viện ảnh có danh sách active/thùng rác, xác nhận trash/restore và chặn ảnh đang được 10 kho nội dung/đơn/lịch sử dùng. File gốc và URL cũ được giữ, không xóa vật lý.
 - Importer ảnh giữ deleted_at từ nguồn mới, vẫn nhận nguồn cũ 8 cột và không ghi đè trạng thái khác. Đã kiểm MySQL/HTTP/Node và regression importer/editor; chưa kiểm layout/cPanel thật.
 - **Import database/054-media-trash.sql sau git pull**, giữ `.env`/storage. Không tự nhập dữ liệu cũ. Xem [thùng rác ảnh](docs/MEDIA-TRASH.md); importer tổng thể vẫn chưa hoàn tất.
+
+## Import danh mục nền — đợt 130
+
+- Thêm bin/import-catalog.php: loại sản phẩm, điểm đến, nhà cung cấp, quầy và alias liên quan. Đọc staging Node, giữ ID/JSON/version; kiểm cây điểm đến, trùng slug/ID, ảnh bìa và metadata đang có. Không ghi đè, gộp ID hoặc gọi lại API tạo danh mục.
+- Dry-run mặc định read-only; --apply bắt buộc fingerprint đã xem và ghi toàn nhóm trong một transaction. Đã kiểm fixture exporter Node/MySQL, CLI, rollback/replay và hai worker đồng thời; chưa dùng dữ liệu thật/cPanel.
+- Không SQL mới, schema vẫn 054. Xem [import danh mục](docs/IMPORT-CATALOG.md). Chưa phải importer tổng thể sản phẩm/đơn/tồn/công nợ; không tự nhập dữ liệu khi cập nhật Git.
