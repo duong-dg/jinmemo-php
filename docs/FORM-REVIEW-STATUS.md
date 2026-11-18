@@ -1,5 +1,7 @@
 # Rà soát form và thao tác nhập liệu
 
+Đợt 126 bổ sung bộ chọn tỉnh/xã VI/EN ở form giao quà và chốt đơn chung; admin xem trước/thêm khu vực hành chính, giữ chỉnh sửa cũ và lưu cấu hình xe theo mục. Đã kiểm Node DOM/HTTP/MySQL, chưa kiểm trực quan layout hoặc cPanel thật cho đợt này. Cần schema 053; xem AREA-SOURCE.md. Các đợt phía dưới là lịch sử, không phải xác nhận đã rà hết mọi form.
+
 Cập nhật 17/11/2026, sau đợt 107. Không đổi tên trường dữ liệu hoặc schema 050.
 
 | Khu vực | Đã chỉnh và kiểm tra |

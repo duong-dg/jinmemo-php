@@ -3,7 +3,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
-const {randomUUID}=require('node:crypto');
+const {randomUUID,createHash}=require('node:crypto');
 class Element{
  constructor(tag,text){this.tagName=tag;this.text=text??'';this.children=[];this._value='';this.disabled=false;}
  set value(v){this._value=String(v);}
@@ -21,8 +21,9 @@ function control(text){const label=find(fields,'label',text);return label.childr
 async function click(node,text){const b=find(node,'button',text);assert.equal(b.disabled,false,text+' disabled');await b.onclick();}
 const fixture=JSON.parse(fs.readFileSync(__dirname+'/fixtures/transport-plan-source.json','utf8'))[0].plan;
 let state={version:1,plan:{...fixture,trips:[],requests:[]}},fields,dialog,screen,saveError=null,saves=[];
-const notices=[];
-const context={structuredClone,crypto:{randomUUID},loading:1,dirty:false,editing:false,
+const notices=[],sectionCalls=[];
+const versions=p=>Object.fromEntries(['vehicles','areas','fares','settings'].map(k=>[k,createHash('sha256').update(JSON.stringify(k==='settings'?[!!p.enabled,!!p.qrEnabled,p.note??null,p.noteEn??null]:[p[k]])).digest('hex')]));
+const context={window:{},structuredClone,crypto:{randomUUID},loading:1,dirty:false,editing:false,
  el:(tag,text)=>new Element(tag,text),
  button:(text,action)=>Object.assign(new Element('button',text),{onclick:action}),
  toolbar:text=>new Element('div',text),orderMoney:n=>String(n),
@@ -32,8 +33,9 @@ const context={structuredClone,crypto:{randomUUID},loading:1,dirty:false,editing
  api:async(path,body)=>{
   if(path==='media')return {data:[]};
   if(path==='transport-plan/preview')return {quotes:[],trips:body.plan.trips.map(t=>({id:t.id,remaining:4-body.plan.requests.filter(r=>r.tripId===t.id&&['HELD','CONFIRMED'].includes(r.status)).reduce((n,r)=>n+r.passengers,0),open:t.status==='OPEN'})),suggestions:Object.fromEntries(body.plan.requests.filter(r=>r.status==='WAITING').map(r=>[r.id,body.plan.trips.filter(t=>t.status==='OPEN').map(t=>t.id)]))};
+  if(path.startsWith('transport-plan/sections/')){const section=path.split('/').at(-1);assert.equal(body.version,versions(state.plan)[section]);sectionCalls.push({path,body:structuredClone(body)});saves.push(structuredClone(body));if(section==='settings')Object.assign(state.plan,structuredClone(body.settings));else state.plan[section]=structuredClone(body.rows);state.version++;return structuredClone(state);}
   assert.equal(path,'transport-plan');
-  if(!body)return structuredClone(state);
+  if(!body)return {...structuredClone(state),sectionVersions:versions(state.plan)};
   if(saveError)throw Error(saveError);
   assert.equal(body.version,state.version);
   saves.push(structuredClone(body));state={version:state.version+1,plan:structuredClone(body.plan)};return structuredClone(state);
@@ -71,6 +73,9 @@ let expectedSaves=0;
  // A stale save must leave the dialog open and preserve form values for recovery.
  await click(requestCard(),'Chỉnh sửa');control('Tên khách / nhãn yêu cầu').value='Keep unsaved';saveError='Kế hoạch xe vừa thay đổi';await click(fields,'Kiểm tra lưu');await click(fields,'Xác nhận lưu');assert.equal(saves.length,expectedSaves);assert.equal(dialog.open,true);assert.equal(control('Tên khách / nhãn yêu cầu').value,'Keep unsaved');assert.ok(all(fields).some(n=>n.textContent?.includes(saveError)));saveError=null;
  assert.deepEqual(state.plan.vehicles,fixture.vehicles);assert.deepEqual(state.plan.areas,fixture.areas);assert.deepEqual(state.plan.fares,fixture.fares);
+ // Catalog editing uses the section token and does not submit unrelated arrays.
+ await context.render();const vehiclesGroup=all(screen).find(n=>n.tagName==='details'&&n.children.some(c=>c.tagName==='summary'&&c.text==='Loại xe'));await click(vehiclesGroup,'Chỉnh sửa');control('Tên loại xe').value='Renamed car';await submit();assert.equal(sectionCalls.at(-1).path,'transport-plan/sections/vehicles');assert.deepEqual(Object.keys(sectionCalls.at(-1).body).sort(),['rows','version']);assert.deepEqual(state.plan.areas,fixture.areas);
+ await click(screen,'Kiểm tra thiết lập');await click(screen,'Xác nhận lưu thiết lập');assert.equal(sectionCalls.at(-1).path,'transport-plan/sections/settings');assert.deepEqual(Object.keys(sectionCalls.at(-1).body).sort(),['settings','version']);
  // Empty catalog still permits loading the screen; dependent add buttons stay disabled.
  state={version:0,plan:{enabled:false,qrEnabled:false,vehicles:[],areas:[],fares:[],trips:[],requests:[]}};await context.render();for(const name of ['Chuyến kế hoạch','Yêu cầu ghép'])assert.equal(find(screen,'button','Thêm '+name).disabled,true);
  console.log('PASS: plan UI trip creation, typed request payloads, suggested hold, confirmation, release, cancellation, date/status filters, preserved catalog, stale-save recovery and empty catalog.');

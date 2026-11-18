@@ -38,8 +38,8 @@ final class TransportPlan
         $starts=self::ancestors($p,$from);$ends=self::ancestors($p,$to);if(!$starts||!$ends||$from===$to)return [];$areas=array_column($p['areas'],null,'id');$out=[];foreach($p['vehicles'] as $v){if($v['seats']<$passengers)continue;$candidates=[];foreach($p['fares'] as $f){if($f['vehicleId']!==$v['id'])continue;$forward=in_array($f['from'],$starts,true)&&in_array($f['to'],$ends,true);$reverse=($f['twoWay']??false)&&in_array($f['to'],$starts,true)&&in_array($f['from'],$ends,true);if(!$forward&&!$reverse)continue;$a=$forward?$f['from']:$f['to'];$b=$forward?$f['to']:$f['from'];$candidates[]=['fare'=>$f,'from'=>$a,'to'=>$b,'score'=>array_search($a,$starts,true)+array_search($b,$ends,true)];}usort($candidates,fn($a,$b)=>$a['score']<=>$b['score']);if(!$candidates)continue;if(isset($candidates[1])&&$candidates[0]['score']===$candidates[1]['score']){$out[]=['vehicleId'=>$v['id'],'error'=>'Có nhiều giá tuyến cùng mức ưu tiên. Cần nhập giá riêng cho tuyến này.'];continue;}$c=$candidates[0];$f=$c['fare'];$traversed=[...array_slice($starts,0,array_search($c['from'],$starts,true)),...array_slice($ends,0,array_search($c['to'],$ends,true))];$extra=0;foreach($traversed as $id)$extra+=$areas[$id]['surcharges'][$v['id']]??0;$row=['vehicleId'=>$v['id'],'fareId'=>$f['id']];foreach(['sharedEnabled','roundTripOnly','roundTripPrice'] as $k)if(array_key_exists($k,$f))$row[$k]=$f[$k];$row+=['base'=>$f['privatePrice'],'surcharge'=>$extra,'total'=>$f['privatePrice']+$extra,'seatPrice'=>$f['seatPrice'],'exact'=>$c['score']===0];if(isset($f['durationMinutes']))$row['durationMinutes']=$f['durationMinutes'];$out[]=$row;}return $out;
     }
     private static function stored(array $p):array{foreach($p['areas'] as &$a)$a['surcharges']=(object)$a['surcharges'];unset($a);return $p;}
-    public static function wire(array $out):array{if(isset($out['plan']))$out['plan']=self::stored($out['plan']);return $out;}
-    public function read():array{$r=$this->query("SELECT data,version FROM jingo_settings WHERE id='transport-plan'")->fetch(PDO::FETCH_ASSOC);$p=self::validate($r?json_decode($r['data'],true,512,JSON_THROW_ON_ERROR):['vehicles'=>[],'areas'=>[],'fares'=>[],'trips'=>[],'requests'=>[]]);return ['plan'=>$p,'version'=>$r?(int)$r['version']:0];}
+    public static function wire(array $out):array{if(isset($out['plan']))$out['plan']=self::stored($out['plan']);if(isset($out['bookedSeats']))$out['bookedSeats']=(object)$out['bookedSeats'];return $out;}
+    public function read():array{$r=$this->query("SELECT data,version FROM jingo_settings WHERE id='transport-plan'")->fetch(PDO::FETCH_ASSOC);$p=self::validate($r?json_decode($r['data'],true,512,JSON_THROW_ON_ERROR):['vehicles'=>[],'areas'=>[],'fares'=>[],'trips'=>[],'requests'=>[]]);$booked=[];if($this->hasTable('jingo_ride_bookings'))foreach($this->query("SELECT trip_id,data FROM jingo_ride_bookings WHERE status NOT IN ('CANCELLED','COMPLETED') AND trip_id IS NOT NULL")->fetchAll(PDO::FETCH_ASSOC) as $b){$d=json_decode($b['data'],true,512,JSON_THROW_ON_ERROR);$booked[$b['trip_id']]=($booked[$b['trip_id']]??0)+(int)($d['passengers']??0);}return ['plan'=>$p,'version'=>$r?(int)$r['version']:0,'sectionVersions'=>self::sectionVersions($p),'bookedSeats'=>$booked];}
     private function hasTable(string $name):bool{return $this->query('SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?',[$name])->fetchColumn()!==false;}
     private function guardOperational(array $p):void
     {
@@ -48,9 +48,40 @@ final class TransportPlan
         foreach($used as $id=>$n)if($n>$vehicles[$trips[$id]['vehicleId']]['seats'])throw new HttpError(409,'Số ghế mới nhỏ hơn khách đã ghép.');
         if($this->hasTable('jingo_ride_pools'))foreach($this->query("SELECT vehicle_id,from_id,to_id,target FROM jingo_ride_pools WHERE status NOT IN ('COMPLETED','CANCELLED')")->fetchAll(PDO::FETCH_ASSOC) as $pool)if(!isset($vehicles[$pool['vehicle_id']],$areas[$pool['from_id']],$areas[$pool['to_id']])||$vehicles[$pool['vehicle_id']]['seats']<(int)$pool['target'])throw new HttpError(409,'Xe/khu vực đang có nhóm ghép, không thể bỏ hoặc giảm ghế.');
     }
+    public static function sectionVersion(array $plan,string $section):string
+    {
+        if(!in_array($section,['vehicles','areas','fares','settings'],true))self::bad('Mục cấu hình xe không hợp lệ.');
+        $p=self::stored($plan);$data=$section==='settings'?[!!$p['enabled'],!!$p['qrEnabled'],$p['note']??null,$p['noteEn']??null]:[$p[$section]];
+        return hash('sha256',json_encode($data,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_LINE_TERMINATORS|JSON_THROW_ON_ERROR));
+    }
+    private static function sectionVersions(array $p):array{$out=[];foreach(['vehicles','areas','fares','settings'] as $section)$out[$section]=self::sectionVersion($p,$section);return $out;}
+    private function lockPlan():void
+    {
+        $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();
+        if(!$this->query("SELECT id FROM jingo_catalog_locks WHERE id='catalog' FOR UPDATE")->fetchColumn())throw new HttpError(503,'Chưa cài khóa danh mục.');
+    }
+    private function persistPlan(array $p,int $version,string $actor,string $action):array
+    {
+        if($version>=2147483647)throw new HttpError(409,'Phiên bản cấu hình vượt giới hạn.');
+        $this->guardOperational($p);
+        $this->query("INSERT INTO jingo_settings(id,data,version) VALUES ('transport-plan',?,?) ON DUPLICATE KEY UPDATE data=VALUES(data),version=VALUES(version)",[json_encode(self::stored($p),JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR),$version+1]);
+        $this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),$actor,$action,'transport-plan']);
+        return ['plan'=>$p,'version'=>$version+1,'sectionVersions'=>self::sectionVersions($p)];
+    }
     private function savePlan(array $p,int $version,string $actor):array
     {
-        $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');$this->db->beginTransaction();try{if(!$this->query("SELECT id FROM jingo_catalog_locks WHERE id='catalog' FOR UPDATE")->fetchColumn())throw new HttpError(503,'Chưa cài khóa danh mục.');$old=$this->read();if($old['version']!==$version)throw new HttpError(409,'Kế hoạch xe vừa thay đổi. Tải lại trước khi lưu.');$this->guardOperational($p);$this->query("INSERT INTO jingo_settings(id,data,version) VALUES ('transport-plan',?,?) ON DUPLICATE KEY UPDATE data=VALUES(data),version=VALUES(version)",[json_encode(self::stored($p),JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR),$version+1]);$this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),$actor,'transport.plan.save','transport-plan']);$this->db->commit();return ['plan'=>$p,'version'=>$version+1];}catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
+        try{$this->lockPlan();$old=$this->read();if($old['version']!==$version)throw new HttpError(409,'Kế hoạch xe vừa thay đổi. Tải lại trước khi lưu.');$out=$this->persistPlan($p,$version,$actor,'transport.plan.save');unset($out['sectionVersions']);$this->db->commit();return $out;}catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
+    }
+    public function saveSection(string $section,array $in,string $actor):array
+    {
+        if(!in_array($section,['vehicles','areas','fares','settings'],true)||array_diff(array_keys($in),['version',$section==='settings'?'settings':'rows'])||!is_string($in['version']??null)||!preg_match('/^[a-f0-9]{64}$/D',$in['version'])||!array_key_exists($section==='settings'?'settings':'rows',$in))self::bad('Dữ liệu mục cấu hình xe không hợp lệ.');
+        if($section==='settings'&&(!is_array($in['settings'])||$in['settings']!==[]&&array_is_list($in['settings'])||array_diff(array_keys($in['settings']),['enabled','qrEnabled','note','noteEn'])))self::bad();
+        try{
+            $this->lockPlan();$old=$this->read();
+            if(!hash_equals($old['sectionVersions'][$section],$in['version']))throw new HttpError(409,'Mục này đã được sửa ở nơi khác. Tải lại trước khi lưu.');
+            $p=$old['plan'];if($section==='settings')$p=array_replace($p,$in['settings']);else $p[$section]=$in['rows'];
+            $out=$this->persistPlan(self::validate($p),$old['version'],$actor,'transport.save.'.$section);$out['sectionVersion']=$out['sectionVersions'][$section];$this->db->commit();return $out;
+        }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
     public function save(array $in,string $actor):array{if(count($in)!==2||array_diff(array_keys($in),['version','plan'])||!is_int($in['version']??null)||$in['version']<0||$in['version']>2147483646)self::bad();return $this->savePlan(self::validate($in['plan']??null),$in['version'],$actor);}
     public function preview(array $in):array

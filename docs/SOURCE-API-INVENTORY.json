@@ -1,0 +1,2016 @@
+{
+  "scope": "SOURCE_DECLARATIONS_ONLY",
+  "sourceCommit": "7e3578d2c27f166ba42a48ce4ee5b21e7ff33cbb",
+  "phpParityVerified": false,
+  "controllerCount": 70,
+  "routeCount": 269,
+  "files": {
+    "admin/admin.module.ts": "6fbe8ee941efb6ff91a30b9d88a8b65c1ad8f6eaebcd1b584ab2e6b16c1a5e05",
+    "admin/backups.module.ts": "f105cb361fecf2ac41a5d46dc33edd937be3cce4d764d012278cf92e71795081",
+    "admin/notifications.module.ts": "d2e8ca053db7eec93a910b22ee0681217bd4deac7eeaed5e7a57bc9bd4c0ad48",
+    "admin/overview.module.ts": "b1991bddcbca5e0a460e9ab9dce89f8393394b712ebf112e3ea3b805a94eac38",
+    "app.module.ts": "731227317b4252fdae39130e748af24c3058c4e03e0d36bf3c8c3f182ed1ef7a",
+    "catalog/catalog.module.ts": "3c3c8735d4fba74c81ac182ce48e502644d1bbba4b0b97fcae270e1e0a2b31fc",
+    "content/contact-requests.module.ts": "2f3d71c4f3fa543552c14ee8288a9763301b9ad84b1a3b17bf31f05adb8afeba",
+    "content/features.module.ts": "b52c1fbd7bf72e9d786f4da27de4fee06a1320abdc60a9a17aeae194a01e27b6",
+    "content/media.module.ts": "c780b33ec6b60ebe797af7f04a9df81cfebf3fca8edb748e7e243257202b72e6",
+    "content/pages.module.ts": "e78b5fb60acdba54f99404a11f0004d2d3153b34cf344ce85a223012b8f40569",
+    "content/posts.module.ts": "85ce7c04ebdd68be84b87f6ad43474fb0f43d15b0d2aa53aa1c370d76e600387",
+    "content/site-seo.module.ts": "92440a49ae4b6b50d8126c2283f372c21801d4678cb81f3afe04ffed20df6c32",
+    "content/translations.module.ts": "4d9f498ca7bb6a2003b98f013e09ff0025f5d118fe4be03ed0d193c0293053de",
+    "content/types.module.ts": "0aa216e1ffa17375ab982dbbddd798dd78268fe500f40f1cfa5643ed234f01cc",
+    "destinations/destinations.module.ts": "d37f862066f29fec0cb6d6469045bd9a04057754d76540584877ee921c6bafd1",
+    "gifts/gifts.module.ts": "f6579da30f215b9da235a0e9b5c1d9c136cd0ba054b409f7da9cf0ea24744059",
+    "inventory/inventory.module.ts": "33ef344c0d96675dee81b6deaee6f7674f66f717392d55c03a2b2151e40a0fa8",
+    "mail/mail.module.ts": "a4a81ebec955e9da543a0d9504c47fa60fd9efdc0a41cb15141e1882a4589e04",
+    "operations/operations.module.ts": "e4c206946911553e6c7779c983ff9885bd04f1bb16c4250abcbe4a2f8702eaef",
+    "orders/carts.module.ts": "80a08d76773e8c888f7aaca7ff50f4edcd9920364318966eb9d264ca4f6d7d37",
+    "orders/orders.module.ts": "74276a413beec2ae9692fbf6fef20afc42bcee43943ae7ddf1b78a091b520e25",
+    "orders/ticket-files.module.ts": "3408fc6985e78c4d01fa31cd34fcb96271556c2cc0d6a9b88a68edf32965b708",
+    "orders/ticket-stock.module.ts": "73da9370e9f55deb8b5e75329234e193b8faf9aa6a4bbd7e1aafa7fa5b7e70d0",
+    "partners/partners.module.ts": "d8130a61f4fb2b01b1e60c61ea6e6523e6070923233cd2278aabc863b01bcde7",
+    "payments/manual-methods.ts": "3854e4d73bb4b7a449f9185b4d85d40ec30c6fd42b341c71e4ec122828e48273",
+    "payments/payments.module.ts": "fae9ccf4fc9163ea0f15740861bf3bd1c28a214b1dd8dd78fa8d29af50430d64",
+    "payments/refunds.module.ts": "4cc88d4c5261b04de2c67a4d518911132b357069f9e4327f20d6ed8c94fc702f",
+    "pos/pos.module.ts": "5db472ab89dd6f315d41e8611e511a1baf0b056a4f731a46ffc3a9fe5071be62",
+    "pricing/pricing.module.ts": "431aa6e49d483257d601208e4550e121b04c7482a661c0bcbd65720b49672ac0",
+    "shifts/shifts.module.ts": "4028c6269bce95977a87268fc622cb153ffd4ee1abbd4a097895e92fa6bf4bd3",
+    "stays/stays.module.ts": "89ddce9f80fbb3c5aadd9138c11a1c5b1e6d3a938cddab166a3e4611dc1f27da",
+    "suppliers/suppliers.module.ts": "245033eed17075cc1ab28cf36b9d531013b7d0d6af3728f3d6cf9c25e247ac9f",
+    "supply/supply.module.ts": "23470a3a486fd5d4e501d5429891b2b4acd3d6f8598d587aa5cf1dfc1433e22a",
+    "transport/area-source.module.ts": "21b975e25b79294213297dcde777e054088b2bad455efd592a8f54a1217f2ee4",
+    "transport/planning.module.ts": "9bc5cab60a30b7f709c73db61367b2abb5a96c5284cbdedafa5e5a7c0057aa79",
+    "transport/rides.module.ts": "a44dea06b7ebc10988d5fa1e41656023171ba4451c7b6b32f8da05e79d4e47c3",
+    "transport/transport.module.ts": "6e62444e9315ac4086dcac97cea33d4ee9e0d85a11f6d8f24c615535510da9cf",
+    "vouchers/vouchers.module.ts": "c64f85869602a3299a865e8c169d53ee02268298c40f0fb2849c5fd201ca2082",
+    "weather/weather.module.ts": "8c3d7358612d9e3addf6b2a7dbe65daa4b4faf7a113da817f2fa41d9f8bf704a"
+  },
+  "controllers": [
+    {
+      "name": "AdminController",
+      "prefix": "admin",
+      "file": "admin/admin.module.ts"
+    },
+    {
+      "name": "BackupsController",
+      "prefix": "admin/backups",
+      "file": "admin/backups.module.ts"
+    },
+    {
+      "name": "NotificationsController",
+      "prefix": "admin/notifications",
+      "file": "admin/notifications.module.ts"
+    },
+    {
+      "name": "OverviewController",
+      "prefix": "admin/overview",
+      "file": "admin/overview.module.ts"
+    },
+    {
+      "name": "HealthController",
+      "prefix": "health",
+      "file": "app.module.ts"
+    },
+    {
+      "name": "CatalogController",
+      "prefix": "products",
+      "file": "catalog/catalog.module.ts"
+    },
+    {
+      "name": "PublicContactRequestsController",
+      "prefix": "site/contact",
+      "file": "content/contact-requests.module.ts"
+    },
+    {
+      "name": "AdminContactRequestsController",
+      "prefix": "admin/contact-requests",
+      "file": "content/contact-requests.module.ts"
+    },
+    {
+      "name": "PublicFeaturesController",
+      "prefix": "site/features",
+      "file": "content/features.module.ts"
+    },
+    {
+      "name": "AdminFeaturesController",
+      "prefix": "admin/features",
+      "file": "content/features.module.ts"
+    },
+    {
+      "name": "AdminMediaController",
+      "prefix": "admin/media",
+      "file": "content/media.module.ts"
+    },
+    {
+      "name": "PublicMediaController",
+      "prefix": "media",
+      "file": "content/media.module.ts"
+    },
+    {
+      "name": "PublicPagesController",
+      "prefix": "site",
+      "file": "content/pages.module.ts"
+    },
+    {
+      "name": "AdminPagesController",
+      "prefix": "admin/pages",
+      "file": "content/pages.module.ts"
+    },
+    {
+      "name": "PublicPostsController",
+      "prefix": "posts",
+      "file": "content/posts.module.ts"
+    },
+    {
+      "name": "AdminPostsController",
+      "prefix": "admin/posts",
+      "file": "content/posts.module.ts"
+    },
+    {
+      "name": "PublicSiteSeoController",
+      "prefix": "site/seo",
+      "file": "content/site-seo.module.ts"
+    },
+    {
+      "name": "AdminSiteSeoController",
+      "prefix": "admin/site-seo",
+      "file": "content/site-seo.module.ts"
+    },
+    {
+      "name": "TranslationsController",
+      "prefix": "admin/translations",
+      "file": "content/translations.module.ts"
+    },
+    {
+      "name": "PublicTypesController",
+      "prefix": "product-types",
+      "file": "content/types.module.ts"
+    },
+    {
+      "name": "AdminTypesController",
+      "prefix": "admin/product-types",
+      "file": "content/types.module.ts"
+    },
+    {
+      "name": "PublicDestinationsController",
+      "prefix": "destinations",
+      "file": "destinations/destinations.module.ts"
+    },
+    {
+      "name": "AdminDestinationsController",
+      "prefix": "admin/destinations",
+      "file": "destinations/destinations.module.ts"
+    },
+    {
+      "name": "GiftsController",
+      "prefix": "gifts",
+      "file": "gifts/gifts.module.ts"
+    },
+    {
+      "name": "AdminGiftsController",
+      "prefix": "admin/gifts",
+      "file": "gifts/gifts.module.ts"
+    },
+    {
+      "name": "InventoryController",
+      "prefix": "admin/inventory",
+      "file": "inventory/inventory.module.ts"
+    },
+    {
+      "name": "MailController",
+      "prefix": "admin/smtp",
+      "file": "mail/mail.module.ts"
+    },
+    {
+      "name": "OrderMailController",
+      "prefix": "admin/orders/:orderId/emails",
+      "file": "mail/mail.module.ts"
+    },
+    {
+      "name": "OperationsController",
+      "prefix": "admin",
+      "file": "operations/operations.module.ts"
+    },
+    {
+      "name": "CustomerCartsController",
+      "prefix": "carts",
+      "file": "orders/carts.module.ts"
+    },
+    {
+      "name": "PartnerCartsController",
+      "prefix": "partner/carts",
+      "file": "orders/carts.module.ts"
+    },
+    {
+      "name": "PosCartsController",
+      "prefix": "pos/carts",
+      "file": "orders/carts.module.ts"
+    },
+    {
+      "name": "AdminCartsController",
+      "prefix": "admin/carts",
+      "file": "orders/carts.module.ts"
+    },
+    {
+      "name": "OrdersController",
+      "prefix": "orders",
+      "file": "orders/orders.module.ts"
+    },
+    {
+      "name": "AdminOrdersController",
+      "prefix": "admin/orders",
+      "file": "orders/orders.module.ts"
+    },
+    {
+      "name": "AdminTicketFilesController",
+      "prefix": "admin/orders/:orderId/files",
+      "file": "orders/ticket-files.module.ts"
+    },
+    {
+      "name": "CustomerTicketFilesController",
+      "prefix": "orders/files",
+      "file": "orders/ticket-files.module.ts"
+    },
+    {
+      "name": "PartnerTicketFilesController",
+      "prefix": "partner/orders/:orderId/files",
+      "file": "orders/ticket-files.module.ts"
+    },
+    {
+      "name": "SharedTicketFilesController",
+      "prefix": "deliveries/files",
+      "file": "orders/ticket-files.module.ts"
+    },
+    {
+      "name": "PosTicketFilesController",
+      "prefix": "pos/orders/:orderId/files",
+      "file": "orders/ticket-files.module.ts"
+    },
+    {
+      "name": "TicketStockController",
+      "prefix": "admin/ticket-stock",
+      "file": "orders/ticket-stock.module.ts"
+    },
+    {
+      "name": "AdminPartnersController",
+      "prefix": "admin/partners",
+      "file": "partners/partners.module.ts"
+    },
+    {
+      "name": "AdminGroupsController",
+      "prefix": "admin/price-groups",
+      "file": "partners/partners.module.ts"
+    },
+    {
+      "name": "PartnerController",
+      "prefix": "partner",
+      "file": "partners/partners.module.ts"
+    },
+    {
+      "name": "DeliveryController",
+      "prefix": "deliveries",
+      "file": "partners/partners.module.ts"
+    },
+    {
+      "name": "ManualMethodsController",
+      "prefix": "admin/manual-payments",
+      "file": "payments/manual-methods.ts"
+    },
+    {
+      "name": "PublicPaymentsController",
+      "prefix": "payments",
+      "file": "payments/payments.module.ts"
+    },
+    {
+      "name": "AdminPaymentsController",
+      "prefix": "admin/payments",
+      "file": "payments/payments.module.ts"
+    },
+    {
+      "name": "PartnerPaymentsController",
+      "prefix": "partner/payments",
+      "file": "payments/payments.module.ts"
+    },
+    {
+      "name": "PosPaymentsController",
+      "prefix": "pos/payments",
+      "file": "payments/payments.module.ts"
+    },
+    {
+      "name": "RefundsController",
+      "prefix": "admin/refunds",
+      "file": "payments/refunds.module.ts"
+    },
+    {
+      "name": "AdminPosQuoteController",
+      "prefix": "admin/pos/quotes",
+      "file": "pos/pos.module.ts"
+    },
+    {
+      "name": "PosUsersController",
+      "prefix": "admin/pos-users",
+      "file": "pos/pos.module.ts"
+    },
+    {
+      "name": "PosController",
+      "prefix": "pos",
+      "file": "pos/pos.module.ts"
+    },
+    {
+      "name": "PricingController",
+      "prefix": "quotes",
+      "file": "pricing/pricing.module.ts"
+    },
+    {
+      "name": "AdminShiftsController",
+      "prefix": "admin/shifts",
+      "file": "shifts/shifts.module.ts"
+    },
+    {
+      "name": "PublicStaysController",
+      "prefix": "stays",
+      "file": "stays/stays.module.ts"
+    },
+    {
+      "name": "AdminStaysController",
+      "prefix": "admin/stays",
+      "file": "stays/stays.module.ts"
+    },
+    {
+      "name": "SuppliersController",
+      "prefix": "admin/suppliers",
+      "file": "suppliers/suppliers.module.ts"
+    },
+    {
+      "name": "SupplyController",
+      "prefix": "admin/supply",
+      "file": "supply/supply.module.ts"
+    },
+    {
+      "name": "AreaSourceController",
+      "prefix": "admin/ride-areas",
+      "file": "transport/area-source.module.ts"
+    },
+    {
+      "name": "GiftAddressesController",
+      "prefix": "gifts/addresses",
+      "file": "transport/area-source.module.ts"
+    },
+    {
+      "name": "TransportPlanningController",
+      "prefix": "admin/transport-plan",
+      "file": "transport/planning.module.ts"
+    },
+    {
+      "name": "PublicRidesController",
+      "prefix": "rides",
+      "file": "transport/rides.module.ts"
+    },
+    {
+      "name": "AdminRidesController",
+      "prefix": "admin/rides",
+      "file": "transport/rides.module.ts"
+    },
+    {
+      "name": "PosRidePaymentsController",
+      "prefix": "pos/rides",
+      "file": "transport/rides.module.ts"
+    },
+    {
+      "name": "TransportController",
+      "prefix": "admin/transport",
+      "file": "transport/transport.module.ts"
+    },
+    {
+      "name": "VouchersController",
+      "prefix": "admin/vouchers",
+      "file": "vouchers/vouchers.module.ts"
+    },
+    {
+      "name": "PublicWeatherController",
+      "prefix": "weather",
+      "file": "weather/weather.module.ts"
+    },
+    {
+      "name": "AdminWeatherController",
+      "prefix": "admin/weather",
+      "file": "weather/weather.module.ts"
+    }
+  ],
+  "routes": [
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/login",
+      "file": "admin/admin.module.ts",
+      "line": 13
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/login-policy",
+      "file": "admin/admin.module.ts",
+      "line": 18
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/login-entry/:slug",
+      "file": "admin/admin.module.ts",
+      "line": 19
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/login/otp",
+      "file": "admin/admin.module.ts",
+      "line": 20
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/security",
+      "file": "admin/admin.module.ts",
+      "line": 21
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/security/logs",
+      "file": "admin/admin.module.ts",
+      "line": 22
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/security/challenge",
+      "file": "admin/admin.module.ts",
+      "line": 23
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/security",
+      "file": "admin/admin.module.ts",
+      "line": 24
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/me",
+      "file": "admin/admin.module.ts",
+      "line": 25
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/logout",
+      "file": "admin/admin.module.ts",
+      "line": 26
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/products",
+      "file": "admin/admin.module.ts",
+      "line": 27
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/products/:id/archive",
+      "file": "admin/admin.module.ts",
+      "line": 30
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/products",
+      "file": "admin/admin.module.ts",
+      "line": 31
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/backups/mysql-export",
+      "file": "admin/backups.module.ts",
+      "line": 56
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/backups",
+      "file": "admin/backups.module.ts",
+      "line": 57
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/backups/:id/download",
+      "file": "admin/backups.module.ts",
+      "line": 58
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/notifications",
+      "file": "admin/notifications.module.ts",
+      "line": 10
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/notifications/read",
+      "file": "admin/notifications.module.ts",
+      "line": 16
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/overview",
+      "file": "admin/overview.module.ts",
+      "line": 20
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/health",
+      "file": "app.module.ts",
+      "line": 36
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/products",
+      "file": "catalog/catalog.module.ts",
+      "line": 22
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/products/:slug/prices",
+      "file": "catalog/catalog.module.ts",
+      "line": 23
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/products/:id/sale-calendar",
+      "file": "catalog/catalog.module.ts",
+      "line": 32
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/products/:slug",
+      "file": "catalog/catalog.module.ts",
+      "line": 33
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/site/contact/requests",
+      "file": "content/contact-requests.module.ts",
+      "line": 20
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/contact-requests",
+      "file": "content/contact-requests.module.ts",
+      "line": 21
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/contact-requests/:id",
+      "file": "content/contact-requests.module.ts",
+      "line": 21
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/site/features",
+      "file": "content/features.module.ts",
+      "line": 30
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/features",
+      "file": "content/features.module.ts",
+      "line": 31
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/features",
+      "file": "content/features.module.ts",
+      "line": 31
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/media",
+      "file": "content/media.module.ts",
+      "line": 66
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/media/:id/trash",
+      "file": "content/media.module.ts",
+      "line": 67
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/media",
+      "file": "content/media.module.ts",
+      "line": 68
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/media/:id/share.jpg",
+      "file": "content/media.module.ts",
+      "line": 77
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/media/:id",
+      "file": "content/media.module.ts",
+      "line": 78
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/site/policies",
+      "file": "content/pages.module.ts",
+      "line": 20
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/site/navigation",
+      "file": "content/pages.module.ts",
+      "line": 20
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/site/pages",
+      "file": "content/pages.module.ts",
+      "line": 20
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/site/contact",
+      "file": "content/pages.module.ts",
+      "line": 20
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/site/pages/:slug",
+      "file": "content/pages.module.ts",
+      "line": 20
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/pages",
+      "file": "content/pages.module.ts",
+      "line": 21
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/pages",
+      "file": "content/pages.module.ts",
+      "line": 21
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/posts",
+      "file": "content/posts.module.ts",
+      "line": 99
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/posts/:slug",
+      "file": "content/posts.module.ts",
+      "line": 100
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/posts",
+      "file": "content/posts.module.ts",
+      "line": 104
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/posts/categories/translations",
+      "file": "content/posts.module.ts",
+      "line": 105
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/posts/categories",
+      "file": "content/posts.module.ts",
+      "line": 107
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/posts/:id/preview",
+      "file": "content/posts.module.ts",
+      "line": 108
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/posts/:id/compare",
+      "file": "content/posts.module.ts",
+      "line": 109
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/posts/:id/revisions",
+      "file": "content/posts.module.ts",
+      "line": 110
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/site/seo",
+      "file": "content/site-seo.module.ts",
+      "line": 9
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/site-seo",
+      "file": "content/site-seo.module.ts",
+      "line": 10
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/site-seo",
+      "file": "content/site-seo.module.ts",
+      "line": 10
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/translations",
+      "file": "content/translations.module.ts",
+      "line": 17
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/translations",
+      "file": "content/translations.module.ts",
+      "line": 18
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/product-types",
+      "file": "content/types.module.ts",
+      "line": 34
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/product-types/:slug",
+      "file": "content/types.module.ts",
+      "line": 34
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/product-types",
+      "file": "content/types.module.ts",
+      "line": 37
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/product-types",
+      "file": "content/types.module.ts",
+      "line": 38
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/destinations",
+      "file": "destinations/destinations.module.ts",
+      "line": 18
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/destinations/:slug",
+      "file": "destinations/destinations.module.ts",
+      "line": 18
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/destinations",
+      "file": "destinations/destinations.module.ts",
+      "line": 19
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/destinations",
+      "file": "destinations/destinations.module.ts",
+      "line": 19
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/gifts",
+      "file": "gifts/gifts.module.ts",
+      "line": 140
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/gifts",
+      "file": "gifts/gifts.module.ts",
+      "line": 141
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/gifts",
+      "file": "gifts/gifts.module.ts",
+      "line": 151
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/gifts",
+      "file": "gifts/gifts.module.ts",
+      "line": 152
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/gifts/orders",
+      "file": "gifts/gifts.module.ts",
+      "line": 153
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/gifts/orders/:id",
+      "file": "gifts/gifts.module.ts",
+      "line": 154
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/inventory",
+      "file": "inventory/inventory.module.ts",
+      "line": 25
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/inventory/config",
+      "file": "inventory/inventory.module.ts",
+      "line": 25
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/inventory/capacity",
+      "file": "inventory/inventory.module.ts",
+      "line": 25
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/inventory/legacy",
+      "file": "inventory/inventory.module.ts",
+      "line": 25
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/smtp",
+      "file": "mail/mail.module.ts",
+      "line": 75
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/smtp",
+      "file": "mail/mail.module.ts",
+      "line": 75
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/smtp/outbox/:id/retry",
+      "file": "mail/mail.module.ts",
+      "line": 75
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/smtp/journal",
+      "file": "mail/mail.module.ts",
+      "line": 75
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/smtp/outbox",
+      "file": "mail/mail.module.ts",
+      "line": 75
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/smtp/test",
+      "file": "mail/mail.module.ts",
+      "line": 75
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/orders/:orderId/emails",
+      "file": "mail/mail.module.ts",
+      "line": 78
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/orders/:orderId/emails/:id/retry",
+      "file": "mail/mail.module.ts",
+      "line": 79
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/counters",
+      "file": "operations/operations.module.ts",
+      "line": 20
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/counters",
+      "file": "operations/operations.module.ts",
+      "line": 20
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/pos/orders",
+      "file": "operations/operations.module.ts",
+      "line": 20
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/reports",
+      "file": "operations/operations.module.ts",
+      "line": 20
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/carts",
+      "file": "orders/carts.module.ts",
+      "line": 19
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/carts/lookup",
+      "file": "orders/carts.module.ts",
+      "line": 20
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/partner/carts",
+      "file": "orders/carts.module.ts",
+      "line": 24
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/partner/carts/:code",
+      "file": "orders/carts.module.ts",
+      "line": 25
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/partner/carts/:code/actions",
+      "file": "orders/carts.module.ts",
+      "line": 26
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/carts",
+      "file": "orders/carts.module.ts",
+      "line": 31
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pos/carts/:code",
+      "file": "orders/carts.module.ts",
+      "line": 32
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/carts/:code/actions",
+      "file": "orders/carts.module.ts",
+      "line": 33
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/carts/pos",
+      "file": "orders/carts.module.ts",
+      "line": 38
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/carts/:code",
+      "file": "orders/carts.module.ts",
+      "line": 39
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/carts/:code/actions",
+      "file": "orders/carts.module.ts",
+      "line": 40
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/orders",
+      "file": "orders/orders.module.ts",
+      "line": 23
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/orders/lookup",
+      "file": "orders/orders.module.ts",
+      "line": 24
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/orders",
+      "file": "orders/orders.module.ts",
+      "line": 29
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/orders/export",
+      "file": "orders/orders.module.ts",
+      "line": 30
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/orders/:id",
+      "file": "orders/orders.module.ts",
+      "line": 31
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/orders/:id/actions",
+      "file": "orders/orders.module.ts",
+      "line": 32
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/orders/:orderId/files",
+      "file": "orders/ticket-files.module.ts",
+      "line": 258
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/orders/:orderId/files",
+      "file": "orders/ticket-files.module.ts",
+      "line": 259
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/orders/:orderId/files/batch",
+      "file": "orders/ticket-files.module.ts",
+      "line": 261
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/orders/:orderId/files/branded",
+      "file": "orders/ticket-files.module.ts",
+      "line": 263
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/orders/:orderId/files/:id/download",
+      "file": "orders/ticket-files.module.ts",
+      "line": 265
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/orders/:orderId/files/:id/revoke",
+      "file": "orders/ticket-files.module.ts",
+      "line": 266
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/orders/files",
+      "file": "orders/ticket-files.module.ts",
+      "line": 278
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/orders/files/:id/download",
+      "file": "orders/ticket-files.module.ts",
+      "line": 279
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/partner/orders/:orderId/files",
+      "file": "orders/ticket-files.module.ts",
+      "line": 284
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/partner/orders/:orderId/files/:id/download",
+      "file": "orders/ticket-files.module.ts",
+      "line": 285
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/partner/orders/:orderId/files/:id/sharing",
+      "file": "orders/ticket-files.module.ts",
+      "line": 286
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/deliveries/files",
+      "file": "orders/ticket-files.module.ts",
+      "line": 293
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/deliveries/files/:id/download",
+      "file": "orders/ticket-files.module.ts",
+      "line": 294
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pos/orders/:orderId/files",
+      "file": "orders/ticket-files.module.ts",
+      "line": 298
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/orders/:orderId/files",
+      "file": "orders/ticket-files.module.ts",
+      "line": 299
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/orders/:orderId/files/batch",
+      "file": "orders/ticket-files.module.ts",
+      "line": 300
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/orders/:orderId/files/branded",
+      "file": "orders/ticket-files.module.ts",
+      "line": 301
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/orders/:orderId/files/:id/revoke",
+      "file": "orders/ticket-files.module.ts",
+      "line": 302
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pos/orders/:orderId/files/:id/download",
+      "file": "orders/ticket-files.module.ts",
+      "line": 303
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/ticket-stock",
+      "file": "orders/ticket-stock.module.ts",
+      "line": 99
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ticket-stock",
+      "file": "orders/ticket-stock.module.ts",
+      "line": 100
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/ticket-stock/:id/manage",
+      "file": "orders/ticket-stock.module.ts",
+      "line": 101
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/ticket-stock/orders/:id",
+      "file": "orders/ticket-stock.module.ts",
+      "line": 102
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/partners",
+      "file": "partners/partners.module.ts",
+      "line": 9
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/partners",
+      "file": "partners/partners.module.ts",
+      "line": 10
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/partners/:id/ledger",
+      "file": "partners/partners.module.ts",
+      "line": 11
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/partners/:id/repayments",
+      "file": "partners/partners.module.ts",
+      "line": 12
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/price-groups",
+      "file": "partners/partners.module.ts",
+      "line": 16
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/price-groups",
+      "file": "partners/partners.module.ts",
+      "line": 17
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/partner/login",
+      "file": "partners/partners.module.ts",
+      "line": 21
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/partner/logout",
+      "file": "partners/partners.module.ts",
+      "line": 22
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/partner/me",
+      "file": "partners/partners.module.ts",
+      "line": 23
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/partner/products",
+      "file": "partners/partners.module.ts",
+      "line": 24
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/partner/quotes",
+      "file": "partners/partners.module.ts",
+      "line": 25
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/partner/orders",
+      "file": "partners/partners.module.ts",
+      "line": 26
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/partner/orders",
+      "file": "partners/partners.module.ts",
+      "line": 27
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/partner/orders/:id",
+      "file": "partners/partners.module.ts",
+      "line": 28
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/partner/orders/:id/credit",
+      "file": "partners/partners.module.ts",
+      "line": 29
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/partner/orders/:id/shares/revoke",
+      "file": "partners/partners.module.ts",
+      "line": 30
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/partner/orders/:id/share",
+      "file": "partners/partners.module.ts",
+      "line": 31
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/deliveries/lookup",
+      "file": "partners/partners.module.ts",
+      "line": 37
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/manual-payments",
+      "file": "payments/manual-methods.ts",
+      "line": 20
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/manual-payments",
+      "file": "payments/manual-methods.ts",
+      "line": 21
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/payments/options",
+      "file": "payments/payments.module.ts",
+      "line": 15
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments/checkout",
+      "file": "payments/payments.module.ts",
+      "line": 16
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments/bundles",
+      "file": "payments/payments.module.ts",
+      "line": 17
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments/bundles/lookup",
+      "file": "payments/payments.module.ts",
+      "line": 18
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/payments/vnpay/ipn",
+      "file": "payments/payments.module.ts",
+      "line": 19
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/payments/vnpay/return",
+      "file": "payments/payments.module.ts",
+      "line": 20
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments/paypal/capture",
+      "file": "payments/payments.module.ts",
+      "line": 21
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments/paypal/webhook",
+      "file": "payments/payments.module.ts",
+      "line": 22
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments/sepay/card-ipn",
+      "file": "payments/payments.module.ts",
+      "line": 23
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/payments/sepay/card-return",
+      "file": "payments/payments.module.ts",
+      "line": 24
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments/sepay/oauth/token",
+      "file": "payments/payments.module.ts",
+      "line": 25
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/payments/sepay/webhook",
+      "file": "payments/payments.module.ts",
+      "line": 26
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/payments/bundles",
+      "file": "payments/payments.module.ts",
+      "line": 30
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/payments/bundles/collect",
+      "file": "payments/payments.module.ts",
+      "line": 31
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/payments",
+      "file": "payments/payments.module.ts",
+      "line": 32
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/payments",
+      "file": "payments/payments.module.ts",
+      "line": 33
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/payments/reconciliation/preview",
+      "file": "payments/payments.module.ts",
+      "line": 34
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/payments/reconciliation/resolve",
+      "file": "payments/payments.module.ts",
+      "line": 35
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/payments/events",
+      "file": "payments/payments.module.ts",
+      "line": 36
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/payments/checkout",
+      "file": "payments/payments.module.ts",
+      "line": 37
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/payments/test-checkout",
+      "file": "payments/payments.module.ts",
+      "line": 38
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/partner/payments/checkout",
+      "file": "payments/payments.module.ts",
+      "line": 42
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/payments/checkout",
+      "file": "payments/payments.module.ts",
+      "line": 46
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/refunds",
+      "file": "payments/refunds.module.ts",
+      "line": 83
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/refunds/preview",
+      "file": "payments/refunds.module.ts",
+      "line": 84
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/refunds",
+      "file": "payments/refunds.module.ts",
+      "line": 85
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/pos/quotes",
+      "file": "pos/pos.module.ts",
+      "line": 21
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/pos-users",
+      "file": "pos/pos.module.ts",
+      "line": 23
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/pos-users",
+      "file": "pos/pos.module.ts",
+      "line": 23
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pos/shifts",
+      "file": "pos/pos.module.ts",
+      "line": 27
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/shifts/:id/cash",
+      "file": "pos/pos.module.ts",
+      "line": 28
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pos/shifts/:id/cash/export",
+      "file": "pos/pos.module.ts",
+      "line": 29
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pos/shifts/:id/print",
+      "file": "pos/pos.module.ts",
+      "line": 30
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pos/shifts/:id/export",
+      "file": "pos/pos.module.ts",
+      "line": 31
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pos/shifts/:id",
+      "file": "pos/pos.module.ts",
+      "line": 32
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/shifts",
+      "file": "pos/pos.module.ts",
+      "line": 33
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/shifts/:id/close",
+      "file": "pos/pos.module.ts",
+      "line": 34
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/login",
+      "file": "pos/pos.module.ts",
+      "line": 35
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/logout",
+      "file": "pos/pos.module.ts",
+      "line": 36
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pos/me",
+      "file": "pos/pos.module.ts",
+      "line": 37
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pos/products",
+      "file": "pos/pos.module.ts",
+      "line": 38
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/quotes",
+      "file": "pos/pos.module.ts",
+      "line": 39
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pos/counters",
+      "file": "pos/pos.module.ts",
+      "line": 40
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/counters",
+      "file": "pos/pos.module.ts",
+      "line": 41
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/orders",
+      "file": "pos/pos.module.ts",
+      "line": 42
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pos/orders",
+      "file": "pos/pos.module.ts",
+      "line": 43
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pos/orders/:id/print",
+      "file": "pos/pos.module.ts",
+      "line": 44
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pos/orders/:id",
+      "file": "pos/pos.module.ts",
+      "line": 45
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/orders/:id/actions",
+      "file": "pos/pos.module.ts",
+      "line": 46
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/quotes",
+      "file": "pricing/pricing.module.ts",
+      "line": 28
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/shifts",
+      "file": "shifts/shifts.module.ts",
+      "line": 45
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/shifts/:id/cash",
+      "file": "shifts/shifts.module.ts",
+      "line": 46
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/shifts/:id/cash/export",
+      "file": "shifts/shifts.module.ts",
+      "line": 47
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/shifts/:id/print",
+      "file": "shifts/shifts.module.ts",
+      "line": 48
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/shifts/:id/export",
+      "file": "shifts/shifts.module.ts",
+      "line": 49
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/shifts/:id",
+      "file": "shifts/shifts.module.ts",
+      "line": 50
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/shifts",
+      "file": "shifts/shifts.module.ts",
+      "line": 51
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/shifts/:id/close",
+      "file": "shifts/shifts.module.ts",
+      "line": 52
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/stays",
+      "file": "stays/stays.module.ts",
+      "line": 105
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/stays/:slug",
+      "file": "stays/stays.module.ts",
+      "line": 106
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/stays/search",
+      "file": "stays/stays.module.ts",
+      "line": 107
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/stays/quote",
+      "file": "stays/stays.module.ts",
+      "line": 108
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/stays/lookup",
+      "file": "stays/stays.module.ts",
+      "line": 109
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/stays",
+      "file": "stays/stays.module.ts",
+      "line": 110
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/stays",
+      "file": "stays/stays.module.ts",
+      "line": 114
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/stays",
+      "file": "stays/stays.module.ts",
+      "line": 115
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/stays/:id/delete",
+      "file": "stays/stays.module.ts",
+      "line": 116
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/stays/:id/calendar",
+      "file": "stays/stays.module.ts",
+      "line": 117
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/stays/bookings",
+      "file": "stays/stays.module.ts",
+      "line": 118
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/stays/bookings/:id",
+      "file": "stays/stays.module.ts",
+      "line": 119
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/stays/bookings/:id/collect",
+      "file": "stays/stays.module.ts",
+      "line": 120
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/stays/bookings/:id/email",
+      "file": "stays/stays.module.ts",
+      "line": 121
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/stays/payment-status/:code",
+      "file": "stays/stays.module.ts",
+      "line": 122
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/stays/vouchers",
+      "file": "stays/stays.module.ts",
+      "line": 123
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/stays/vouchers",
+      "file": "stays/stays.module.ts",
+      "line": 124
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/suppliers",
+      "file": "suppliers/suppliers.module.ts",
+      "line": 15
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/suppliers",
+      "file": "suppliers/suppliers.module.ts",
+      "line": 15
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/supply/statements/:id",
+      "file": "supply/supply.module.ts",
+      "line": 67
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/supply/statements/:id/export",
+      "file": "supply/supply.module.ts",
+      "line": 67
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/supply/alerts",
+      "file": "supply/supply.module.ts",
+      "line": 67
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/supply/lots/:id/history",
+      "file": "supply/supply.module.ts",
+      "line": 67
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/supply/lots/:id/history/export",
+      "file": "supply/supply.module.ts",
+      "line": 67
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/supply/lots",
+      "file": "supply/supply.module.ts",
+      "line": 67
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/supply/lots/batch",
+      "file": "supply/supply.module.ts",
+      "line": 67
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/supply/lots",
+      "file": "supply/supply.module.ts",
+      "line": 67
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/supply/lots/:id/manage",
+      "file": "supply/supply.module.ts",
+      "line": 67
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/supply/lots/:id/config",
+      "file": "supply/supply.module.ts",
+      "line": 67
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/supply/orders/:id",
+      "file": "supply/supply.module.ts",
+      "line": 67
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/supply/orders/:id/allocate",
+      "file": "supply/supply.module.ts",
+      "line": 67
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/supply/balances",
+      "file": "supply/supply.module.ts",
+      "line": 67
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/supply/payments",
+      "file": "supply/supply.module.ts",
+      "line": 67
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/supply/profit",
+      "file": "supply/supply.module.ts",
+      "line": 67
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/ride-areas",
+      "file": "transport/area-source.module.ts",
+      "line": 12
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/gifts/addresses",
+      "file": "transport/area-source.module.ts",
+      "line": 23
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/transport-plan",
+      "file": "transport/planning.module.ts",
+      "line": 13
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/transport-plan",
+      "file": "transport/planning.module.ts",
+      "line": 14
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/transport-plan/sections/:section",
+      "file": "transport/planning.module.ts",
+      "line": 15
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/transport-plan/preview",
+      "file": "transport/planning.module.ts",
+      "line": 16
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rides",
+      "file": "transport/rides.module.ts",
+      "line": 174
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rides/destinations",
+      "file": "transport/rides.module.ts",
+      "line": 174
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rides/links",
+      "file": "transport/rides.module.ts",
+      "line": 174
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rides/status",
+      "file": "transport/rides.module.ts",
+      "line": 174
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rides/payment",
+      "file": "transport/rides.module.ts",
+      "line": 174
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rides/quotes",
+      "file": "transport/rides.module.ts",
+      "line": 174
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rides",
+      "file": "transport/rides.module.ts",
+      "line": 174
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/rides",
+      "file": "transport/rides.module.ts",
+      "line": 175
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/rides/export",
+      "file": "transport/rides.module.ts",
+      "line": 175
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/rides/links",
+      "file": "transport/rides.module.ts",
+      "line": 175
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/rides/:id/payment",
+      "file": "transport/rides.module.ts",
+      "line": 175
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/rides/pools/:id/guests",
+      "file": "transport/rides.module.ts",
+      "line": 175
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/rides/:id/agency-cost",
+      "file": "transport/rides.module.ts",
+      "line": 175
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/rides/:id",
+      "file": "transport/rides.module.ts",
+      "line": 175
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/pos/rides",
+      "file": "transport/rides.module.ts",
+      "line": 176
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/rides",
+      "file": "transport/rides.module.ts",
+      "line": 181
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/rides/cash",
+      "file": "transport/rides.module.ts",
+      "line": 188
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/rides/status",
+      "file": "transport/rides.module.ts",
+      "line": 193
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/pos/rides/payment",
+      "file": "transport/rides.module.ts",
+      "line": 193
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/transport",
+      "file": "transport/transport.module.ts",
+      "line": 11
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/transport/:id",
+      "file": "transport/transport.module.ts",
+      "line": 20
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/vouchers",
+      "file": "vouchers/vouchers.module.ts",
+      "line": 14
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/vouchers",
+      "file": "vouchers/vouchers.module.ts",
+      "line": 14
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/weather/:id",
+      "file": "weather/weather.module.ts",
+      "line": 36
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/weather",
+      "file": "weather/weather.module.ts",
+      "line": 37
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/weather",
+      "file": "weather/weather.module.ts",
+      "line": 37
+    }
+  ]
+}

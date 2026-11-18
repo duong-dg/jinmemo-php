@@ -1302,3 +1302,10 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Thêm `--relations` cho `bin/check-transfer.php`: kiểm 61 khóa chính, 26 unique và 55 khóa ngoại khai báo trong schema nguồn đóng băng. Hai lượt đọc không chạy SQL, phát hiện khóa đơn/ghép trùng và bản ghi thiếu cha, báo riêng bảng đích chưa xuất/ngoài whitelist.
 - Chỉ mục hash có giới hạn, không lưu ID khách hàng trong báo cáo; hỗ trợ UNIQUE nullable, UUID và số nguyên chính xác. Đã qua kiểm thử lỗi/giới hạn/riêng tư/CLI và bộ kiểm file cũ; mẫu ràng buộc được tái đối chiếu với schema nguồn.
 - Chưa kiểm tham chiếu JSON/đa loại, ledger/tồn/collation đích hoặc importer toàn bộ; `importReady` vẫn false. Không đổi schema 052, không cần chạy migration. Xem [cách dùng và đọc kết quả](docs/TRANSFER-FILE-AUDIT.md).
+
+## Danh mục địa chỉ và lưu cấu hình xe theo mục — đợt 126
+
+- Chuyển danh mục tỉnh/huyện/xã v1/v2: admin xem trước rồi thêm khu vực còn thiếu, giữ tên/phụ thu đã sửa; khách chọn tỉnh/xã để thêm vào địa chỉ giao quà ở form quà và chốt chung, hỗ trợ VI/EN và nhập tay khi dịch vụ ngoài lỗi.
+- Cache 24 giờ/128 mục, giới hạn HTTP/timeout/backoff, chỉ gọi upstream cố định. Thêm lưu từng mục xe/khu vực/giá/thiết lập bằng section version, giữ thay đổi ở mục khác và kiểm đơn/nhóm xe đang hoạt động trước khi lưu.
+- **Cập nhật database: import database/053-area-source.sql** sau git pull (hoặc chạy installer theo quy trình hiện có). Không nhập dữ liệu cũ, đổi giá hoặc chỉnh đơn khách. Chi tiết: [danh mục và cấu hình xe](docs/AREA-SOURCE.md).
+- Đã kiểm MySQL/HTTP, hai worker đồng thời, Node DOM và regression quà/chốt đơn/cấu hình xe. Chưa kiểm upstream/cPanel/layout thật. Đã lập baseline khai báo 70 controller/269 API nguồn để rà tiếp, không coi số lượng là chứng nhận chuyển đủ; [phần còn thiếu](docs/PORT-COMPLETION.md).

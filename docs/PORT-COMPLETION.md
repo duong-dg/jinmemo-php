@@ -1,9 +1,10 @@
 # Phần chuyển đổi còn cần hoàn tất
 
-Cập nhật sau đợt 125 (schema 052). Đây là danh sách phần thiếu đã xác nhận, không phải chứng nhận đã đối chiếu hết mọi endpoint của nguồn.
+Cập nhật sau đợt 126 (schema 053). Đây là danh sách phần thiếu đã xác nhận, không phải chứng nhận đã đối chiếu hết mọi endpoint của nguồn.
 
 | Phần | Trạng thái và điều kiện hoàn tất |
 | --- | --- |
+| Danh mục địa chỉ và cấu hình xe | Đã chuyển API tỉnh/huyện/xã v1/v2, cache có giới hạn, admin xem trước/thêm khu vực giữ mục cũ, bộ chọn địa chỉ giao quà VI/EN ở hai form và lưu riêng từng mục cấu hình xe chống ghi đè chéo. Đã kiểm MySQL/HTTP/Node DOM, còn kiểm provider/layout/hosting thật; xem AREA-SOURCE.md |
 | Thời tiết | Đã chuyển cấu hình, API, cache/hạn mức, gợi ý và hiển thị; xem WEATHER.md. Còn kiểm tích hợp bằng tài khoản thật trên hosting |
 | OTP và chính sách bảo mật admin | Đã chuyển OTP đăng nhập/đổi chính sách, đường dẫn riêng, nhật ký và geo opt-in; xem ADMIN-SECURITY.md. Còn kiểm SMTP thật và cấu hình hosting; không import phiên/challenge Node |
 | Sao lưu/khôi phục trong ứng dụng | Đã có danh sách/tải archive với SHA-256, trạng thái lịch và xuất SQL database PHP; xem BACKUP-RESTORE-PHP.md. Đã thêm CLI archive database PHP mã hóa GPG, kiểm giải mã và retention riêng. Đã thêm archive ứng dụng PHP gồm DB/media/file vé/khóa/cấu hình/source Git, có gate drain request/worker và kiểm phục hồi riêng. Đã có CLI kiểm tra integrity/cấu trúc archive độc lập, không chạy SQL/ghi đè hoặc giả marker phục hồi. Còn tự cài/xác minh cron, thử trên cPanel thật và cấu hình phục hồi tài khoản/SSL/cron/offsite; bản database vẫn được phân biệt riêng |
@@ -11,5 +12,10 @@ Cập nhật sau đợt 125 (schema 052). Đây là danh sách phần thiếu đ
 | Chuyển dữ liệu cũ | Đã có importer ảnh/bài viết riêng và CLI kiểm file transfer Node không cần DB (format/counts/schema/giá trị; thêm --relations kiểm PK/unique/FK khai báo, chưa kiểm JSON/đa loại/ledger; importReady luôn false). Chưa có importer toàn bộ danh mục, đơn, tồn, ledger và quan hệ; xem MIGRATION.md, TRANSFER-FILE-AUDIT.md và TRANSFER-CONTRACT.json |
 | Thanh toán | Đã có nhiều luồng vận hành, nhưng vẫn cần đối chiếu chi tiết nguồn và kiểm provider thật; xem PAYMENT-PORT-STATUS.md. Sổ hoàn không đồng nghĩa đã chuyển tiền hoàn qua ngân hàng/provider |
 | Kiểm trước vận hành | Cần chạy bộ chức năng với dữ liệu staging thực tế, hosting cPanel, SMTP/provider và các quyền vai trò. Không dùng hai database độc lập cùng trừ tồn hoặc ghi thu |
+| Đối chiếu toàn bộ nguồn | Đã lập baseline 70 controller/269 khai báo API tại revision 7e3578d; SOURCE-API-INVENTORY.json lưu method/path/file/line/hash để rà từng luồng. Đây chỉ là danh mục nguồn, phpParityVerified=false; chưa chứng nhận từng endpoint có hành vi tương đương. Route PHP có alias/regex nên tìm tên không đủ kết luận còn thiếu hay đã hoàn tất |
 
 Bản nguồn không được thay đổi trong quá trình port. Các tính năng đã có ở PHP không tự chứng minh importer hoặc tính tương đương toàn bộ nguồn đã hoàn tất. PDF tiếp tục chỉ đính kèm/giao file gốc theo phạm vi đã chốt.
+
+Ưu tiên tiếp theo: hoàn tất đối chiếu chức năng/luồng còn thiếu từ baseline, hoàn thiện nhập danh mục/đơn/tồn/ledger có dry-run và đối soát, rồi mới import một lần theo yêu cầu. Kiểm cPanel/SMTP/payment thật cần môi trường/tài khoản thực tế; các kiểm thử local không thay thế bước đó. Tự cài cron và phục hồi tài khoản/SSL/offsite vẫn còn như bảng trên, không tự cấu hình khi git pull.
+
+Tái đối chiếu baseline bằng `node tests/build-source-api-inventory.mjs /path/to/node-repository --check`. Script chỉ phân tích AST TypeScript và đọc Git revision, không khởi động ứng dụng nguồn hay kết nối database.
