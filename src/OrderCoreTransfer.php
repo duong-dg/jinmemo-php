@@ -67,6 +67,7 @@ final class OrderCoreTransfer
     private static function integer(mixed $v):bool{return is_int($v)&&$v>=0&&$v<=9007199254740991;}
     private static function text(mixed $v,int $min,int $max):bool{return is_string($v)&&!str_contains($v,"\0")&&preg_match('//u',$v)===1&&mb_strlen($v,'UTF-8')>=$min&&mb_strlen($v,'UTF-8')<=$max;}
     private static function uuid(mixed $v):bool{return is_string($v)&&preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/iD',$v)===1;}
+    public static function validateRecord(array $row):void{self::valid($row);}
     private static function valid(array $r):void
     {
         if(!self::uuid($r['id'])||!self::uuid($r['request_id'])||!preg_match('/^(?:JM|JG)[A-F0-9]{10}$/D',$r['code'])||!preg_match('/^[a-f0-9]{64}$/D',$r['request_hash'])||!preg_match('/^[a-f0-9]{64}$/D',$r['access_hash'])||!preg_match('/^[1-9][0-9]{0,9}$/D',(string)$r['version'])||(int)$r['version']>2147483646||!self::text($r['instructions'],0,65535)||strlen($r['instructions'])>65535)throw new RuntimeException();

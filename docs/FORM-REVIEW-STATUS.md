@@ -71,3 +71,5 @@ Form chốt và gom mã có lựa chọn thủ công/online theo LIVE; bắt bu�
 Form riêng theo ID dòng ở giỏ vé và chốt đơn chung, có sức chứa xe riêng, giờ/số chỗ xe ghép, chuyến bay và khứ hồi. Review hiển thị tuyến, ngày/giờ, số khách trước nút xác nhận; khóa ô chuyến khi review, giữ giá trị lúc làm mới giá, retry body trip cố định. Không dùng chung input giữa các dòng. Đã xem VI desktop/EN mobile với fixture không tạo đơn; test frontend và backend transport/carts/full HTTP qua. Schema giữ 052.
 
 Đợt 135: danh sách voucher phân biệt chờ chuyển dữ liệu, không hiển thị 0 lượt khi lịch sử chưa nhập. Form giải thích lưu/bật không mở khóa và bỏ cờ runtime khỏi payload. Node DOM chạy script admin/form đầy đủ và regression editor; chưa kiểm layout/cPanel thật. Xem IMPORT-VOUCHERS.md.
+
+Đợt 139: thêm Dữ liệu chuyển đổi bên trong nhóm Cấu hình website, tìm kiếm/phân trang đơn gốc và thẻ chi tiết readonly. Nêu rõ trạng thái kho chờ; chỉ hiển thị text đã kiểm hash, tiền bằng BigInt để không làm tròn, không dùng innerHTML hoặc nút nghiệp vụ. HTTP/Node DOM đã kiểm, chưa chứng nhận layout trình duyệt/cPanel thật.

@@ -1381,3 +1381,11 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Thêm bin/import-order-relations.php cho kênh CTV/POS và lịch sử thao tác, kiểm lõi đơn/metadata cha, kênh trùng và liên kết hai chiều. Giữ trường nguồn, actor/note/UTC microsecond; không suy ra order_version không có trong export.
 - Giữ cả UUID request_hash của REVOKE_FILE đúng nguồn. Mặc định dry-run, apply cần fingerprint, ghi kho chờ nguyên khối/audit/replay; không thực thi lại thao tác hoặc ghi đơn vận hành.
 - **Import database/060-order-relation-holding.sql sau git pull**. Chưa nhập thật hoặc mở khóa; còn thu tiền/tồn/ledger/các liên kết khác và xuất bản đơn nguyên khối. Xem [liên kết/lịch sử trong kho chờ](docs/IMPORT-ORDER-RELATIONS.md).
+
+## Luồng chuyển dữ liệu tổng hợp — đợt 139
+
+- Thêm bin/import-transfer.php đọc trực tiếp export đủ 61 bảng, kiểm schema/PK/unique/FK, đối soát chéo đơn/thu/nợ/voucher/tồn/lô/kho mã/giỏ, rồi lưu nguyên bản vào kho chờ chung. Giữ BIGINT lớn và UUID hash legacy; dry-run mặc định, apply cần fingerprint, atomic/rollback/replay/hai worker.
+- Thêm kiểm ảnh/file vé gốc độc lập hoặc gộp trước apply, bytes/hash/dimensions; không xử lý lại PDF. Có runtimePlan chỉ rõ cột cần adapter và dữ liệu không được export. Chỉ có export SQL chưa đủ khôi phục secret, khóa mail, gateway attempts hoặc bytes PDF/ảnh. operationalReady vẫn false, chưa publish dữ liệu vận hành.
+- **Import database/061-full-transfer-holding.sql sau git pull**. Chưa nhập dữ liệu thật. Đã chạy 167 bài hồi quy PHP/Node cục bộ, cập nhật các harness/fixture cũ và chạy lại ca lỗi; chưa thay kiểm cPanel/provider thật. Xem [luồng tổng hợp và giới hạn](docs/FULL-TRANSFER.md).
+
+Admin có **Cấu hình website → Dữ liệu chuyển đổi** để xem kho chờ/tìm đơn gốc và lịch sử; chỉ admin, không lộ proof/hash, không thu/gửi/kích hoạt. Tổng hợp 167 bài hồi quy và hai bài mới của màn đối chiếu: 169 bài độc lập đạt; 18 bài nhóm chuyển dữ liệu đã chạy lại sau tích hợp cuối.
