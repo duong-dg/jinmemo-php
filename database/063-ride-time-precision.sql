@@ -1,0 +1,2 @@
+SET time_zone='+00:00';
+ALTER TABLE jingo_ride_bookings MODIFY COLUMN created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);

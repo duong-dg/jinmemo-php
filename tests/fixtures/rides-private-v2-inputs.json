@@ -1,0 +1,163 @@
+[
+  {
+    "roundTrip": false,
+    "from": "a1",
+    "to": "b1",
+    "passengers": 2,
+    "date": "2025-07-01",
+    "time": "10:00",
+    "flexMinutes": 0,
+    "mode": "PRIVATE",
+    "locale": "vi",
+    "returnTime": "18:00",
+    "payment": "PAY_LATER",
+    "requestKey": "00000000-0000-4000-8000-000000099700",
+    "vehicleId": "v1",
+    "expectedTotal": 230,
+    "contact": {
+      "name": "Khách xe 0",
+      "phone": "+84 123456789",
+      "email": "guest@example.test"
+    },
+    "pickup": "Sảnh / Gate A",
+    "dropoff": "Khách sạn / Gate B",
+    "note": "Ghi chú / khách VIP"
+  },
+  {
+    "from": "a1",
+    "to": "b1",
+    "passengers": 2,
+    "date": "2025-07-01",
+    "time": "10:00",
+    "flexMinutes": 0,
+    "mode": "PRIVATE",
+    "locale": "en",
+    "payment": "PAY_LATER",
+    "requestKey": "00000000-0000-4000-8000-000000099701",
+    "vehicleId": "v1",
+    "expectedTotal": 115,
+    "contact": {
+      "name": "Khách xe 1",
+      "phone": "+84 123456789",
+      "email": "guest@example.test"
+    },
+    "pickup": "Sảnh / Gate A",
+    "dropoff": "Khách sạn / Gate B",
+    "note": "Ghi chú / khách VIP"
+  },
+  {
+    "roundTrip": false,
+    "from": "a1",
+    "to": "b1",
+    "passengers": 2,
+    "date": "2025-07-01",
+    "time": "10:00",
+    "flexMinutes": 0,
+    "mode": "PRIVATE",
+    "locale": "vi",
+    "payment": "PAY_LATER",
+    "requestKey": "00000000-0000-4000-8000-000000099702",
+    "vehicleId": "v1",
+    "expectedTotal": 115,
+    "contact": {
+      "name": "Khách xe 2",
+      "phone": "+84 123456789",
+      "email": "guest@example.test"
+    },
+    "pickup": "Sảnh / Gate A",
+    "dropoff": "Khách sạn / Gate B",
+    "note": "Ghi chú / khách VIP"
+  },
+  {
+    "roundTrip": false,
+    "from": "a1",
+    "to": "b1",
+    "passengers": 2,
+    "date": "2025-07-01",
+    "time": "10:00",
+    "flexMinutes": 0,
+    "mode": "PRIVATE",
+    "locale": "en",
+    "payment": "PAY_LATER",
+    "requestKey": "00000000-0000-4000-8000-000000099703",
+    "vehicleId": "v1",
+    "expectedTotal": 115,
+    "contact": {
+      "name": "Khách xe 3",
+      "phone": "+84 123456789",
+      "email": "guest@example.test"
+    },
+    "pickup": "Sảnh / Gate A",
+    "dropoff": "Khách sạn / Gate B",
+    "note": "Ghi chú / khách VIP"
+  },
+  {
+    "roundTrip": false,
+    "from": "a1",
+    "to": "b1",
+    "passengers": 2,
+    "date": "2025-07-01",
+    "time": "10:00",
+    "flexMinutes": 0,
+    "mode": "PRIVATE",
+    "locale": "vi",
+    "payment": "PAY_LATER",
+    "requestKey": "00000000-0000-4000-8000-000000099704",
+    "vehicleId": "v1",
+    "expectedTotal": 115,
+    "contact": {
+      "name": "Khách xe 4",
+      "phone": "+84 123456789",
+      "email": "guest@example.test"
+    },
+    "pickup": "Sảnh / Gate A",
+    "dropoff": "Khách sạn / Gate B",
+    "note": "Ghi chú / khách VIP"
+  },
+  {
+    "roundTrip": false,
+    "from": "a1",
+    "to": "b1",
+    "passengers": 2,
+    "date": "2025-07-01",
+    "time": "10:00",
+    "flexMinutes": 0,
+    "mode": "PRIVATE",
+    "locale": "en",
+    "payment": "PAY_LATER",
+    "requestKey": "00000000-0000-4000-8000-000000099705",
+    "vehicleId": "v1",
+    "expectedTotal": 115,
+    "contact": {
+      "name": "Khách xe 5",
+      "phone": "+84 123456789",
+      "email": "guest@example.test"
+    },
+    "pickup": "Sảnh / Gate A",
+    "dropoff": "Khách sạn / Gate B",
+    "note": "Ghi chú / khách VIP"
+  },
+  {
+    "roundTrip": false,
+    "from": "a1",
+    "to": "b1",
+    "passengers": 2,
+    "date": "2025-07-01",
+    "time": "10:00",
+    "flexMinutes": 0,
+    "mode": "PRIVATE",
+    "locale": "vi",
+    "payment": "PAY_LATER",
+    "requestKey": "00000000-0000-4000-8000-000000099706",
+    "vehicleId": "v1",
+    "expectedTotal": 115,
+    "contact": {
+      "name": "Khách xe 6",
+      "phone": "+84 123456789",
+      "email": "guest@example.test"
+    },
+    "pickup": "Sảnh / Gate A",
+    "dropoff": "Khách sạn / Gate B",
+    "note": "Ghi chú / khách VIP"
+  }
+]

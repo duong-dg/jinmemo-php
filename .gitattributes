@@ -7,3 +7,4 @@ tests/fixtures/refunds-v2-node.sql text eol=lf
 tests/fixtures/refunds-*-v2-node.sql text eol=lf
 tests/fixtures/gift-bundles-v2-node.sql text eol=lf
 tests/fixtures/gift-bundles-mixed-v2-node.sql text eol=lf
+tests/fixtures/rides-private*.sql text eol=lf

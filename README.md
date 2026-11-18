@@ -1399,3 +1399,5 @@ Admin có **Cấu hình website → Dữ liệu chuyển đổi** để xem kho 
 Đợt 143: thêm importer **lịch sử hoàn vào jingo_refunds** từ full-v2, kiểm sáu nhóm cha và khoản thực thu gốc, giữ fingerprint/thời gian, không gọi chuyển tiền. Cha/khoản thu chưa có hoặc chưa khớp thì chặn. Xem [IMPORT-REFUNDS.md](docs/IMPORT-REFUNDS.md).
 
 Đợt 144: `--with-gift-bundles` nhập nguyên tử quà + mã tổng chỉ gồm quà + khoản thu gốc vào runtime. Mã nhập chờ đối soát hoàn và cấp liên kết mới, không tạo hash tra cứu giả. Cài schema bằng `php bin/install.php`. Xem [IMPORT-GIFT-BUNDLES.md](docs/IMPORT-GIFT-BUNDLES.md).
+
+Đợt 145: importer kế hoạch xe + đơn xe riêng WEB/PAY_LATER chưa thu, giữ giá/trạng thái/version/UTC microseconds và request Node. Có dry-run, fingerprint, rollback và chống ghi đè; xe ghép/đã thu/POS/QR/mã tổng còn chặn. Xem [IMPORT-PRIVATE-RIDES.md](docs/IMPORT-PRIVATE-RIDES.md). Schema nâng bằng `php bin/install.php`.

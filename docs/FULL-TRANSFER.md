@@ -108,3 +108,5 @@ CLI tự nhận v1/full-v2. V2 kiểm hợp đồng 68 bảng nguồn + manifest
 Đợt 143 có adapter runtime cho lịch sử hoàn (IMPORT-REFUNDS.md). Cha/khoản thu vận hành phải khớp trước, khác với kho chờ chưa thể dùng làm cha runtime. Lệnh lưu kho chờ không tự gọi importer hoàn.
 
 Đợt 144: adapter runtime quà/mã tổng quà có luồng cấp liên kết thay thế sau đối soát, xem IMPORT-GIFT-BUNDLES.md. Lệnh kho chờ chung vẫn không tự gọi adapter hoặc mở vận hành.
+
+Đợt 145 thêm adapter runtime cho kế hoạch/xe riêng chưa thu (IMPORT-PRIVATE-RIDES.md); không tự chạy từ lệnh kho chờ. Còn các nhánh ghép/đã thu/POS/QR/mã tổng; không chứng nhận toàn bộ xe hoặc publication đã hoàn tất.
