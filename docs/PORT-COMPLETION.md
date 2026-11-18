@@ -1,9 +1,10 @@
 # Phần chuyển đổi còn cần hoàn tất
 
-Cập nhật sau đợt 126 (schema 053). Đây là danh sách phần thiếu đã xác nhận, không phải chứng nhận đã đối chiếu hết mọi endpoint của nguồn.
+Cập nhật sau đợt 127 (schema 053). Đây là danh sách phần thiếu đã xác nhận, không phải chứng nhận đã đối chiếu hết mọi endpoint của nguồn.
 
 | Phần | Trạng thái và điều kiện hoàn tất |
 | --- | --- |
+| Tìm/xuất đơn xe | Đã chuyển tìm mã/tên/điện thoại/email, API và nút xuất CSV đúng 25 cột nguồn, filter/sort/10.000 dòng/audit; đã kiểm fixture Node và MySQL/HTTP/DOM. Còn kiểm trình duyệt/hosting và ứng dụng bảng tính thật; xem RIDE-EXPORT.md |
 | Danh mục địa chỉ và cấu hình xe | Đã chuyển API tỉnh/huyện/xã v1/v2, cache có giới hạn, admin xem trước/thêm khu vực giữ mục cũ, bộ chọn địa chỉ giao quà VI/EN ở hai form và lưu riêng từng mục cấu hình xe chống ghi đè chéo. Đã kiểm MySQL/HTTP/Node DOM, còn kiểm provider/layout/hosting thật; xem AREA-SOURCE.md |
 | Thời tiết | Đã chuyển cấu hình, API, cache/hạn mức, gợi ý và hiển thị; xem WEATHER.md. Còn kiểm tích hợp bằng tài khoản thật trên hosting |
 | OTP và chính sách bảo mật admin | Đã chuyển OTP đăng nhập/đổi chính sách, đường dẫn riêng, nhật ký và geo opt-in; xem ADMIN-SECURITY.md. Còn kiểm SMTP thật và cấu hình hosting; không import phiên/challenge Node |

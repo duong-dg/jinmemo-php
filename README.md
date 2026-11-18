@@ -1309,3 +1309,9 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Cache 24 giờ/128 mục, giới hạn HTTP/timeout/backoff, chỉ gọi upstream cố định. Thêm lưu từng mục xe/khu vực/giá/thiết lập bằng section version, giữ thay đổi ở mục khác và kiểm đơn/nhóm xe đang hoạt động trước khi lưu.
 - **Cập nhật database: import database/053-area-source.sql** sau git pull (hoặc chạy installer theo quy trình hiện có). Không nhập dữ liệu cũ, đổi giá hoặc chỉnh đơn khách. Chi tiết: [danh mục và cấu hình xe](docs/AREA-SOURCE.md).
 - Đã kiểm MySQL/HTTP, hai worker đồng thời, Node DOM và regression quà/chốt đơn/cấu hình xe. Chưa kiểm upstream/cPanel/layout thật. Đã lập baseline khai báo 70 controller/269 API nguồn để rà tiếp, không coi số lượng là chứng nhận chuyển đủ; [phần còn thiếu](docs/PORT-COMPLETION.md).
+
+## Tìm và xuất CSV đơn xe — đợt 127
+
+- Admin tìm theo mã/tên/điện thoại/email, dùng chung bộ lọc cho danh sách và xuất CSV. Xuất toàn bộ đơn khớp bộ lọc, đúng 25 cột nguồn, thứ tự ổn định, tối đa 10.000 đơn và có audit. Chỉ admin có phiên/Origin hợp lệ được xuất.
+- Giữ Unicode, số 0 đầu điện thoại, giá vốn 0, ghi chú nhiều dòng; escape CSV và chặn công thức theo helper Node. Đã đối chiếu byte fixture nguồn, kiểm MySQL/HTTP/DOM và regression đơn xe; chưa kiểm hosting/Excel thật.
+- Không thêm migration SQL, schema vẫn 053. Chi tiết [tìm/xuất đơn xe](docs/RIDE-EXPORT.md); importer tổng thể và các phần chưa đối chiếu vẫn còn trong PORT-COMPLETION.md.

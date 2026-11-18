@@ -1,5 +1,7 @@
 # Rà soát form và thao tác nhập liệu
 
+Đợt 127: admin đơn xe có ô tìm có nhãn hỗ trợ, giới hạn 100 ký tự và nút xuất CSV theo ngày/trạng thái/từ khóa. Chặn tải lặp khi đang gửi và khi xem điều xe hôm nay; lỗi giữ bộ lọc. Đã kiểm Node DOM/HTTP/MySQL; chưa kiểm layout trình duyệt hoặc Excel thật. Xem RIDE-EXPORT.md; không SQL mới.
+
 Đợt 126 bổ sung bộ chọn tỉnh/xã VI/EN ở form giao quà và chốt đơn chung; admin xem trước/thêm khu vực hành chính, giữ chỉnh sửa cũ và lưu cấu hình xe theo mục. Đã kiểm Node DOM/HTTP/MySQL, chưa kiểm trực quan layout hoặc cPanel thật cho đợt này. Cần schema 053; xem AREA-SOURCE.md. Các đợt phía dưới là lịch sử, không phải xác nhận đã rà hết mọi form.
 
 Cập nhật 17/11/2026, sau đợt 107. Không đổi tên trường dữ liệu hoặc schema 050.

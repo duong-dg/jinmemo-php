@@ -1,0 +1,261 @@
+{
+  "rows": [
+    {
+      "code": "JM-X000000000000",
+      "visit_date": "2099-06-01",
+      "status": "CANCELLED",
+      "data": {
+        "contact": {
+          "name": "=1+1",
+          "phone": "0123456789",
+          "email": "test@example.test"
+        },
+        "mode": "SHARED",
+        "time": "08:00",
+        "vehicleName": "Xe 4 chỗ",
+        "passengers": 2,
+        "fromName": "A",
+        "toName": "B",
+        "pickup": "12 đường thử",
+        "dropoff": "Cổng chính",
+        "total": 250000,
+        "agencyCost": 0,
+        "paymentStatus": "UNPAID",
+        "paidAmount": 0,
+        "roundTrip": false,
+        "returnTime": "16:00",
+        "driver": "Driver",
+        "driverPhone": "+84901234567",
+        "plate": "ABC",
+        "note": "Ghi chú\u0000, dòng\n2",
+        "operatorNote": "Nội bộ",
+        "requestHash": "NEVER_EXPORT"
+      }
+    },
+    {
+      "code": "JM-X000000000001",
+      "visit_date": "2099-06-01",
+      "status": "PENDING",
+      "data": {
+        "contact": {
+          "name": " +SUM(1,2)",
+          "phone": "0123456789",
+          "email": "test@example.test"
+        },
+        "mode": "PRIVATE",
+        "time": "08:00",
+        "vehicleName": "Xe 4 chỗ",
+        "passengers": 2,
+        "fromName": "A",
+        "toName": "B",
+        "pickup": "12 đường thử",
+        "dropoff": "Cổng chính",
+        "total": 250000,
+        "agencyCost": null,
+        "paymentStatus": "PAID",
+        "paidAmount": 250000,
+        "roundTrip": true,
+        "returnTime": "16:00",
+        "driver": "Driver",
+        "driverPhone": "+84901234567",
+        "plate": "ABC",
+        "note": "Ghi chú\u0000, dòng\n2",
+        "operatorNote": "Nội bộ",
+        "requestHash": "NEVER_EXPORT"
+      }
+    },
+    {
+      "code": "JM-X000000000002",
+      "visit_date": "2099-06-01",
+      "status": "CANCELLED",
+      "data": {
+        "contact": {
+          "name": "\tformula",
+          "phone": "0123456789",
+          "email": "test@example.test"
+        },
+        "mode": "SHARED",
+        "time": "08:00",
+        "vehicleName": "Xe 4 chỗ",
+        "passengers": 2,
+        "fromName": "A",
+        "toName": "B",
+        "pickup": "12 đường thử",
+        "dropoff": "Cổng chính",
+        "total": 250000,
+        "agencyCost": 0,
+        "paymentStatus": "UNPAID",
+        "paidAmount": 0,
+        "roundTrip": false,
+        "returnTime": "16:00",
+        "driver": "Driver",
+        "driverPhone": "+84901234567",
+        "plate": "ABC",
+        "note": "Ghi chú\u0000, dòng\n2",
+        "operatorNote": "Nội bộ",
+        "requestHash": "NEVER_EXPORT"
+      }
+    },
+    {
+      "code": "JM-X000000000003",
+      "visit_date": "2099-06-01",
+      "status": "PENDING",
+      "data": {
+        "contact": {
+          "name": "@command",
+          "phone": "0123456789",
+          "email": "test@example.test"
+        },
+        "mode": "PRIVATE",
+        "time": "08:00",
+        "vehicleName": "Xe 4 chỗ",
+        "passengers": 2,
+        "fromName": "A",
+        "toName": "B",
+        "pickup": "12 đường thử",
+        "dropoff": "Cổng chính",
+        "total": 250000,
+        "agencyCost": null,
+        "paymentStatus": "PAID",
+        "paidAmount": 250000,
+        "roundTrip": true,
+        "returnTime": "16:00",
+        "driver": "Driver",
+        "driverPhone": "+84901234567",
+        "plate": "ABC",
+        "note": "Ghi chú\u0000, dòng\n2",
+        "operatorNote": "Nội bộ",
+        "requestHash": "NEVER_EXPORT"
+      }
+    },
+    {
+      "code": "JM-X000000000004",
+      "visit_date": "2099-06-01",
+      "status": "CANCELLED",
+      "data": {
+        "contact": {
+          "name": "-1",
+          "phone": "0123456789",
+          "email": "test@example.test"
+        },
+        "mode": "SHARED",
+        "time": "08:00",
+        "vehicleName": "Xe 4 chỗ",
+        "passengers": 2,
+        "fromName": "A",
+        "toName": "B",
+        "pickup": "12 đường thử",
+        "dropoff": "Cổng chính",
+        "total": 250000,
+        "agencyCost": 0,
+        "paymentStatus": "UNPAID",
+        "paidAmount": 0,
+        "roundTrip": false,
+        "returnTime": "16:00",
+        "driver": "Driver",
+        "driverPhone": "+84901234567",
+        "plate": "ABC",
+        "note": "Ghi chú\u0000, dòng\n2",
+        "operatorNote": "Nội bộ",
+        "requestHash": "NEVER_EXPORT"
+      }
+    },
+    {
+      "code": "JM-X000000000005",
+      "visit_date": "2099-06-01",
+      "status": "PENDING",
+      "data": {
+        "contact": {
+          "name": "Hội An 🐴",
+          "phone": "0123456789",
+          "email": "test@example.test"
+        },
+        "mode": "PRIVATE",
+        "time": "08:00",
+        "vehicleName": "Xe 4 chỗ",
+        "passengers": 2,
+        "fromName": "A",
+        "toName": "B",
+        "pickup": "12 đường thử",
+        "dropoff": "Cổng chính",
+        "total": 250000,
+        "agencyCost": null,
+        "paymentStatus": "PAID",
+        "paidAmount": 250000,
+        "roundTrip": true,
+        "returnTime": "16:00",
+        "driver": "Driver",
+        "driverPhone": "+84901234567",
+        "plate": "ABC",
+        "note": "Ghi chú\u0000, dòng\n2",
+        "operatorNote": "Nội bộ",
+        "requestHash": "NEVER_EXPORT"
+      }
+    },
+    {
+      "code": "JM-X000000000006",
+      "visit_date": "2099-06-01",
+      "status": "CANCELLED",
+      "data": {
+        "contact": {
+          "name": "a\"b, c\nline2",
+          "phone": "0123456789",
+          "email": "test@example.test"
+        },
+        "mode": "SHARED",
+        "time": "08:00",
+        "vehicleName": "Xe 4 chỗ",
+        "passengers": 2,
+        "fromName": "A",
+        "toName": "B",
+        "pickup": "12 đường thử",
+        "dropoff": "Cổng chính",
+        "total": 250000,
+        "agencyCost": 0,
+        "paymentStatus": "UNPAID",
+        "paidAmount": 0,
+        "roundTrip": false,
+        "returnTime": "16:00",
+        "driver": "Driver",
+        "driverPhone": "+84901234567",
+        "plate": "ABC",
+        "note": "Ghi chú\u0000, dòng\n2",
+        "operatorNote": "Nội bộ",
+        "requestHash": "NEVER_EXPORT"
+      }
+    },
+    {
+      "code": "JM-X000000000007",
+      "visit_date": "2099-06-01",
+      "status": "PENDING",
+      "data": {
+        "contact": {
+          "name": "﻿=hidden",
+          "phone": "0123456789",
+          "email": "test@example.test"
+        },
+        "mode": "PRIVATE",
+        "time": "08:00",
+        "vehicleName": "Xe 4 chỗ",
+        "passengers": 2,
+        "fromName": "A",
+        "toName": "B",
+        "pickup": "12 đường thử",
+        "dropoff": "Cổng chính",
+        "total": 250000,
+        "agencyCost": null,
+        "paymentStatus": "PAID",
+        "paidAmount": 250000,
+        "roundTrip": true,
+        "returnTime": "16:00",
+        "driver": "Driver",
+        "driverPhone": "+84901234567",
+        "plate": "ABC",
+        "note": "Ghi chú\u0000, dòng\n2",
+        "operatorNote": "Nội bộ",
+        "requestHash": "NEVER_EXPORT"
+      }
+    }
+  ],
+  "csv": "﻿\"Mã booking\",\"Ngày đi\",\"Giờ đón\",\"Trạng thái\",\"Hình thức xe\",\"Loại xe\",\"Số khách\",\"Nơi đi\",\"Nơi đến\",\"Địa chỉ đón\",\"Địa chỉ trả\",\"Khách hàng\",\"Điện thoại\",\"Email\",\"Giá trị đơn (VND)\",\"Giá vốn đại lý (VND)\",\"Thanh toán\",\"Tiền đã ghi thu (chưa trừ hoàn) (VND)\",\"Khứ hồi\",\"Giờ về\",\"Tài xế\",\"Điện thoại tài xế\",\"Biển số\",\"Ghi chú khách\",\"Ghi chú nội bộ\"\r\n\"JM-X000000000000\",\"2099-06-01\",\"08:00\",\"Đã hủy\",\"Xe ghép\",\"Xe 4 chỗ\",\"2\",\"A\",\"B\",\"12 đường thử\",\"Cổng chính\",\"'=1+1\",\"'0123456789\",\"test@example.test\",\"250000\",\"0\",\"Chưa thu tiền\",\"0\",\"Không\",\"16:00\",\"Driver\",\"'+84901234567\",\"ABC\",\"Ghi chú, dòng\n2\",\"Nội bộ\"\r\n\"JM-X000000000001\",\"2099-06-01\",\"08:00\",\"Chờ xác nhận\",\"Xe riêng\",\"Xe 4 chỗ\",\"2\",\"A\",\"B\",\"12 đường thử\",\"Cổng chính\",\"' +SUM(1,2)\",\"'0123456789\",\"test@example.test\",\"250000\",\"\",\"Đã thu tiền\",\"250000\",\"Có\",\"16:00\",\"Driver\",\"'+84901234567\",\"ABC\",\"Ghi chú, dòng\n2\",\"Nội bộ\"\r\n\"JM-X000000000002\",\"2099-06-01\",\"08:00\",\"Đã hủy\",\"Xe ghép\",\"Xe 4 chỗ\",\"2\",\"A\",\"B\",\"12 đường thử\",\"Cổng chính\",\"'\tformula\",\"'0123456789\",\"test@example.test\",\"250000\",\"0\",\"Chưa thu tiền\",\"0\",\"Không\",\"16:00\",\"Driver\",\"'+84901234567\",\"ABC\",\"Ghi chú, dòng\n2\",\"Nội bộ\"\r\n\"JM-X000000000003\",\"2099-06-01\",\"08:00\",\"Chờ xác nhận\",\"Xe riêng\",\"Xe 4 chỗ\",\"2\",\"A\",\"B\",\"12 đường thử\",\"Cổng chính\",\"'@command\",\"'0123456789\",\"test@example.test\",\"250000\",\"\",\"Đã thu tiền\",\"250000\",\"Có\",\"16:00\",\"Driver\",\"'+84901234567\",\"ABC\",\"Ghi chú, dòng\n2\",\"Nội bộ\"\r\n\"JM-X000000000004\",\"2099-06-01\",\"08:00\",\"Đã hủy\",\"Xe ghép\",\"Xe 4 chỗ\",\"2\",\"A\",\"B\",\"12 đường thử\",\"Cổng chính\",\"'-1\",\"'0123456789\",\"test@example.test\",\"250000\",\"0\",\"Chưa thu tiền\",\"0\",\"Không\",\"16:00\",\"Driver\",\"'+84901234567\",\"ABC\",\"Ghi chú, dòng\n2\",\"Nội bộ\"\r\n\"JM-X000000000005\",\"2099-06-01\",\"08:00\",\"Chờ xác nhận\",\"Xe riêng\",\"Xe 4 chỗ\",\"2\",\"A\",\"B\",\"12 đường thử\",\"Cổng chính\",\"Hội An 🐴\",\"'0123456789\",\"test@example.test\",\"250000\",\"\",\"Đã thu tiền\",\"250000\",\"Có\",\"16:00\",\"Driver\",\"'+84901234567\",\"ABC\",\"Ghi chú, dòng\n2\",\"Nội bộ\"\r\n\"JM-X000000000006\",\"2099-06-01\",\"08:00\",\"Đã hủy\",\"Xe ghép\",\"Xe 4 chỗ\",\"2\",\"A\",\"B\",\"12 đường thử\",\"Cổng chính\",\"a\"\"b, c\nline2\",\"'0123456789\",\"test@example.test\",\"250000\",\"0\",\"Chưa thu tiền\",\"0\",\"Không\",\"16:00\",\"Driver\",\"'+84901234567\",\"ABC\",\"Ghi chú, dòng\n2\",\"Nội bộ\"\r\n\"JM-X000000000007\",\"2099-06-01\",\"08:00\",\"Chờ xác nhận\",\"Xe riêng\",\"Xe 4 chỗ\",\"2\",\"A\",\"B\",\"12 đường thử\",\"Cổng chính\",\"'﻿=hidden\",\"'0123456789\",\"test@example.test\",\"250000\",\"\",\"Đã thu tiền\",\"250000\",\"Có\",\"16:00\",\"Driver\",\"'+84901234567\",\"ABC\",\"Ghi chú, dòng\n2\",\"Nội bộ\"\r\n"
+}
