@@ -32,3 +32,5 @@ Manifest phải xác nhận đã xuất bảng đơn, settings, checkout_members
 Ảnh và cờ phân hệ vẫn phải đáp ứng điều kiện của [IMPORT-BUSINESS-SETTINGS.md](IMPORT-BUSINESS-SETTINGS.md). Không nhập/phát lại mail, thông báo, provider, hoàn tiền hoặc thao tác ảnh/PDF. Audit lịch sử toàn hệ thống vẫn thuộc kho chờ riêng, không được phát lại thành hành động.
 
 Kiểm local dùng fixture tổng hợp qua helper export Node đã ghim, không chứng nhận dữ liệu production hoặc hoàn tất toàn bộ chuyển dữ liệu; `operationalReady=false` vẫn giữ.
+
+Đợt 144 thêm chế độ riêng `--with-gift-bundles` cho mã tổng chỉ gồm quà, có đối soát hoàn và cấp liên kết thay thế: [IMPORT-GIFT-BUNDLES.md](IMPORT-GIFT-BUNDLES.md). Chế độ --with-gift-orders trong tài liệu này vẫn chỉ nhận đơn độc lập.

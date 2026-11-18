@@ -5,6 +5,7 @@ require_once __DIR__.'/AdminAuth.php';
 require_once __DIR__.'/ManualMethods.php';
 require_once __DIR__.'/GiftCatalog.php';
 require_once __DIR__.'/GiftOrderTransfer.php';
+require_once __DIR__.'/GiftBundleTransfer.php';
 
 /** Publishes selected, validated business settings directly from full-v2, without replaying save side effects. */
 final class BusinessSettingsTransfer
@@ -16,8 +17,9 @@ final class BusinessSettingsTransfer
         $sort=static function(mixed $v)use(&$sort):mixed{if($v instanceof stdClass){$a=get_object_vars($v);ksort($a,SORT_STRING);foreach($a as &$x)$x=$sort($x);return (object)$a;}if(is_array($v))return array_map($sort,$v);return $v;};
         return json_encode($sort(json_decode($json,false,512,JSON_THROW_ON_ERROR|JSON_BIGINT_AS_STRING)),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR);
     }
-    public function run(string $file,string $scope='all',bool $apply=false,?string $fingerprint=null,bool $withGiftOrders=false):array
+    public function run(string $file,string $scope='all',bool $apply=false,?string $fingerprint=null,bool $withGiftOrders=false,bool $withGiftBundles=false):array
     {
+        if($withGiftBundles)$withGiftOrders=true;
         if(!in_array($scope,['all','manual-payments','gifts'],true))throw new InvalidArgumentException('Scope: all, manual-payments hoặc gifts.');
         if($withGiftOrders&&$scope==='manual-payments')throw new InvalidArgumentException('Nhập đơn quà cần scope gifts hoặc all.');
         if($apply&&(!is_string($fingerprint)||!preg_match('/^[a-f0-9]{64}$/D',$fingerprint)))throw new InvalidArgumentException('Cần fingerprint từ dry-run.');
@@ -26,12 +28,14 @@ final class BusinessSettingsTransfer
         if(TransferFormat::detect($file)!=='full-v2'){$error('FULL_V2_REQUIRED');return $r;}
         $audit=(new TransferRelations())->run($file);$r['sourceSha256']=$audit['sha256'];
         if(!$audit['profileMatches']||$audit['relations']['errorCount']){$error('SOURCE_FILE_OR_RELATIONS_INVALID');return $r;}
+        $bundleRows=[];$memberRows=[];$referenceRows=[];$refundRows=[];$bundleBytes=0;$bundleCount=0;
         $source=[];$giftOrders=0;$giftRows=[];$giftBytes=0;$giftMembers=[];$membersDeclared=false;$bundlesDeclared=false;$bundleRefsValid=true;$financialRefs=[];$refundsDeclared=false;$paymentsDeclared=false;$giftOrdersDeclared=false;$settingsDeclared=false;
         $r['giftOrders']=['included'=>$withGiftOrders,'source'=>0,'matching'=>0,'inserted'=>0];
-        $again=TransferFormat::audit($file)->run($file,static function(string $table,array $columns,array $values)use(&$source,&$giftOrders,&$giftOrdersDeclared,&$settingsDeclared,&$giftRows,&$giftBytes,&$giftMembers,&$membersDeclared,&$bundlesDeclared,&$bundleRefsValid,&$financialRefs,&$refundsDeclared,&$paymentsDeclared,$withGiftOrders):void{
+        $again=TransferFormat::audit($file)->run($file,static function(string $table,array $columns,array $values)use(&$source,&$giftOrders,&$giftOrdersDeclared,&$settingsDeclared,&$giftRows,&$giftBytes,&$giftMembers,&$membersDeclared,&$bundlesDeclared,&$bundleRefsValid,&$financialRefs,&$refundsDeclared,&$paymentsDeclared,&$bundleRows,&$memberRows,&$referenceRows,&$refundRows,&$bundleBytes,&$bundleCount,$withGiftBundles,$withGiftOrders):void{
             if($table==='jm_transfer_gift_orders'){$giftOrders++;if(!$withGiftOrders)return;}
             if(!in_array($table,['jm_transfer_settings','jm_transfer_manifest','jm_transfer_gift_orders','jm_transfer_checkout_members','jm_transfer_checkout_bundles','jm_transfer_refunds','jm_transfer_payment_references'],true))return;
             $row=[];foreach($columns as $i=>$c){$v=$values[$i];$row[$c['name']]=$v==='NULL'?null:(str_starts_with($v,'CONVERT(')?hex2bin(substr($v,10,-16)):$v);}
+            if($withGiftBundles&&in_array($table,['jm_transfer_checkout_bundles','jm_transfer_checkout_members','jm_transfer_payment_references','jm_transfer_refunds'],true)){if(++$bundleCount>50000||($bundleBytes+=strlen(json_encode($row,JSON_THROW_ON_ERROR)))>33554432)throw new RuntimeException('Gift bundle metadata limit.');switch($table){case 'jm_transfer_checkout_bundles':$bundleRows[]=$row;break;case 'jm_transfer_checkout_members':$memberRows[]=$row;break;case 'jm_transfer_payment_references':$referenceRows[]=$row;break;case 'jm_transfer_refunds':$refundRows[]=$row;break;}}
             if($table==='jm_transfer_refunds'){if($withGiftOrders&&$row['root_kind']==='GIFT'){$financialRefs[$row['root_id']]=true;$financialRefs[$row['root_code']]=true;}return;}
             if($table==='jm_transfer_payment_references'){if($withGiftOrders)$financialRefs[$row['entity_id']]=true;return;}
             if($table==='jm_transfer_gift_orders'){if(count($giftRows)>=50000||($giftBytes+=strlen($row['data']))>33554432)throw new RuntimeException('Gift source limit.');$giftRows[]=$row;return;}
@@ -57,8 +61,10 @@ final class BusinessSettingsTransfer
         if(isset($incoming['gifts'])&&(!$giftOrdersDeclared||$giftOrders>0&&!$withGiftOrders))$error('GIFT_ORDER_IMPORT_REQUIRED_BEFORE_STOCK','gifts');
         if($withGiftOrders&&$giftRows&&(!$refundsDeclared||!$paymentsDeclared))$error('GIFT_FINANCIAL_TABLES_NOT_EXPORTED','gifts');
         if($withGiftOrders&&$giftRows&&!$bundleRefsValid)$error('GIFT_CHECKOUT_REFERENCES_INVALID','gifts');
+        $bundleService=$withGiftBundles?new GiftBundleTransfer($this->db):null;$prepared=$withGiftBundles?GiftBundleTransfer::prepare($giftRows,$bundleRows,$memberRows,$referenceRows,$refundRows):['bundles'=>[],'contexts'=>[],'errors'=>[]];foreach($prepared['errors'] as $code)$error($code,'gifts');
+        $r['giftBundles']=['included'=>$withGiftBundles,'source'=>count($prepared['bundles']),'matching'=>0,'inserted'=>0,'lookupResetRequired'=>$withGiftBundles&&count($prepared['bundles'])>0];
         $giftService=$withGiftOrders?new GiftOrderTransfer($this->db):null;
-        if($withGiftOrders&&isset($incoming['gifts']))foreach(GiftOrderTransfer::validate($giftRows,json_decode($incoming['gifts']['data'],true,512,JSON_THROW_ON_ERROR),$giftMembers,$membersDeclared&&$bundlesDeclared,$financialRefs) as $code)$error($code,'gifts');
+        if($withGiftOrders&&isset($incoming['gifts']))foreach(GiftOrderTransfer::validate($giftRows,json_decode($incoming['gifts']['data'],true,512,JSON_THROW_ON_ERROR),$giftMembers,$membersDeclared&&$bundlesDeclared,$financialRefs,$prepared['contexts']) as $code)$error($code,'gifts');
         $r['giftOrders']['source']=$withGiftOrders?count($giftRows):$giftOrders;
         if($r['errorCount'])return $r;
         foreach(['jingo_settings','jingo_audit','jingo_catalog_locks','jingo_media','jingo_gift_orders'] as $table){$engine=$this->query('SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? AND TABLE_TYPE=\'BASE TABLE\'',[$table])->fetchColumn();if(strtoupper((string)$engine)!=='INNODB')$error('RUNTIME_SCHEMA_MISSING',$table);}
@@ -66,6 +72,7 @@ final class BusinessSettingsTransfer
         if(array_column($columns,'COLUMN_NAME')!==['id','data','version'])$error('RUNTIME_SETTINGS_SCHEMA_MISMATCH');
         foreach($columns as $c){$valid=match($c['COLUMN_NAME']){'id'=>in_array($c['DATA_TYPE'],['char','varchar'],true)&&(int)$c['CHARACTER_MAXIMUM_LENGTH']>=80,'data'=>$c['DATA_TYPE']==='json'||$c['DATA_TYPE']==='longtext'&&$c['CHARACTER_SET_NAME']==='utf8mb4','version'=>$c['DATA_TYPE']==='int',default=>false};if(!$valid||$c['IS_NULLABLE']!=='NO')$error('RUNTIME_SETTINGS_CAPACITY_MISMATCH');}
         if($this->query("SELECT COLUMN_NAME FROM information_schema.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='jingo_settings' AND INDEX_NAME='PRIMARY' ORDER BY SEQ_IN_INDEX")->fetchAll(PDO::FETCH_COLUMN)!==['id'])$error('RUNTIME_SETTINGS_PRIMARY_KEY_MISMATCH');
+        if($bundleService)foreach($bundleService->schema() as $code)$error($code,'gifts');
         if($giftService)foreach($giftService->schema() as $code)$error($code,'gifts');
         if($r['errorCount'])return $r;
         $this->db->exec('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');if(!$apply)$this->db->exec('SET TRANSACTION READ ONLY');$this->db->beginTransaction();
@@ -85,16 +92,18 @@ final class BusinessSettingsTransfer
                     if(!$target&&$this->query('SELECT 1 FROM jingo_gift_orders LIMIT 1')->fetchColumn())$error('RUNTIME_GIFT_ORDERS_EXIST','gifts');
                 }
             }
-            $giftPlan=$giftService?$giftService->plan($giftRows,$apply):null;
+            $giftPlan=$giftService?$giftService->plan($giftRows,$apply,$prepared['contexts']):null;
             if($giftPlan){$r['giftOrders']['matching']=$giftPlan['matching'];foreach($giftPlan['errors'] as $code)$error($code,'gifts');}
-            $fp=hash('sha256',($withGiftOrders?'runtime-business-settings-with-gift-orders-v1:':'runtime-business-settings-v1:').$scope.':'.$audit['sha256'].':'.json_encode($plan,JSON_THROW_ON_ERROR).($giftPlan['digest']??''));
+            $bundlePlan=$bundleService?$bundleService->plan($prepared,$apply):null;if($bundlePlan){$r['giftBundles']['matching']=$bundlePlan['matching'];foreach($bundlePlan['errors'] as $code)$error($code,'gifts');}
+            $fp=hash('sha256',($withGiftBundles?'runtime-gift-bundles-v1:':($withGiftOrders?'runtime-business-settings-with-gift-orders-v1:':'runtime-business-settings-v1:')).$scope.':'.$audit['sha256'].':'.json_encode($plan,JSON_THROW_ON_ERROR).($giftPlan['digest']??'').($bundlePlan['digest']??''));
             if($apply&&!hash_equals($fingerprint,$fp))$error('FINGERPRINT_OR_TARGET_CHANGED');
             if(!is_file($file)||is_link($file)||hash_file('sha256',$file)!==$audit['sha256'])$error('SOURCE_CHANGED_BEFORE_COMMIT');
             $r['ready']=$r['errorCount']===0;$r['fingerprint']=$r['ready']?$fp:null;
             if(!$apply||!$r['ready']){$this->db->rollBack();return $r;}
             foreach($new as $id=>$row){$this->query('INSERT INTO jingo_settings(id,data,version) VALUES (?,?,?)',[$id,$row['data'],$row['version']]);$r['inserted']++;}
             if($giftService)$r['giftOrders']['inserted']=$giftService->insert($giftPlan['new']);
-            if($new||$r['giftOrders']['inserted'])$this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),'cli-import','transfer.business-settings',$fp]);
+            if($bundleService)$r['giftBundles']['inserted']=$bundleService->insert($bundlePlan,$audit['sha256']);
+            if($new||$r['giftOrders']['inserted']||$r['giftBundles']['inserted']||!empty($bundlePlan['newRefs']))$this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),'cli-import','transfer.business-settings',$fp]);
             $this->db->commit();$r['applied']=true;return $r;
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }

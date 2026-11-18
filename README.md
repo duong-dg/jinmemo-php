@@ -1397,3 +1397,5 @@ Admin có **Cấu hình website → Dữ liệu chuyển đổi** để xem kho 
 Đợt 142: `--with-gift-orders` nhập đơn quà độc lập và tồn hiện tại nguyên tử vào runtime, giữ snapshot/trạng thái/version và không phát lại biến động tồn. Đơn thuộc thanh toán chung hoặc có dấu vết tài chính vẫn cần adapter tiếp theo. Xem [IMPORT-GIFT-ORDERS.md](docs/IMPORT-GIFT-ORDERS.md).
 
 Đợt 143: thêm importer **lịch sử hoàn vào jingo_refunds** từ full-v2, kiểm sáu nhóm cha và khoản thực thu gốc, giữ fingerprint/thời gian, không gọi chuyển tiền. Cha/khoản thu chưa có hoặc chưa khớp thì chặn. Xem [IMPORT-REFUNDS.md](docs/IMPORT-REFUNDS.md).
+
+Đợt 144: `--with-gift-bundles` nhập nguyên tử quà + mã tổng chỉ gồm quà + khoản thu gốc vào runtime. Mã nhập chờ đối soát hoàn và cấp liên kết mới, không tạo hash tra cứu giả. Cài schema bằng `php bin/install.php`. Xem [IMPORT-GIFT-BUNDLES.md](docs/IMPORT-GIFT-BUNDLES.md).

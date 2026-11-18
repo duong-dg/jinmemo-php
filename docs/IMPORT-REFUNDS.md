@@ -37,3 +37,5 @@ Giới hạn: tối đa 100.000 dòng/64 MiB metadata nguồn được chọn, t
 Đã kiểm local bằng fixture tổng hợp qua helper export Node, sáu nhóm cha, khoản thu/ngày/cap, rollback, replay và hai tiến trình đồng thời. Chưa nhập dữ liệu production. Toàn bộ chuyển dữ liệu vẫn `operationalReady=false`; cần hoàn tất adapter cha/mã tổng và xử lý liên kết tra cứu trước khi mở vận hành.
 
 Xem [quy trình hai bên](EXPORT-IMPORT-COORDINATION.md), [import đơn quà độc lập](IMPORT-GIFT-ORDERS.md) và [kho chờ toàn bộ dữ liệu](FULL-TRANSFER.md).
+
+Đợt 144 hỗ trợ cha mã tổng chỉ gồm quà ở trạng thái chờ đối soát (IMPORT-GIFT-BUNDLES.md). Bộ nhập lịch sử có đường đọc riêng trong transaction; API thu/hoàn thông thường vẫn bị chặn cho đến khi sổ hoàn khớp và quản trị cấp liên kết mới.

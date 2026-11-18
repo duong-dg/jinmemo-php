@@ -55,3 +55,5 @@ Adapter runtime bổ sung: [IMPORT-BUSINESS-SETTINGS.md](IMPORT-BUSINESS-SETTING
 Đợt 142 có thêm nhập đơn quà độc lập cùng tồn qua `--with-gift-orders`: xem [IMPORT-GIFT-ORDERS.md](IMPORT-GIFT-ORDERS.md). Đơn phụ thuộc mã tổng/thanh toán/hoàn tiền vẫn phải chờ adapter tương ứng, không chia nhỏ scope để bỏ liên kết.
 
 Sổ hoàn được nhập sau các cha và khoản thu bằng [IMPORT-REFUNDS.md](IMPORT-REFUNDS.md). Bộ nhập đối chiếu ID/mã, từng khoản thu, tổng thực thu và liên kết cha; không gọi lại chuyển tiền hoặc bù dữ liệu cha bị thiếu.
+
+Đợt 144 có luồng quà + mã tổng chỉ gồm quà: [IMPORT-GIFT-BUNDLES.md](IMPORT-GIFT-BUNDLES.md). Dùng installer để nâng schema, nhập graph có cờ chờ, đối soát sổ hoàn, rồi quản trị chủ động cấp liên kết thay thế. Liên kết nguồn cũ không được tái tạo từ SQL thiếu khóa. Mã ghép thêm vé/xe còn chặn để chờ adapter tương ứng.

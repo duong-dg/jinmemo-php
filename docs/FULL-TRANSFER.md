@@ -106,3 +106,5 @@ CLI tự nhận v1/full-v2. V2 kiểm hợp đồng 68 bảng nguồn + manifest
 Đợt 142: adapter runtime quà đã hỗ trợ đơn độc lập cùng catalog/tồn trong một giao dịch; xem IMPORT-GIFT-ORDERS.md. CLI kho chờ chung vẫn không tự xuất bản hoặc chạy adapter.
 
 Đợt 143 có adapter runtime cho lịch sử hoàn (IMPORT-REFUNDS.md). Cha/khoản thu vận hành phải khớp trước, khác với kho chờ chưa thể dùng làm cha runtime. Lệnh lưu kho chờ không tự gọi importer hoàn.
+
+Đợt 144: adapter runtime quà/mã tổng quà có luồng cấp liên kết thay thế sau đối soát, xem IMPORT-GIFT-BUNDLES.md. Lệnh kho chờ chung vẫn không tự gọi adapter hoặc mở vận hành.

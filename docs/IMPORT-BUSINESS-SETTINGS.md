@@ -37,3 +37,5 @@ Mặc định scope `all`: cả hai cấu hình phải có và hợp lệ; lỗi
 - Không nhập tài khoản, phát mail, gọi provider, chạy lại thao tác tạo đơn, tính lại doanh thu/tồn hoặc thay đổi ảnh/PDF. Đợt này chỉ kiểm local tổng hợp, chưa nhập dữ liệu thật.
 
 Trình tự tổng thể và hợp đồng hai bên: [EXPORT-IMPORT-COORDINATION.md](EXPORT-IMPORT-COORDINATION.md).
+
+Với quà thuộc mã tổng chỉ gồm quà, đợt 144 có cờ riêng `--with-gift-bundles`; xem IMPORT-GIFT-BUNDLES.md. Không tự chuyển sang chế độ này khi thiếu cờ; mã ghép vé/xe vẫn chặn.

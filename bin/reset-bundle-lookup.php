@@ -1,0 +1,7 @@
+<?php
+declare(strict_types=1);
+if(PHP_SAPI!=='cli'){http_response_code(404);exit;}
+require dirname(__DIR__).'/src/bootstrap.php';require dirname(__DIR__).'/src/BundleLookupReset.php';require_once dirname(__DIR__).'/src/OrderMail.php';
+try{
+    $args=[];$apply=false;foreach(array_slice($argv,1) as $arg){if($arg==='--help'){echo "php bin/reset-bundle-lookup.php --code=JB_REFERENCE [--apply --fingerprint=DRY_RUN_SHA256 --output=/private/NEW_FILE.json]\nExplicit new lookup credential for an imported pending gift-only bundle after refund reconciliation. Private URL goes only to a new file outside the project and every webroot, never stdout or email. No money operation.\n";exit;}if($arg==='--apply'&&!$apply){$apply=true;continue;}if(preg_match('/^--(code|fingerprint|output)=(.+)$/D',$arg,$m)&&!isset($args[$m[1]])){$args[$m[1]]=$m[2];continue;}throw new InvalidArgumentException('Dùng --help.');}if(!isset($args['code']))throw new InvalidArgumentException('Cần --code.');$config=jingoConfig();$r=(new BundleLookupReset(jingoDatabase($config),OrderMail::directory(),$config['PUBLIC_BASE_URL']??''))->run($args['code'],$apply,$args['fingerprint']??null,$args['output']??null);echo json_encode($r,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR)."\n";exit($r['ready']?0:2);
+}catch(InvalidArgumentException $e){fwrite(STDERR,$e->getMessage()."\n");exit(1);}catch(Throwable){fwrite(STDERR,"Chưa xác nhận cấp lại liên kết. Kiểm lại mã tổng, sổ hoàn và file riêng nếu đã được tạo; không ghi đè file đó. Không gửi liên kết hoặc thực hiện thanh toán.\n");exit(1);}

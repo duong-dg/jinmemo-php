@@ -19,7 +19,7 @@ final class GiftOrderTransfer
         $sort=static function(mixed $v)use(&$sort):mixed{if($v instanceof stdClass){$a=get_object_vars($v);ksort($a,SORT_STRING);foreach($a as &$x)$x=$sort($x);return (object)$a;}return is_array($v)?array_map($sort,$v):$v;};
         return json_encode($sort(json_decode($json,false,512,JSON_THROW_ON_ERROR|JSON_BIGINT_AS_STRING)),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR);
     }
-    public static function validate(array $rows,array $catalog,array $bundledIds,bool $membersDeclared,array $financialRefs=[]):array
+    public static function validate(array $rows,array $catalog,array $bundledIds,bool $membersDeclared,array $financialRefs=[],array $bundleContexts=[]):array
     {
         $errors=[];$error=static function(string $code)use(&$errors):void{if(count($errors)<100)$errors[]=$code;};$items=array_column($catalog['items'],null,'id');$returns=[];
         if($rows&&!$membersDeclared)$error('GIFT_CHECKOUT_MEMBERS_NOT_EXPORTED');
@@ -29,7 +29,8 @@ final class GiftOrderTransfer
                 if(isset($financialRefs[$row['id']])||isset($financialRefs[$row['code']])){$error('GIFT_FINANCIAL_HISTORY_ADAPTER_REQUIRED');continue;}
                 $d=json_decode($row['data'],true,512,JSON_THROW_ON_ERROR|JSON_BIGINT_AS_STRING);
                 if(!is_array($d))throw new RuntimeException();
-                if(isset($bundledIds[$row['id']])||array_intersect(array_keys($d),['paymentStatus','paidAmount','paidAt','paymentReference','bundleCode'])){$error('GIFT_PAYMENT_OR_BUNDLE_ADAPTER_REQUIRED');continue;}
+                if(!isset($bundleContexts[$row['id']])&&(isset($bundledIds[$row['id']])||array_intersect(array_keys($d),['paymentStatus','paidAmount','paidAt','paymentReference','bundleCode']))){$error('GIFT_PAYMENT_OR_BUNDLE_ADAPTER_REQUIRED');continue;}
+                if(isset($bundleContexts[$row['id']]))foreach(['paymentStatus','paidAmount','paidAt','paymentReference','bundleCode'] as $key)unset($d[$key]);
                 if(array_diff(array_keys($d),['requestId','fulfillment','expectedTotal','name','phone','pickupCounterId','address','lines','pickupCounterName','shippingFee','total','fingerprint'])||($d['requestId']??null)!==$row['id']||!in_array($d['fulfillment']??null,['PICKUP','DELIVERY'],true)||!is_string($d['fingerprint']??null)||!preg_match('/^[a-f0-9]{64}$/D',$d['fingerprint']))throw new RuntimeException();
                 self::text($d['name']??null,2,120);self::text($d['phone']??null,8,25);if(!preg_match('/^\+?[0-9 ()-]{8,25}$/D',$d['phone']))throw new RuntimeException();
                 self::text($d['address']??null,$d['fulfillment']==='DELIVERY'?8:0,500);
@@ -61,7 +62,7 @@ final class GiftOrderTransfer
         if(($keys['PRIMARY']??[])!==['id']||!in_array(['code'],$keys,true))$errors[]='RUNTIME_GIFT_ORDER_KEYS_MISMATCH';return array_values(array_unique($errors));
     }
     /** Caller holds the catalog lock; only returns private plan to the importer, never API output. */
-    public function plan(array $rows,bool $lock):array
+    public function plan(array $rows,bool $lock,array $bundleContexts=[]):array
     {
         if(!$this->db->inTransaction())throw new LogicException('Transaction required.');$source=array_column($rows,null,'id');$new=$source;$matched=0;$errors=[];$states=[];$bytes=0;$count=0;
         $buffered=$this->db->getAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY);$this->db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY,false);$q=null;
@@ -75,7 +76,7 @@ final class GiftOrderTransfer
             $states[$id]=hash('sha256',json_encode($target,JSON_THROW_ON_ERROR));unset($new[$id]);
         }
         }finally{if($q)$q->closeCursor();$this->db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY,$buffered);}
-        $q=$this->query("SELECT entity_id FROM jingo_checkout_members WHERE kind='giftId' LIMIT 50001".($lock?' FOR UPDATE':''));$members=0;while(($id=$q->fetchColumn())!==false){if(++$members>50000)throw new RuntimeException('Runtime checkout member limit.');if(isset($source[$id]))$errors[]='RUNTIME_GIFT_ALREADY_IN_BUNDLE';}$q->closeCursor();
+        $q=$this->query("SELECT entity_id,bundle_id FROM jingo_checkout_members WHERE kind='giftId' LIMIT 50001".($lock?' FOR UPDATE':''));$members=0;while($member=$q->fetch(PDO::FETCH_ASSOC)){$id=$member['entity_id'];if(++$members>50000)throw new RuntimeException('Runtime checkout member limit.');if(isset($source[$id])&&($bundleContexts[$id]??null)!==$member['bundle_id'])$errors[]='RUNTIME_GIFT_ALREADY_IN_BUNDLE';}$q->closeCursor();
         $codes=array_fill_keys(array_column($rows,'code'),true);
         foreach(["SELECT root_id AS entity_id,root_code FROM jingo_refunds WHERE root_kind='GIFT' LIMIT 100001","SELECT entity_id,'' AS root_code FROM jingo_payment_references LIMIT 100001"] as $sql){$q=$this->query($sql.($lock?' FOR UPDATE':''));$seen=0;while($ref=$q->fetch(PDO::FETCH_ASSOC)){if(++$seen>100000)throw new RuntimeException('Runtime financial reference limit.');if(isset($source[$ref['entity_id']])||isset($codes[$ref['root_code']]))$errors[]='RUNTIME_GIFT_FINANCIAL_HISTORY_EXISTS';}$q->closeCursor();}
         ksort($states,SORT_STRING);
