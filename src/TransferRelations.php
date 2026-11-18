@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-require_once __DIR__.'/TransferAudit.php';
+require_once __DIR__.'/TransferFormat.php';
 
 /** Two read-only streaming passes; indexes contain hashes, never customer identifiers. */
 final class TransferRelations
@@ -20,13 +20,17 @@ final class TransferRelations
 
     public function run(string $path): array
     {
+        $format=TransferFormat::detect($path);
+        $this->profile=json_decode((string)file_get_contents(TransferFormat::profile($format)),true,512,JSON_THROW_ON_ERROR);
+        $this->constraints=json_decode((string)file_get_contents(TransferFormat::relations($format)),true,512,JSON_THROW_ON_ERROR);
+        if($this->profile['sourceCommit']!==$this->constraints['sourceCommit']||$this->profile['schemaSha256']!==$this->constraints['schemaSha256']||array_keys($this->profile['tables'])!==array_keys($this->constraints['tables']))throw new RuntimeException('Constraint profile differs.');
         $result = ['status'=>'SKIPPED','declaredConstraintsValid'=>null,'indexedKeys'=>0,'maxIndexedKeys'=>$this->maxKeys,'rowsChecked'=>0,'foreignReferencesChecked'=>0,'unresolvedReferences'=>[],'errors'=>[],'errorCount'=>0];
         $indexes = []; $limit = false;
         $error = static function(string $code, ?string $table = null, ?array $columns = null, ?int $line = null, ?int $row = null) use (&$result): void {
             $result['errorCount']++;
             if (count($result['errors']) < 100) $result['errors'][] = array_filter(['code'=>$code,'table'=>$table,'columns'=>$columns,'line'=>$line,'row'=>$row],static fn($v)=>$v!==null);
         };
-        $audit = new TransferAudit();
+        $audit = TransferFormat::audit($path);
         $report = $audit->run($path, function(string $table, array $columns, array $values, int $line, int $row) use (&$indexes,&$result,&$limit,$error): void {
             if ($limit) return;
             $spec = $this->constraints['tables'][$table];

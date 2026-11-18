@@ -1389,3 +1389,5 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - **Import database/061-full-transfer-holding.sql sau git pull**. Chưa nhập dữ liệu thật. Đã chạy 167 bài hồi quy PHP/Node cục bộ, cập nhật các harness/fixture cũ và chạy lại ca lỗi; chưa thay kiểm cPanel/provider thật. Xem [luồng tổng hợp và giới hạn](docs/FULL-TRANSFER.md).
 
 Admin có **Cấu hình website → Dữ liệu chuyển đổi** để xem kho chờ/tìm đơn gốc và lịch sử; chỉ admin, không lộ proof/hash, không thu/gửi/kích hoạt. Tổng hợp 167 bài hồi quy và hai bài mới của màn đối chiếu: 169 bài độc lập đạt; 18 bài nhóm chuyển dữ liệu đã chạy lại sau tích hợp cuối.
+
+Đợt 140: nhận export Node **full-v2** (68 bảng nguồn + manifest), tự kiểm cột/số dòng/SHA-256, giữ hỗ trợ v1. Chỉ lưu kho chờ; chưa xuất bản toàn bộ dữ liệu vận hành. Quy trình hai bên: [EXPORT-IMPORT-COORDINATION.md](docs/EXPORT-IMPORT-COORDINATION.md).

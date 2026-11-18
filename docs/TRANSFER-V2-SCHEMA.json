@@ -1,0 +1,3408 @@
+{
+  "format": "jinmemo-mysql-full-transfer-v2",
+  "sourceCommit": "9fb617071c212df641ecfbaced08961b8f7eed72",
+  "schemaSha256": "3a508f95dcd70361672a9a1a905a3fc423bc47231d2523ccb2192b2eaf616244",
+  "exporterSha256": "963ba1651a4b610c48e504876a234e30b1b94e8c5f0bb83d6899a3082c914f19",
+  "businessSettingIds": [
+    "gifts",
+    "transport-plan",
+    "features",
+    "site-seo",
+    "manual-payments"
+  ],
+  "excludedSourceTables": [
+    "jinmemo_weather_cache",
+    "jinmemo_weather_usage",
+    "jinmemo_migrations",
+    "jinmemo_sessions",
+    "jinmemo_admin_geo_cache",
+    "jinmemo_admin_geo_usage",
+    "jinmemo_admin_security",
+    "jinmemo_admin_otp",
+    "jinmemo_admin_login_limits",
+    "jinmemo_admin_login_log",
+    "jinmemo_pos_sessions",
+    "jinmemo_gateway_attempts",
+    "jinmemo_paypal_orders",
+    "jinmemo_sepay_payloads",
+    "jinmemo_partner_sessions",
+    "jinmemo_partner_shares",
+    "jinmemo_partner_share_actions",
+    "jinmemo_order_mail_keys",
+    "jinmemo_post_view_keys",
+    "jinmemo_admin_notification_reads",
+    "jinmemo_ride_payment_attempts"
+  ],
+  "tables": {
+    "jm_transfer_product_types": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "slug",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_destinations": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "slug",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_suppliers": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_media": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "filename",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "alt",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "width",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "height",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "bytes",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "created_by",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      },
+      {
+        "name": "deleted_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": true,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_products": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "slug",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_pages": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "slug",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_post_categories": [
+      {
+        "name": "name",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "english_name",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": true,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_posts": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "slug",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_post_revisions": [
+      {
+        "name": "post_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "saved_by",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "reason",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_post_metrics": [
+      {
+        "name": "post_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "views",
+        "type": "BIGINT",
+        "sourceType": "bigint",
+        "nullable": false,
+        "manifestDataType": "bigint",
+        "json": false
+      }
+    ],
+    "jm_transfer_slug_aliases": [
+      {
+        "name": "kind",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "slug",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "entity_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      }
+    ],
+    "jm_transfer_policy_pages": [
+      {
+        "name": "policy_key",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "page_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      }
+    ],
+    "jm_transfer_orders": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "code",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "request_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "request_hash",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "snapshot",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "contact",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "booking_status",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "payment_status",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "instructions",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_carts": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "code",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "request_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "request_hash",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "channel",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "partner_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": true,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "counter_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": true,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "total",
+        "type": "BIGINT",
+        "sourceType": "bigint",
+        "nullable": false,
+        "manifestDataType": "bigint",
+        "json": false
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_cart_orders": [
+      {
+        "name": "cart_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "position",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_cart_actions": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "cart_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "request_hash",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      }
+    ],
+    "jm_transfer_order_archives": [
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "archived_by",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "reason",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_order_payments": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "amount",
+        "type": "BIGINT",
+        "sourceType": "bigint",
+        "nullable": false,
+        "manifestDataType": "bigint",
+        "json": false
+      },
+      {
+        "name": "reference",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "admin_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_order_actions": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "request_hash",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "admin_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "action",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "note",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_order_tickets": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "code",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "code_hash",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "kind",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "covers",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "note",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_ticket_files": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "ticket_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "name",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "mime",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "bytes",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "hash",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      },
+      {
+        "name": "revoked_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": true,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      },
+      {
+        "name": "revoke_reason",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "file_kind",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "deleted_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": true,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      },
+      {
+        "name": "partner_shared",
+        "type": "TINYINT(1)",
+        "sourceType": "boolean",
+        "nullable": false,
+        "manifestDataType": "boolean",
+        "json": false
+      },
+      {
+        "name": "sharing_version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_ticket_stock": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "lot_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "code",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "code_hash",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "status",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "reason",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": true,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "ticket_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": true,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_stock_imports": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "lot_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "request_hash",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "quantity",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_vouchers": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "code",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_voucher_uses": [
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "voucher_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "released",
+        "type": "TINYINT(1)",
+        "sourceType": "boolean",
+        "nullable": false,
+        "manifestDataType": "boolean",
+        "json": false
+      }
+    ],
+    "jm_transfer_inventory_configs": [
+      {
+        "name": "product_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "enabled",
+        "type": "TINYINT(1)",
+        "sourceType": "boolean",
+        "nullable": false,
+        "manifestDataType": "boolean",
+        "json": false
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_inventory_buckets": [
+      {
+        "name": "product_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "variant_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "visit_date",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "slot_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "capacity",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "low_stock_threshold",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_inventory_allocations": [
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "product_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "variant_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "visit_date",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "slot_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "quantity",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "released",
+        "type": "TINYINT(1)",
+        "sourceType": "boolean",
+        "nullable": false,
+        "manifestDataType": "boolean",
+        "json": false
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_supply_lots": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "request_hash",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "supplier_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "product_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "variant_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "customer_type",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "unit_cost",
+        "type": "BIGINT",
+        "sourceType": "bigint",
+        "nullable": false,
+        "manifestDataType": "bigint",
+        "json": false
+      },
+      {
+        "name": "total_quantity",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "valid_from",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "valid_to",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "priority",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "enabled",
+        "type": "TINYINT(1)",
+        "sourceType": "boolean",
+        "nullable": false,
+        "manifestDataType": "boolean",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      },
+      {
+        "name": "archived",
+        "type": "TINYINT(1)",
+        "sourceType": "boolean",
+        "nullable": false,
+        "manifestDataType": "boolean",
+        "json": false
+      },
+      {
+        "name": "unlimited",
+        "type": "TINYINT(1)",
+        "sourceType": "boolean",
+        "nullable": false,
+        "manifestDataType": "boolean",
+        "json": false
+      }
+    ],
+    "jm_transfer_supply_purchases": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "lot_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "supplier_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "customer_type",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "quantity",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "unit_cost",
+        "type": "BIGINT",
+        "sourceType": "bigint",
+        "nullable": false,
+        "manifestDataType": "bigint",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_supply_allocations": [
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "lot_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "quantity",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "unit_cost",
+        "type": "BIGINT",
+        "sourceType": "bigint",
+        "nullable": false,
+        "manifestDataType": "bigint",
+        "json": false
+      },
+      {
+        "name": "released",
+        "type": "TINYINT(1)",
+        "sourceType": "boolean",
+        "nullable": false,
+        "manifestDataType": "boolean",
+        "json": false
+      }
+    ],
+    "jm_transfer_supply_actions": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "request_hash",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      }
+    ],
+    "jm_transfer_supplier_payments": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "supplier_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "amount",
+        "type": "BIGINT",
+        "sourceType": "bigint",
+        "nullable": false,
+        "manifestDataType": "bigint",
+        "json": false
+      },
+      {
+        "name": "method",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "reference",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "note",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "request_hash",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_counters": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_pos_orders": [
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "counter_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "admin_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      }
+    ],
+    "jm_transfer_pos_shifts": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "counter_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "opened_by",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "opened_name",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "counter_name",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "opening_cash",
+        "type": "BIGINT",
+        "sourceType": "bigint",
+        "nullable": false,
+        "manifestDataType": "bigint",
+        "json": false
+      },
+      {
+        "name": "opening_note",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "open_hash",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "opened_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      },
+      {
+        "name": "closed_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": true,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      },
+      {
+        "name": "closed_by",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": true,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "close_request",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": true,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "close_hash",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": true,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "close_note",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": true,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "summary",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": true,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_pos_open_shifts": [
+      {
+        "name": "counter_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "shift_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      }
+    ],
+    "jm_transfer_pos_shift_receipts": [
+      {
+        "name": "payment_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "shift_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      }
+    ],
+    "jm_transfer_pos_cash_movements": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "shift_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "kind",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "amount",
+        "type": "BIGINT",
+        "sourceType": "bigint",
+        "nullable": false,
+        "manifestDataType": "bigint",
+        "json": false
+      },
+      {
+        "name": "reference",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "note",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "actor_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "actor_name",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "request_hash",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_payment_methods": [
+      {
+        "name": "payment_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "method",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      }
+    ],
+    "jm_transfer_price_groups": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_partners": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "email",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_partner_orders": [
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "partner_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      }
+    ],
+    "jm_transfer_partner_ledger": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "partner_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": true,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "kind",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "amount",
+        "type": "BIGINT",
+        "sourceType": "bigint",
+        "nullable": false,
+        "manifestDataType": "bigint",
+        "json": false
+      },
+      {
+        "name": "reference",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "note",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "actor_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "request_hash",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "due_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": true,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_payment_references": [
+      {
+        "name": "reference",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "kind",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "entity_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "amount",
+        "type": "BIGINT",
+        "sourceType": "bigint",
+        "nullable": false,
+        "manifestDataType": "bigint",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_gateway_events": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "attempt_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": true,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": true,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "provider",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "mode",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "amount",
+        "type": "BIGINT",
+        "sourceType": "bigint",
+        "nullable": false,
+        "manifestDataType": "bigint",
+        "json": false
+      },
+      {
+        "name": "status",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "reason",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "fingerprint",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_gateway_resolutions": [
+      {
+        "name": "event_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "target_code",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "admin_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "note",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "original_reason",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "original_order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": true,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_transport_jobs": [
+      {
+        "name": "order_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "visit_date",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "status",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_ride_bookings": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "code",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "request_key",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "visit_date",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "status",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "trip_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": true,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_ride_pools": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "visit_date",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "from_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "to_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "vehicle_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "departure",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "target",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "total",
+        "type": "BIGINT",
+        "sourceType": "bigint",
+        "nullable": false,
+        "manifestDataType": "bigint",
+        "json": false
+      },
+      {
+        "name": "status",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_ride_payment_events": [
+      {
+        "name": "event_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "ride_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      }
+    ],
+    "jm_transfer_gift_orders": [
+      {
+        "name": "id",
+        "type": "CHAR(36)",
+        "sourceType": "uuid",
+        "nullable": false,
+        "manifestDataType": "uuid",
+        "json": false
+      },
+      {
+        "name": "code",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "status",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_checkout_bundles": [
+      {
+        "name": "id",
+        "type": "CHAR(36)",
+        "sourceType": "uuid",
+        "nullable": false,
+        "manifestDataType": "uuid",
+        "json": false
+      },
+      {
+        "name": "code",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "total",
+        "type": "BIGINT",
+        "sourceType": "bigint",
+        "nullable": false,
+        "manifestDataType": "bigint",
+        "json": false
+      },
+      {
+        "name": "status",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_checkout_members": [
+      {
+        "name": "kind",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "entity_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "bundle_id",
+        "type": "CHAR(36)",
+        "sourceType": "uuid",
+        "nullable": false,
+        "manifestDataType": "uuid",
+        "json": false
+      }
+    ],
+    "jm_transfer_refunds": [
+      {
+        "name": "id",
+        "type": "CHAR(36)",
+        "sourceType": "uuid",
+        "nullable": false,
+        "manifestDataType": "uuid",
+        "json": false
+      },
+      {
+        "name": "root_kind",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "root_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "root_code",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "amount",
+        "type": "BIGINT",
+        "sourceType": "bigint",
+        "nullable": false,
+        "manifestDataType": "bigint",
+        "json": false
+      },
+      {
+        "name": "refunded_on",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "reference_key",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_stays": [
+      {
+        "name": "id",
+        "type": "CHAR(36)",
+        "sourceType": "uuid",
+        "nullable": false,
+        "manifestDataType": "uuid",
+        "json": false
+      },
+      {
+        "name": "slug",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_stay_aliases": [
+      {
+        "name": "lang",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "slug",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "hotel_id",
+        "type": "CHAR(36)",
+        "sourceType": "uuid",
+        "nullable": false,
+        "manifestDataType": "uuid",
+        "json": false
+      }
+    ],
+    "jm_transfer_stay_bookings": [
+      {
+        "name": "id",
+        "type": "CHAR(36)",
+        "sourceType": "uuid",
+        "nullable": false,
+        "manifestDataType": "uuid",
+        "json": false
+      },
+      {
+        "name": "code",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "hotel_id",
+        "type": "CHAR(36)",
+        "sourceType": "uuid",
+        "nullable": false,
+        "manifestDataType": "uuid",
+        "json": false
+      },
+      {
+        "name": "room_id",
+        "type": "CHAR(36)",
+        "sourceType": "uuid",
+        "nullable": false,
+        "manifestDataType": "uuid",
+        "json": false
+      },
+      {
+        "name": "check_in",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "check_out",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "rooms",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "status",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "request_hash",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "expires_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": true,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_stay_vouchers": [
+      {
+        "name": "id",
+        "type": "CHAR(36)",
+        "sourceType": "uuid",
+        "nullable": false,
+        "manifestDataType": "uuid",
+        "json": false
+      },
+      {
+        "name": "code",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "type": "BIGINT",
+        "sourceType": "integer",
+        "nullable": false,
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_stay_payment_events": [
+      {
+        "name": "event_id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "booking_id",
+        "type": "CHAR(36)",
+        "sourceType": "uuid",
+        "nullable": false,
+        "manifestDataType": "uuid",
+        "json": false
+      }
+    ],
+    "jm_transfer_contact_requests": [
+      {
+        "name": "id",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "status",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_settings": [
+      {
+        "name": "id",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "sourceType": "integer",
+        "nullable": false,
+        "type": "BIGINT",
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_admins": [
+      {
+        "name": "id",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "email",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      }
+    ],
+    "jm_transfer_pos_users": [
+      {
+        "name": "id",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "email",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "data",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "version",
+        "sourceType": "integer",
+        "nullable": false,
+        "type": "BIGINT",
+        "manifestDataType": "integer",
+        "json": false
+      }
+    ],
+    "jm_transfer_audit": [
+      {
+        "name": "id",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "admin_id",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "action",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "entity_id",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "type": "DATETIME(6)",
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_mail_outbox": [
+      {
+        "name": "id",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "order_id",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "event",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "status",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "attempts",
+        "sourceType": "integer",
+        "nullable": false,
+        "type": "BIGINT",
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "next_at",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "type": "DATETIME(6)",
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      },
+      {
+        "name": "last_error",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "type": "DATETIME(6)",
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      },
+      {
+        "name": "sent_at",
+        "sourceType": "timestamptz",
+        "nullable": true,
+        "type": "DATETIME(6)",
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_stay_mail": [
+      {
+        "name": "id",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "booking_id",
+        "sourceType": "uuid",
+        "nullable": false,
+        "type": "CHAR(36)",
+        "manifestDataType": "uuid",
+        "json": false
+      },
+      {
+        "name": "event",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "status",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "attempts",
+        "sourceType": "integer",
+        "nullable": false,
+        "type": "BIGINT",
+        "manifestDataType": "integer",
+        "json": false
+      },
+      {
+        "name": "next_at",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "type": "DATETIME(6)",
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      },
+      {
+        "name": "last_error",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "type": "DATETIME(6)",
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      },
+      {
+        "name": "sent_at",
+        "sourceType": "timestamptz",
+        "nullable": true,
+        "type": "DATETIME(6)",
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_admin_notifications": [
+      {
+        "name": "id",
+        "sourceType": "bigserial",
+        "nullable": false,
+        "type": "BIGINT",
+        "manifestDataType": "bigint",
+        "json": false
+      },
+      {
+        "name": "kind",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "code",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "href",
+        "sourceType": "text",
+        "nullable": false,
+        "type": "LONGTEXT",
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "created_at",
+        "sourceType": "timestamptz",
+        "nullable": false,
+        "type": "DATETIME(6)",
+        "manifestDataType": "timestamp with time zone",
+        "json": false
+      }
+    ],
+    "jm_transfer_manifest": [
+      {
+        "name": "source_table",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "target_table",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": true,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "status",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": false,
+        "manifestDataType": "text",
+        "json": false
+      },
+      {
+        "name": "row_count",
+        "type": "BIGINT",
+        "sourceType": "bigint",
+        "nullable": true,
+        "manifestDataType": "bigint",
+        "json": false
+      },
+      {
+        "name": "columns_json",
+        "type": "LONGTEXT",
+        "sourceType": "jsonb",
+        "nullable": false,
+        "manifestDataType": "jsonb",
+        "json": true
+      },
+      {
+        "name": "insert_sha256",
+        "type": "LONGTEXT",
+        "sourceType": "text",
+        "nullable": true,
+        "manifestDataType": "text",
+        "json": false
+      }
+    ]
+  }
+}

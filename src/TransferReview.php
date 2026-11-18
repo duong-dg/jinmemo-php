@@ -22,8 +22,8 @@ final class TransferReview
     public function overview():array
     {
         $this->installed();$counts=[];$total=0;foreach($this->query('SELECT table_name,COUNT(*) AS total FROM jingo_transfer_records GROUP BY table_name ORDER BY table_name')->fetchAll(PDO::FETCH_ASSOC) as $r){$counts[$r['table_name']]=(int)$r['total'];$total+=(int)$r['total'];}
-        $profile=json_decode((string)file_get_contents(dirname(__DIR__).'/docs/TRANSFER-EXPORT-SCHEMA.json'),true);$tables=[];foreach($profile['tables'] as $name=>$columns)$tables[]=['name'=>$name,'rows'=>$counts[$name]??0];
-        return ['operationalReady'=>false,'state'=>'HOLDING_ONLY','totalRows'=>$total,'tables'=>$tables,'runtimePlan'=>(new TransferRuntimePlan($this->db))->run()];
+        $v2=isset($counts['jm_transfer_manifest']);$profilePath=dirname(__DIR__).'/docs/'.($v2?'TRANSFER-V2-SCHEMA.json':'TRANSFER-EXPORT-SCHEMA.json');$profile=json_decode((string)file_get_contents($profilePath),true);$tables=[];foreach($profile['tables'] as $name=>$columns)$tables[]=['name'=>$name,'rows'=>$counts[$name]??0];
+        return ['operationalReady'=>false,'state'=>'HOLDING_ONLY','totalRows'=>$total,'tables'=>$tables,'runtimePlan'=>(new TransferRuntimePlan($this->db,$profilePath))->run()];
     }
     public function orders(array $input):array
     {

@@ -4,13 +4,14 @@ declare(strict_types=1);
 /** Read-only schema comparison. Column matches never certify behavior or authorize publication. */
 final class TransferRuntimePlan
 {
-    public function __construct(private PDO $db){}
+    public function __construct(private PDO $db,private ?string $profilePath=null){}
     public function run():array
     {
-        $profile=json_decode((string)file_get_contents(dirname(__DIR__).'/docs/TRANSFER-EXPORT-SCHEMA.json'),true,512,JSON_THROW_ON_ERROR);
+        $profile=json_decode((string)file_get_contents($this->profilePath??dirname(__DIR__).'/docs/TRANSFER-EXPORT-SCHEMA.json'),true,512,JSON_THROW_ON_ERROR);
         $schema=(string)$this->db->query('SELECT DATABASE()')->fetchColumn();$tables=[];$matches=0;
         $q=$this->db->prepare('SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=? AND TABLE_NAME=? ORDER BY ORDINAL_POSITION');
         foreach($profile['tables'] as $source=>$columns){
+            if($source==='jm_transfer_manifest'){$tables[$source]=['target'=>null,'status'=>'ARCHIVE_METADATA','missingSourceColumns'=>[],'runtimeOnlyColumns'=>[]];continue;}
             $target='jingo_'.substr($source,12);$q->execute([$schema,$target]);$actual=$q->fetchAll(PDO::FETCH_COLUMN);$expected=array_column($columns,'name');$missing=array_values(array_diff($expected,$actual));$extra=array_values(array_diff($actual,$expected));$same=$actual!==[]&&$missing===[]&&$extra===[];
             if($same)$matches++;$tables[$source]=['target'=>$target,'status'=>$actual===[]?'MISSING_RUNTIME_TABLE':($same?'COLUMN_SET_MATCH_ONLY':'ADAPTER_REQUIRED'),'missingSourceColumns'=>$missing,'runtimeOnlyColumns'=>$extra];
         }

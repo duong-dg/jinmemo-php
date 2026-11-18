@@ -31,8 +31,9 @@ final class FullTransferHolding
     public function run(string $file,bool $apply=false,?string $fingerprint=null,?string $checkedSourceSha256=null):array
     {
         if($apply&&(!is_string($fingerprint)||!preg_match('/^[a-f0-9]{64}$/D',$fingerprint)))throw new InvalidArgumentException('Cần fingerprint từ dry-run trước --apply.');
+        $format=TransferFormat::detect($file);$this->profile=json_decode((string)file_get_contents(TransferFormat::profile($format)),true,512,JSON_THROW_ON_ERROR);$this->relations=json_decode((string)file_get_contents(TransferFormat::relations($format)),true,512,JSON_THROW_ON_ERROR);
         $audit=(new TransferRelations())->run($file);
-        $report=['scope'=>'all-exported-tables-holding-only','mode'=>$apply?'apply':'dry-run','ready'=>false,'applied'=>false,'operationalReady'=>false,'fingerprint'=>null,'sourceSha256'=>$audit['sha256'],'sourceCommit'=>$this->profile['sourceCommit'],
+        $report=['scope'=>'all-exported-tables-holding-only','format'=>$format,'mode'=>$apply?'apply':'dry-run','ready'=>false,'applied'=>false,'operationalReady'=>false,'fingerprint'=>null,'sourceSha256'=>$audit['sha256'],'sourceCommit'=>$this->profile['sourceCommit'],
             'tables'=>[],'counts'=>['sourceRows'=>0,'newRows'=>0,'matchingRows'=>0,'insertedRows'=>0],'errors'=>[],'errorCount'=>0,
             'fileAudit'=>['profileMatches'=>$audit['profileMatches'],'formatValid'=>$audit['formatValid'],'errorCount'=>$audit['errorCount'],'errors'=>$audit['errors']],
             'relations'=>$audit['relations'],'reconciliation'=>null,
@@ -40,9 +41,10 @@ final class FullTransferHolding
         $error=static function(string $code,?string $table=null)use(&$report):void{$report['errorCount']++;if(count($report['errors'])<100)$report['errors'][]=array_filter(['code'=>$code,'table'=>$table],static fn($v)=>$v!==null);};
         if(!$audit['profileMatches']||$audit['relations']['errorCount']!==0){$error('SOURCE_FILE_OR_RELATIONS_INVALID');return $report;}
         if($checkedSourceSha256!==null&&!hash_equals($checkedSourceSha256,(string)$audit['sha256'])){$error('SOURCE_CHANGED_AFTER_FILE_CHECK');return $report;}
+        if($format==='full-v2'&&$audit['missingTables'])$report['activationBlockers'][]='SOURCE_MODULES_DECLARED_MISSING';
         if($audit['relations']['status']!=='PASSED')$report['activationBlockers'][]='SOURCE_REFERENCES_TABLES_NOT_EXPORTED';
         $records=[];$rows=[];$bytes=0;$count=0;
-        $again=(new TransferAudit())->run($file,function(string $table,array $columns,array $values)use(&$records,&$rows,&$bytes,&$count):void{
+        $again=TransferFormat::audit($file)->run($file,function(string $table,array $columns,array $values)use(&$records,&$rows,&$bytes,&$count):void{
             if(++$count>100000)throw new RuntimeException('Full transfer row limit.');$row=[];
             foreach($columns as $i=>$column){$raw=$values[$i];$value=$raw==='NULL'?null:(str_starts_with($raw,'CONVERT(')?hex2bin(substr($raw,10,-16)):$raw);$row[$column['name']]=$value;}
             $payload=self::json($row);$bytes+=strlen($payload);if($bytes>67108864)throw new RuntimeException('Full transfer metadata limit.');
@@ -51,11 +53,11 @@ final class FullTransferHolding
         });
         if(!$again['profileMatches']||$again['sha256']!==$audit['sha256']){$error('SOURCE_CHANGED_DURING_READ');return $report;}
         foreach($this->profile['tables'] as $table=>$columns){$rows[$table]??=[];$records[$table]??=[];$report['tables'][$table]=['sourceRows'=>count($rows[$table]),'newRows'=>0,'matchingRows'=>0,'insertedRows'=>0];}
-        $report['counts']['sourceRows']=$count;$report['reconciliation']=(new TransferReconciliation())->run($rows);$report['runtimePlan']=(new TransferRuntimePlan($this->db))->run();
+        $report['counts']['sourceRows']=$count;$report['reconciliation']=(new TransferReconciliation($format==='full-v2'))->run($rows);$report['runtimePlan']=(new TransferRuntimePlan($this->db,TransferFormat::profile($format)))->run();
         $report['activationBlockers']=array_values(array_unique([...$report['activationBlockers'],...$report['runtimePlan']['blockers']]));
         if($report['reconciliation']['errorCount']>0){$error('SOURCE_RECONCILIATION_FAILED');return $report;}
         foreach($report['reconciliation']['unchecked'] as $item)$report['activationBlockers'][]=$item;
-        $calculated=hash('sha256','all-exported-tables-holding-v1:'.$this->profile['schemaSha256'].':'.$audit['sha256']);
+        $calculated=hash('sha256','all-exported-tables-holding-'.($format==='v1'?'v1':'full-v2').':'.$this->profile['schemaSha256'].':'.$audit['sha256']);
         if($apply&&!hash_equals($fingerprint,$calculated)){$error('FINGERPRINT_MISMATCH');return $report;}
         $target=(string)$this->db->query('SELECT DATABASE()')->fetchColumn();
         foreach(['jingo_transfer_records','jingo_catalog_locks','jingo_audit'] as $table){$r=$this->query('SELECT TABLE_TYPE,ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=? AND TABLE_NAME=?',[$target,$table])->fetch(PDO::FETCH_ASSOC);if(!$r||$r['TABLE_TYPE']!=='BASE TABLE'||strtoupper($r['ENGINE']??'')!=='INNODB')$error('SCHEMA_MISMATCH',$table);}

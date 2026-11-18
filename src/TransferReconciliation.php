@@ -6,6 +6,7 @@ require_once __DIR__.'/OrderCoreTransfer.php';
 final class TransferReconciliation
 {
     private array $result=[];
+    public function __construct(private bool $proofExcluded=false){}
     private function error(string $code,string $table):void{$this->result['errorCount']++;if(count($this->result['errors'])<100)$this->result['errors'][]=['code'=>$code,'table'=>$table];}
     private static function index(array $rows,string $column='id'):array{$out=[];foreach($rows as $r)$out[$r[$column]]=$r;return $out;}
     private static function number(mixed $v,int $min=0):int
@@ -27,7 +28,7 @@ final class TransferReconciliation
         $orders=self::index($get('orders'));$snapshots=[];$partners=self::index($get('partners'));$owners=self::index($get('partner_orders'),'order_id');$pos=self::index($get('pos_orders'),'order_id');
         $vouchers=self::index($get('vouchers'));$uses=self::index($get('voucher_uses'),'order_id');$payments=self::index($get('order_payments'),'order_id');$refs=self::index($get('payment_references'),'reference');$methods=self::index($get('payment_methods'),'payment_id');
         $this->check('orders',$get('orders'),function($r)use(&$snapshots,$owners,$pos,$uses,$payments):void{
-            OrderCoreTransfer::validateRecord($r);$s=json_decode($r['snapshot'],true,512,JSON_THROW_ON_ERROR|JSON_BIGINT_AS_STRING);$snapshots[$r['id']]=$s;
+            OrderCoreTransfer::validateRecord($r,$this->proofExcluded);$s=json_decode($r['snapshot'],true,512,JSON_THROW_ON_ERROR|JSON_BIGINT_AS_STRING);$snapshots[$r['id']]=$s;
             if(isset($owners[$r['id']],$pos[$r['id']])||$r['payment_status']==='CREDIT'&&!isset($owners[$r['id']])||isset($s['discount'])&&(isset($owners[$r['id']])||isset($pos[$r['id']])||!isset($uses[$r['id']])))throw new RuntimeException();
             if($r['payment_status']==='PAID'&&!isset($payments[$r['id']]))throw new RuntimeException();
         });

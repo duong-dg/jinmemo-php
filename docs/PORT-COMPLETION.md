@@ -26,3 +26,7 @@ Tái đối chiếu baseline bằng `node tests/build-source-api-inventory.mjs /
 Đợt 139 đã chạy 167 bài PHP/Node độc lập trên local; sau sửa sáu harness/fixture lỗi thời và cấu hình GD, các ca chạy lại đều đạt. Đây không phải chứng nhận toàn bộ endpoint nguồn, staging thật, cPanel hoặc giao dịch provider. Xem FULL-TRANSFER.md để phân biệt kho chờ đầy đủ với xuất bản vận hành chưa hoàn tất.
 
 Sau tích hợp cuối đợt 139 có màn đối chiếu admin readonly (Cấu hình website → Dữ liệu chuyển đổi), kiểm HTTP/DOM và 18 bài nhóm transfer. Tổng 169 bài độc lập đã chạy đạt, không phải kiểm staging/cPanel thực tế hoặc xác nhận toàn bộ cơ chế xuất bản đã hoàn thiện.
+
+Đợt 140: thêm parser và kho chờ full-v2, 68 bảng nguồn + manifest, kiểm checksum INSERT/cột/số dòng, thiếu nguồn và credential JSON; giữ v1. Chưa hoàn tất atomic publication/native adapters và khôi phục liên kết/credential, chưa import thật. Quy trình phối hợp Node/PHP ở EXPORT-IMPORT-COORDINATION.md.
+
+Kiểm đợt 140: 19 bài nhóm transfer đạt; ca full-v2 mở rộng chạy lại đạt với 161 dòng mẫu, CLI tự nhận định dạng, admin review và kiểm PDF nguyên bytes. Hai bộ sinh profile/fixture --check khớp Node exporter đã ghim. Chỉ kiểm local tổng hợp, chưa dùng dữ liệu production.
