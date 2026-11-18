@@ -40,6 +40,8 @@ Manifest phải xác nhận xuất settings, ride_bookings, ride_pools, ride_pay
 
 Cấu hình hoặc đơn đích khác nguồn, có đơn/nhóm đích ngoài scope, hoặc phát sinh khoản thu/liên kết sau dry-run sẽ chặn. Không ghi đè, xóa, gán lại chuyến hoặc đặt lại dispatch/giá sau khi vận hành. Replay cùng dữ liệu cần dry-run mới; không thêm đơn/audit lần nữa.
 
+Đợt 146 bổ sung chặn khi đơn đích có bất kỳ `jingo_ride_payment_attempts` nào, kể cả QR hết hạn, thất bại hoặc đã trả: báo `RUNTIME_RIDE_PAYMENT_RECONCILIATION_REQUIRED`. Không tự xóa hoặc đổi trạng thái yêu cầu QR để nhập lại. Kiểm lại dưới transaction khi apply, nên một QR phát sinh sau dry-run cũng chặn fingerprint đã duyệt. Lịch sử hoàn tiền được đối chiếu cả ID và mã đơn; mã khớp nhưng ID lệch vẫn dừng để đối soát. Báo cáo không xuất token QR hoặc nội dung giao dịch.
+
 Apply dùng khóa catalog, các khóa bản ghi và transaction InnoDB; lỗi ở audit/ảnh/schema/dữ liệu phụ thuộc rollback toàn bộ kế hoạch và đơn. Giới hạn nguồn được chọn 50.000 dòng/32 MiB metadata; đích tối đa 50.000 đơn/64 MiB JSON, các chỉ mục tham chiếu có giới hạn riêng. Báo cáo không chứa PII, request_key, requestHash hoặc snapshot.
 
 QR, giao dịch đã thu, ca POS, xe ghép và mã tổng ghép nhiều phân hệ vẫn chờ các adapter tiếp theo. Gateway attempts không có trong export; giao dịch treo cần được đối soát trước khi chuyển thật, không mở hai hệ thống đồng thời ghi thu/giữ chỗ.
