@@ -1,0 +1,11 @@
+{
+  "asOf": "2026-11-18T00:00:00.000000Z",
+  "sourceCommit": "7e3578d2c27f166ba42a48ce4ee5b21e7ff33cbb",
+  "creditSourceSha256": "55d0a3735232dcbe97a19cee4c57200738cff2ba3a0702a0fac53a63fc8a6158",
+  "sourceSummarySha256": "31a2d896c13177197702204f0b4e76335a35b8041e7f1604f730f29fcb803e4f",
+  "partnersChecked": 4,
+  "chargesChecked": 5,
+  "repaymentsChecked": 2,
+  "partnersWithDebt": 2,
+  "partnersOverdue": 1
+}

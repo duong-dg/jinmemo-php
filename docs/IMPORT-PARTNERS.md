@@ -57,3 +57,5 @@ php tests/carts.php
 ```
 
 Tests cần JINGO_TEST_DSN trỏ MySQL thử, tự tạo/xóa DB ngẫu nhiên; không chạy trên DB vận hành. Importer đơn/tồn/partner_orders/ledger, đối soát số dư và bước mở khóa chuyển hệ thống vẫn còn.
+
+Đợt 134 bổ sung bước [đối soát công nợ nguồn](PARTNER-CREDIT-TRANSFER-AUDIT.md) bằng file export và mốc UTC cố định. Kiểm chủ/tổng/trạng thái đơn, khoản ghi nợ, mã trả nợ, số tiền và FIFO; không nhập ledger hoặc xóa transfer_pending. PASSED của bộ kiểm này chưa cho phép mở khóa tài khoản.

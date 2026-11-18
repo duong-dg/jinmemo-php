@@ -1351,3 +1351,9 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Thêm bin/import-partners.php: giữ ID/email/JSON/version/nhóm và hạn mức, không nhập mật khẩu/session. Tài khoản mới ở trạng thái chờ nhập/đối chiếu đơn và công nợ; chưa được login/giao dịch. Cấp mật khẩu qua admin không tự mở khóa chuyển đổi.
 - Admin có nhãn chờ/cấp mật khẩu và màn sổ không cho ghi trả nợ khi chưa đủ dữ liệu. Tài khoản PHP cũ khớp metadata giữ mật khẩu/cờ hiện tại. Đã kiểm importer/dry-run/rollback/replay/hai worker, pending gates và regression CTV/đơn/giỏ/công nợ.
 - **Import database/056-partner-transfer-pending.sql sau git pull**. Chưa nhập dữ liệu thật; còn đơn/tồn/ledger, đối soát và bước mở khóa sau chuyển hệ thống. Xem [import hồ sơ CTV](docs/IMPORT-PARTNERS.md).
+
+## Đối soát công nợ nguồn — đợt 134
+
+- Thêm bin/check-partner-credit-transfer.php: kiểm CHARGE theo tổng/chủ/trạng thái đơn, mã trả nợ hai chiều, số nguyên an toàn và FIFO/quá hạn từ file export Node. Digest kết quả đã đối chiếu với creditSummary bản gốc.
+- Chỉ đọc file, không MySQL/SQL/import/mở khóa CTV; importReady luôn false. Cần mốc UTC --as-of rõ ràng. Chưa đối chiếu dữ liệu đích hoặc chuyển đơn/tồn/ledger.
+- Không SQL mới, schema vẫn 056; không nhập dữ liệu thật khi git pull. Xem [đối soát công nợ nguồn](docs/PARTNER-CREDIT-TRANSFER-AUDIT.md).
