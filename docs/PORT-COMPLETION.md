@@ -34,3 +34,7 @@ Kiểm đợt 140: 19 bài nhóm transfer đạt; ca full-v2 mở rộng chạy 
 Đợt 141: adapter runtime cho manual-payments/gifts từ full-v2, kiểm schema/checksum/quan hệ, dùng validator chung, giữ raw JSON/version/stock/VI-EN, fingerprint gắn đích, transaction/lock/audit và chặn ghi đè. Có đơn quà nguồn thì chặn tồn để chờ adapter đơn; cấu hình khác và toàn bộ publication vẫn chưa hoàn tất. Xem IMPORT-BUSINESS-SETTINGS.md.
 
 Kiểm đợt 141: 20 bài nhóm transfer đạt; kiểm thêm gift-catalog, gift-orders, payments, carts và HTTP đều đạt. Ca mới kiểm ghi runtime/đọc qua module, tồn/VI-EN/version, schema, source gift order dependency, ảnh thiếu, feature conflict, fingerprint, audit rollback, replay và CLI dry-run theo scope. Fixture Node --check khớp. Không nhập dữ liệu production.
+
+Đợt 142: nhập đồng thời danh mục/tồn và đơn quà độc lập vào runtime qua --with-gift-orders, kiểm tiền/snapshot/trạng thái/ngày/khả năng hủy, giữ fingerprint, không tạo lại hay hoàn tồn lúc nhập. Chặn phụ thuộc checkout/payment/refund, thiếu source declarations và xung đột runtime. Chưa nhập các đơn quà thuộc thanh toán chung hoặc xuất bản toàn bộ hệ thống. Xem IMPORT-GIFT-ORDERS.md.
+
+Kiểm đợt 142: 21 bài transfer đạt, cùng gift-orders/checkout-bundles/refunds. Ca mới kiểm nguyên tử catalog+4 trạng thái đơn, giá/phí lịch sử, microseconds, overflow khi hủy, nguồn thiếu metadata/mã tổng/sổ tài chính, xung đột runtime, CLI flag, hai tiến trình cùng fingerprint, rollback audit, native replay/cancel và không phát mail/thông báo. Fixture Node --check khớp. Chưa nhập dữ liệu production.

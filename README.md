@@ -1393,3 +1393,5 @@ Admin có **Cấu hình website → Dữ liệu chuyển đổi** để xem kho 
 Đợt 140: nhận export Node **full-v2** (68 bảng nguồn + manifest), tự kiểm cột/số dòng/SHA-256, giữ hỗ trợ v1. Chỉ lưu kho chờ; chưa xuất bản toàn bộ dữ liệu vận hành. Quy trình hai bên: [EXPORT-IMPORT-COORDINATION.md](docs/EXPORT-IMPORT-COORDINATION.md).
 
 Đợt 141: có adapter **import vào runtime** cho cấu hình thanh toán thủ công và danh mục quà từ full-v2; dry-run/fingerprint/atomic/no-overwrite. Quà có đơn lịch sử còn bị chặn để chờ adapter đơn/tồn. Xem [IMPORT-BUSINESS-SETTINGS.md](docs/IMPORT-BUSINESS-SETTINGS.md).
+
+Đợt 142: `--with-gift-orders` nhập đơn quà độc lập và tồn hiện tại nguyên tử vào runtime, giữ snapshot/trạng thái/version và không phát lại biến động tồn. Đơn thuộc thanh toán chung hoặc có dấu vết tài chính vẫn cần adapter tiếp theo. Xem [IMPORT-GIFT-ORDERS.md](docs/IMPORT-GIFT-ORDERS.md).

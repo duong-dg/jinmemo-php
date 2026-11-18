@@ -33,3 +33,16 @@ console.log('Node full-v2 fixtures generated; nested credentials removed, numeri
 
 rows.jm_transfer_settings=rows.jm_transfer_settings.map(r=>({...r,version:'7',data:r.id==='manual-payments'?JSON.stringify({methods:[{id:'PAY_LATER',name:'Thanh toán sau',englishName:'Pay later',instructions:'Liên hệ xác nhận',englishInstructions:'Contact to confirm',enabled:true}]}):r.id==='gifts'?JSON.stringify({enabled:true,shippingFee:50000,items:[{id:'00000000-0000-4000-8000-000000009999',name:'Quà mẫu',description:'Mô tả',nameEn:'Gift',descriptionEn:'Description',price:100000,stock:7,active:true}]}):r.data}));
 {const text=build(),target=new URL('./fixtures/business-settings-v2-node.sql',import.meta.url);if(process.argv.includes('--check')){if(fs.readFileSync(target,'utf8')!==text)throw Error('Business fixture differs');}else fs.writeFileSync(target,text);}
+
+// Standalone historical orders; current stock already includes their original movements.
+const historicalInputs=[];rows.jm_transfer_gift_orders=['PENDING','SHIPPING','COMPLETED','CANCELLED'].map((status,i)=>{
+ const requestId='00000000-0000-4000-8000-'+String(9800+i).padStart(12,'0'),fulfillment=i===2?'PICKUP':'DELIVERY',itemId=i<2?'00000000-0000-4000-8000-000000009999':'00000000-0000-4000-8000-000000009996',shippingFee=fulfillment==='DELIVERY'?10000:0,total=50000+shippingFee;
+ const input={requestId,fulfillment,expectedTotal:total,name:'Khách mẫu '+i,phone:'0901234567',...(fulfillment==='PICKUP'?{pickupCounterId:'old-counter'}:{}),address:fulfillment==='DELIVERY'?'Địa chỉ giao hàng cũ':'',lines:[{id:itemId,quantity:2}]};historicalInputs.push(input);
+ const data={...input,address:fulfillment==='PICKUP'?'Địa chỉ quầy cũ':input.address,...(fulfillment==='PICKUP'?{pickupCounterName:'Quầy cũ'}:{}),lines:[{...input.lines[0],name:'Tên quà lịch sử',price:25000}],shippingFee,total,fingerprint:hash(JSON.stringify(input))};
+ return {id:requestId,code:'JM-G'+String(9800+i).padStart(12,'0'),status,data:JSON.stringify(data),created_at:'2026-11-18 00:00:02.12345'+i};
+});
+for(const [file,text]of [['gift-orders-v2-node.sql',build()],['gift-orders-v2-inputs.json',JSON.stringify(historicalInputs,null,2)+'\n']]){const target=new URL('./fixtures/'+file,import.meta.url);if(process.argv.includes('--check')){if(fs.readFileSync(target,'utf8').replaceAll('\r\n','\n')!==text)throw Error('Gift fixture differs '+file);}else fs.writeFileSync(target,text);}
+
+for(const [file,text]of [['gift-orders-v2-missing-members.sql',build(new Set(['jm_transfer_checkout_members']))]]){const target=new URL('./fixtures/'+file,import.meta.url);if(process.argv.includes('--check')){if(fs.readFileSync(target,'utf8')!==text)throw Error('Missing members fixture differs');}else fs.writeFileSync(target,text);}
+rows.jm_transfer_checkout_bundles=[{id:'00000000-0000-4000-8000-000000009850',code:'JB0000009850',total:'60000',status:'PENDING',data:JSON.stringify({refs:{giftId:rows.jm_transfer_gift_orders[0].id}}),created_at:'2026-11-18 00:00:02.123456'}];
+{const text=build(),target=new URL('./fixtures/gift-orders-v2-bundle.sql',import.meta.url);if(process.argv.includes('--check')){if(fs.readFileSync(target,'utf8')!==text)throw Error('Bundle fixture differs');}else fs.writeFileSync(target,text);}

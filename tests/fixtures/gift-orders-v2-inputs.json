@@ -1,0 +1,59 @@
+[
+  {
+    "requestId": "00000000-0000-4000-8000-000000009800",
+    "fulfillment": "DELIVERY",
+    "expectedTotal": 60000,
+    "name": "Khách mẫu 0",
+    "phone": "0901234567",
+    "address": "Địa chỉ giao hàng cũ",
+    "lines": [
+      {
+        "id": "00000000-0000-4000-8000-000000009999",
+        "quantity": 2
+      }
+    ]
+  },
+  {
+    "requestId": "00000000-0000-4000-8000-000000009801",
+    "fulfillment": "DELIVERY",
+    "expectedTotal": 60000,
+    "name": "Khách mẫu 1",
+    "phone": "0901234567",
+    "address": "Địa chỉ giao hàng cũ",
+    "lines": [
+      {
+        "id": "00000000-0000-4000-8000-000000009999",
+        "quantity": 2
+      }
+    ]
+  },
+  {
+    "requestId": "00000000-0000-4000-8000-000000009802",
+    "fulfillment": "PICKUP",
+    "expectedTotal": 50000,
+    "name": "Khách mẫu 2",
+    "phone": "0901234567",
+    "pickupCounterId": "old-counter",
+    "address": "",
+    "lines": [
+      {
+        "id": "00000000-0000-4000-8000-000000009996",
+        "quantity": 2
+      }
+    ]
+  },
+  {
+    "requestId": "00000000-0000-4000-8000-000000009803",
+    "fulfillment": "DELIVERY",
+    "expectedTotal": 60000,
+    "name": "Khách mẫu 3",
+    "phone": "0901234567",
+    "address": "Địa chỉ giao hàng cũ",
+    "lines": [
+      {
+        "id": "00000000-0000-4000-8000-000000009996",
+        "quantity": 2
+      }
+    ]
+  }
+]

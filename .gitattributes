@@ -1,3 +1,5 @@
 *.pdf binary
 tests/fixtures/full-v2*.sql text eol=lf
 tests/fixtures/business-settings-v2-node.sql text eol=lf
+tests/fixtures/gift-orders-v2-node.sql text eol=lf
+tests/fixtures/gift-orders-v2-*.sql text eol=lf

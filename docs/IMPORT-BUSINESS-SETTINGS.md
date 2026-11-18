@@ -32,8 +32,8 @@ Mặc định scope `all`: cả hai cấu hình phải có và hợp lệ; lỗi
 - Dùng chung validator của form lưu cấu hình; từ chối dữ liệu cần sửa, cắt, ép kiểu hoặc thêm giá trị mặc định mới. Không tự chuẩn hóa làm mất nội dung nguồn.
 - Giữ version nguồn 1..2147483646, không ghi đè dữ liệu runtime khác. Cấu hình trùng dữ liệu/version được nhận diện. Dry-run mới sau lần apply cho fingerprint mới; chạy lại không tạo audit/setting trùng.
 - Khóa catalog và giao dịch InnoDB bảo vệ apply. Fingerprint gồm file, scope, dữ liệu nguồn và trạng thái cấu hình đích. Đích thay đổi thì phải dry-run lại. Lỗi ghi/audit rollback toàn bộ.
-- Quà yêu cầu manifest xác nhận đã xuất bảng gift_orders và bảng đó không có đơn. Có đơn quà lịch sử thì báo `GIFT_ORDER_IMPORT_REQUIRED_BEFORE_STOCK`; cần adapter đơn quà trước, không bỏ kiểm để mở bán. Nếu runtime có đơn quà, không nhập mới tồn đè lên hoạt động đang có.
+- Quà yêu cầu manifest xác nhận đã xuất bảng gift_orders và bảng đó không có đơn. Có đơn quà lịch sử thì mặc định báo `GIFT_ORDER_IMPORT_REQUIRED_BEFORE_STOCK`. Đợt 142 thêm cờ `--with-gift-orders` nhập đơn độc lập cùng tồn trong một giao dịch; đơn phụ thuộc mã tổng/thanh toán vẫn chặn. Xem [IMPORT-GIFT-ORDERS.md](IMPORT-GIFT-ORDERS.md). Nếu runtime có đơn quà, không nhập mới tồn đè lên hoạt động đang có.
 - Ảnh quà phải đã có trong thư viện PHP và chưa bị xóa. Copy/import ảnh gốc trước. Nếu runtime có cờ `features.giftsEnabled`, cờ đó phải khớp `gifts.enabled`; công cụ không tự sửa cờ phân hệ.
-- Không nhập tài khoản, phát mail, gọi provider, tạo đơn, tính lại doanh thu/tồn hoặc thay đổi ảnh/PDF. Đợt này chỉ kiểm local tổng hợp, chưa nhập dữ liệu thật.
+- Không nhập tài khoản, phát mail, gọi provider, chạy lại thao tác tạo đơn, tính lại doanh thu/tồn hoặc thay đổi ảnh/PDF. Đợt này chỉ kiểm local tổng hợp, chưa nhập dữ liệu thật.
 
 Trình tự tổng thể và hợp đồng hai bên: [EXPORT-IMPORT-COORDINATION.md](EXPORT-IMPORT-COORDINATION.md).

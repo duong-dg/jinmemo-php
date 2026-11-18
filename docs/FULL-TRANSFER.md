@@ -102,3 +102,5 @@ Bổ sung `tests/transfer-review.php` và `tests/transfer-review-ui.cjs`: HTTP q
 CLI tự nhận v1/full-v2. V2 kiểm hợp đồng 68 bảng nguồn + manifest (69 nhóm/404 cột), số dòng, kiểu cột và SHA-256 nguyên bytes INSERT. Node v2 không có comment đếm dòng từng bảng như v1; manifest/footer cung cấp số đếm. MISSING_SOURCE phải khai báo, vẫn chặn vận hành; cột/khóa credential bị loại, không tạo giả access_hash. JSON LONGTEXT giữ nguyên token số. Metadata manifest không phải bảng runtime. Kho đã có v1 không tự ghi đè bằng v2. Settings, danh tính admin/POS và lịch sử mail chỉ giữ kho chờ, không kích hoạt đăng nhập hoặc gửi mail. Xem [quy trình phối hợp](EXPORT-IMPORT-COORDINATION.md). Các giới hạn xuất bản nêu trên vẫn áp dụng.
 
 Đợt 141 có CLI riêng `import-business-settings.php` xuất bản hai cấu hình vào runtime (IMPORT-BUSINESS-SETTINGS.md). `import-transfer.php` vẫn giữ vai trò kho chờ, không tự gọi adapter hay mở bán.
+
+Đợt 142: adapter runtime quà đã hỗ trợ đơn độc lập cùng catalog/tồn trong một giao dịch; xem IMPORT-GIFT-ORDERS.md. CLI kho chờ chung vẫn không tự xuất bản hoặc chạy adapter.

@@ -51,3 +51,5 @@ Lệnh cuối mặc định dry-run. Không chạy trực tiếp SQL export vào
 **Hiện chưa hoàn tất bộ xuất bản toàn bộ dữ liệu vào schema vận hành. `operationalReady=false` vẫn được giữ.** Các bước thực tế ở trên là quy trình chuẩn bị và kiểm; không tự động thực hiện import thật trong quá trình phát triển. Xem FULL-TRANSFER.md về giới hạn và những phần còn thiếu.
 
 Adapter runtime bổ sung: [IMPORT-BUSINESS-SETTINGS.md](IMPORT-BUSINESS-SETTINGS.md) nhập hai cấu hình `manual-payments` và `gifts` trực tiếp từ full-v2 vào jingo_settings. Đây là phạm vi riêng; chưa thay thế bước hoàn thiện toàn bộ dữ liệu vận hành.
+
+Đợt 142 có thêm nhập đơn quà độc lập cùng tồn qua `--with-gift-orders`: xem [IMPORT-GIFT-ORDERS.md](IMPORT-GIFT-ORDERS.md). Đơn phụ thuộc mã tổng/thanh toán/hoàn tiền vẫn phải chờ adapter tương ứng, không chia nhỏ scope để bỏ liên kết.
