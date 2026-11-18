@@ -1,0 +1,35 @@
+[
+  {
+    "code": "JM0000000904",
+    "requestId": "00000000-0000-4000-8000-000000099000",
+    "amount": 100000,
+    "recipient": "Người nhận mẫu",
+    "method": "BANK",
+    "reference": "REFUND-TRANSFER-0",
+    "refundedOn": "2026-11-17",
+    "note": "Đã hoàn tiền trước khi chuyển hệ thống",
+    "verified": true
+  },
+  {
+    "code": "JM0000000904",
+    "requestId": "00000000-0000-4000-8000-000000099001",
+    "amount": 50000,
+    "recipient": "Người nhận mẫu",
+    "method": "CASH",
+    "reference": "",
+    "refundedOn": "2026-11-17",
+    "note": "Đã hoàn tiền trước khi chuyển hệ thống",
+    "verified": true
+  },
+  {
+    "code": "JB0000009850",
+    "requestId": "00000000-0000-4000-8000-000000099002",
+    "amount": 10000,
+    "recipient": "Người nhận mẫu",
+    "method": "BANK",
+    "reference": "REFUND-TRANSFER-2",
+    "refundedOn": "2026-11-17",
+    "note": "Đã hoàn tiền trước khi chuyển hệ thống",
+    "verified": true
+  }
+]

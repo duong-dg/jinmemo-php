@@ -1395,3 +1395,5 @@ Admin có **Cấu hình website → Dữ liệu chuyển đổi** để xem kho 
 Đợt 141: có adapter **import vào runtime** cho cấu hình thanh toán thủ công và danh mục quà từ full-v2; dry-run/fingerprint/atomic/no-overwrite. Quà có đơn lịch sử còn bị chặn để chờ adapter đơn/tồn. Xem [IMPORT-BUSINESS-SETTINGS.md](docs/IMPORT-BUSINESS-SETTINGS.md).
 
 Đợt 142: `--with-gift-orders` nhập đơn quà độc lập và tồn hiện tại nguyên tử vào runtime, giữ snapshot/trạng thái/version và không phát lại biến động tồn. Đơn thuộc thanh toán chung hoặc có dấu vết tài chính vẫn cần adapter tiếp theo. Xem [IMPORT-GIFT-ORDERS.md](docs/IMPORT-GIFT-ORDERS.md).
+
+Đợt 143: thêm importer **lịch sử hoàn vào jingo_refunds** từ full-v2, kiểm sáu nhóm cha và khoản thực thu gốc, giữ fingerprint/thời gian, không gọi chuyển tiền. Cha/khoản thu chưa có hoặc chưa khớp thì chặn. Xem [IMPORT-REFUNDS.md](docs/IMPORT-REFUNDS.md).

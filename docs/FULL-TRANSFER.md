@@ -104,3 +104,5 @@ CLI tự nhận v1/full-v2. V2 kiểm hợp đồng 68 bảng nguồn + manifest
 Đợt 141 có CLI riêng `import-business-settings.php` xuất bản hai cấu hình vào runtime (IMPORT-BUSINESS-SETTINGS.md). `import-transfer.php` vẫn giữ vai trò kho chờ, không tự gọi adapter hay mở bán.
 
 Đợt 142: adapter runtime quà đã hỗ trợ đơn độc lập cùng catalog/tồn trong một giao dịch; xem IMPORT-GIFT-ORDERS.md. CLI kho chờ chung vẫn không tự xuất bản hoặc chạy adapter.
+
+Đợt 143 có adapter runtime cho lịch sử hoàn (IMPORT-REFUNDS.md). Cha/khoản thu vận hành phải khớp trước, khác với kho chờ chưa thể dùng làm cha runtime. Lệnh lưu kho chờ không tự gọi importer hoàn.

@@ -53,3 +53,5 @@ Lệnh cuối mặc định dry-run. Không chạy trực tiếp SQL export vào
 Adapter runtime bổ sung: [IMPORT-BUSINESS-SETTINGS.md](IMPORT-BUSINESS-SETTINGS.md) nhập hai cấu hình `manual-payments` và `gifts` trực tiếp từ full-v2 vào jingo_settings. Đây là phạm vi riêng; chưa thay thế bước hoàn thiện toàn bộ dữ liệu vận hành.
 
 Đợt 142 có thêm nhập đơn quà độc lập cùng tồn qua `--with-gift-orders`: xem [IMPORT-GIFT-ORDERS.md](IMPORT-GIFT-ORDERS.md). Đơn phụ thuộc mã tổng/thanh toán/hoàn tiền vẫn phải chờ adapter tương ứng, không chia nhỏ scope để bỏ liên kết.
+
+Sổ hoàn được nhập sau các cha và khoản thu bằng [IMPORT-REFUNDS.md](IMPORT-REFUNDS.md). Bộ nhập đối chiếu ID/mã, từng khoản thu, tổng thực thu và liên kết cha; không gọi lại chuyển tiền hoặc bù dữ liệu cha bị thiếu.
