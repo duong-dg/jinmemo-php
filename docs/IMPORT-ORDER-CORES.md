@@ -51,3 +51,5 @@ php tests/voucher-use-transfer.php
 Fixture lõi dùng SQL sinh từ helper exporter Node thật của đợt 136; test thêm Unicode/emoji và các snapshot legacy/online/miễn phí/CREDIT. Kiểm nguyên vẹn 13 trường, tiền/date/hash/NULL/shape, collision nguồn/kho/live, fingerprint, schema/capacity/unique, rollback/audit/replay/CLI và hai worker. Kiểm tra cứu khách trả 404 cho đơn chỉ trong kho chờ, các bảng đơn/thu/tồn/vé/mail/thông báo vận hành vẫn rỗng. Migration replay giữ nguyên kho chờ. Regression đơn và importer lượt voucher chạy với schema mới.
 
 Các test dùng MySQL thử, tự tạo/xóa DB ngẫu nhiên; chưa dùng dump thật/cPanel. Còn chuyển và đối soát toàn bộ quan hệ, kiểm file vật lý, rồi cơ chế xuất bản đơn nguyên khối và mở khóa. Kho chờ mới không tự đáp ứng các phần đó.
+
+Đợt 138 bổ sung [liên kết CTV/POS và lịch sử thao tác trong kho chờ](IMPORT-ORDER-RELATIONS.md), yêu cầu lõi đã khớp. Chỉ lưu trường gốc, chưa thực thi/publish lịch sử hoặc đáp ứng đơn cha trong các bảng vận hành. Schema 060 không mở khóa đơn/CTV.

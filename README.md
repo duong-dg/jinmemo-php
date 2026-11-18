@@ -1375,3 +1375,9 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Thêm bin/import-order-cores.php: kiểm/giữ 13 cột gốc, snapshot/contact/hash/mã và UTC microsecond; kiểm phép tính tiền lịch sử, collision và version. Không tính lại giá theo danh mục hôm nay.
 - Dữ liệu chỉ vào jingo_transfer_orders, chưa xuất hiện trong đơn vận hành hoặc tra cứu; không thu tiền/trừ tồn/gửi email. Mặc định dry-run, apply cần fingerprint; operationalReady luôn false.
 - **Import database/059-order-transfer-holding.sql sau git pull**. Chưa nhập dữ liệu thật; còn quan hệ đơn/tồn/thu tiền/ledger và cơ chế xuất bản nguyên khối. Xem [lõi đơn trong kho chuyển đổi](docs/IMPORT-ORDER-CORES.md).
+
+## Liên kết và lịch sử đơn trong kho chờ — đợt 138
+
+- Thêm bin/import-order-relations.php cho kênh CTV/POS và lịch sử thao tác, kiểm lõi đơn/metadata cha, kênh trùng và liên kết hai chiều. Giữ trường nguồn, actor/note/UTC microsecond; không suy ra order_version không có trong export.
+- Giữ cả UUID request_hash của REVOKE_FILE đúng nguồn. Mặc định dry-run, apply cần fingerprint, ghi kho chờ nguyên khối/audit/replay; không thực thi lại thao tác hoặc ghi đơn vận hành.
+- **Import database/060-order-relation-holding.sql sau git pull**. Chưa nhập thật hoặc mở khóa; còn thu tiền/tồn/ledger/các liên kết khác và xuất bản đơn nguyên khối. Xem [liên kết/lịch sử trong kho chờ](docs/IMPORT-ORDER-RELATIONS.md).
