@@ -1,5 +1,7 @@
 # Import sản phẩm và gói vé từ export Node — đợt 131
 
+Đợt 132 bổ sung lệnh riêng import-price-groups.php gồm cả nhóm giá CTV trên cùng engine, xem IMPORT-PRICE-GROUPS.md. Lệnh import-products.php ở tài liệu này vẫn giữ phạm vi cũ.
+
 **Cập nhật hosting:** sau git pull, import `database/055-product-time-precision.sql` bằng phpMyAdmin hoặc installer theo quy trình hiện có. Cột jingo_products.updated_at được nâng lên DATETIME(6), giữ giá trị hiện có và mặc định thời gian mới có microsecond; thao tác sửa sản phẩm cũng ghi UTC_TIMESTAMP(6). Không tự nhập dữ liệu khi cập nhật.
 
 Importer mới dùng chung engine của importer danh mục: **bin/import-products.php**. Phạm vi gồm loại sản phẩm/điểm đến/nhà cung cấp/quầy, sản phẩm (gói vé và giá trong JSON) cùng alias TYPE/DESTINATION/DESTINATION_EN/PRODUCT. Có thể nhập một nhóm nguyên khối vào DB đích trống hoặc chạy sau importer danh mục; dữ liệu đã khớp chỉ được kiểm, không ghi đè/tăng version. Không bao gồm price_groups của CTV, đơn, tồn, lô nguồn cung, công nợ hoặc ledger.

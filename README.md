@@ -1339,3 +1339,9 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Thêm bin/import-products.php dùng chung engine danh mục: giữ ID/JSON/version, gói vé/giá/lịch/English và alias cũ; kiểm dependency, ảnh và fingerprint, không ghi đè metadata khác. Không tự tạo đơn/tồn hoặc tính lại giá.
 - **Import database/055-product-time-precision.sql sau git pull** để giữ updated_at microsecond. Mặc định chỉ dry-run; --apply cần hash riêng đã xem. Đã kiểm exporter fixture, MySQL/CLI/hai worker, runtime alias/giá và regression danh mục/sản phẩm.
 - Chưa dùng dữ liệu thật/cPanel. Importer nhóm giá CTV/đơn/tồn/công nợ/ledger vẫn chưa hoàn tất; xem [hướng dẫn sản phẩm](docs/IMPORT-PRODUCTS.md).
+
+## Import nhóm giá CTV — đợt 132
+
+- Thêm bin/import-price-groups.php, nối nhóm giá DIRECT/DISCOUNT và dữ liệu legacy với sản phẩm/gói/nhóm khách. Giữ JSON/version/trạng thái, kiểm tham chiếu/rule, không ghi đè hoặc gán nhóm vào tài khoản.
+- Dry-run mặc định, --apply cần hash riêng; ghi toàn nhóm nguyên khối. Đã kiểm fixture exporter/MySQL/CLI, giá CTV sau nhập, rollback/replay/hai worker và regression sản phẩm/nhóm giá.
+- Không SQL mới, schema vẫn 055. Chưa nhập dữ liệu thật; tài khoản CTV, đơn/tồn/công nợ/ledger còn thiếu. Xem [import nhóm giá CTV](docs/IMPORT-PRICE-GROUPS.md).

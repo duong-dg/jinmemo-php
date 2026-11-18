@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-foreach(['AdminAuth','ProductTypes','Destinations','Suppliers','Counters','Media','Pricing','ContentHtml','Products','ProductSchema'] as $dependency)require_once __DIR__.'/'.$dependency.'.php';
+foreach(['AdminAuth','ProductTypes','Destinations','Suppliers','Counters','Media','Pricing','ContentHtml','Products','ProductSchema','PriceGroups'] as $dependency)require_once __DIR__.'/'.$dependency.'.php';
 
 /** Staging -> runtime metadata only. Does not call save(), reprice or change source IDs. */
 final class CatalogTransfer
@@ -8,8 +8,8 @@ final class CatalogTransfer
     private const TABLES=['product_types'=>ProductTypes::class,'destinations'=>Destinations::class,'suppliers'=>Suppliers::class,'counters'=>Counters::class];
     private array $errors=[];
     private int $bytes=0;
-    public function __construct(private PDO $db,private string $mediaDirectory,private bool $includeProducts=false){}
-    private function tables():array{return $this->includeProducts?self::TABLES+['products'=>ProductSchema::class]:self::TABLES;}
+    public function __construct(private PDO $db,private string $mediaDirectory,private bool $includeProducts=false,private bool $includePriceGroups=false){if($includePriceGroups&&!$includeProducts)throw new InvalidArgumentException('Price groups require product scope.');}
+    private function tables():array{return self::TABLES+($this->includeProducts?['products'=>ProductSchema::class]:[])+($this->includePriceGroups?['price_groups'=>PriceGroups::class]:[]);}
     private static function timestamp(mixed $v):?string{if(!is_string($v)||!preg_match('/^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{1,6})?$/D',$v))return null;$normal=str_contains($v,'.')?str_pad($v,26,'0'):$v.'.000000';$d=DateTimeImmutable::createFromFormat('!Y-m-d H:i:s.u',$normal,new DateTimeZone('UTC'));return $d!==false&&$d->format('Y-m-d H:i:s.u')===$normal?$normal:null;}
     private function query(string $sql,array $args=[]):PDOStatement{$s=$this->db->prepare($sql);$s->execute($args);return $s;}
     private static function identifier(string $v):string{if(!preg_match('/^[A-Za-z0-9_][A-Za-z0-9_$-]{0,63}$/D',$v))throw new InvalidArgumentException('Tên database không hợp lệ.');return '`'.$v.'`';}
@@ -52,7 +52,7 @@ final class CatalogTransfer
         self::identifier($source);$target=(string)$this->db->query('SELECT DATABASE()')->fetchColumn();self::identifier($target);
         if(strcasecmp($source,$target)===0)throw new InvalidArgumentException('Staging phải khác database PHP.');
         if($apply&&(!is_string($expectedFingerprint)||!preg_match('/^[a-f0-9]{64}$/D',$expectedFingerprint)))throw new InvalidArgumentException('Cần --fingerprint từ dry-run trước --apply.');
-        $this->errors=[];$this->bytes=0;$report=['scope'=>$this->includeProducts?'catalog-and-products-only':'catalog-foundations-only','sourceDatabase'=>$source,'targetDatabase'=>$target,'mode'=>$apply?'apply':'dry-run','ready'=>false,'applied'=>false,'fingerprint'=>null,'counts'=>[],'errors'=>[],'notImportedTables'=>[],'notImportedAliasRows'=>0];
+        $this->errors=[];$this->bytes=0;$report=['scope'=>$this->includePriceGroups?'catalog-products-price-groups-only':($this->includeProducts?'catalog-and-products-only':'catalog-foundations-only'),'sourceDatabase'=>$source,'targetDatabase'=>$target,'mode'=>$apply?'apply':'dry-run','ready'=>false,'applied'=>false,'fingerprint'=>null,'counts'=>[],'errors'=>[],'notImportedTables'=>[],'notImportedAliasRows'=>0];
         $this->db->exec('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');if(!$apply)$this->db->exec('SET TRANSACTION READ ONLY');$this->db->beginTransaction();
         try{
             foreach(['jingo_catalog_locks','jingo_audit','jingo_slug_aliases','jingo_media'] as $table){$r=$this->query('SELECT TABLE_TYPE,ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=? AND TABLE_NAME=?',[$target,$table])->fetch(PDO::FETCH_ASSOC);if(!$r||$r['TABLE_TYPE']!=='BASE TABLE'||strtoupper($r['ENGINE']??'')!=='INNODB')$this->error($table,0,'MISSING_RUNTIME_TABLE');}
@@ -85,6 +85,12 @@ final class CatalogTransfer
                 if(isset($body['destinationId'])){$node=$all['destinations'][$body['destinationId']]??null;if(!$node)$this->error('products',0,'MISSING_DESTINATION');$seen=[];while($node!==null){if(isset($seen[$node['id']]))break;$seen[$node['id']]=true;if($published&&$node['status']!=='ACTIVE')$this->error('products',0,'INACTIVE_PRODUCT_DESTINATION');$node=isset($node['parentId'])?($all['destinations'][$node['parentId']]??null):null;}}
                 if(isset($body['cover']['id']))$imageReferences[]=$body['cover']['id'];foreach($body['gallery'] as $image)$imageReferences[]=$image['id'];$imageReferences=array_merge($imageReferences,ContentHtml::imageIds($body['detailHtml']??''),ContentHtml::imageIds($body['english']['detailHtml']??''));
             }
+            if($this->includePriceGroups)foreach($all['price_groups'] as $group)foreach($group['rules']??[] as $rule){
+                $product=$all['products'][$rule['productId']]??null;if(!$product){$this->error('price_groups',0,'MISSING_RULE_PRODUCT');continue;}
+                $variant=null;foreach($product['variants'] as $v)if($v['id']===$rule['variantId'])$variant=$v;
+                if(!$variant||!array_key_exists($rule['customerType'],$variant['prices'])){$this->error('price_groups',0,'INVALID_RULE_VARIANT_OR_CUSTOMER');continue;}
+                if(isset($rule['slotId'])){$slots=array_column($variant['timeSlots']??[],'id');foreach($variant['schedulePeriods']??[] as $period)$slots=array_merge($slots,array_column($period['timeSlots'],'id'));if(!in_array($rule['slotId'],$slots,true))$this->error('price_groups',0,'MISSING_RULE_SLOT');}
+            }
             $files=[];$coverBytes=0;foreach(array_unique($imageReferences) as $id){if(isset($files[$id]))continue;try{$media=new Media($this->db,$this->mediaDirectory);$media->validateIds([$id]);$path=$media->file($id);$r=$this->query('SELECT bytes,width,height FROM jingo_media WHERE id=?',[$id])->fetch(PDO::FETCH_ASSOC);$info=is_link($path)?false:@getimagesize($path);if(!$info||$info[2]!==IMAGETYPE_WEBP||filesize($path)!==(int)$r['bytes']||$info[0]!=(int)$r['width']||$info[1]!=(int)$r['height']||(int)$r['bytes']>10485760)throw new RuntimeException();$coverBytes+=(int)$r['bytes'];if($coverBytes>2147483648)throw new RuntimeException();$hash=hash_file('sha256',$path);if($hash===false)throw new RuntimeException();$files[$id]=['path'=>$path,'hash'=>$hash];$fingerprints[]='cover:'.$id.':'.$hash;}catch(Throwable){$this->error('media',0,'INVALID_REFERENCED_IMAGE_OR_LIMIT');}}
             $aliases=[];$sourceAliases=$this->rows($source,'jm_transfer_slug_aliases');$targetAliases=$this->rows($target,'jingo_slug_aliases',$apply);$aliasSeen=[];$report['counts']['slug_aliases']=['sourceRows'=>count($sourceAliases),'selectedRows'=>0,'newRows'=>0,'matchingRows'=>0,'insertedRows'=>0];
             foreach([false=>$targetAliases,true=>$sourceAliases] as $fromSource=>$rows)foreach($rows as $i=>$row){$kind=$row['kind'];if(!in_array($kind,$this->includeProducts?['TYPE','DESTINATION','DESTINATION_EN','PRODUCT']:['TYPE','DESTINATION','DESTINATION_EN'],true)){if($fromSource)$report['notImportedAliasRows']++;continue;}$table=match($kind){'TYPE'=>'product_types','PRODUCT'=>'products',default=>'destinations'};$slug=$row['slug'];$id=$row['entity_id'];
@@ -96,7 +102,7 @@ final class CatalogTransfer
             $report['errors']=$this->errors;$report['ready']=!$this->errors;if(!$apply||!$report['ready']){$this->db->rollBack();return $report;}
             foreach($files as $file)if(!is_file($file['path'])||is_link($file['path'])||!hash_equals($file['hash'],(string)hash_file('sha256',$file['path'])))throw new RuntimeException('Cover changed during import.');
             foreach($pending as $table=>$rows){$cols=$table==='slug_aliases'?['kind','slug','entity_id']:$columns[$table];$insert=$this->db->prepare('INSERT INTO jingo_'.$table.' (`'.implode('`,`',$cols).'`) VALUES ('.implode(',',array_fill(0,count($cols),'?')).')');foreach($rows as $row)$insert->execute(array_map(static fn($col)=>$row[$col],$cols));$report['counts'][$table]['insertedRows']=count($rows);}
-            if($pending)$this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),'cli-import',$this->includeProducts?'products.import':'catalog.import','catalog:'.$report['fingerprint']]);
+            if($pending)$this->query('INSERT INTO jingo_audit(id,admin_id,action,entity_id) VALUES (?,?,?,?)',[bin2hex(random_bytes(16)),'cli-import',$this->includePriceGroups?'price-groups.import':($this->includeProducts?'products.import':'catalog.import'),'catalog:'.$report['fingerprint']]);
             $this->db->commit();$report['applied']=true;return $report;
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
