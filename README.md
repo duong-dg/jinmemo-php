@@ -1369,3 +1369,9 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Thêm bin/import-voucher-uses.php cho lượt đang dùng/đã trả, kiểm liên kết hai chiều và hạn mức. Chỉ nhập khi đơn/voucher cha đích khớp toàn bộ dữ liệu nguồn; thiếu đơn thì chặn, không tự tạo đơn hoặc tính lại giá lịch sử.
 - Mặc định read-only dry-run, --apply cần hash riêng; transaction/audit/replay/hai worker đã kiểm. Thêm lượt mới cần voucher pending; nhập xong vẫn chưa mở khóa.
 - **Import database/058-order-time-precision.sql sau git pull** để giữ created_at đơn UTC microsecond. Chưa nhập dữ liệu thật; importer đơn/tồn/ledger và đối soát/mở khóa tổng thể còn thiếu. Xem [import lượt voucher](docs/IMPORT-VOUCHER-USES.md).
+
+## Lõi đơn vé trong kho chuyển đổi — đợt 137
+
+- Thêm bin/import-order-cores.php: kiểm/giữ 13 cột gốc, snapshot/contact/hash/mã và UTC microsecond; kiểm phép tính tiền lịch sử, collision và version. Không tính lại giá theo danh mục hôm nay.
+- Dữ liệu chỉ vào jingo_transfer_orders, chưa xuất hiện trong đơn vận hành hoặc tra cứu; không thu tiền/trừ tồn/gửi email. Mặc định dry-run, apply cần fingerprint; operationalReady luôn false.
+- **Import database/059-order-transfer-holding.sql sau git pull**. Chưa nhập dữ liệu thật; còn quan hệ đơn/tồn/thu tiền/ledger và cơ chế xuất bản nguyên khối. Xem [lõi đơn trong kho chuyển đổi](docs/IMPORT-ORDER-CORES.md).
