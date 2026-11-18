@@ -1401,3 +1401,5 @@ Admin có **Cấu hình website → Dữ liệu chuyển đổi** để xem kho 
 Đợt 144: `--with-gift-bundles` nhập nguyên tử quà + mã tổng chỉ gồm quà + khoản thu gốc vào runtime. Mã nhập chờ đối soát hoàn và cấp liên kết mới, không tạo hash tra cứu giả. Cài schema bằng `php bin/install.php`. Xem [IMPORT-GIFT-BUNDLES.md](docs/IMPORT-GIFT-BUNDLES.md).
 
 Đợt 145: importer kế hoạch xe + đơn xe riêng WEB/PAY_LATER chưa thu, giữ giá/trạng thái/version/UTC microseconds và request Node. Có dry-run, fingerprint, rollback và chống ghi đè; xe ghép/đã thu/POS/QR/mã tổng còn chặn. Xem [IMPORT-PRIVATE-RIDES.md](docs/IMPORT-PRIVATE-RIDES.md). Schema nâng bằng `php bin/install.php`.
+
+Đợt 147: import-rides.php --with-paid-qr nhập nguyên tử đơn WEB/private đã thu đủ qua SePay với receipt/event/link gốc; không tạo QR hay thu lại. Schema 064 giữ UTC microseconds sự kiện. Tiền mặt/hoàn/POS/xe ghép/mã tổng vẫn chờ. Xem docs/IMPORT-PAID-RIDES.md.

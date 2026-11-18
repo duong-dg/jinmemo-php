@@ -4,6 +4,8 @@
 
 Đây là phạm vi riêng, chưa phải toàn bộ module xe. Có xe ghép/nhóm ghép, POS, QR, đã thu/hoàn, liên kết mã tổng hoặc cấu trúc chưa chứng minh được thì **dừng cả batch**; không bỏ các dòng đó để nhập một phần và không gọi lại ghép nhóm.
 
+Đợt 147 có phạm vi mở rộng tùy chọn `--with-paid-qr` cho đơn xe riêng đã thu đủ qua SePay kèm sự kiện/ledger gốc; xem [IMPORT-PAID-RIDES.md](IMPORT-PAID-RIDES.md). Các điều kiện trong tài liệu này áp dụng cho lệnh mặc định không có flag; QR chưa trả, tiền mặt, hoàn tiền, POS và xe ghép vẫn chưa được mở.
+
 ## Khi cập nhật code
 
 Backup rồi chạy trong thư mục PHP:

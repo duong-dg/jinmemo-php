@@ -59,3 +59,5 @@ Sổ hoàn được nhập sau các cha và khoản thu bằng [IMPORT-REFUNDS.m
 Đợt 144 có luồng quà + mã tổng chỉ gồm quà: [IMPORT-GIFT-BUNDLES.md](IMPORT-GIFT-BUNDLES.md). Dùng installer để nâng schema, nhập graph có cờ chờ, đối soát sổ hoàn, rồi quản trị chủ động cấp liên kết thay thế. Liên kết nguồn cũ không được tái tạo từ SQL thiếu khóa. Mã ghép thêm vé/xe còn chặn để chờ adapter tương ứng.
 
 Đợt 145 có adapter kế hoạch + xe riêng chưa thu: [IMPORT-PRIVATE-RIDES.md](IMPORT-PRIVATE-RIDES.md). Dùng schema installer trước; không tính lại giá đơn cũ hoặc bỏ qua các dòng chưa có adapter. Mã ghép và tài chính xe vẫn cần làm tiếp trước lần import thật.
+
+Đợt 147: PHP nhận thêm đơn WEB/private đã thu đủ SePay bằng --with-paid-qr; Node cần xuất nguyên payment_references + gateway_events + ride_payment_events và khai báo gateway_resolutions. Không cần dựng QR attempts bị loại khỏi export; chỉ nhận sự kiện xe PAID có attempt_id/order_id NULL đúng luồng Node. REVIEW/đối soát thủ công, hoàn/tiền mặt và các nhóm chưa hỗ trợ sẽ chặn cả batch. Xem IMPORT-PAID-RIDES.md; chưa chạy import thật.

@@ -110,3 +110,5 @@ CLI tự nhận v1/full-v2. V2 kiểm hợp đồng 68 bảng nguồn + manifest
 Đợt 144: adapter runtime quà/mã tổng quà có luồng cấp liên kết thay thế sau đối soát, xem IMPORT-GIFT-BUNDLES.md. Lệnh kho chờ chung vẫn không tự gọi adapter hoặc mở vận hành.
 
 Đợt 145 thêm adapter runtime cho kế hoạch/xe riêng chưa thu (IMPORT-PRIVATE-RIDES.md); không tự chạy từ lệnh kho chờ. Còn các nhánh ghép/đã thu/POS/QR/mã tổng; không chứng nhận toàn bộ xe hoặc publication đã hoàn tất.
+
+Đợt 147 bổ sung phạm vi --with-paid-qr cho native private WEB SePay PAID receipts/events/links nguyên tử, giữ request replay và thời gian chính xác qua schema 064. Không tự suy ra QR attempts hoặc nguồn thiếu bằng chứng; chưa nhận cash/refund/POS/shared/mixed bundle. Xem IMPORT-PAID-RIDES.md; operationalReady vẫn false.
