@@ -1,5 +1,7 @@
 # Import danh mục nền từ export Node — đợt 130
 
+Đợt 131 bổ sung importer sản phẩm dùng chung engine, gồm cả danh mục nền trong transaction; xem IMPORT-PRODUCTS.md và migration 055. Lệnh import-catalog.php hiện có vẫn chỉ nhập nhóm danh mục, không tự mở rộng phạm vi.
+
 Đã thêm importer **loại sản phẩm, điểm đến, nhà cung cấp, quầy** và alias TYPE/DESTINATION/DESTINATION_EN. Đây là một nhóm của importer tổng thể, chưa nhập sản phẩm/gói giá, đơn, tồn vé, công nợ, ledger, khách/tài khoản hoặc settings. Các bảng/alias ngoài phạm vi giữ nguyên trong staging và được báo riêng. Không tự chạy import khi git pull.
 
 Giữ ID, slug, JSON nguồn (gồm English và sourceHash), phiên bản cột và đường dẫn cũ. Không gọi API save để tạo lại danh mục, tăng version, tạo ID hoặc thay nội dung nguồn. JSON được so theo nội dung/kiểu, không coi thứ tự key hoặc khoảng trắng là sửa nội dung; JSON lưu mới dùng dữ liệu staging nguyên gốc. Phiên bản nằm trong JSON có thể cũ hơn version cột của Node; giữ cả hai như nguồn, runtime đọc version cột.

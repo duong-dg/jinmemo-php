@@ -1333,3 +1333,9 @@ Chưa có module điều xe/đặt xe, thanh toán online hoặc import toàn b�
 - Thêm bin/import-catalog.php: loại sản phẩm, điểm đến, nhà cung cấp, quầy và alias liên quan. Đọc staging Node, giữ ID/JSON/version; kiểm cây điểm đến, trùng slug/ID, ảnh bìa và metadata đang có. Không ghi đè, gộp ID hoặc gọi lại API tạo danh mục.
 - Dry-run mặc định read-only; --apply bắt buộc fingerprint đã xem và ghi toàn nhóm trong một transaction. Đã kiểm fixture exporter Node/MySQL, CLI, rollback/replay và hai worker đồng thời; chưa dùng dữ liệu thật/cPanel.
 - Không SQL mới, schema vẫn 054. Xem [import danh mục](docs/IMPORT-CATALOG.md). Chưa phải importer tổng thể sản phẩm/đơn/tồn/công nợ; không tự nhập dữ liệu khi cập nhật Git.
+
+## Import sản phẩm và gói vé — đợt 131
+
+- Thêm bin/import-products.php dùng chung engine danh mục: giữ ID/JSON/version, gói vé/giá/lịch/English và alias cũ; kiểm dependency, ảnh và fingerprint, không ghi đè metadata khác. Không tự tạo đơn/tồn hoặc tính lại giá.
+- **Import database/055-product-time-precision.sql sau git pull** để giữ updated_at microsecond. Mặc định chỉ dry-run; --apply cần hash riêng đã xem. Đã kiểm exporter fixture, MySQL/CLI/hai worker, runtime alias/giá và regression danh mục/sản phẩm.
+- Chưa dùng dữ liệu thật/cPanel. Importer nhóm giá CTV/đơn/tồn/công nợ/ledger vẫn chưa hoàn tất; xem [hướng dẫn sản phẩm](docs/IMPORT-PRODUCTS.md).
