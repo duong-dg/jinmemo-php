@@ -10,3 +10,5 @@ tests/fixtures/gift-bundles-mixed-v2-node.sql text eol=lf
 tests/fixtures/rides-private*.sql text eol=lf
 
 tests/fixtures/rides-closed-pools*.sql text eol=lf
+
+tests/fixtures/rides-active-pools*.sql text eol=lf

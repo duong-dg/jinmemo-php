@@ -10,6 +10,8 @@
 
 Đợt 150 thêm `--with-closed-pools` cho nhóm ghép đã hoàn tất/hủy và chưa thu tiền, gồm khách web/thủ công. Xem [IMPORT-CLOSED-RIDE-POOLS.md](IMPORT-CLOSED-RIDE-POOLS.md); nhóm đang hoạt động/đã thu vẫn chặn, lệnh mặc định không thay đổi phạm vi.
 
+Đợt 151 mở nhóm đang hoạt động chưa thu qua `--with-active-pools`, tự bao gồm nhóm đóng; xem [IMPORT-ACTIVE-RIDE-POOLS.md](IMPORT-ACTIVE-RIDE-POOLS.md). Phạm vi mặc định vẫn giữ nguyên, nhóm đã thu chưa được mở.
+
 ## Khi cập nhật code
 
 Backup rồi chạy trong thư mục PHP:

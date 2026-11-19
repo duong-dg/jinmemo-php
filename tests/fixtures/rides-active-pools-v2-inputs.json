@@ -1,0 +1,197 @@
+[
+  {
+    "poolId": "00000000-0000-4000-8000-000000099100",
+    "manual": false,
+    "input": {
+      "roundTrip": false,
+      "from": "a",
+      "to": "b",
+      "passengers": 1,
+      "date": "2099-07-01",
+      "time": "10:00",
+      "flexMinutes": 0,
+      "mode": "SHARED",
+      "locale": "vi",
+      "payment": "PAY_LATER",
+      "shareSize": 3,
+      "requestKey": "00000000-0000-4000-8000-000000098900",
+      "vehicleId": "v1",
+      "expectedTotal": 34,
+      "contact": {
+        "name": "Khách đang ghép / 0",
+        "phone": "0901234567",
+        "email": "active@example.test"
+      },
+      "pickup": "Sảnh / A",
+      "dropoff": "Khách sạn / B",
+      "note": "Giữ giá cũ / nhóm VIP"
+    }
+  },
+  {
+    "poolId": "00000000-0000-4000-8000-000000099100",
+    "manual": true,
+    "input": {
+      "requestKey": "00000000-0000-4000-8000-000000098901",
+      "name": "Khách đang ghép / 1",
+      "phone": "0901234567",
+      "passengers": 1,
+      "note": "Giữ giá cũ / nhóm VIP"
+    }
+  },
+  {
+    "poolId": "00000000-0000-4000-8000-000000099101",
+    "manual": false,
+    "input": {
+      "roundTrip": false,
+      "from": "a",
+      "to": "b",
+      "passengers": 1,
+      "date": "2099-07-01",
+      "time": "10:00",
+      "flexMinutes": 0,
+      "mode": "SHARED",
+      "locale": "vi",
+      "payment": "PAY_LATER",
+      "shareSize": 3,
+      "requestKey": "00000000-0000-4000-8000-000000098902",
+      "vehicleId": "v1",
+      "expectedTotal": 34,
+      "contact": {
+        "name": "Khách đang ghép / 2",
+        "phone": "0901234567",
+        "email": "active@example.test"
+      },
+      "pickup": "Sảnh / A",
+      "dropoff": "Khách sạn / B",
+      "note": "Giữ giá cũ / nhóm VIP"
+    }
+  },
+  {
+    "poolId": "00000000-0000-4000-8000-000000099101",
+    "manual": true,
+    "input": {
+      "requestKey": "00000000-0000-4000-8000-000000098903",
+      "name": "Khách đang ghép / 3",
+      "phone": "0901234567",
+      "passengers": 2,
+      "note": "Giữ giá cũ / nhóm VIP"
+    }
+  },
+  {
+    "poolId": "00000000-0000-4000-8000-000000099102",
+    "manual": false,
+    "input": {
+      "roundTrip": false,
+      "from": "a",
+      "to": "b",
+      "passengers": 1,
+      "date": "2099-07-01",
+      "time": "10:00",
+      "flexMinutes": 0,
+      "mode": "SHARED",
+      "locale": "vi",
+      "payment": "PAY_LATER",
+      "shareSize": 3,
+      "requestKey": "00000000-0000-4000-8000-000000098904",
+      "vehicleId": "v1",
+      "expectedTotal": 34,
+      "contact": {
+        "name": "Khách đang ghép / 4",
+        "phone": "0901234567",
+        "email": "active@example.test"
+      },
+      "pickup": "Sảnh / A",
+      "dropoff": "Khách sạn / B",
+      "note": "Giữ giá cũ / nhóm VIP"
+    }
+  },
+  {
+    "poolId": "00000000-0000-4000-8000-000000099102",
+    "manual": true,
+    "input": {
+      "requestKey": "00000000-0000-4000-8000-000000098905",
+      "name": "Khách đang ghép / 5",
+      "phone": "0901234567",
+      "passengers": 2,
+      "note": "Giữ giá cũ / nhóm VIP"
+    }
+  },
+  {
+    "poolId": "00000000-0000-4000-8000-000000099103",
+    "manual": false,
+    "input": {
+      "roundTrip": false,
+      "from": "a",
+      "to": "b",
+      "passengers": 1,
+      "date": "2099-07-01",
+      "time": "10:00",
+      "flexMinutes": 0,
+      "mode": "SHARED",
+      "locale": "vi",
+      "payment": "PAY_LATER",
+      "shareSize": 3,
+      "requestKey": "00000000-0000-4000-8000-000000098906",
+      "vehicleId": "v1",
+      "expectedTotal": 34,
+      "contact": {
+        "name": "Khách đang ghép / 6",
+        "phone": "0901234567",
+        "email": "active@example.test"
+      },
+      "pickup": "Sảnh / A",
+      "dropoff": "Khách sạn / B",
+      "note": "Giữ giá cũ / nhóm VIP"
+    }
+  },
+  {
+    "poolId": "00000000-0000-4000-8000-000000099103",
+    "manual": true,
+    "input": {
+      "requestKey": "00000000-0000-4000-8000-000000098907",
+      "name": "Khách đang ghép / 7",
+      "phone": "0901234567",
+      "passengers": 2,
+      "note": "Giữ giá cũ / nhóm VIP"
+    }
+  },
+  {
+    "poolId": "00000000-0000-4000-8000-000000099104",
+    "manual": false,
+    "input": {
+      "roundTrip": false,
+      "from": "a",
+      "to": "b",
+      "passengers": 1,
+      "date": "2099-07-01",
+      "time": "10:00",
+      "flexMinutes": 0,
+      "mode": "SHARED",
+      "locale": "vi",
+      "payment": "PAY_LATER",
+      "shareSize": 3,
+      "requestKey": "00000000-0000-4000-8000-000000098908",
+      "vehicleId": "v1",
+      "expectedTotal": 34,
+      "contact": {
+        "name": "Khách đang ghép / 8",
+        "phone": "0901234567",
+        "email": "active@example.test"
+      },
+      "pickup": "Sảnh / A",
+      "dropoff": "Khách sạn / B",
+      "note": "Giữ giá cũ / nhóm VIP"
+    }
+  },
+  {
+    "poolId": "00000000-0000-4000-8000-000000099104",
+    "manual": true,
+    "input": {
+      "requestKey": "00000000-0000-4000-8000-000000098909",
+      "name": "Khách đang ghép / 9",
+      "phone": "0901234567",
+      "passengers": 2,
+      "note": "Giữ giá cũ / nhóm VIP"
+    }
+  }
+]

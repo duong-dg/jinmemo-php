@@ -2,6 +2,8 @@
 
 Đợt 150 thêm `--with-closed-pools` vào import xe: nhập nguyên tử kế hoạch, đơn xe thuộc phạm vi hỗ trợ và các nhóm ghép **COMPLETED/CANCELLED chưa thu tiền** vào `jingo_ride_pools`/`jingo_ride_bookings` vận hành. Có khách web, khách thêm thủ công và nhóm hủy rỗng; không gọi lại tạo nhóm, syncPool, chia tiền hoặc giữ chỗ.
 
+Đợt 151 thêm phạm vi `--with-active-pools`, gồm cả các nhóm chưa thu đang ghép/đủ khách/chờ đón/đang chạy; xem [IMPORT-ACTIVE-RIDE-POOLS.md](IMPORT-ACTIVE-RIDE-POOLS.md). Các điều kiện chặn nhóm active ở phần còn lại của tài liệu này áp dụng cho lệnh chỉ có `--with-closed-pools`.
+
 ## Cập nhật hosting
 
 Backup rồi chạy trong thư mục PHP:

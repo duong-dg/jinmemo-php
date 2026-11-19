@@ -116,3 +116,5 @@ CLI tự nhận v1/full-v2. V2 kiểm hợp đồng 68 bảng nguồn + manifest
 Đợt 148 bổ sung native RIDE refund history vào cùng transaction import đơn xe riêng đã thu SePay (--with-paid-qr --with-refunds), giữ số còn lại/request replay/báo cáo và chặn over-refund/target conflict. Không thực hiện hoàn tiền hoặc ghi thu chi ca quầy. Xem IMPORT-REFUNDED-RIDES.md; operationalReady vẫn false.
 
 Đợt 150 bổ sung native closed/unpaid shared pools và thành viên web/manual trong transaction import xe, schema 065. Không tạo lại holds hoặc chia lại tiền; active/paid pools và các nhóm chưa có adapter vẫn không được công bố. Xem IMPORT-CLOSED-RIDE-POOLS.md; operationalReady vẫn false.
+
+Đợt 151 bổ sung active unpaid shared groups vào native ride import bằng --with-active-pools, gồm closed groups. Giữ nguyên capacity/snapshot/version, kiểm state/plan/dispatch/frozen split, không tái tạo holds. Nhóm có thu/hoàn, POS/ca quầy và mixed bundles vẫn chờ. Xem IMPORT-ACTIVE-RIDE-POOLS.md; operationalReady vẫn false.
