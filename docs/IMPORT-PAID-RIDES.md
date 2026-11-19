@@ -2,6 +2,8 @@
 
 Đợt 147 mở rộng `bin/import-rides.php --with-paid-qr`: nhập kế hoạch, đơn WEB/PRIVATE độc lập chưa thu theo phạm vi cũ và đơn đã thu đủ qua SePay LIVE. Giữ nguyên snapshot, requestHash, giá, version, thời gian và ba phần của khoản thu: `jingo_payment_references`, `jingo_gateway_events`, `jingo_ride_payment_events`. Không gọi lại settlement, gửi mail, tạo QR hay thu thêm tiền.
 
+Đợt 148 thêm `--with-refunds` để nhập luôn lịch sử hoàn của các đơn này trong cùng transaction; xem [IMPORT-REFUNDED-RIDES.md](IMPORT-REFUNDED-RIDES.md). Điều kiện chặn lịch sử hoàn trong phần còn lại của tài liệu này áp dụng cho lệnh chỉ có `--with-paid-qr`.
+
 ## Cập nhật hosting
 
 Backup rồi chạy trong thư mục PHP:

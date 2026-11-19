@@ -39,3 +39,5 @@ Giới hạn: tối đa 100.000 dòng/64 MiB metadata nguồn được chọn, t
 Xem [quy trình hai bên](EXPORT-IMPORT-COORDINATION.md), [import đơn quà độc lập](IMPORT-GIFT-ORDERS.md) và [kho chờ toàn bộ dữ liệu](FULL-TRANSFER.md).
 
 Đợt 144 hỗ trợ cha mã tổng chỉ gồm quà ở trạng thái chờ đối soát (IMPORT-GIFT-BUNDLES.md). Bộ nhập lịch sử có đường đọc riêng trong transaction; API thu/hoàn thông thường vẫn bị chặn cho đến khi sổ hoàn khớp và quản trị cấp liên kết mới.
+
+Đợt 148: đơn xe riêng đã thu SePay có thể nhập đồng thời cha/receipt/event và lịch sử hoàn bằng import-rides.php --with-paid-qr --with-refunds. Lệnh import-refunds.php ở tài liệu này vẫn dành cho toàn bộ sổ hoàn sau khi các cha đã sẵn sàng. Hai adapter dùng chung validator/schema gate. Xem IMPORT-REFUNDED-RIDES.md.

@@ -1,0 +1,35 @@
+[
+  {
+    "code": "JM-X000000099700",
+    "requestId": "00000000-0000-4000-8000-000000099600",
+    "amount": 50,
+    "recipient": "Khách nhận / 0",
+    "method": "BANK",
+    "reference": "ride-refund-0",
+    "refundedOn": "2025-06-30",
+    "note": "Hoàn lịch sử / khách VIP",
+    "verified": true
+  },
+  {
+    "code": "JM-X000000099700",
+    "requestId": "00000000-0000-4000-8000-000000099601",
+    "amount": 30,
+    "recipient": "Khách nhận / 1",
+    "method": "CASH",
+    "reference": "",
+    "refundedOn": "2025-06-30",
+    "note": "Hoàn lịch sử / khách VIP",
+    "verified": true
+  },
+  {
+    "code": "JM-X000000099701",
+    "requestId": "00000000-0000-4000-8000-000000099602",
+    "amount": 115,
+    "recipient": "Khách nhận / 2",
+    "method": "GATEWAY",
+    "reference": "ride-refund-2",
+    "refundedOn": "2025-06-30",
+    "note": "Hoàn lịch sử / khách VIP",
+    "verified": true
+  }
+]

@@ -27,7 +27,7 @@ final class RefundTransfer
         if(!is_string($v)||str_contains($v,"\0"))throw new RuntimeException();$length=strlen(mb_convert_encoding($v,'UTF-16LE','UTF-8'))/2;
         if($length<$min||$length>$max||preg_replace('/^[\s\x{FEFF}]+|[\s\x{FEFF}]+$/u','',$v)!==$v)throw new RuntimeException();
     }
-    private static function valid(array $r):void
+    public static function validateRecord(array $r):void
     {
         if(!isset(self::ROOTS[$r['root_kind']])||!preg_match('/^(?:J[MGCBH][A-F0-9]{10}|JM-[XG][A-F0-9]{12})$/D',$r['root_code'])||self::number($r['amount'])>15000000000)throw new RuntimeException();
         $d=json_decode($r['data'],true,512,JSON_THROW_ON_ERROR|JSON_BIGINT_AS_STRING);
@@ -76,6 +76,15 @@ final class RefundTransfer
         }
         return ['paid'=>$paid,'receiptDigest'=>hash('sha256',self::json($receipts))];
     }
+    /** Shared schema gate for native historical refund adapters. */
+    public function schemaErrors():array
+    {
+        $errors=[];$error=static function(string $code)use(&$errors):void{$errors[]=$code;};
+        $columns=$this->query("SELECT COLUMN_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,CHARACTER_SET_NAME,COLLATION_NAME,DATETIME_PRECISION,IS_NULLABLE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='jingo_refunds' ORDER BY ORDINAL_POSITION")->fetchAll(PDO::FETCH_ASSOC);
+        if(array_column($columns,'COLUMN_NAME')!==['id','root_kind','root_id','root_code','amount','refunded_on','reference_key','data','created_at'])$error('RUNTIME_REFUND_SCHEMA_MISMATCH');
+        foreach($columns as $c){$ok=match($c['COLUMN_NAME']){'amount'=>$c['DATA_TYPE']==='bigint','data'=>$c['DATA_TYPE']==='json'||$c['DATA_TYPE']==='longtext'&&$c['CHARACTER_SET_NAME']==='utf8mb4','created_at'=>$c['DATA_TYPE']==='datetime'&&(int)$c['DATETIME_PRECISION']===6,default=>in_array($c['DATA_TYPE'],['char','varchar'],true)&&(int)$c['CHARACTER_MAXIMUM_LENGTH']>=(['id'=>36,'root_kind'=>16,'root_id'=>80,'root_code'=>80,'refunded_on'=>10,'reference_key'=>512][$c['COLUMN_NAME']]??PHP_INT_MAX)};if($c['COLUMN_NAME']==='reference_key'&&$c['COLLATION_NAME']!=='utf8mb4_bin')$ok=false;if(!$ok||$c['IS_NULLABLE']!=='NO')$error('RUNTIME_REFUND_CAPACITY_MISMATCH');}
+        $keys=[];foreach($this->query("SELECT INDEX_NAME,COLUMN_NAME FROM information_schema.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='jingo_refunds' AND NON_UNIQUE=0 ORDER BY INDEX_NAME,SEQ_IN_INDEX")->fetchAll(PDO::FETCH_ASSOC) as $k)$keys[$k['INDEX_NAME']][]=$k['COLUMN_NAME'];if(($keys['PRIMARY']??[])!==['id']||!in_array(['reference_key'],$keys,true))$error('RUNTIME_REFUND_KEYS_MISMATCH');return array_values(array_unique($errors));
+    }
     public function run(string $file,bool $apply=false,?string $fingerprint=null):array
     {
         if($apply&&(!is_string($fingerprint)||!preg_match('/^[a-f0-9]{64}$/D',$fingerprint)))throw new InvalidArgumentException('Cần fingerprint từ dry-run.');
@@ -97,13 +106,10 @@ final class RefundTransfer
         $tables['_checkoutRefsValid']=true;foreach($tables['checkout_members']??[] as $m)$tables['_checkoutChildren'][$m['kind']][$m['entity_id']]=true;
         foreach($tables['checkout_bundles']??[] as $bundle){$d=json_decode($bundle['data'],false,512,JSON_THROW_ON_ERROR);if(!$d instanceof stdClass||!isset($d->refs)||!$d->refs instanceof stdClass){$tables['_checkoutRefsValid']=false;continue;}foreach(get_object_vars($d->refs) as $kind=>$id){if(!in_array($kind,['cartId','rideId','giftId'],true)||!is_string($id)){$tables['_checkoutRefsValid']=false;continue;}$tables['_checkoutChildren'][$kind][$id]=true;}}
         $source=[];$roots=[];$totals=[];$r['sourceRows']=count($tables['refunds']??[]);if($r['sourceRows']>50000||array_sum(array_map(static fn($row)=>strlen($row['data']),$tables['refunds']??[]))>33554432){$error('SOURCE_REFUND_LIMIT');return $r;}
-        foreach($tables['refunds']??[] as $row){try{self::valid($row);$source[$row['id']]=$row;$key=$row['root_kind'].':'.$row['root_id'];if(isset($roots[$key])&&$roots[$key]['root_code']!==$row['root_code'])throw new RuntimeException();$roots[$key]=$row;$totals[$key]=self::add($totals[$key]??0,self::number($row['amount']));}catch(Throwable){$error('REFUND_RECORD_INVALID');}}
+        foreach($tables['refunds']??[] as $row){try{self::validateRecord($row);$source[$row['id']]=$row;$key=$row['root_kind'].':'.$row['root_id'];if(isset($roots[$key])&&$roots[$key]['root_code']!==$row['root_code'])throw new RuntimeException();$roots[$key]=$row;$totals[$key]=self::add($totals[$key]??0,self::number($row['amount']));}catch(Throwable){$error('REFUND_RECORD_INVALID');}}
         $r['rootCount']=count($roots);if($r['errorCount'])return $r;
         foreach(['jingo_refunds','jingo_audit','jingo_catalog_locks',...array_map(static fn($t)=>'jingo_'.$t,array_values(self::ROOTS)),'jingo_order_payments','jingo_payment_references','jingo_cart_orders','jingo_checkout_members'] as $table){$engine=$this->query('SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? AND TABLE_TYPE=\'BASE TABLE\'',[$table])->fetchColumn();if(strtoupper((string)$engine)!=='INNODB')$error('RUNTIME_SCHEMA_MISSING');}
-        $columns=$this->query("SELECT COLUMN_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,CHARACTER_SET_NAME,COLLATION_NAME,DATETIME_PRECISION,IS_NULLABLE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='jingo_refunds' ORDER BY ORDINAL_POSITION")->fetchAll(PDO::FETCH_ASSOC);
-        if(array_column($columns,'COLUMN_NAME')!==['id','root_kind','root_id','root_code','amount','refunded_on','reference_key','data','created_at'])$error('RUNTIME_REFUND_SCHEMA_MISMATCH');
-        foreach($columns as $c){$ok=match($c['COLUMN_NAME']){'amount'=>$c['DATA_TYPE']==='bigint','data'=>$c['DATA_TYPE']==='json'||$c['DATA_TYPE']==='longtext'&&$c['CHARACTER_SET_NAME']==='utf8mb4','created_at'=>$c['DATA_TYPE']==='datetime'&&(int)$c['DATETIME_PRECISION']===6,default=>in_array($c['DATA_TYPE'],['char','varchar'],true)&&(int)$c['CHARACTER_MAXIMUM_LENGTH']>=(['id'=>36,'root_kind'=>16,'root_id'=>80,'root_code'=>80,'refunded_on'=>10,'reference_key'=>512][$c['COLUMN_NAME']]??PHP_INT_MAX)};if($c['COLUMN_NAME']==='reference_key'&&$c['COLLATION_NAME']!=='utf8mb4_bin')$ok=false;if(!$ok||$c['IS_NULLABLE']!=='NO')$error('RUNTIME_REFUND_CAPACITY_MISMATCH');}
-        $keys=[];foreach($this->query("SELECT INDEX_NAME,COLUMN_NAME FROM information_schema.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='jingo_refunds' AND NON_UNIQUE=0 ORDER BY INDEX_NAME,SEQ_IN_INDEX")->fetchAll(PDO::FETCH_ASSOC) as $k)$keys[$k['INDEX_NAME']][]=$k['COLUMN_NAME'];if(($keys['PRIMARY']??[])!==['id']||!in_array(['reference_key'],$keys,true))$error('RUNTIME_REFUND_KEYS_MISMATCH');if($r['errorCount'])return $r;
+        foreach($this->schemaErrors() as $code)$error($code);if($r['errorCount'])return $r;
         $this->db->exec('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');if(!$apply)$this->db->exec('SET TRANSACTION READ ONLY');$this->db->beginTransaction();
         try{
             if(!$this->query("SELECT id FROM jingo_catalog_locks WHERE id='catalog'".($apply?' FOR UPDATE':''))->fetchColumn())throw new RuntimeException('Missing catalog lock.');$states=[];$new=$source;$seen=0;$bytes=0;

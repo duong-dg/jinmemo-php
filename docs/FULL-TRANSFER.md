@@ -112,3 +112,5 @@ CLI tự nhận v1/full-v2. V2 kiểm hợp đồng 68 bảng nguồn + manifest
 Đợt 145 thêm adapter runtime cho kế hoạch/xe riêng chưa thu (IMPORT-PRIVATE-RIDES.md); không tự chạy từ lệnh kho chờ. Còn các nhánh ghép/đã thu/POS/QR/mã tổng; không chứng nhận toàn bộ xe hoặc publication đã hoàn tất.
 
 Đợt 147 bổ sung phạm vi --with-paid-qr cho native private WEB SePay PAID receipts/events/links nguyên tử, giữ request replay và thời gian chính xác qua schema 064. Không tự suy ra QR attempts hoặc nguồn thiếu bằng chứng; chưa nhận cash/refund/POS/shared/mixed bundle. Xem IMPORT-PAID-RIDES.md; operationalReady vẫn false.
+
+Đợt 148 bổ sung native RIDE refund history vào cùng transaction import đơn xe riêng đã thu SePay (--with-paid-qr --with-refunds), giữ số còn lại/request replay/báo cáo và chặn over-refund/target conflict. Không thực hiện hoàn tiền hoặc ghi thu chi ca quầy. Xem IMPORT-REFUNDED-RIDES.md; operationalReady vẫn false.

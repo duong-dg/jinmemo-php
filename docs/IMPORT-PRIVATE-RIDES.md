@@ -6,6 +6,8 @@
 
 Đợt 147 có phạm vi mở rộng tùy chọn `--with-paid-qr` cho đơn xe riêng đã thu đủ qua SePay kèm sự kiện/ledger gốc; xem [IMPORT-PAID-RIDES.md](IMPORT-PAID-RIDES.md). Các điều kiện trong tài liệu này áp dụng cho lệnh mặc định không có flag; QR chưa trả, tiền mặt, hoàn tiền, POS và xe ghép vẫn chưa được mở.
 
+Đợt 148 mở thêm lịch sử hoàn cho xe SePay khi có cả `--with-paid-qr --with-refunds`; xem [IMPORT-REFUNDED-RIDES.md](IMPORT-REFUNDED-RIDES.md). Phạm vi mặc định vẫn giữ nguyên.
+
 ## Khi cập nhật code
 
 Backup rồi chạy trong thư mục PHP:
