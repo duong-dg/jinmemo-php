@@ -8,6 +8,8 @@
 
 Đợt 148 mở thêm lịch sử hoàn cho xe SePay khi có cả `--with-paid-qr --with-refunds`; xem [IMPORT-REFUNDED-RIDES.md](IMPORT-REFUNDED-RIDES.md). Phạm vi mặc định vẫn giữ nguyên.
 
+Đợt 150 thêm `--with-closed-pools` cho nhóm ghép đã hoàn tất/hủy và chưa thu tiền, gồm khách web/thủ công. Xem [IMPORT-CLOSED-RIDE-POOLS.md](IMPORT-CLOSED-RIDE-POOLS.md); nhóm đang hoạt động/đã thu vẫn chặn, lệnh mặc định không thay đổi phạm vi.
+
 ## Khi cập nhật code
 
 Backup rồi chạy trong thư mục PHP:

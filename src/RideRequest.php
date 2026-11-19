@@ -21,4 +21,12 @@ final class RideRequest
         $ordered=[];foreach(['requestKey','name','phone','passengers','note'] as $key)$ordered[$key]=$input[$key];
         return hash('sha256',json_encode(['id'=>$poolId,'input'=>$ordered],JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_LINE_TERMINATORS|JSON_THROW_ON_ERROR));
     }
+    public static function matchesClosedSharedSnapshot(array $row,array $data,array $pool):bool
+    {
+        if(!empty($data['manual']))return hash_equals($data['requestHash'],self::manualGuestHash($pool['id'],['requestKey'=>$row['request_key'],'name'=>$data['contact']['name'],'phone'=>$data['contact']['phone'],'passengers'=>$data['passengers'],'note'=>$data['note']]));
+        $input=[];foreach(['from','to','passengers','date','time','flexMinutes','mode','locale','payment','poolId','vehicleId','contact','pickup','dropoff','note'] as $key)if(array_key_exists($key,$data))$input[$key]=$data[$key];$input['requestKey']=$row['request_key'];
+        // An unpaid pool's frozen total/target bounds all possible original quote offsets.
+        $totals=[];for($offset=0;$offset<=(int)$pool['target']-$data['passengers'];$offset++)$totals[intdiv((int)$pool['total'],(int)$pool['target'])*$data['passengers']+min($data['passengers'],max(0,(int)$pool['total']%(int)$pool['target']-$offset))]=true;
+        foreach(array_keys($totals) as $total)foreach([false,null] as $flag)foreach(((int)$pool['target']===2?[true,false]:[true]) as $size){$input['expectedTotal']=$total;if($flag===null)unset($input['roundTrip']);else $input['roundTrip']=$flag;if($size)$input['shareSize']=(int)$pool['target'];else unset($input['shareSize']);if(hash_equals($data['requestHash'],self::hash($input)))return true;}return false;
+    }
 }

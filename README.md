@@ -1407,3 +1407,5 @@ Admin có **Cấu hình website → Dữ liệu chuyển đổi** để xem kho 
 Đợt 148: --with-paid-qr --with-refunds nhập nguyên tử đơn xe riêng SePay cùng lịch sử hoàn một phần/toàn bộ; giữ request replay, số còn lại và báo cáo thu–hoàn. Không thực hiện chuyển tiền. Xem docs/IMPORT-REFUNDED-RIDES.md; chưa import production.
 
 Đợt 149: thêm tương thích request Node cho thao tác thêm khách thủ công vào nhóm xe; nhận lại đúng mã cũ cả khi nhóm đã kết thúc, giữ fingerprint PHP cũ, không chia lại tiền hoặc giữ chỗ. Đây là phần chuẩn bị cho adapter import xe ghép; chưa mở import pools/shared.
+
+Đợt 150: --with-closed-pools nhập nhóm xe COMPLETED/CANCELLED chưa thu cùng khách web/thủ công, giữ giá chia/fingerprint/version/UTC microseconds; schema 065 tự cài qua bin/install.php. Nhóm đang hoạt động/đã thu, POS và mã tổng còn chờ. Xem docs/IMPORT-CLOSED-RIDE-POOLS.md; chưa import production.
