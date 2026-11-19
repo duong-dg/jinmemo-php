@@ -1,5 +1,7 @@
 # Phối hợp Node export và PHP import
 
+Đợt 155: [lịch sử đơn gốc](IMPORT-ORDER-HISTORY.md) đọc trực tiếp full-v2 với đơn native đã khớp; schema 068 giữ note/actor/time/hash gốc, không cần Node bổ sung order_version giả. Bộ [nhập tồn vé](IMPORT-INVENTORY.md) cũng cần cha native khớp. Hai bộ này không tự xuất bản đơn vé từ kho chờ và chưa mở lệnh apply toàn hệ thống.
+
 ## Hợp đồng đã ghim
 
 PHP tự nhận v1 hoặc **full-v2** qua header. V1 giữ hợp đồng cũ; full-v2 ghim exporter ở Node commit `9fb617071c212df641ecfbaced08961b8f7eed72`, 68 bảng nguồn và bảng manifest (69 nhóm, 404 cột). Xem TRANSFER-V2-SCHEMA.json và TRANSFER-V2-RELATIONS.json.

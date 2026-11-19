@@ -25,6 +25,9 @@ async function renderOrders(screen,serial){
   const pagination=toolbar(`Trang ${result.page} / ${Math.max(1,Math.ceil(result.summary.total/result.pageSize))}`);for(const [text,delta]of [['← Trước',-1],['Sau →',1]]){const control=button(text,()=>{orderFilters.page+=delta;render();});control.disabled=delta<0?result.page<=1:result.page*result.pageSize>=result.summary.total;pagination.append(control);}screen.append(pagination);
  }catch(error){if(serial===loading){screen.replaceChildren(empty('Chưa tải được đơn'));notice(error.message,true);}}
 }
+function renderSourceOrderHistory(detail,history){
+ if(!history?.length)return;detail.append(el('h3','Lịch sử từ hệ thống cũ'));for(const item of history){const entry=el('div',undefined,'order-history');entry.append(el('strong',orderLabels[item.action]||item.action),el('small',new Date(item.createdAt).toLocaleString('vi-VN')+' · '+item.adminId),el('p',item.note));detail.append(entry);}
+}
 async function openOrder(id,serial){
  try{const result=await api('orders/'+id),fileResult=await api('orders/'+id+'/files');if(serial!==loading||!['orders','overview','supply-alerts','pos','smtp','transport','carts'].includes(current)||$('#workspace').hidden)return;
   const order=result.data,dialog=$('#editor'),fields=$('#fields');draft=null;dirty=false;$('#edit-error').hidden=true;$('#editor-title').textContent='Đơn '+order.code;$('#edit-form button[type=submit]').hidden=true;fields.replaceChildren();
@@ -42,6 +45,7 @@ async function openOrder(id,serial){
   if(order.archived)detail.append(el('p','Đơn đang lưu trữ · '+order.archiveReason,'error'));
   detail.append(el('h3','Liên hệ'));for(const value of [order.contact.name,order.contact.email,order.contact.phone,order.contact.note])if(value)detail.append(el('p',value));if(order.contact.invoice){detail.append(el('h3','Thông tin hóa đơn'));for(const [key,title]of [['name','Tên'],['taxCode','Mã số thuế'],['address','Địa chỉ'],['email','Email']])detail.append(el('p',title+': '+order.contact.invoice[key]));}
   detail.append(el('h3','Hướng dẫn hiện tại'),el('p',order.instructions||'Chưa có hướng dẫn.'));
+  renderSourceOrderHistory(detail,order.sourceHistory);
   if(order.history.length){detail.append(el('h3','Lịch sử xử lý'));for(const item of order.history){const entry=el('div',undefined,'order-history');entry.append(el('strong',orderLabels[item.action]||item.action),el('small',new Date(item.createdAt).toLocaleString('vi-VN')+' · Admin '+item.adminId),el('p',item.data.note));if(item.data.instructions)entry.append(el('p',item.data.instructions));detail.append(entry);}}
   if(order.payments.length){detail.append(el('h3','Khoản thu đã ghi nhận'));for(const payment of order.payments){const entry=el('div',undefined,'order-history');entry.append(el('strong',orderMoney(payment.amount)+' · '+(payment.method==='CASH'?'Tiền mặt':payment.method==='VNPAY'?'VNPAY':'Chuyển khoản')),el('p','Mã giao dịch / phiếu thu: '+payment.reference),...(order.channel==='POS'?[el('p',payment.shiftId?'Ca thu: '+payment.shiftId:'Khoản thu không gắn ca.')]:[]),el('small',new Date(payment.createdAt).toLocaleString('vi-VN')+' · Admin '+payment.adminId));detail.append(entry);}}
   const status=el('p');status.setAttribute('role','status');detail.append(status);

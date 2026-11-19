@@ -1,5 +1,7 @@
 # Liên kết kênh bán và lịch sử thao tác trong kho chờ — đợt 138
 
+Cập nhật đợt 155: [import-order-history.php](IMPORT-ORDER-HISTORY.md) đã bổ sung nhập lịch sử trực tiếp từ full-v2 để admin đọc với cha đơn native khớp và chặn chạy lại mã thao tác. Phần hướng dẫn bên dưới vẫn nói về bộ nhập kho chờ; không đổi kho chờ thành dữ liệu vận hành.
+
 Sau `git pull`, chạy **database/060-order-relation-holding.sql** qua phpMyAdmin hoặc installer. Migration tạo ba bảng riêng, có FK trỏ lõi đơn trong jingo_transfer_orders của schema 059; không chép dữ liệu hoặc thay đổi bảng đơn đang bán.
 
 `bin/import-order-relations.php` bổ sung kênh CTV/POS và lịch sử gốc vào kho chuyển đổi. Không ghi các bảng quan hệ vận hành, không thực thi lại thao tác PAY/CREDIT/DELIVER/CANCEL/đính kèm/thu hồi file. `operationalReady` luôn false. Chưa chạy nhập dữ liệu thật; vẫn đợi chuyển đủ các module để nhập một lần.

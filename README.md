@@ -1,5 +1,7 @@
 # JinMemo — PHP + MySQL cho hosting
 
+Đợt 155: schema 068 và [bộ nhập lịch sử đơn gốc](docs/IMPORT-ORDER-HISTORY.md), admin đọc lịch sử Node và chặn tái sử dụng mã thao tác cũ. Cần đơn native khớp; chưa phải chuyển đầy đủ toàn hệ thống. Sau cập nhật Git chạy `php bin/install.php` để cài schema; không tự nhập dữ liệu thật.
+
 Đây là bản chuyển đổi riêng. Hiện có trang chủ, sản phẩm, bài viết/cẩm nang, nội dung và Liên hệ công khai; giao diện quản trị cùng các API danh mục, tồn, voucher, tính giá và tạo/tra cứu đơn WEB. Đã nối giao diện đặt/tra cứu đơn; đã có ghi nhận thu tiền thủ công; đã có giao file vé gốc qua tra cứu; đã có SMTP/email đơn vé và lưu trú; thanh toán trực tuyến và công cụ nhập dữ liệu cũ chưa hoàn tất; chưa thay thế hệ thống hiện tại. Xem [kế hoạch chuyển dữ liệu cũ](docs/MIGRATION.md).
 
 ## Cài đặt bộ khung

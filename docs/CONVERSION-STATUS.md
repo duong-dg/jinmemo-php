@@ -1,5 +1,7 @@
 # Trạng thái chuyển đổi tổng thể
 
+Đợt 155 bổ sung [lịch sử đơn gốc](IMPORT-ORDER-HISTORY.md), schema 068: nhập full-v2 khi đơn native đã khớp, admin xem được người thao tác/ghi chú/thời gian gốc. Giữ mã thao tác cũ để chặn thực thi lại ở xử lý đơn, công nợ, giao mã và đính kèm file; không tự suy ra phiên bản hay phát lại thu tiền/gửi thư.
+
 Đợt 154 bổ sung [bộ nhập tồn vé](IMPORT-INVENTORY.md): cấu hình, tổng chỗ theo ngày/suất và phân bổ giữ/trả nguyên bản. Có dry-run, fingerprint, giao dịch nguyên tử, chống ghi đè và kiểm cha sản phẩm/đơn native. Phần này chỉ chạy khi cha khớp; chưa thay cho luồng xuất bản toàn bộ đơn vé, kho mã vé hoặc lô nguồn/công nợ.
 
 Đợt gộp 153 dùng bản Node `9fb617071c212df641ecfbaced08961b8f7eed72`: 70 controller, 270 khai báo API; inventory là danh mục nguồn, chưa chứng nhận hành vi tương đương mọi API. File export full-v2 có 68 bảng nguồn và manifest. Không coi việc giữ đủ bảng trong kho chờ là đã nhập đủ vào bán hàng.

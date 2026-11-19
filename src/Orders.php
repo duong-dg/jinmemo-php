@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/SourceOrderHistory.php';
 require_once __DIR__.'/PartnerMigration.php';
 require_once __DIR__.'/Notifications.php';
 require_once __DIR__.'/OrderMail.php';
@@ -106,7 +107,7 @@ final class Orders
     }
     public function get(string $id):array
     {
-        $row=$this->query('SELECT * FROM jingo_orders WHERE id=?',[$id])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy đơn.');$result=$this->detail($row,true);$archive=$this->query('SELECT reason,created_at FROM jingo_order_archives WHERE order_id=?',[$id])->fetch(PDO::FETCH_ASSOC);$result['archived']=$archive!==false;$result['archiveReason']=$archive['reason'] ?? '';$result['history']=[];
+        $row=$this->query('SELECT * FROM jingo_orders WHERE id=?',[$id])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy đơn.');$result=$this->detail($row,true);$archive=$this->query('SELECT reason,created_at FROM jingo_order_archives WHERE order_id=?',[$id])->fetch(PDO::FETCH_ASSOC);$result['archived']=$archive!==false;$result['archiveReason']=$archive['reason'] ?? '';$result['sourceHistory']=SourceOrderHistory::read($this->db,$id);$result['history']=[];
         foreach($this->query('SELECT id,admin_id,action,data,created_at FROM jingo_order_actions WHERE order_id=? ORDER BY order_version',[$id])->fetchAll(PDO::FETCH_ASSOC) as $a)$result['history'][]=['id'=>$a['id'],'adminId'=>$a['admin_id'],'action'=>$a['action'],'data'=>json_decode($a['data'],true,512,JSON_THROW_ON_ERROR),'createdAt'=>str_replace(' ','T',$a['created_at']).'Z'];
         if($result['channel']==='POS')$result['openShiftId']=$this->query('SELECT shift_id FROM jingo_pos_open_shifts WHERE counter_id=?',[$result['counter']['id']])->fetchColumn()?:null;
         $result['payments']=[];foreach($this->query('SELECT p.id,p.amount,p.method,p.admin_id,p.created_at,r.reference,s.shift_id FROM jingo_order_payments p JOIN jingo_payment_references r ON r.reference_hash=p.reference_hash LEFT JOIN jingo_pos_shift_receipts s ON s.payment_id=p.id WHERE p.order_id=? ORDER BY p.created_at,p.id',[$id])->fetchAll(PDO::FETCH_ASSOC) as $p)$result['payments'][]=['id'=>$p['id'],'amount'=>(int)$p['amount'],'method'=>$p['method'],'reference'=>$p['reference'],'adminId'=>$p['admin_id'],'shiftId'=>$p['shift_id'],'createdAt'=>str_replace(' ','T',$p['created_at']).'Z'];return $result;
@@ -174,7 +175,7 @@ final class Orders
             if($action==='PAY'||$staffId!==null){$counter=$this->query('SELECT counter_id FROM jingo_pos_orders WHERE order_id=?',[$id])->fetchColumn();if($counter!==false)$this->query('SELECT id FROM jingo_counters WHERE id=? FOR UPDATE',[$counter]);}
             if($staffId!==null){if($counter===false)throw new HttpError(404,'Không tìm thấy đơn quầy.');$permission=match($action){'PAY'=>'COLLECT','CANCEL'=>'CANCEL','DELIVER'=>'DELIVER',default=>null};if($permission===null)throw new HttpError(403,'Thao tác này chỉ dành cho admin.');PosAccess::live($this->db,$staffId,$counter,$permission);$actor='pos-user:'.$staffId;}
             $row=$this->query('SELECT * FROM jingo_orders WHERE id=? FOR UPDATE',[$id])->fetch(PDO::FETCH_ASSOC);if(!$row)throw new HttpError(404,'Không tìm thấy đơn.');
-            if($action==='PAY'&&!$nested){$parent=$this->query('SELECT cart_id FROM jingo_cart_orders WHERE order_id=?',[$id])->fetchColumn();if($parent!==false)CheckoutLinks::guard($this->db,'cartId',$parent);}$prior=$this->query('SELECT request_hash FROM jingo_order_actions WHERE id=?',[$input['requestId']])->fetchColumn();if($prior!==false){if(!hash_equals($prior,$hash))throw new HttpError(409,'Mã thao tác đã dùng.');$result=$this->get($id);if(!$nested)$this->db->commit();return $result;}
+            if($action==='PAY'&&!$nested){$parent=$this->query('SELECT cart_id FROM jingo_cart_orders WHERE order_id=?',[$id])->fetchColumn();if($parent!==false)CheckoutLinks::guard($this->db,'cartId',$parent);}SourceOrderHistory::guard($this->db,$input['requestId']);$prior=$this->query('SELECT request_hash FROM jingo_order_actions WHERE id=?',[$input['requestId']])->fetchColumn();if($prior!==false){if(!hash_equals($prior,$hash))throw new HttpError(409,'Mã thao tác đã dùng.');$result=$this->get($id);if(!$nested)$this->db->commit();return $result;}
             if((int)$row['version']!==$input['version'])throw new HttpError(409,'Đơn đã thay đổi. Tải lại trước khi xử lý.');if($row['booking_status']==='CANCELLED'&&!in_array($action,['ARCHIVE','RESTORE'],true))throw new HttpError(409,'Đơn đã hủy.');
             $archived=$this->query('SELECT order_id FROM jingo_order_archives WHERE order_id=?',[$id])->fetchColumn();if($archived&&$action!=='RESTORE')throw new HttpError(409,'Đơn đang lưu trữ. Khôi phục trước khi xử lý.');if(!$archived&&$action==='RESTORE')throw new HttpError(409,'Đơn chưa được lưu trữ.');
             if($action==='ARCHIVE'){
