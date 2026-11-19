@@ -1,5 +1,7 @@
 # Phần chuyển đổi còn cần hoàn tất
 
+Đợt 156: `import-supply.php` chuyển nguyên tử lô hữu hạn/mua theo đơn, phân bổ, lịch sử mua, mã thao tác và khoản trả nhà cung cấp. Cần cha native khớp; xem [IMPORT-SUPPLY.md](IMPORT-SUPPLY.md). Không cần schema mới, schema hiện tại vẫn là 068.
+
 Đợt 155 (schema 068): thêm `import-order-history.php`, đọc lịch sử gốc trong admin và chặn tái sử dụng mã thao tác. Cần cha đơn native khớp, không xuất bản toàn bộ đơn vé; xem [IMPORT-ORDER-HISTORY.md](IMPORT-ORDER-HISTORY.md).
 
 Đợt 154: thêm `import-inventory.php` cho ba bảng tồn với cha native bắt buộc, giữ phân bổ nguyên bản; xem [IMPORT-INVENTORY.md](IMPORT-INVENTORY.md). Toàn hệ thống vẫn chưa được chứng nhận chuyển đủ.

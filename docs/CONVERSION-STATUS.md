@@ -1,5 +1,7 @@
 # Trạng thái chuyển đổi tổng thể
 
+Đợt 156 bổ sung [bộ nhập lô nguồn và sổ nhà cung cấp](IMPORT-SUPPLY.md): năm bảng lô/phân bổ/mua theo đơn/mã thao tác/khoản trả BANK-CASH được nhập cùng giao dịch, giữ nguyên giá vốn và công nợ. Cần sản phẩm, nhà cung cấp và đơn native khớp; chưa tự xuất bản đơn vé hoặc chuyển kho mã vé.
+
 Đợt 155 bổ sung [lịch sử đơn gốc](IMPORT-ORDER-HISTORY.md), schema 068: nhập full-v2 khi đơn native đã khớp, admin xem được người thao tác/ghi chú/thời gian gốc. Giữ mã thao tác cũ để chặn thực thi lại ở xử lý đơn, công nợ, giao mã và đính kèm file; không tự suy ra phiên bản hay phát lại thu tiền/gửi thư.
 
 Đợt 154 bổ sung [bộ nhập tồn vé](IMPORT-INVENTORY.md): cấu hình, tổng chỗ theo ngày/suất và phân bổ giữ/trả nguyên bản. Có dry-run, fingerprint, giao dịch nguyên tử, chống ghi đè và kiểm cha sản phẩm/đơn native. Phần này chỉ chạy khi cha khớp; chưa thay cho luồng xuất bản toàn bộ đơn vé, kho mã vé hoặc lô nguồn/công nợ.
@@ -37,6 +39,6 @@ Lệnh không dùng database, không chạy SQL nguồn và không ghi dữ li�
 
 ## Cập nhật PHP
 
-Backup rồi `git pull origin main` và `php bin/install.php`. Installer cập nhật schema 066 (microseconds liên hệ), 067 (vai trò trang chính sách), rồi khởi tạo chính sách mặc định theo bản Node. Nội dung thông tin đơn vị vận hành vẫn ở nháp để chủ website điền; các trang hiện hữu/đã chỉnh/đã ẩn không bị viết lại. PDF tiếp tục là file gốc, không đọc hoặc tạo lại nội dung.
+Backup rồi `git pull origin main` và `php bin/install.php`. Installer cập nhật tới schema 068 (lịch sử đơn gốc), rồi khởi tạo chính sách mặc định theo bản Node. Đợt 156 không thêm schema mới. Nội dung thông tin đơn vị vận hành vẫn ở nháp để chủ website điền; các trang hiện hữu/đã chỉnh/đã ẩn không bị viết lại. PDF tiếp tục là file gốc, không đọc hoặc tạo lại nội dung.
 
 Đợt này chưa import production. Kết quả kiểm local không thay cho nghiệm thu dữ liệu/tài khoản/hosting thật.

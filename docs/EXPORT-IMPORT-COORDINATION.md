@@ -1,5 +1,7 @@
 # Phối hợp Node export và PHP import
 
+Đợt 156: [import-supply.php](IMPORT-SUPPLY.md) nhận trực tiếp full-v2 cho năm bảng sổ nguồn/NCC. Cần các cha native khớp; giữ hash, giá vốn, số lượng và khoản trả nguyên bản. Không cần Node đổi hợp đồng hoặc thêm cột giả; chưa mở apply toàn hệ thống.
+
 Đợt 155: [lịch sử đơn gốc](IMPORT-ORDER-HISTORY.md) đọc trực tiếp full-v2 với đơn native đã khớp; schema 068 giữ note/actor/time/hash gốc, không cần Node bổ sung order_version giả. Bộ [nhập tồn vé](IMPORT-INVENTORY.md) cũng cần cha native khớp. Hai bộ này không tự xuất bản đơn vé từ kho chờ và chưa mở lệnh apply toàn hệ thống.
 
 ## Hợp đồng đã ghim

@@ -1,0 +1,59 @@
+{
+  "lots": [
+    {
+      "unlimited": false,
+      "id": "00000000-0000-4000-8000-000000000300",
+      "supplierId": "00000000-0000-4000-8000-000000000003",
+      "productId": "p",
+      "variantId": "eco",
+      "customerType": "ADULT",
+      "unitCost": 100000,
+      "quantity": 10,
+      "validFrom": "2099-01-01",
+      "validTo": "2099-12-31",
+      "priority": 100,
+      "note": "Nguồn gốc / 👋 VIP"
+    },
+    {
+      "unlimited": true,
+      "id": "00000000-0000-4000-8000-000000000303",
+      "supplierId": "00000000-0000-4000-8000-000000000003",
+      "productId": "p",
+      "variantId": "eco",
+      "customerType": "ADULT",
+      "unitCost": 40000,
+      "validFrom": "2099-01-01",
+      "validTo": "2099-12-31",
+      "priority": 100,
+      "note": "Nguồn gốc / 👋 VIP"
+    }
+  ],
+  "allocation": {
+    "requestId": "00000000-0000-4000-8000-000000093302",
+    "version": 3,
+    "mode": "MANUAL",
+    "picks": [
+      {
+        "lotId": "00000000-0000-4000-8000-000000000303",
+        "quantity": 1
+      }
+    ]
+  },
+  "orderId": "00000000-0000-4000-8000-000000000901",
+  "payment": {
+    "requestId": "00000000-0000-4000-8000-000000009300",
+    "supplierId": "00000000-0000-4000-8000-000000000003",
+    "amount": 100000,
+    "method": "BANK",
+    "reference": "ORIGINAL-SUPPLIER-PAY",
+    "note": "Trả nguồn nguyên bản / 👋"
+  },
+  "cashPayment": {
+    "requestId": "00000000-0000-4000-8000-000000093304",
+    "supplierId": "00000000-0000-4000-8000-000000000003",
+    "amount": 20000,
+    "method": "CASH",
+    "reference": "",
+    "note": "Khoản trả tiền mặt cũ"
+  }
+}
