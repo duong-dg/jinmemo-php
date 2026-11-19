@@ -16,4 +16,9 @@ final class RideRequest
         // A round-trip-only fare can override a false/omitted request flag in the stored snapshot.
         foreach($data['roundTrip']?[true,false,null]:[false,null] as $flag){if($flag===null)unset($input['roundTrip']);else $input['roundTrip']=$flag;if(hash_equals($data['requestHash'],self::hash($input)))return true;}return false;
     }
+    public static function manualGuestHash(string $poolId,array $input):string
+    {
+        $ordered=[];foreach(['requestKey','name','phone','passengers','note'] as $key)$ordered[$key]=$input[$key];
+        return hash('sha256',json_encode(['id'=>$poolId,'input'=>$ordered],JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_LINE_TERMINATORS|JSON_THROW_ON_ERROR));
+    }
 }

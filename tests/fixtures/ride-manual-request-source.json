@@ -1,0 +1,56 @@
+[
+  {
+    "poolId": "00000000-0000-4000-8000-000000099560",
+    "raw": {
+      "requestKey": "00000000-0000-4000-8000-000000099570",
+      "name": " Khách / A ",
+      "phone": " 0901234567 ",
+      "passengers": 1,
+      "note": " Ghi chú / khách VIP "
+    },
+    "input": {
+      "requestKey": "00000000-0000-4000-8000-000000099570",
+      "name": "Khách / A",
+      "phone": "0901234567",
+      "passengers": 1,
+      "note": "Ghi chú / khách VIP"
+    },
+    "hash": "72aa88de18b8571ce898627cf41b2c62488816c21438cfaf079efe868d469c7e"
+  },
+  {
+    "poolId": "00000000-0000-4000-8000-000000099560",
+    "raw": {
+      "requestKey": "00000000-0000-4000-8000-000000099571",
+      "name": "Guest plain",
+      "phone": "",
+      "passengers": 1,
+      "note": ""
+    },
+    "input": {
+      "requestKey": "00000000-0000-4000-8000-000000099571",
+      "name": "Guest plain",
+      "phone": "",
+      "passengers": 1,
+      "note": ""
+    },
+    "hash": "9823415109d018a6f8a900c0a6815dcac361f0a024b93aa06510dc40640fb04f"
+  },
+  {
+    "poolId": "00000000-0000-4000-8000-000000099560",
+    "raw": {
+      "requestKey": "00000000-0000-4000-8000-000000099572",
+      "name": " Khách 🚗 / B ",
+      "phone": "+84 123456789",
+      "passengers": 2,
+      "note": " Ghi chú  / VIP "
+    },
+    "input": {
+      "requestKey": "00000000-0000-4000-8000-000000099572",
+      "name": "Khách 🚗 / B",
+      "phone": "+84 123456789",
+      "passengers": 2,
+      "note": "Ghi chú  / VIP"
+    },
+    "hash": "a27ef0d6f4249e9bc99692a507c20c5fb47824645590e71156bc7371752591ae"
+  }
+]

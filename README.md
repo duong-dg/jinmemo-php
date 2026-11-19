@@ -1405,3 +1405,5 @@ Admin có **Cấu hình website → Dữ liệu chuyển đổi** để xem kho 
 Đợt 147: import-rides.php --with-paid-qr nhập nguyên tử đơn WEB/private đã thu đủ qua SePay với receipt/event/link gốc; không tạo QR hay thu lại. Schema 064 giữ UTC microseconds sự kiện. Tiền mặt/hoàn/POS/xe ghép/mã tổng vẫn chờ. Xem docs/IMPORT-PAID-RIDES.md.
 
 Đợt 148: --with-paid-qr --with-refunds nhập nguyên tử đơn xe riêng SePay cùng lịch sử hoàn một phần/toàn bộ; giữ request replay, số còn lại và báo cáo thu–hoàn. Không thực hiện chuyển tiền. Xem docs/IMPORT-REFUNDED-RIDES.md; chưa import production.
+
+Đợt 149: thêm tương thích request Node cho thao tác thêm khách thủ công vào nhóm xe; nhận lại đúng mã cũ cả khi nhóm đã kết thúc, giữ fingerprint PHP cũ, không chia lại tiền hoặc giữ chỗ. Đây là phần chuẩn bị cho adapter import xe ghép; chưa mở import pools/shared.
