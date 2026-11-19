@@ -1411,3 +1411,5 @@ Admin có **Cấu hình website → Dữ liệu chuyển đổi** để xem kho 
 Đợt 150: --with-closed-pools nhập nhóm xe COMPLETED/CANCELLED chưa thu cùng khách web/thủ công, giữ giá chia/fingerprint/version/UTC microseconds; schema 065 tự cài qua bin/install.php. Nhóm đang hoạt động/đã thu, POS và mã tổng còn chờ. Xem docs/IMPORT-CLOSED-RIDE-POOLS.md; chưa import production.
 
 Đợt 151: --with-active-pools nhận cả nhóm đang ghép/đủ khách/chờ đón/đang chạy chưa thu, kiểm trạng thái/số chỗ/giá chia/tài xế/kế hoạch, giữ native continuation và chặn ghi đè sau cutover. Tự bao gồm nhóm đóng; không thêm SQL ngoài schema 065 hiện có. Xem docs/IMPORT-ACTIVE-RIDE-POOLS.md; chưa import production.
+
+Đợt 152: Admin → Cấu hình website → Dữ liệu chuyển đổi có hướng dẫn cPanel/Terminal và sao chép lệnh cập nhật/kiểm file/dry-run, kể cả khi kho chờ chưa sẵn sàng. Hiện chưa có nút tải SQL/import toàn bộ trên web. Xem docs/IMPORT-START-HERE.md; chưa import production.
