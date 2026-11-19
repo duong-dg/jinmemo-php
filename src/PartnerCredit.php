@@ -26,8 +26,8 @@ final class PartnerCredit
     }
     private function account(string $id,bool $write):array
     {
-        if($write)PartnerMigration::requireReady($this->db,$id);
-        $raw=$this->query('SELECT data FROM jingo_partners WHERE id=?'.($write?' FOR UPDATE':' LOCK IN SHARE MODE'),[$id])->fetchColumn();if($raw===false)throw new HttpError(404,'Không tìm thấy CTV.');$a=json_decode($raw,true,512,JSON_THROW_ON_ERROR);if(!is_int($a['creditLimit'] ?? null)||$a['creditLimit']<0||$a['creditLimit']>1000000000000||!is_int($a['creditDays'] ?? null)||$a['creditDays']<1||$a['creditDays']>90||!is_bool($a['creditEnabled'] ?? null))throw new HttpError(409,'Cấu hình công nợ CTV không hợp lệ.');return $a;
+        // Acquire the write lock before the migration guard's shared read: concurrent charges must not upgrade two shared locks.
+        $raw=$this->query('SELECT data FROM jingo_partners WHERE id=?'.($write?' FOR UPDATE':' LOCK IN SHARE MODE'),[$id])->fetchColumn();if($raw===false)throw new HttpError(404,'Không tìm thấy CTV.');if($write)PartnerMigration::requireReady($this->db,$id);$a=json_decode($raw,true,512,JSON_THROW_ON_ERROR);if(!is_int($a['creditLimit'] ?? null)||$a['creditLimit']<0||$a['creditLimit']>1000000000000||!is_int($a['creditDays'] ?? null)||$a['creditDays']<1||$a['creditDays']>90||!is_bool($a['creditEnabled'] ?? null))throw new HttpError(409,'Cấu hình công nợ CTV không hợp lệ.');return $a;
     }
     private function view(string $id,array $account):array{$entries=$this->rows($id);$summary=self::summary($entries,$account['creditLimit']);if((bool)$this->query('SELECT transfer_pending FROM jingo_partners WHERE id=?',[$id])->fetchColumn()){$summary['available']=0;$summary['transferPending']=true;}return $summary+['creditEnabled'=>$account['creditEnabled'],'creditDays'=>$account['creditDays'],'entries'=>$entries];}
     public function ledger(string $id,?string $partnerId=null):array

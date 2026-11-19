@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/ContactChannels.php';
 
 final class Pages
 {
@@ -40,11 +41,11 @@ final class Pages
         }
         $page['contact']=null; $contact=$input['contact'] ?? null;
         if($contact!==null) {
-            if(!is_array($contact) || array_diff(array_keys($contact),['phone','email','address','hours','mapUrl']) || count($contact)!==5) throw new HttpError(400,'Thông tin liên hệ không hợp lệ.');
+            if(!is_array($contact) || array_diff(array_keys($contact),['phone','email','address','hours','mapUrl','facebookUrl','whatsapp','zaloUrl','messengerUrl']) || array_diff(['phone','email','address','hours','mapUrl'],array_keys($contact))) throw new HttpError(400,'Thông tin liên hệ không hợp lệ.');
             $contact=['phone'=>self::text($contact,'phone',40),'email'=>self::text($contact,'email',254,false,false),'address'=>self::text($contact,'address',500),'hours'=>self::text($contact,'hours',300),'mapUrl'=>self::text($contact,'mapUrl',4096,false,false)];
             if(!preg_match('/^[+0-9 ()-]*$/D',$contact['phone']) || ($contact['email']!=='' && !filter_var($contact['email'],FILTER_VALIDATE_EMAIL)) || ($contact['mapUrl']!=='' && (!str_starts_with($contact['mapUrl'],'https://') || !filter_var($contact['mapUrl'],FILTER_VALIDATE_URL)))) throw new HttpError(400,'Điện thoại, email hoặc bản đồ không hợp lệ.');
         }
-        if($page['kind']==='CONTACT') $page['contact']=$contact ?? ['phone'=>'','email'=>'','address'=>'','hours'=>'','mapUrl'=>''];
+        if($page['kind']==='CONTACT') $page['contact']=array_merge($contact ?? ['phone'=>'','email'=>'','address'=>'','hours'=>'','mapUrl'=>''],ContactChannels::validate($input['contact']??[]));
         if($page['status']==='PUBLISHED' && trim(strip_tags($page['contentHtml']))==='') throw new HttpError(400,'Thêm nội dung trước khi xuất bản.');
         if($page['english']['published'] ?? false) if($page['english']['title']==='' || trim(strip_tags($page['english']['contentHtml']))==='') throw new HttpError(400,'Thêm tiêu đề và nội dung English trước khi xuất bản.');
         return $page;

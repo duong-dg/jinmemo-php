@@ -1,0 +1,5 @@
+<?php
+declare(strict_types=1);
+if(PHP_SAPI!=='cli'){http_response_code(404);exit;}
+require dirname(__DIR__).'/src/TransferCoverage.php';
+try{if($argc===2&&$argv[1]==='--help'){echo "php bin/check-transfer-coverage.php --file=FULL_V2.sql\nRead-only source-wide manifest/relations/capability report. No database, file writes, SQL execution or import. PARTIAL_NATIVE means an adapter exists for limited scope, never all rows verified. Exit 2 while whole-system publication remains incomplete; 1 on invalid input.\n";exit;}if($argc!==2||!str_starts_with($argv[1],'--file='))throw new InvalidArgumentException('Dùng --help.');$r=(new TransferCoverage())->run(substr($argv[1],7));echo json_encode($r,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR)."\n";exit($r['publicationReady']?0:2);}catch(InvalidArgumentException $e){fwrite(STDERR,$e->getMessage()."\n");exit(1);}catch(Throwable){fwrite(STDERR,"Không hoàn tất kiểm tra chuyển đổi. Kiểm file và profile; chưa nhập dữ liệu.\n");exit(1);}

@@ -1,6 +1,6 @@
 # Phần chuyển đổi còn cần hoàn tất
 
-Cập nhật sau đợt 139 (schema 061). Đây là danh sách phần thiếu đã xác nhận, không phải chứng nhận đã đối chiếu hết mọi endpoint của nguồn.
+Trạng thái mới nhất sau đợt gộp 153 (schema 067): xem CONVERSION-STATUS.md. Các bảng và ghi chú bên dưới giữ lịch sử từng đợt; không phải chứng nhận đã đối chiếu hết mọi endpoint hoặc nhập toàn bộ dữ liệu vào bán hàng.
 
 | Phần | Trạng thái và điều kiện hoàn tất |
 | --- | --- |
@@ -74,3 +74,7 @@ Kiểm đợt 150: 27 bài nhóm transfer đạt; ride-pools/ride-manual-replay/
 Kiểm đợt 151: 28 bài nhóm transfer đạt; ride-pools/ride-manual-replay/rides/transport-plan/ride-payments/database-backup/checkout-bundles đều đạt. Ca mới gồm 5 trạng thái active + closed, membership/plan/capacity/dispatch/proof/price rejection, atomic audit rollback, hai tiến trình và CLI; native quotes dùng tổng 101 thay giá hiện tại 999, nhận ghế cuối/khóa nhóm/chặn tràn, điều phối từng giai đoạn và hủy trước đón mở lại chỗ/chia đúng phần chưa thu. Import/replay không đổi version/holds và file cũ bị chặn sau cutover. Ca mới chạy lại sau bổ sung kiểm chia tiền khi hủy; fixture --check khớp. Không thêm SQL, chưa import production hoặc gọi provider.
 
 Đợt 152: bổ sung hướng dẫn chỗ import ngay đầu admin transfer, nêu rõ cPanel Terminal, SQL ngoài webroot, kho chờ khác runtime và chưa có upload/apply toàn bộ. Có copy lệnh update/audit/dry-run và fallback clipboard, không thêm API hoặc thao tác ghi. Hướng dẫn tồn tại ngay cả khi archive API lỗi/schema chưa cài. transfer-review-ui kiểm text-safe, copy đúng command, không có --apply/business mutation và fallback/failed archive đều đạt. Không đổi schema hoặc nhập dữ liệu thật. Xem IMPORT-START-HERE.md.
+
+Đợt gộp 153: nối paid shared pools/SePay/refunds trong graph xe, thêm native contact-request history và schema 066; port social channels Facebook/WhatsApp/Zalo/Messenger từ Node sang validator/admin/public VI/EN. Thêm policy role/default pages và public site/policies theo nguồn, schema 067/installer seed idempotent, giữ OPERATOR nháp, không ghi đè owner edits/trash và tránh chiếm English URL. Thêm source-wide coverage CLI/admin, phân biệt PARTIAL_NATIVE/HOLDING_ONLY/RESET_REQUIRED/ARCHIVED_DO_NOT_REPLAY, không cho là đã chuyển hết. Cập nhật inventory 70 controller/270 route tại 9fb6170, phpParityVerified vẫn false.
+
+Kiểm đợt gộp 153: bộ toàn ứng dụng 183 bài đạt sau sửa/rerun ca PartnerCredit deadlock do shared-lock upgrade; giữ readiness read guard và dùng write lock trước khi nâng trong Orders/Carts/credit. Hai ca mới policy-pages/contact-channels chạy riêng đạt (tổng 185 bài độc lập). Chạy lại carts/partner-credit/partner-orders/partner-catalog/partner-transfer/pages/contact-request-transfer, HTTP với GD và admin/transfer UI sau tích hợp đều đạt. Kiểm Node API inventory/full-v2 fixtures/policy defaults --check khớp nguồn; schema/JS/PHP/diff checks đạt. Chưa import production, chưa xác nhận provider/cPanel hoặc hoàn tất native import mọi bảng. Xem CONVERSION-STATUS.md, IMPORT-PAID-RIDE-POOLS.md và IMPORT-CONTACT-REQUESTS.md.

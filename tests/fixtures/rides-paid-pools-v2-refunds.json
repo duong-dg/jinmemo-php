@@ -1,0 +1,35 @@
+[
+  {
+    "code": "JM-X000000099002",
+    "requestId": "00000000-0000-4000-8000-000000098850",
+    "amount": 10,
+    "recipient": "Khách hoàn ghép / 0",
+    "method": "BANK",
+    "reference": "POOL-REFUND-0",
+    "refundedOn": "2025-06-30",
+    "note": "Hoàn lịch sử nhóm ghép / VIP",
+    "verified": true
+  },
+  {
+    "code": "JM-X000000099005",
+    "requestId": "00000000-0000-4000-8000-000000098851",
+    "amount": 67,
+    "recipient": "Khách hoàn ghép / 1",
+    "method": "BANK",
+    "reference": "POOL-REFUND-1",
+    "refundedOn": "2025-06-30",
+    "note": "Hoàn lịch sử nhóm ghép / VIP",
+    "verified": true
+  },
+  {
+    "code": "JM-X000000099203",
+    "requestId": "00000000-0000-4000-8000-000000098852",
+    "amount": 34,
+    "recipient": "Khách hoàn ghép / 2",
+    "method": "BANK",
+    "reference": "POOL-REFUND-2",
+    "refundedOn": "2025-06-30",
+    "note": "Hoàn lịch sử nhóm ghép / VIP",
+    "verified": true
+  }
+]

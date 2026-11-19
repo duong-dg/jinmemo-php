@@ -52,3 +52,5 @@ Nguồn và PHP phải được chốt quyền ghi khi chuyển thật; không c
 Export không chứa QR attempts của Node: chỉ nhìn trạng thái UNPAID chưa đủ chứng minh không còn QR đang chờ. Cần đối soát các QR/giao dịch treo trước khi chuyển thật; import không dựng lại hoặc tự hủy những yêu cầu thanh toán không có trong file.
 
 Apply kiểm lại dưới khóa catalog và transaction InnoDB, fingerprint gồm phạm vi active cùng trạng thái nhóm/đơn. Lỗi ở nhóm, thành viên hoặc audit rollback toàn bộ. Không tạo QR, thu tiền, ghi ca, gọi provider hay phát mail khi import. Chưa nhập dữ liệu production; nhóm có thu/hoàn, POS/ca quầy/tiền mặt, tuyến con chưa hỗ trợ và mã tổng ghép nhiều phân hệ còn cần chuyển tiếp.
+
+Đợt gộp 153 mở riêng nhóm đã thu SePay bằng --with-paid-pools (tự gồm active/closed/private SePay); có hoàn dùng thêm --with-refunds. Xem IMPORT-PAID-RIDE-POOLS.md. Điều kiện chưa nhận nhóm đã thu ở trên áp dụng cho flag chỉ --with-active-pools.

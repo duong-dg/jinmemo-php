@@ -27,3 +27,5 @@ php bin/import-transfer.php --file=/home/USER/private/export.sql
 ```
 
 Đang chuyển tiếp các phần còn thiếu nên chưa thực hiện lần import production. Chưa có một lệnh nhập toàn bộ hệ thống và sẵn sàng bán hàng. Các adapter có phạm vi riêng, dry-run/fingerprint riêng; xem EXPORT-IMPORT-COORDINATION.md và PORT-COMPLETION.md. Chạy import-transfer chỉ đưa vào kho chờ khi được apply, không thay cho các adapter dữ liệu vận hành.
+
+Đợt gộp 153 bổ sung lệnh rà tổng thể: php bin/check-transfer-coverage.php --file=/home/USER/private/export.sql . Lệnh chỉ kiểm, không ghi và trả exit 2 khi chưa đủ điều kiện xuất bản toàn hệ thống. Xem CONVERSION-STATUS.md; admin transfer cũng hiển thị các bảng có adapter giới hạn/chỉ kho chờ/cần reset, không đồng nghĩa đã nhập native.

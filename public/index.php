@@ -532,6 +532,7 @@ try {
         if($method==='POST') $auth->mutation(); $actor=$auth->me(); $suppliers=new Suppliers($db);
         jingoJson(['data'=>$method==='POST'?$suppliers->save(jingoRequestBody(),$actor['id']):$suppliers->list()]);
     }
+    if($path==='/api/v1/site/policies'){if(($_SERVER['REQUEST_METHOD']??'GET')!=='GET'){header('Allow: GET');throw new HttpError(405,'Phương thức không được hỗ trợ.');}require_once dirname(__DIR__).'/src/PolicyPages.php';$config=jingoConfig();header('Cache-Control: no-store');jingoJson(['data'=>(object)(new PolicyPages(jingoDatabase($config)))->links(($_GET['lang']??'')==='en'?'en':'vi')]);}
     if($path==='/api/v1/admin/pages' || in_array($path,['/api/v1/site/pages','/api/v1/site/navigation','/api/v1/site/contact'],true) || preg_match('#^/api/v1/site/pages/([^/]+)$#D',(string)$path,$pageMatch)) {
         $admin=$path==='/api/v1/admin/pages'; $method=$_SERVER['REQUEST_METHOD'] ?? 'GET';
         if(!in_array($method,$admin?['GET','POST']:['GET'],true)) { header('Allow: '.($admin?'GET, POST':'GET')); throw new HttpError(405,'Phương thức không được hỗ trợ.'); }

@@ -130,7 +130,7 @@ async function openEditor(record,createContact=false){
   if(!record)Object.assign(draft,{status:'DRAFT',kind:createContact?'CONTACT':'PAGE',...(createContact?{id:'00000000-0000-4000-8000-000000000001',slug:'lien-he'}:{}),showInMenu:false,showInFooter:false,sortOrder:0,cover:null,contact:null,english:null});
   field('title','Tiêu đề','text',[],true,180);field('slug','Đường dẫn','text',[],true,160);field('status','Trạng thái','select',draft.kind==='CONTACT'?['DRAFT','PUBLISHED']:['DRAFT','PUBLISHED','TRASH']);field('sortOrder','Thứ tự','number');field('showInMenu','Hiện trên menu','checkbox');field('showInFooter','Hiện ở chân trang','checkbox');
   field('menuLabel','Tên trên menu','text',[],false,60);field('description','Mô tả','textarea',[],false,1000);field('contentHtml','Nội dung HTML','textarea',[],true,200000);field('seoTitle','Tiêu đề SEO','text',[],false,200);field('seoDescription','Mô tả SEO','textarea',[],false,500);
-  if(draft.kind==='CONTACT'){section('Thông tin liên hệ');for(const [key,label,type]of [['phone','Điện thoại','tel'],['email','Email','email'],['address','Địa chỉ','text'],['hours','Giờ làm việc','text'],['mapUrl','Liên kết bản đồ HTTPS','url']])field('contact.'+key,label,type);}
+  if(draft.kind==='CONTACT'){section('Thông tin liên hệ');for(const [key,label,type]of [['phone','Điện thoại','tel'],['email','Email','email'],['address','Địa chỉ','text'],['hours','Giờ làm việc','text'],['mapUrl','Liên kết bản đồ HTTPS','url'],['facebookUrl','Facebook HTTPS','url'],['whatsapp','WhatsApp (có mã quốc gia)','tel'],['zaloUrl','Zalo HTTPS','url'],['messengerUrl','Messenger HTTPS','url']])field('contact.'+key,label,type);}
   section('English');field('_english','Có bản English','checkbox').checked=!!draft.english;
   for(const [key,label,type,max]of [['title','Tiêu đề English','text',180],['slug','Đường dẫn English','text',160],['contentHtml','Nội dung HTML English','textarea',200000],['description','Mô tả English','textarea',1000],['menuLabel','Tên menu English','text',60],['seoTitle','Tiêu đề SEO English','text',200],['seoDescription','Mô tả SEO English','textarea',500]])field('_en.'+key,label,type,[],false,max).value=draft.english?.[key]??'';
   field('_en.published','Xuất bản English','checkbox').checked=!!draft.english?.published;
@@ -152,7 +152,7 @@ $('#edit-form').onsubmit=async e=>{
   if(current==='products'){for(const key of ['destinationId','supplierId'])if(!data[key])delete data[key];if(!data.destination)data.destination=$('#fields [name=destinationId]')?.selectedOptions[0]?.textContent||'';}
   if(current==='pages'){
    data.sortOrder=Number(form.get('sortOrder')||0);data.showInMenu=form.has('showInMenu');data.showInFooter=form.has('showInFooter');data.english=null;
-   if(data.kind==='CONTACT'){data.contact={};for(const key of ['phone','email','address','hours','mapUrl'])data.contact[key]=form.get('contact.'+key)||'';}
+   if(data.kind==='CONTACT'){data.contact={};for(const key of ['phone','email','address','hours','mapUrl','facebookUrl','whatsapp','zaloUrl','messengerUrl'])data.contact[key]=form.get('contact.'+key)||'';}
    if(form.has('_english')){data.english={};for(const key of ['title','slug','contentHtml','description','menuLabel','seoTitle','seoDescription'])data.english[key]=form.get('_en.'+key)||'';data.english.published=form.has('_en.published');}
   }
   for(const key of Object.keys(data))if(key.startsWith('_'))delete data[key];

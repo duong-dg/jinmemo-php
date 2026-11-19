@@ -46,7 +46,7 @@ final class Carts
     }
     private function partner(string $id,bool $write,bool $credit=false):array
     {
-        if($write)PartnerMigration::requireReady($this->db,$id);
+        if($write)PartnerMigration::requireReady($this->db,$id,true);
         $raw=$this->query('SELECT data FROM jingo_partners WHERE id=?'.($write?' FOR UPDATE':' LOCK IN SHARE MODE'),[$id])->fetchColumn();$a=$raw===false?null:json_decode($raw,true,512,JSON_THROW_ON_ERROR);if(!$a||!in_array($a['status']??'',$write?['ACTIVE']:['ACTIVE','PAUSED'],true)||$credit&&!($a['creditEnabled']??false))throw new HttpError(403,'Tài khoản CTV không được thực hiện thao tác này.');return $a;
     }
     public function credit(string $code,array $in,string $actor,?string $partnerId=null):array

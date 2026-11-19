@@ -1,0 +1,32 @@
+[
+  {
+    "id": "00000000-0000-4000-8000-000000098700",
+    "name": "Khách liên hệ / 0",
+    "email": "contact0@example.test",
+    "phone": "0901234567",
+    "subject": "Hỏi vé / Contact 0",
+    "message": "Nội dung cũ / <b>không chạy HTML</b> VIP",
+    "locale": "vi",
+    "website": ""
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000098701",
+    "name": "Khách liên hệ / 1",
+    "email": "contact1@example.test",
+    "phone": "0901234567",
+    "subject": "Hỏi vé / Contact 1",
+    "message": "Nội dung cũ / <b>không chạy HTML</b> VIP",
+    "locale": "en",
+    "website": ""
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000098702",
+    "name": "Khách liên hệ / 2",
+    "email": "contact2@example.test",
+    "phone": "0901234567",
+    "subject": "Hỏi vé / Contact 2",
+    "message": "Nội dung cũ / <b>không chạy HTML</b> VIP",
+    "locale": "vi",
+    "website": ""
+  }
+]

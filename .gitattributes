@@ -12,3 +12,7 @@ tests/fixtures/rides-private*.sql text eol=lf
 tests/fixtures/rides-closed-pools*.sql text eol=lf
 
 tests/fixtures/rides-active-pools*.sql text eol=lf
+
+tests/fixtures/rides-paid-pools*.sql text eol=lf
+
+tests/fixtures/contact-requests*.sql text eol=lf

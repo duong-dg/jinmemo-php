@@ -1,12 +1,12 @@
 {
   "scope": "SOURCE_DECLARATIONS_ONLY",
-  "sourceCommit": "7e3578d2c27f166ba42a48ce4ee5b21e7ff33cbb",
+  "sourceCommit": "9fb617071c212df641ecfbaced08961b8f7eed72",
   "phpParityVerified": false,
   "controllerCount": 70,
-  "routeCount": 269,
+  "routeCount": 270,
   "files": {
     "admin/admin.module.ts": "6fbe8ee941efb6ff91a30b9d88a8b65c1ad8f6eaebcd1b584ab2e6b16c1a5e05",
-    "admin/backups.module.ts": "f105cb361fecf2ac41a5d46dc33edd937be3cce4d764d012278cf92e71795081",
+    "admin/backups.module.ts": "2be971ff7f197f91665f4b3cf178b2f91413c097a6752a5bbbed622da1a9e839",
     "admin/notifications.module.ts": "d2e8ca053db7eec93a910b22ee0681217bd4deac7eeaed5e7a57bc9bd4c0ad48",
     "admin/overview.module.ts": "b1991bddcbca5e0a460e9ab9dce89f8393394b712ebf112e3ea3b805a94eac38",
     "app.module.ts": "731227317b4252fdae39130e748af24c3058c4e03e0d36bf3c8c3f182ed1ef7a",
@@ -14,7 +14,7 @@
     "content/contact-requests.module.ts": "2f3d71c4f3fa543552c14ee8288a9763301b9ad84b1a3b17bf31f05adb8afeba",
     "content/features.module.ts": "b52c1fbd7bf72e9d786f4da27de4fee06a1320abdc60a9a17aeae194a01e27b6",
     "content/media.module.ts": "c780b33ec6b60ebe797af7f04a9df81cfebf3fca8edb748e7e243257202b72e6",
-    "content/pages.module.ts": "e78b5fb60acdba54f99404a11f0004d2d3153b34cf344ce85a223012b8f40569",
+    "content/pages.module.ts": "3cc75a1c6724e0006683d28ffb2e1370c134e45ccfa786253597e129e1fad8a1",
     "content/posts.module.ts": "85ce7c04ebdd68be84b87f6ad43474fb0f43d15b0d2aa53aa1c370d76e600387",
     "content/site-seo.module.ts": "92440a49ae4b6b50d8126c2283f372c21801d4678cb81f3afe04ffed20df6c32",
     "content/translations.module.ts": "4d9f498ca7bb6a2003b98f013e09ff0025f5d118fe4be03ed0d193c0293053de",
@@ -478,21 +478,27 @@
     },
     {
       "method": "POST",
+      "path": "/api/v1/admin/backups/mysql-export/full",
+      "file": "admin/backups.module.ts",
+      "line": 57
+    },
+    {
+      "method": "POST",
       "path": "/api/v1/admin/backups/mysql-export",
       "file": "admin/backups.module.ts",
-      "line": 56
+      "line": 58
     },
     {
       "method": "GET",
       "path": "/api/v1/admin/backups",
       "file": "admin/backups.module.ts",
-      "line": 57
+      "line": 59
     },
     {
       "method": "GET",
       "path": "/api/v1/admin/backups/:id/download",
       "file": "admin/backups.module.ts",
-      "line": 58
+      "line": 60
     },
     {
       "method": "GET",
@@ -612,43 +618,43 @@
       "method": "GET",
       "path": "/api/v1/site/policies",
       "file": "content/pages.module.ts",
-      "line": 20
+      "line": 21
     },
     {
       "method": "GET",
       "path": "/api/v1/site/navigation",
       "file": "content/pages.module.ts",
-      "line": 20
+      "line": 21
     },
     {
       "method": "GET",
       "path": "/api/v1/site/pages",
       "file": "content/pages.module.ts",
-      "line": 20
+      "line": 21
     },
     {
       "method": "GET",
       "path": "/api/v1/site/contact",
       "file": "content/pages.module.ts",
-      "line": 20
+      "line": 21
     },
     {
       "method": "GET",
       "path": "/api/v1/site/pages/:slug",
       "file": "content/pages.module.ts",
-      "line": 20
+      "line": 21
     },
     {
       "method": "GET",
       "path": "/api/v1/admin/pages",
       "file": "content/pages.module.ts",
-      "line": 21
+      "line": 22
     },
     {
       "method": "POST",
       "path": "/api/v1/admin/pages",
       "file": "content/pages.module.ts",
-      "line": 21
+      "line": 22
     },
     {
       "method": "GET",

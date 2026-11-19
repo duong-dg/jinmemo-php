@@ -9,5 +9,6 @@ try {
         $sql=file_get_contents($file);
         foreach (explode(';',$sql) as $statement) if (trim($statement)!=='') $db->exec($statement);
     }
+    require_once dirname(__DIR__).'/src/PolicyPages.php';(new PolicyPages($db))->seed();
     echo "JinMemo schema installed.\n";
 } catch (Throwable $e) { fwrite(STDERR,$e->getMessage()."\n"); exit(1); }

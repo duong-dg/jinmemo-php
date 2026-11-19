@@ -30,12 +30,17 @@ final class ContactRequests
         $attempts=$expired?1:(int)$row['attempts']+1; $until=$expired?gmdate('Y-m-d H:i:s',time()+900):$row['until_at'];
         $this->query('INSERT INTO jingo_contact_limits(id,attempts,until_at) VALUES (?,?,?) ON DUPLICATE KEY UPDATE attempts=VALUES(attempts),until_at=VALUES(until_at)',[$id,$attempts,$until]);
     }
+    public static function validateData(array $input):array
+    {
+        if(count($input)!==6||array_diff(array_keys($input),['name','email','phone','subject','message','locale'])||!in_array($input['locale']??null,['vi','en'],true))throw new HttpError(400,'Kiểm tra thông tin liên hệ.');
+        $data=['name'=>self::text($input,'name',2,100),'email'=>self::text($input,'email',1,200,false),'phone'=>self::text($input,'phone',0,30),'subject'=>self::text($input,'subject',3,180),'message'=>self::text($input,'message',10,5000),'locale'=>$input['locale']];
+        if(!filter_var($data['email'],FILTER_VALIDATE_EMAIL)||!preg_match('/^[+0-9 ()-]*$/D',$data['phone']))throw new HttpError(400,'Kiểm tra email và điện thoại.');return $data;
+    }
     public function submit(array $input): array
     {
         $this->guard();
         if(array_diff(array_keys($input),['id','name','email','phone','subject','message','locale','website']) || !self::uuid($input['id'] ?? null) || !in_array($input['locale'] ?? null,['vi','en'],true)) throw new HttpError(400,'Kiểm tra thông tin liên hệ.');
-        $data=['name'=>self::text($input,'name',2,100),'email'=>self::text($input,'email',1,200,false),'phone'=>self::text($input,'phone',0,30),'subject'=>self::text($input,'subject',3,180),'message'=>self::text($input,'message',10,5000),'locale'=>$input['locale']];
-        if(!filter_var($data['email'],FILTER_VALIDATE_EMAIL) || !preg_match('/^[+0-9 ()-]*$/D',$data['phone'])) throw new HttpError(400,'Kiểm tra email và điện thoại.');
+        $data=self::validateData(array_intersect_key($input,array_flip(['name','email','phone','subject','message','locale'])));
         if(self::text($input,'website',0,200,false)!=='') return ['ok'=>true];
         $this->db->beginTransaction();
         try {
@@ -59,7 +64,7 @@ final class ContactRequests
     {
         if(!in_array($status,['NEW','DONE','TRASH'],true)) throw new HttpError(400,'Trạng thái không hợp lệ.');
         $items=$this->query('SELECT id,data,status,created_at FROM jingo_contact_requests WHERE status=? ORDER BY created_at DESC,id DESC LIMIT 100',[$status])->fetchAll(PDO::FETCH_ASSOC);
-        foreach($items as &$item) { $item['data']=json_decode($item['data'],true,512,JSON_THROW_ON_ERROR); $item['created_at']=gmdate('Y-m-d\TH:i:s.000\Z',strtotime($item['created_at'].' UTC')); } unset($item); return ['data'=>$items];
+        foreach($items as &$item) { $item['data']=json_decode($item['data'],true,512,JSON_THROW_ON_ERROR); $item['created_at']=(new DateTimeImmutable($item['created_at'],new DateTimeZone('UTC')))->format('Y-m-d\TH:i:s.v\Z'); } unset($item); return ['data'=>$items];
     }
     public function update(string $id,array $input,string $actor): array
     {
