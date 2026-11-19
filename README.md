@@ -1415,3 +1415,6 @@ Admin có **Cấu hình website → Dữ liệu chuyển đổi** để xem kho 
 Đợt 152: Admin → Cấu hình website → Dữ liệu chuyển đổi có hướng dẫn cPanel/Terminal và sao chép lệnh cập nhật/kiểm file/dry-run, kể cả khi kho chờ chưa sẵn sàng. Hiện chưa có nút tải SQL/import toàn bộ trên web. Xem docs/IMPORT-START-HERE.md; chưa import production.
 
 Đợt gộp 153: nhóm xe thu SePay + hoàn, lịch sử liên hệ, kênh chat công khai/admin, trang chính sách VI/EN và kiểm chuyển đổi toàn nguồn. Sửa deadlock công nợ CTV; bộ chung 183 bài sau rerun và 2 ca mới đạt. Cập nhật bằng git pull + php bin/install.php (schema 066/067, khởi tạo chính sách như Node; thông tin đơn vị vận hành giữ nháp). **Chưa chuyển hết native import**; xem docs/CONVERSION-STATUS.md và báo cáo check-transfer-coverage.php, không import production lúc này.
+## Cập nhật bộ nhập tồn vé
+
+`php bin/import-inventory.php --file=/duong-dan/export.sql` kiểm tra cấu hình, tổng chỗ và phân bổ nguyên bản từ full-v2. Cần sản phẩm và đơn đã tồn tại đúng trong PHP; không tự xuất bản đơn từ kho chờ. Xem [hướng dẫn](docs/IMPORT-INVENTORY.md) và [trạng thái toàn bộ](docs/CONVERSION-STATUS.md). Mặc định không ghi dữ liệu.

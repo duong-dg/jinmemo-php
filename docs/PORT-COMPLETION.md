@@ -1,5 +1,7 @@
 # Phần chuyển đổi còn cần hoàn tất
 
+Đợt 154: thêm `import-inventory.php` cho ba bảng tồn với cha native bắt buộc, giữ phân bổ nguyên bản; xem [IMPORT-INVENTORY.md](IMPORT-INVENTORY.md). Toàn hệ thống vẫn chưa được chứng nhận chuyển đủ.
+
 Trạng thái mới nhất sau đợt gộp 153 (schema 067): xem CONVERSION-STATUS.md. Các bảng và ghi chú bên dưới giữ lịch sử từng đợt; không phải chứng nhận đã đối chiếu hết mọi endpoint hoặc nhập toàn bộ dữ liệu vào bán hàng.
 
 | Phần | Trạng thái và điều kiện hoàn tất |
